@@ -1,0 +1,92 @@
+key "Level6","1050"
+
+key "Level7","1300"
+
+key "Level8","1400"
+
+key "Level9","1600"
+
+key "Level10","1800"
+
+key "Level11","2050"
+
+key "Level12","2400"
+
+key "Level13","2700"
+
+key "Level14","3000"
+
+key "Level15","3300"
+
+key "Level16","3500"
+
+key "Level17","3700"
+
+key "Level18","3900"
+
+key "Level19","4000"
+
+key "Level20","4250"
+
+key "Level21","4500"
+
+key "Level22","4700"
+
+key "Level23","5000"
+
+key "Level24","5100"
+
+key "Level25","5200"
+
+key "Level26","5300"
+
+key "Level27","5400"
+
+key "Level28","5500"
+
+key "Level29","5600"
+
+key "Level30","5700"
+
+key "Level31","5800"
+
+key "Level32","5900"
+
+key "Level33","6000"
+
+key "Level34","6200"
+
+key "Level35","6400"
+
+key "Level36","6600"
+
+key "Level37","6800"
+
+key "Level38","7000"
+
+key "Level39","7500"
+
+key "Level40","8000"
+
+key "Level41","8500"
+
+key "Level42","9000"
+
+key "Level43","10000"
+
+key "Level44","10500"
+
+key "Level45","11000"
+
+key "Level46","11500"
+
+key "Level47","12000"
+
+key "Level48","12500"
+
+key "Level49","13000"
+
+key "Level50","13500"
+
+key "MaxXPLevel","50"
+
