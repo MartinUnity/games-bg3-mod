@@ -1296,7 +1296,6 @@ object category "I_WPN_Pike_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Rapier_1",2,0,0,0,0,0,0,0
 object category "I_WPN_Scimitar_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Shortsword_1",1,0,0,0,0,0,0,0
-//object category "I_WPN_Shortsword_4_Fire",1,0,0,0,0,0,0,0
 object category "I_WPN_Shortsword_4_Cold",1,0,0,0,0,0,0,0
 object category "I_ARM_Shield_5",1,0,0,0,0,0,0,0
 object category "I_ARM_Zebras_Body",1,0,0,0,0,0,0,0
@@ -1376,12 +1375,13 @@ StartLevel "4"
 EndLevel "6"
 object category "I_ARM_ChainShirt_Body",1,0,0,0,0,0,0,0
 object category "I_ARM_ScaleMail_Body",1,0,0,0,0,0,0,0
-object category "I_ARM_Breastplate_Body",3,0,0,0,0,0,0,0
-object category "I_ARM_Breastplate_Body_4",1,0,0,0,0,0,0,0
+object category "I_ARM_Breastplate_Body",2,0,0,0,0,0,0,0
+object category "I_ARM_Breastplate_Body_4",2,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
 object category "I_ARM_ScaleMail_Body",1,0,0,0,0,0,0,0
 object category "I_ARM_Breastplate_Body",1,0,0,0,0,0,0,0
+object category "I_ARM_Breastplate_Body_5",2,0,0,0,0,0,0,0
 object category "I_ARM_HalfPlate_Body",3,0,0,0,0,0,0,0
 new treasuretable "ST_HeavyArmor"
 new subtable "1,1"

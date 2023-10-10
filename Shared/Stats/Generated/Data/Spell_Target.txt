@@ -10521,7 +10521,6 @@ data "TargetEffect" "e71a09af-7fb4-409f-bb1b-b6c93a9465e4"
 //data "CastEffect" "01fbd7fa-66bd-47c9-aaaa-36b6f65fd9f6"
 //data "TargetEffect" "e71a09af-7fb4-409f-bb1b-b6c93a9465e4"
 
-
 new entry "Target_Sting_Imp"
 type "SpellData"
 data "SpellType" "Target"
@@ -10540,26 +10539,26 @@ data "SpellAnimationIntentType" "Aggressive"
 data "CastEffect" "11a20c12-3b22-4a1e-a7d5-1d261b60aef9"
 data "TargetEffect" "7933e052-8bf1-40b6-9e2f-91e73c4dc53d"
 
-//// Zethrok
-//// Imp - lvl 3-4
-//new entry "Target_Sting_Imp_Summon"
-//type "SpellData"
-//data "SpellType" "Target"
-//using "Target_Sting_Imp"
-//data "SpellFlags" "IsEnemySpell"
-//data "SpellAnimationIntentType" "Aggressive"
-//
-//// Zethrok
-//// Imp - lvl 5-6
+// Zethrok
+// Imp - lvl 3-4
 new entry "Target_Sting_Imp_Summon"
 type "SpellData"
 data "SpellType" "Target"
 using "Target_Sting_Imp"
-data "SpellSuccess" "TARGET:IF(not SavingThrow(Ability.Constitution, 13)):DealDamage(1d4+3,Poison);DealDamage(max(1,1d6+UnarmedMeleeAbilityModifier), Piercing)"
-data "ExtraDescriptionParams" "DealDamage(1d6+UnarmedMeleeAbilityModifier, Piercing);DealDamage(1d4+3,Poison)"
-data "TooltipDamageList" "DealDamage(1d6+UnarmedMeleeAbilityModifier, Piercing);DealDamage(1d4+3,Poison,,,,ad727a13-c6f0-4b5b-aefd-aac79c6ed46e)"
 data "SpellFlags" "IsEnemySpell"
 data "SpellAnimationIntentType" "Aggressive"
+
+//// Zethrok
+//// Imp - lvl 5-6
+//new entry "Target_Sting_Imp_Summon"
+//type "SpellData"
+//data "SpellType" "Target"
+//using "Target_Sting_Imp"
+//data "SpellSuccess" "TARGET:IF(not SavingThrow(Ability.Constitution, 13)):DealDamage(1d4+3,Poison);DealDamage(max(1,1d6+UnarmedMeleeAbilityModifier), Piercing)"
+//data "ExtraDescriptionParams" "DealDamage(1d6+UnarmedMeleeAbilityModifier, Piercing);DealDamage(1d4+3,Poison)"
+//data "TooltipDamageList" "DealDamage(1d6+UnarmedMeleeAbilityModifier, Piercing);DealDamage(1d4+3,Poison,,,,ad727a13-c6f0-4b5b-aefd-aac79c6ed46e)"
+//data "SpellFlags" "IsEnemySpell"
+//data "SpellAnimationIntentType" "Aggressive"
 
 // Zethrok
 // Imp - lvl 7-8
