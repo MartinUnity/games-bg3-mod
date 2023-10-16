@@ -1330,6 +1330,8 @@ object category "I_WPN_HandCrossbow_1",1,0,0,0,0,0,0,0
 object category "I_WPN_HandCrossbow_4",1,0,0,0,0,0,0,0
 object category "I_WPN_HeavyCrossbow_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Longbow_1",1,0,0,0,0,0,0,0
+object category "I_WPN_Longbow_4",1,0,0,0,0,0,0,0
+object category "I_WPN_Longbow_5",1,0,0,0,0,0,0,0
 new treasuretable "ST_RandomWeapon"
 new subtable "1,1"
 object category "T_ST_SimpleMeleeWeapons",1,0,0,0,0,0,0,0
@@ -1355,9 +1357,15 @@ new treasuretable "ST_ArmorShield"
 new subtable "1,1"
 StartLevel "2"
 object category "I_ARM_Shield_4",2,0,0,0,0,0,0,0
+object category "I_ARM_Zebras_Body",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "5"
+object category "I_ARM_Shield_5",2,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "7"
+object category "I_ARM_Zebras_Body_1",1,0,0,0,0,0,0,0
 new treasuretable "ST_LightArmor"
 new subtable "1,1"
-EndLevel "4"
 object category "I_ARM_Padded_Body",1,0,0,0,0,0,0,0
 object category "I_ARM_Leather_Body",2,0,0,0,0,0,0,0
 new subtable "1,1"
@@ -2177,6 +2185,11 @@ new subtable "1,1"
 object category "T_ST_Finesse_MeleeWeapons",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_ST_Finesse_MeleeWeapons_Magic",1,0,0,0,0,0,0,0
+// Zethrok - add shield
+new treasuretable "EquipmentTrader_Shield_Melee"
+new subtable "1,1"
+object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
+// End
 new treasuretable "EquipmentTrader_Melee_Magic"
 new subtable "2,1"
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
@@ -2297,6 +2310,7 @@ object category "I_ARM_StuddedLeather_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
 object category "I_ARM_StuddedLeather_Body_2",1,0,0,0,0,0,0,0
+object category "I_ARM_StuddedLeather_Body_4",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Medium_Magic"
 new subtable "1,1"
 StartLevel "2"

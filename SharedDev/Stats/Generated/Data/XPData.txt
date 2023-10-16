@@ -1,92 +1,101 @@
-key "Level6","1050"
+// Orig total: 11700 XP
+// From 1-5: 1700 XP (13000 XP normally) - so 13000+111500 = 124500 XP
+// Less from 1-5: 11300 XP
+// 11-20: 32800 XP / 2 = 16400 XP
+// 21-30: 52000 XP / 2 = 26000 XP
+// 31-40: 66200 XP / 2 = 33100 XP
+// 41-50: 111500 XP / 2 = 55750 XP
+// New total: (til og med 20: 39950 ): 21-30 = 52000; 31-40 = 66200; 41-50 = 111500
+// Total: 269650 XP
+key "Level6","825"
 
-key "Level7","1300"
+key "Level7","950"
 
-key "Level8","1400"
+key "Level8","1000"
 
-key "Level9","1600"
+key "Level9","1100"
 
-key "Level10","1800"
+key "Level10","1150"
 
-key "Level11","2050"
+key "Level11","1175"
 
-key "Level12","2400"
+key "Level12","1200"
 
-key "Level13","2700"
+key "Level13","1350"
 
-key "Level14","3000"
+key "Level14","1500"
 
-key "Level15","3300"
+key "Level15","1650"
 
-key "Level16","3500"
+key "Level16","1750"
 
-key "Level17","3700"
+key "Level17","1850"
 
-key "Level18","3900"
+key "Level18","1950"
 
-key "Level19","4000"
+key "Level19","2000"
 
-key "Level20","4250"
+key "Level20","2125"
 
-key "Level21","4500"
+key "Level21","2250"
 
-key "Level22","4700"
+key "Level22","2350"
 
-key "Level23","5000"
+key "Level23","2500"
 
-key "Level24","5100"
+key "Level24","2550"
 
-key "Level25","5200"
+key "Level25","2600"
 
-key "Level26","5300"
+key "Level26","2650"
 
-key "Level27","5400"
+key "Level27","2700"
 
-key "Level28","5500"
+key "Level28","2750"
 
-key "Level29","5600"
+key "Level29","2800"
 
-key "Level30","5700"
+key "Level30","2850"
 
-key "Level31","5800"
+key "Level31","3050"
 
-key "Level32","5900"
+key "Level32","3100"
 
-key "Level33","6000"
+key "Level33","3150"
 
-key "Level34","6200"
+key "Level34","3300"
 
-key "Level35","6400"
+key "Level35","4200"
 
-key "Level36","6600"
+key "Level36","4300"
 
-key "Level37","6800"
+key "Level37","4400"
 
-key "Level38","7000"
+key "Level38","4500"
 
-key "Level39","7500"
+key "Level39","4750"
 
-key "Level40","8000"
+key "Level40","5000"
 
-key "Level41","8500"
+key "Level41","5250"
 
-key "Level42","9000"
+key "Level42","5500"
 
-key "Level43","10000"
+key "Level43","6000"
 
-key "Level44","10500"
+key "Level44","6250"
 
-key "Level45","11000"
+key "Level45","6500"
 
-key "Level46","11500"
+key "Level46","6750"
 
-key "Level47","12000"
+key "Level47","7000"
 
-key "Level48","12500"
+key "Level48","7250"
 
-key "Level49","13000"
+key "Level49","7500"
 
-key "Level50","13500"
+key "Level50","8500"
 
 key "MaxXPLevel","50"
 
