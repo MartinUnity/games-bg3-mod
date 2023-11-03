@@ -1282,16 +1282,25 @@ object category "I_WPN_Quarterstaff_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
+EndLevel "10"
+object category "I_WPN_Longsword_Tanking_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "12"
+object category "I_WPN_Longsword_Tanking_12",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "8"
+EndLevel "10"
 object category "I_WPN_Quarterstaff_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "9"
+StartLevel "10"
 object category "I_WPN_Quarterstaff_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_11",1,0,0,0,0,0,0,0
+object category "I_WPN_Longsword_Tanking_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
 object category "I_WPN_Quarterstaff_12",1,0,0,0,0,0,0,0
@@ -1314,15 +1323,15 @@ object category "I_WPN_Trident_1",1,0,0,0,0,0,0,0
 object category "I_WPN_WarPick_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Warhammer_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "6"
+StartLevel "8"
 object category "I_WPN_Maul_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "8"
+StartLevel "10"
 object category "I_WPN_Morningstar_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Morningstar_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Maul_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "11"
+StartLevel "13"
 object category "I_WPN_Morningstar_12",1,0,0,0,0,0,0,0
 new treasuretable "ST_Finesse_MeleeWeapons"
 new subtable "1,1"
@@ -1395,6 +1404,33 @@ object category "I_ARM_Shield_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
 object category "I_ARM_Shield_12",1,0,0,0,0,0,0,0
+new treasuretable "ST_ClothArmor"
+new subtable "1,1"
+StartLevel "5"
+EndLevel "8"
+object category "I_ARM_Robe_Body_50",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_51",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_52",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_20",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_21",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "5"
+EndLevel "8"
+object category "I_ARM_Robe_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_12",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "8"
+EndLevel "12"
+object category "I_ARM_Robe_Body_13",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_14",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_15",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_16",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "12"
+object category "I_ARM_Robe_Body_13",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
 new treasuretable "ST_LightArmor"
 new subtable "1,1"
 object category "I_ARM_Padded_Body",1,0,0,0,0,0,0,0
@@ -2218,6 +2254,11 @@ new treasuretable "EquipmentTrader_Shield_Melee"
 new subtable "1,1"
 object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
 // End
+// Zethrok - add Clotharmor
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Magic"
+new subtable "1,1"
+object category "T_ST_ClothArmor",1,0,0,0,0,0,0,0
+// End
 new treasuretable "EquipmentTrader_Melee_Magic"
 new subtable "2,1"
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
@@ -2339,13 +2380,14 @@ new subtable "1,1"
 StartLevel "9"
 object category "I_ARM_StuddedLeather_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "12"
+StartLevel "10"
+EndLevel "15"
 object category "I_ARM_StuddedLeather_Body_10",1,0,0,0,0,0,0,0
 object category "I_ARM_Leather_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "16"
-object category "I_ARM_StuddedLeather_Body_10",1,0,0,0,0,0,0,0
-object category "I_ARM_Leather_Body_10",1,0,0,0,0,0,0,0
+StartLevel "15"
+object category "I_ARM_StuddedLeather_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_Leather_Body_11",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Medium_Magic"
 new subtable "1,1"
 StartLevel "2"
@@ -2368,25 +2410,31 @@ EndLevel "6"
 object category "I_ARM_ScaleMail_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
+EndLevel "8"
 object category "I_ARM_ScaleMail_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "7"
-object category "I_ARM_ScaleMail_Body_10",1,0,0,0,0,0,0,0
-new subtable "1,1"
 StartLevel "8"
+EndLevel "12"
+object category "I_ARM_ScaleMail_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_ChainShirt_Body_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "12"
 object category "I_ARM_ScaleMail_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_ChainShirt_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
 EndLevel "8"
 object category "I_ARM_Breastplate_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
+EndLevel "11"
 object category "I_ARM_Breastplate_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "11"
+EndLevel "15"
 object category "I_ARM_Breastplate_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "11"
+StartLevel "15"
 object category "I_ARM_Breastplate_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
@@ -2394,12 +2442,14 @@ EndLevel "8"
 object category "I_ARM_HalfPlate_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
+EndLevel "11"
 object category "I_ARM_HalfPlate_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "14"
+StartLevel "11"
+EndLevel "15"
 object category "I_ARM_HalfPlate_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "18"
+StartLevel "15"
 object category "I_ARM_HalfPlate_Body_11",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Heavy_Magic"
 new subtable "1,1"
@@ -2412,10 +2462,10 @@ EndLevel "8"
 object category "I_ARM_RingMail_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
-EndLevel "9"
+EndLevel "8"
 object category "I_ARM_RingMail_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "9"
+StartLevel "8"
 object category "I_ARM_RingMail_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "4"
@@ -2423,28 +2473,48 @@ EndLevel "6"
 object category "I_ARM_ChainMail_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
+EndLevel "9"
 object category "I_ARM_ChainMail_Body_2",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "9"
+EndLevel "13"
+object category "I_ARM_ChainMail_Body_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "13"
+object category "I_ARM_ChainMail_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
 EndLevel "8"
 object category "I_ARM_Splint_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
+EndLevel "12"
 object category "I_ARM_Splint_Body_2",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "12"
+EndLevel "15"
+object category "I_ARM_Splint_Body_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "15"
+object category "I_ARM_Splint_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 EndLevel "10"
 object category "I_ARM_Plate_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "11"
+EndLevel "13"
 object category "I_ARM_Plate_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "13"
+EndLevel "16"
 object category "I_ARM_Plate_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "16"
 object category "I_ARM_Plate_Body_11",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Magic"
+new subtable "1,1"
+object category "T_EquipmentTrader_BodyArmor_Cloth_Magic",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_EquipmentTrader_BodyArmor_Light_Magic",1,0,0,0,0,0,0,0
 new subtable "1,1"
@@ -2714,7 +2784,8 @@ new subtable "1,1"
 object category "T_ST_MartialMeleeWeapons",2,0,0,0,0,0,0,0
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
 object category "T_ST_MartialMeleeWeapons_1",2,0,0,0,0,0,0,0
-object category "T_ST_ArmorShield",2,0,0,0,0,0,0,0
+object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
+object category "T_ST_ClothArmor",2,0,0,0,0,0,0,0
 new treasuretable "_Rewards"
 new treasuretable "Combat_Minor"
 new subtable "1,1"

@@ -1023,7 +1023,7 @@ object category "T_ST_GEN_Valuables_Jewelry_Copper",1,0,0,0,0,0,0,0
 new treasuretable "DEN_Harpy_Nest"
 new subtable "1,1"
 object category "I_DEN_HarpyMeal_Nest_Ring_2",1,0,0,0,0,0,0,0
-object category "I_DEN_HarpyMeal_NestRing",1,0,0,0,0,0,0,0
+//object category "I_DEN_HarpyMeal_NestRing",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_Valuables_Gems",1,0,0,0,0,0,0,0
 new subtable "1,1"
