@@ -28,16 +28,16 @@ key "Level6","5360"
 //key "Level7","950"
 key "Level7","6030"
 
-//key "Level8","1000"
-key "Level8","8000"
+key "Level8","1000"
+//key "Level8","8000"
 
-//key "Level9","1100"
-key "Level9","9340"
+key "Level9","1100"
+//key "Level9","9340"
 
-//key "Level10","1150"
-key "Level10","13340"
+key "Level10","1150"
+//key "Level10","13340"
 
-// DIFF: 37045
+// DIFF: 37045 (27430)
 key "Level11","1175"
 
 key "Level12","1200"
@@ -78,45 +78,45 @@ key "Level29","2800"
 
 key "Level30","2850"
 
-key "Level31","3050"
+key "Level31","4050"
 
-key "Level32","3100"
+key "Level32","4100"
 
-key "Level33","3150"
+key "Level33","4150"
 
-key "Level34","3300"
+key "Level34","4300"
 
-key "Level35","2700"
+key "Level35","3700"
 
-key "Level36","2800"
+key "Level36","3800"
 
-key "Level37","2900"
+key "Level37","3900"
 
-key "Level38","3000"
+key "Level38","4000"
 
-key "Level39","3250"
+key "Level39","4250"
 
-key "Level40","3500"
+key "Level40","4500"
 
-key "Level41","3750"
+key "Level41","4750"
 
-key "Level42","4000"
+key "Level42","5000"
 
-key "Level43","4000"
+key "Level43","5000"
 
-key "Level44","4325"
+key "Level44","6325"
 
-key "Level45","4200"
+key "Level45","6200"
 
-key "Level46","4350"
+key "Level46","6350"
 
-key "Level47","4500"
+key "Level47","6500"
 
-key "Level48","4750"
+key "Level48","6750"
 
-key "Level49","5000"
+key "Level49","7000"
 
-key "Level50","5650"
+key "Level50","7650"
 
 key "MaxXPLevel","50"
 

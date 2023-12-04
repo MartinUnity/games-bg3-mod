@@ -2855,10 +2855,10 @@ data "Unique" "1"
 
 
 //------ TEAM #2 -----
-// Tav     : *Sorceror (draconic) / Bard (1 lvl) / Wizard (evo)                      :: cha/int/dex
-// Shadow  : *Cleric (light) / Ranger (beast master) + ranged [ / Druid (moon) ]     :: wis/dex/con
-// Gale    : *Sorceror (draconic) / Wizard (evo) / Warlock / Cleric (tempest)        :: cha/int/con
-// Lae'zel : *Druid (shapeshifter) / Monk (element) /
+// Tav     : *Cleric (heal) / Ranger (beast master) + ranged [ / Druid (moon) ]   :: wis/dex/con
+// Shadow  : *Cleric (tempest) / Druid (moon) / Wizard (1)                        :: wis/con
+// Gale    : *Sorceror (draconic) / Warlock [/ Cleric (tempest)]                  :: cha/con/wis
+// Lae'zel : *Fighter / Cleric (life)                                             :: str/wis
 
 
 
