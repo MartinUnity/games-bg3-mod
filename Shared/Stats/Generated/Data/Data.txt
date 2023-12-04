@@ -490,7 +490,7 @@ key "EncumberedMultiplier","35"
 
 key "HeavilyEncumberedMultiplier","45"
 
-key "CarryLimitMultiplier","50"
+key "CarryLimitMultiplier","150"
 
 key "ShoveCurveConstant","65"
 

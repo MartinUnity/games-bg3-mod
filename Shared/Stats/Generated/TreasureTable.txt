@@ -1289,20 +1289,20 @@ StartLevel "12"
 object category "I_WPN_Longsword_Tanking_12",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
-EndLevel "10"
+EndLevel "11"
 object category "I_WPN_Quarterstaff_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "10"
+StartLevel "11"
 object category "I_WPN_Quarterstaff_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Longsword_Tanking_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "12"
+StartLevel "13"
 object category "I_WPN_Quarterstaff_12",1,0,0,0,0,0,0,0
 new treasuretable "ST_MartialMeleeWeapons_1"
 new subtable "1,1"
@@ -1421,7 +1421,7 @@ object category "I_ARM_Robe_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_12",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "8"
+StartLevel "9"
 EndLevel "12"
 object category "I_ARM_Robe_Body_13",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_14",1,0,0,0,0,0,0,0
@@ -1429,8 +1429,8 @@ object category "I_ARM_Robe_Body_15",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_16",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
-object category "I_ARM_Robe_Body_13",1,0,0,0,0,0,0,0
-object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_17",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_23",1,0,0,0,0,0,0,0
 new treasuretable "ST_LightArmor"
 new subtable "1,1"
 object category "I_ARM_Padded_Body",1,0,0,0,0,0,0,0
