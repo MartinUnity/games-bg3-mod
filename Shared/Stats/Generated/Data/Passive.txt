@@ -3666,3 +3666,4 @@ using "ARM_SuperiorPlate_1_Passive_root"
 data "DescriptionParams" "4"
 data "Boosts" "DamageReduction(Piercing, Flat, 4)"
 
+

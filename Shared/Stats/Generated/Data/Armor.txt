@@ -2213,7 +2213,7 @@ data "RootTemplate" "8494f6d9-d588-4d18-bb0d-c5a58e911771"
 //data "PassivesOnEquip" "MAG_Generic_Leeching_Passive_low_eb"
 
 // Starter
-//data "Boosts" "RollBonus(Attack, 10)"
+//data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 
@@ -2860,6 +2860,11 @@ data "Unique" "1"
 // Gale    : *Sorceror (draconic) / Warlock [/ Cleric (tempest)]                  :: cha/con/wis
 // Lae'zel : *Fighter / Cleric (life)                                             :: str/wis
 
+//------ TEAM #3 -----
+// Tav     : *Sorceror (draconic) / Warlock / Cleric (tempest)                    :: cha/wis/con
+// Shadow  : *Cleric (life) / Ranger (BM) / Druid                                 :: wis/dex/con
+// Gale    : *Sorceror (draconic) / Wizard                                        :: cha+int/con
+// Lae'zel : *Druid (shapeshifter) / Wizard                                       :: wis/int
 
 
 

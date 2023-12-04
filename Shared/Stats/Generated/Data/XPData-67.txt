@@ -11,13 +11,13 @@
 
 key "Level1","25"
 
-key "Level2","575"
+key "Level2","275"
 
-key "Level3","1200"
+key "Level3","400"
 
-key "Level4","2540"
+key "Level4","3090"
 
-key "Level5","4335"
+key "Level5","4885"
 
 key "MaxXPLevel","5"
 
