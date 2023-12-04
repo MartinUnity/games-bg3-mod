@@ -486,9 +486,9 @@ key "Disarm_ThrowAngle","100"
 
 key "Disarm_RandomConeAngle","40"
 
-key "EncumberedMultiplier","35"
+key "EncumberedMultiplier","125"
 
-key "HeavilyEncumberedMultiplier","45"
+key "HeavilyEncumberedMultiplier","140"
 
 key "CarryLimitMultiplier","150"
 
