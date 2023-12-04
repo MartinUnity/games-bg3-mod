@@ -1142,7 +1142,7 @@ type "Armor"
 using "ARM_Underwear"
 data "RootTemplate" "4b30a649-fd88-4f64-a57b-1149d7b9ac41"
 //data "Boosts" "AbilityOverrideMinimum(Dexterity,20);Skill(Athletics, 6)"
-data "Boosts" "Skill(Athletics, 4e)"
+data "Boosts" "Skill(Athletics, 4)"
 
 new entry "ARM_Underwear_Gale"
 type "Armor"

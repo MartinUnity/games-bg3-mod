@@ -2241,6 +2241,10 @@ data "RootTemplate" "9fecf84d-911f-4986-9454-0429ac437f45"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 //data "Boosts" "AbilityOverrideMinimum(Strength,16);Skill(Survival, 2);Skill(Perception, 2)"
+// Starter
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 new entry "ARM_Underwear_Dwarves_Green"
 type "Armor"
@@ -2343,6 +2347,8 @@ data "RootTemplate" "3caad2f1-719f-4070-b7f0-887c49c773d3"
 //data "Boosts" "AbilityOverrideMinimum(Strength,26);AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Dexterity,22);AbilityOverrideMinimum(Constitution,30);AbilityOverrideMinimum(Intelligence,20);AbilityOverrideMinimum(Charisma,22);RollBonus(Attack, 1);Skill(SleightOfHand, 6);Skill(Survival, 6);Skill(Perception, 6);AC(1)"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive;MAG_Generic_Leeching_Passive_low"
 
+// Starter
+//data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_HalfOrcs_Orange"
@@ -2371,8 +2377,8 @@ data "RootTemplate" "d40b567d-6b66-447e-8923-2bbd0d7aea00"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 // Starter
-data "Boosts" "RollBonus(Attack, 20)"
-data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_Humans_B"
 type "Armor"
@@ -2836,4 +2842,18 @@ data "Unique" "1"
 // Barb (1) / Monk / Rogue / Wizard
 // Sorc (1) / Druid / Pala
 // Figh (1) / Cleric / Ranger
+
+//------
+//Tav      : *Fighter (Champion) / Druid (spore) / Warlock (for tmp hp?)     :: str/con/wis/cha
+//Shadow   : *Cleric (life) / Ranger (beast master) (/druid)                 :: wis/dex/con
+//Gale:    : Wizard (evoc) / Cleric (light) / *Sorc (draconic)               :: int/wis/cha
+//Lae'zel  : *Barbarian  / Monk (spell) / Druid (moon) ( / Ranger (hunter) ) :: str/con/wis
+
+//Wyll     : Fighter (eldritch knight) / Warlock (hexblade) / Wizard (evoc) :: str/con/int
+//Astarion : Rogue (thief) / Wizard (necro)                                 :: dex/int
+//Karlach  : Rogue (assassin) / Wizard (necro)                              :: dex/int
+
+
+
+
 
