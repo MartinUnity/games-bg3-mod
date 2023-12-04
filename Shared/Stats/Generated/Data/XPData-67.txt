@@ -1,0 +1,30 @@
+// Orig Total: 13000 XP
+// New total: 1700 XP (11300 XP reduction)
+
+// BEFORE
+//key "Level1","25"
+//key "Level2","125"
+//key "Level3","200"
+//key "Level4","400"
+//key "Level5","650"
+// END BEFORE
+
+key "Level1","25"
+
+key "Level2","575"
+
+key "Level3","1200"
+
+key "Level4","2540"
+
+key "Level5","4335"
+
+key "MaxXPLevel","5"
+
+//-- ORIG
+//key "Level1","300"
+//key "Level2","600"
+//key "Level3","1800"
+//key "Level4","3800"
+//key "Level5","6500"
+//key "MaxXPLevel","5"

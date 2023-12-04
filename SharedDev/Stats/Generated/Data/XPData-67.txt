@@ -1,0 +1,170 @@
+// Orig total: 11700 XP
+// From 1-5: 1700 XP (13000 XP normally) - so 13000+111500 = 124500 XP
+// Less from 1-5: 11300 XP
+// 11-20: 32800 XP / 2 = 16400 XP
+// 21-30: 52000 XP / 2 = 26000 XP
+// 31-40: 66200 XP / 2 = 33100 XP
+// 41-50: 111500 XP / 2 = 55750 XP
+// New total: (til og med 20: 39950 ): 21-30 = 52000; 31-40 = 66200; 41-50 = 111500
+// Total: 269650 XP
+// FAST LVL : 1400 (MISSING: 13000 - 1400 = 11600)
+// 66% LVL  : 8675 (MISSING: 13000 - 8675 = 4325)
+// 75% LVL  : 9750 (MISSING: 13000 - 9750 = 3250)
+
+// ORIG
+//key "Level6","8000"
+//key "Level7","9000"
+//key "Level8","12000"
+//key "Level9","14000"
+//key "Level10","20000"
+//key "Level11","24000"
+//key "Level12","30000"
+//key "MaxXPLevel","12"
+// END - ORIG
+
+//key "Level6","825"
+key "Level6","5360"
+
+//key "Level7","950"
+key "Level7","6030"
+
+//key "Level8","1000"
+key "Level8","8000"
+
+//key "Level9","1100"
+key "Level9","9340"
+
+//key "Level10","1150"
+key "Level10","13340"
+
+// DIFF: 37045
+key "Level11","1175"
+
+key "Level12","1200"
+
+key "Level13","1350"
+
+key "Level14","1500"
+
+key "Level15","1650"
+
+key "Level16","1750"
+
+key "Level17","1850"
+
+key "Level18","1950"
+
+key "Level19","2000"
+
+key "Level20","2125"
+
+key "Level21","2250"
+
+key "Level22","2350"
+
+key "Level23","2500"
+
+key "Level24","2550"
+
+key "Level25","2600"
+
+key "Level26","2650"
+
+key "Level27","2700"
+
+key "Level28","2750"
+
+key "Level29","2800"
+
+key "Level30","2850"
+
+key "Level31","3050"
+
+key "Level32","3100"
+
+key "Level33","3150"
+
+key "Level34","3300"
+
+key "Level35","2700"
+
+key "Level36","2800"
+
+key "Level37","2900"
+
+key "Level38","3000"
+
+key "Level39","3250"
+
+key "Level40","3500"
+
+key "Level41","3750"
+
+key "Level42","4000"
+
+key "Level43","4000"
+
+key "Level44","4325"
+
+key "Level45","4200"
+
+key "Level46","4350"
+
+key "Level47","4500"
+
+key "Level48","4750"
+
+key "Level49","5000"
+
+key "Level50","5650"
+
+key "MaxXPLevel","50"
+
+// OLD - ORIG
+//key "Level6","825"
+//key "Level7","950"
+//key "Level8","1000"
+//key "Level9","1100"
+//key "Level10","1150"
+//key "Level11","1175"
+//key "Level12","1200"
+//key "Level13","1350"
+//key "Level14","1500"
+//key "Level15","1650"
+//key "Level16","1750"
+//key "Level17","1850"
+//key "Level18","1950"
+//key "Level19","2000"
+//key "Level20","2125"
+//key "Level21","2250"
+//key "Level22","2350"
+//key "Level23","2500"
+//key "Level24","2550"
+//key "Level25","2600"
+//key "Level26","2650"
+//key "Level27","2700"
+//key "Level28","2750"
+//key "Level29","2800"
+//key "Level30","2850"
+//key "Level31","3050"
+//key "Level32","3100"
+//key "Level33","3150"
+//key "Level34","3300"
+//key "Level35","4200"
+//key "Level36","4300"
+//key "Level37","4400"
+//key "Level38","4500"
+//key "Level39","4750"
+//key "Level40","5000"
+//key "Level41","5250"
+//key "Level42","5500"
+//key "Level43","5000"
+//key "Level44","5250"
+//key "Level45","5500"
+//key "Level46","5750"
+//key "Level47","6000"
+//key "Level48","6250"
+//key "Level49","6500"
+//key "Level50","7150"
+//key "MaxXPLevel","50"
+// END - ORIG

@@ -1,14 +1,1 @@
-// Orig Total: 13000 XP
-// New total: 1700 XP (11300 XP reduction)
-key "Level1","25"
-
-key "Level2","125"
-
-key "Level3","200"
-
-key "Level4","400"
-
-key "Level5","650"
-
-key "MaxXPLevel","5"
-
+XPData-67.txt

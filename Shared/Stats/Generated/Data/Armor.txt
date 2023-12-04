@@ -2854,6 +2854,13 @@ data "Unique" "1"
 //Karlach  : Rogue (assassin) / Wizard (necro)                              :: dex/int
 
 
+//------ TEAM #2 -----
+// Tav     : *Sorceror (draconic) / Bard (1 lvl) / Wizard (evo)                      :: cha/int/dex
+// Shadow  : *Cleric (light) / Ranger (beast master) + ranged [ / Druid (moon) ]     :: wis/dex/con
+// Gale    : *Sorceror (draconic) / Wizard (evo) / Warlock / Cleric (tempest)        :: cha/int/con
+// Lae'zel : *Druid (shapeshifter) / Monk (element) /
+
+
 
 
 
