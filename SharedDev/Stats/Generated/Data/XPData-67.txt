@@ -23,22 +23,24 @@
 // END - ORIG
 
 //key "Level6","825"
-key "Level6","5360"
+// To allow multiclass to 'catch' up a bit
+key "Level6","1360"
+//key "Level6","5360"
 
 //key "Level7","950"
 key "Level7","6030"
 
-key "Level8","1000"
+key "Level8","2000"
 //key "Level8","8000"
 
-key "Level9","1100"
+key "Level9","2100"
 //key "Level9","9340"
 
-key "Level10","1150"
+key "Level10","2150"
 //key "Level10","13340"
 
 // DIFF: 37045 (27430)
-key "Level11","1175"
+key "Level11","2175"
 
 key "Level12","1200"
 

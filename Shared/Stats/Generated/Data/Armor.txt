@@ -2832,6 +2832,9 @@ data "Boosts" "UnlockSpell(Zone_DEN_ColorSpray_HarpyMeal_NestRing);UnlockSpell(T
 data "Unique" "1"
 
 
+//data "Boosts" "Ability(Constitution,1);ProficiencyBonus(SavingThrow,Constitution)"
+
+
 //// Playthrough
 // Tav: Fighter, Barbarian? [medium armor]
 // Ranger (druid)
@@ -2865,6 +2868,13 @@ data "Unique" "1"
 // Shadow  : *Cleric (life) / Ranger (BM) / Druid                                 :: wis/dex/con
 // Gale    : *Sorceror (draconic) / Wizard                                        :: cha+int/con
 // Lae'zel : *Druid (shapeshifter) / Wizard                                       :: wis/int
+
+//------ TEAM #4 -----
+// Tav     : *Sorceror (draconic) / Warlock / Cleric (tempest)                    :: cha/wis/con
+// Shadow  : *Cleric (life) / Ranger (BM) / Druid                                 :: wis/dex/con
+// Gale    : *Sorceror (draconic) / Wizard                                        :: cha+int/con
+// Lae'zel : *Druid (shapeshifter) / Wizard                                       :: wis/int
+
 
 
 
