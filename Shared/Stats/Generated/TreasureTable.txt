@@ -2380,14 +2380,18 @@ new subtable "1,1"
 StartLevel "9"
 object category "I_ARM_StuddedLeather_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
+StartLevel "11"
+object category "I_ARM_Leather_Body_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
 StartLevel "10"
 EndLevel "15"
 object category "I_ARM_StuddedLeather_Body_10",1,0,0,0,0,0,0,0
-object category "I_ARM_Leather_Body_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "13"
+object category "I_ARM_Leather_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "15"
 object category "I_ARM_StuddedLeather_Body_11",1,0,0,0,0,0,0,0
-object category "I_ARM_Leather_Body_11",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Medium_Magic"
 new subtable "1,1"
 StartLevel "2"
@@ -2464,9 +2468,11 @@ new subtable "1,1"
 StartLevel "6"
 EndLevel "8"
 object category "I_ARM_RingMail_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_RingMail_Body_20",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 object category "I_ARM_RingMail_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_RingMail_Body_21",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "4"
 EndLevel "6"
@@ -2479,9 +2485,11 @@ new subtable "1,1"
 StartLevel "9"
 EndLevel "13"
 object category "I_ARM_ChainMail_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_ChainMail_Body_20",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "13"
 object category "I_ARM_ChainMail_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_ChainMail_Body_21",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
 EndLevel "8"
@@ -2494,9 +2502,11 @@ new subtable "1,1"
 StartLevel "12"
 EndLevel "15"
 object category "I_ARM_Splint_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_Splint_Body_20",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "15"
 object category "I_ARM_Splint_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_Splint_Body_21",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 EndLevel "10"
@@ -2509,9 +2519,11 @@ new subtable "1,1"
 StartLevel "13"
 EndLevel "16"
 object category "I_ARM_Plate_Body_10",1,0,0,0,0,0,0,0
+object category "I_ARM_Plate_Body_20",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "16"
 object category "I_ARM_Plate_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_Plate_Body_21",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Magic"
 new subtable "1,1"
 object category "T_EquipmentTrader_BodyArmor_Cloth_Magic",1,0,0,0,0,0,0,0
