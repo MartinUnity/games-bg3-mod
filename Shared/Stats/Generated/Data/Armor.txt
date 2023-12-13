@@ -3013,7 +3013,10 @@ data "Unique" "1"
 // Lae'zel : *Druid (shapeshifter) / Wizard                                       :: wis/int
 // Karlach : *Barbarian                                                           :: str/con/dex   :: Off tank
 
-
-
+//------ TEAM #5 -----
+// Tav     : *Pala (1) / Druid (spore) / Lock (tmp hp)                            :: cha/wis/con/str    :: Main tank    :: 1: Pala (vengeance), 2: Lock, 3: Druid, 4: Druid (spore), 5: Lock, 6-9: Pala, 10: Druid, 11: Lock, 12+: Pala
+// Shadow  : *Cleric (life) / Ranger (BM)                                         :: wis/dex/con                        :: 1: Cleric (life), 2-4: Ranger (BM), 5-6: Cleric, 7-8: Ranger, 9-10: Cleric
+// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) - (2)          :: str/wis/con/dex    :: Off tank     :: 1: Barbarian, 2: Cleric (tempest), 3: Barbarian, 4-5: Druid (spore), ?  || DW - Dex build
+// Wyll    : *Sorceror (draconic) / Warlock                                       :: cha/con                            :: 1: Sorcerer, 2-6: Warlock, 7-10: Sorc
 
 

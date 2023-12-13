@@ -1196,7 +1196,8 @@ using "ARM_Underwear"
 data "RootTemplate" "b460bd0c-58fe-4a56-831c-af92fd4ba7e2"
 // as NPC
 //data "Boosts" "AbilityOverrideMinimum(Strength,16);AbilityOverrideMinimum(Wisdom,24);Skill(Religion, 6)"
-data "Boosts" "AbilityOverrideMinimum(Strength,16);Skill(Religion, 4)"
+//data "Boosts" "AbilityOverrideMinimum(Strength,16);Skill(Religion, 4)"
+data "Boosts" "Skill(Religion, 4)"
 //data "PassivesOnEquip" "MAG_Generic_Leeching_Passive_low"
 
 new entry "ARM_Underwear_Wyll"
