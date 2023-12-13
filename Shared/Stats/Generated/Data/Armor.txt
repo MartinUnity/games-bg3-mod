@@ -2333,8 +2333,8 @@ data "RootTemplate" "78063154-288f-41aa-a99f-e56cbf601129"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 // Starter
-//data "Boosts" "RollBonus(Attack, 20)"
-//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+data "Boosts" "RollBonus(Attack, 20)"
+data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_HalfOrcs"
 type "Armor"
@@ -3014,9 +3014,9 @@ data "Unique" "1"
 // Karlach : *Barbarian                                                           :: str/con/dex   :: Off tank
 
 //------ TEAM #5 -----
-// Tav     : *Pala (1) / Druid (spore) / Lock (tmp hp)                            :: cha/wis/con/str    :: Main tank    :: 1: Pala (vengeance), 2: Lock, 3: Druid, 4: Druid (spore), 5: Lock, 6-9: Pala, 10: Druid, 11: Lock, 12+: Pala
-// Shadow  : *Cleric (life) / Ranger (BM)                                         :: wis/dex/con                        :: 1: Cleric (life), 2-4: Ranger (BM), 5-6: Cleric, 7-8: Ranger, 9-10: Cleric
-// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) - (2)          :: str/wis/con/dex    :: Off tank     :: 1: Barbarian, 2: Cleric (tempest), 3: Barbarian, 4-5: Druid (spore), ?  || DW - Dex build
+// Tav     : *Pala (1) / Lock (tmp hp) (/Wizard - necro)                          :: cha/int/con/str    :: Main tank    :: 1: Pala (vengeance), 2: Lock, 3-4: Wiz (nec), 5-8: Pala, ?
+// Shadow  : *Cleric (life) / Druid (ele) / Ranger (BM)                           :: wis/dex/con                        :: 1-4: Cleric (life), 5: Druid (shil), 6-9: Ranger (BM), 10-12: Druid, ?
+// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) / Monk (1)     :: wis/con/dex        :: Off tank     :: 1: Barbarian, 2: Monk, 3: Druid, 4: Cleric (tempest), 5: Barbarian, 4-5: Druid (spore), ?  || DW - Dex build
 // Wyll    : *Sorceror (draconic) / Warlock                                       :: cha/con                            :: 1: Sorcerer, 2-6: Warlock, 7-10: Sorc
 
 
