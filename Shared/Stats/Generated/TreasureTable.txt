@@ -1282,6 +1282,10 @@ object category "I_WPN_Quarterstaff_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "6"
+object category "I_WPN_Quarterstaff_20",1,0,0,0,0,0,0,0
+object category "I_WPN_Quarterstaff_21",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "6"
 EndLevel "10"
 object category "I_WPN_Longsword_Tanking_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
@@ -1398,12 +1402,19 @@ new treasuretable "ST_ArmorShield"
 new subtable "1,1"
 StartLevel "6"
 object category "I_ARM_Shield_10",1,0,0,0,0,0,0,0
+object category "I_ARM_Shield_20",1,0,0,0,0,0,0,0
+object category "I_ARM_Shield_21",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
 object category "I_ARM_Shield_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
 object category "I_ARM_Shield_12",1,0,0,0,0,0,0,0
+object category "I_ARM_Shield_30",1,0,0,0,0,0,0,0
+object category "I_ARM_Shield_31",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "14"
+object category "I_ARM_Shield_13",1,0,0,0,0,0,0,0
 new treasuretable "ST_ClothArmor"
 new subtable "1,1"
 StartLevel "5"
