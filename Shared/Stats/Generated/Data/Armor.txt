@@ -2333,8 +2333,8 @@ data "RootTemplate" "78063154-288f-41aa-a99f-e56cbf601129"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 // Starter
-data "Boosts" "RollBonus(Attack, 20)"
-data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_HalfOrcs"
 type "Armor"
