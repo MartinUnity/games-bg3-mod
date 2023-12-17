@@ -2504,6 +2504,16 @@ data "ValueUUID" "a229f048-70b0-4b0c-88cb-29b5c6bdb2d0"
 data "Rarity" "VeryRare"
 data "Boosts" "Ability(Strength, 2);Ability(Constitution, 2)"
 
+new entry "ARM_Shield_150"
+type "Armor"
+using "ARM_Shield"
+data "RootTemplate" "cb2d6c27-ec29-4555-adf2-41e8c1952439"
+data "ArmorClass" "6"
+data "ValueLevel" "14"
+data "ValueUUID" "a229f048-70b0-4b0c-88cb-29b5c6bdb2d0"
+data "Rarity" "VeryRare"
+data "Boosts" "Ability(Strength, 3);Ability(Dexterity, 3);Ability(Constitution, 3);Ability(Wisdom, 3);Ability(Intelligence, 3);Ability(Charisma, 3)"
+
 
 //// MEDIUM ARMOR
 new entry "ARM_ChainShirt_Body_10"
@@ -2526,7 +2536,7 @@ data "ValueLevel" "4"
 data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
 data "Rarity" "Rare"
 data "PassivesOnEquip" "ARM_SuperiorMaterial_11_Passive;ARM_Balance_11_Passive"
-data "Boosts" "Ability(Constitution, 1),Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
+data "Boosts" "Ability(Constitution, 1);Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
 
 new entry "ARM_ScaleMail_Body_10"
 type "Armor"
@@ -2538,7 +2548,7 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "Rarity" "Rare"
 //data "PassivesOnEquip" "ARM_SuperiorMaterial_2_Passive;MAG_Generic_Weapon_Radiant_low_1;MAG_Reflect_Armor_Passive"
 data "PassivesOnEquip" "ARM_SuperiorMaterial_10_Passive"
-data "Boosts" "Ability(Wisdom, 1),Skill(Athletics, 2);Skill(Nature, 2)"
+data "Boosts" "Ability(Wisdom, 1);Skill(Athletics, 2);Skill(Nature, 2)"
 
 new entry "ARM_ScaleMail_Body_11"
 type "Armor"
@@ -2550,7 +2560,7 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "Rarity" "VeryRare"
 //data "PassivesOnEquip" "ARM_SuperiorMaterial_2_Passive;ARM_Balance_1_Passive;MAG_Generic_Weapon_Radiant_low_1;MAG_Reflect_Armor_Passive"
 data "PassivesOnEquip" "ARM_SuperiorMaterial_11_Passive"
-data "Boosts" "Ability(Constitution, 1),Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
+data "Boosts" "Ability(Constitution, 1);Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
 
 new entry "ARM_Breastplate_Body_10"
 type "Armor"
@@ -2561,7 +2571,7 @@ data "ValueLevel" "4"
 data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "Rarity" "Rare"
 data "PassivesOnEquip" "ARM_SuperiorPlate_1_Passive;ARM_BodyAid_1_Passive;MAG_Generic_Weapon_Radiant_low_1"
-data "Boosts" "Ability(Wisdom, 1),Skill(Athletics, 2);Skill(Nature, 2)"
+data "Boosts" "Ability(Wisdom, 1);Skill(Athletics, 2);Skill(Nature, 2)"
 
 new entry "ARM_Breastplate_Body_11"
 type "Armor"
@@ -2572,7 +2582,18 @@ data "ValueLevel" "5"
 data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "Rarity" "VeryRare"
 data "PassivesOnEquip" "ARM_SuperiorPlate_1_Passive;ARM_BodyAid_1_Passive;MAG_Generic_Weapon_Radiant_low_2"
-data "Boosts" "Ability(Constitution, 1),Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
+data "Boosts" "Ability(Constitution, 1);Ability(Wisdom, 1);Skill(Athletics, 3);Skill(Nature, 3)"
+
+new entry "ARM_Breastplate_Body_150"
+type "Armor"
+using "ARM_Breastplate_Body"
+data "RootTemplate" "ad912cef-8bfb-4bf3-98f0-f2c5e3b45915"
+data "ArmorClass" "26"
+data "ValueLevel" "14"
+data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
+data "Rarity" "VeryRare"
+data "PassivesOnEquip" "ARM_SuperiorPlate_1_Passive;ARM_BodyAid_1_Passive;MAG_Generic_Weapon_Radiant_low_2"
+data "Boosts" "Ability(Strength, 3);Ability(Dexterity, 3);Ability(Constitution, 3);Ability(Wisdom, 3);Ability(Intelligence, 3);Ability(Charisma, 3)"
 
 //// HEAVY ARMOR
 new entry "ARM_RingMail_Body_10"
@@ -2796,6 +2817,18 @@ data "Rarity" "VeryRare"
 data "PassivesOnEquip" "ARM_ExceptionalPlate_11_Passive"
 data "Boosts" "Ability(Wisdom, 1);Advantage(Skill, Medicine);Ability(Constitution, 1)"
 
+new entry "ARM_Plate_Body_150"
+type "Armor"
+using "ARM_Plate_Body"
+data "RootTemplate" "fdb8ce53-51dc-4ccb-9e29-d1d99040e60b"
+data "ArmorClass" "30"
+data "ValueLevel" "14"
+data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
+data "Rarity" "VeryRare"
+data "PassivesOnEquip" "ARM_ExceptionalPlate_11_Passive"
+data "Boosts" "Ability(Strength, 3);Ability(Dexterity, 3);Ability(Constitution, 3);Ability(Wisdom, 3);Ability(Intelligence, 3);Ability(Charisma, 3)"
+
+
 //// LIGHT ARMOR
 new entry "ARM_StuddedLeather_Body_10"
 type "Armor"
@@ -2806,7 +2839,7 @@ data "ValueLevel" "4"
 data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
 data "Rarity" "Rare"
 data "PassivesOnEquip" "ARM_SuperiorPadding_10_Passive;ARM_Ambusher_10_Passive"
-data "Boosts" "Ability(Dexterity, 1),Skill(Acrobatics, 2)"
+data "Boosts" "Ability(Dexterity, 1);Skill(Acrobatics, 2)"
 
 new entry "ARM_StuddedLeather_Body_11"
 type "Armor"
@@ -2817,7 +2850,18 @@ data "ValueLevel" "5"
 data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
 data "Rarity" "VeryRare"
 data "PassivesOnEquip" "ARM_SuperiorPadding_11_Passive;ARM_Ambusher_11_Passive"
-data "Boosts" "Ability(Dexterity, 2),Skill(Acrobatics, 3)"
+data "Boosts" "Ability(Dexterity, 2);Skill(Acrobatics, 3)"
+
+new entry "ARM_StuddedLeather_Body_150"
+type "Armor"
+using "ARM_StuddedLeather_Body"
+data "RootTemplate" "83603f36-d158-4a0e-b9c9-358413ba3a92"
+data "ArmorClass" "22"
+data "ValueLevel" "14"
+data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
+data "Rarity" "VeryRare"
+data "PassivesOnEquip" "ARM_SuperiorPadding_11_Passive;ARM_Ambusher_11_Passive"
+data "Boosts" "Ability(Strength, 3);Ability(Dexterity, 3);Ability(Constitution, 3);Ability(Wisdom, 3);Ability(Intelligence, 3);Ability(Charisma, 3)"
 
 new entry "ARM_Leather_Body_10"
 type "Armor"
@@ -2828,7 +2872,7 @@ data "ValueLevel" "4"
 data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
 data "Rarity" "Rare"
 data "PassivesOnEquip" "ARM_Stealthy_10_Passive;ARM_Balance_10_Passive"
-data "Boosts" "Ability(Dexterity, 1),Skill(Acrobatics, 2)"
+data "Boosts" "Ability(Dexterity, 1);Skill(Acrobatics, 2)"
 
 new entry "ARM_Leather_Body_11"
 type "Armor"
@@ -2839,7 +2883,7 @@ data "ValueLevel" "5"
 data "ValueUUID" "f0307da3-feb7-40b0-bd62-18eea9167021"
 data "Rarity" "VeryRare"
 data "PassivesOnEquip" "ARM_Stealthy_11_Passive;ARM_Balance_11_Passive"
-data "Boosts" "Ability(Dexterity, 2),Skill(Acrobatics, 3)"
+data "Boosts" "Ability(Dexterity, 2);Skill(Acrobatics, 3)"
 
 //// CLOTH ARMOR
 new entry "ARM_Robe_Body_50"
@@ -3007,6 +3051,17 @@ data "ValueScale" "1"
 data "Rarity" "VeryRare"
 data "Boosts" "AC(3);Ability(Strength, 2);Ability(Dexterity, 2);Ability(Constitution, 2)"
 
+new entry "ARM_Robe_Body_150"
+type "Armor"
+using "ARM_Robe_Body"
+data "RootTemplate" "467cca20-42bb-45cd-8eac-6ed49bbc2707"
+data "ArmorClass" "10"
+data "ValueLevel" "14"
+data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
+data "ValueScale" "1"
+data "Rarity" "VeryRare"
+data "Boosts" "AC(5);Ability(Strength, 3);Ability(Dexterity, 3);Ability(Constitution, 3);Ability(Wisdom, 3);Ability(Intelligence, 3);Ability(Charisma, 3)"
+
 //// NEW TREASURE-ITEMS
 new entry "DEN_HarpyMeal_Nest_Ring_2"
 type "Armor"
@@ -3067,7 +3122,17 @@ data "Unique" "1"
 //------ TEAM #5 -----
 // Tav     : *Pala (1) / Lock (tmp hp) (/Wizard - necro)                          :: cha/int/con/str    :: Main tank    :: 1: Pala (vengeance), 2: Lock, 3-4: Wiz (nec), 5-8: Pala, ?
 // Shadow  : *Cleric (life) / Druid (ele) / Ranger (BM)                           :: wis/dex/con                        :: 1-4: Cleric (life), 5: Druid (shil), 6-9: Ranger (BM), 10-12: Druid, ?
-// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) / Monk (1)     :: wis/con/dex        :: Off tank     :: 1: Barbarian, 2: Monk, 3: Druid, 4: Cleric (tempest), 5: Barbarian, 4-5: Druid (spore), ?  || DW - Dex build
+// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) / Monk (1)     :: wis/con/dex        :: Off tank     :: 1: Barbarian, 2: Monk, 3: Druid, 4: Cleric (tempest), 5: Barbarian, 6-8: Druid (spore), ?  || DW - Dex build
+// Wyll    : *Sorceror (draconic) / Warlock                                       :: cha/con                            :: 1: Sorcerer, 2-6: Warlock, 7-10: Sorc
+
+//------ TEAM #6 ----- UTIL/LIGHT/HIGH-LVL/MULTI
+// Rogue, bard & ranger gets +1 skill pr. level
+// Tav     : *Fighter / Cleric / Rogue / Druid / Bard / Ranger (non-BM)           :: wis/con/dex        :: Main tank    :: 1: Fighter (armor), 2-4: Ranger, 5: Druid, 6: Rogue, 7-8: Bard (jack of all), 8: ...
+// Tav2    : *Fighter / Cleric / Rogue / Druid / Bard / Ranger (non-BM)           :: wis/con/dex        :: Main tank    :: 1: Fighter (armor), 2-4: Rogue, 5: Druid, 6: Rogue, 7-8: Bard (jack of all), 8: ...
+// Hireling: *Barbarian / Druid / Ranger (BM)                                     :: dex/wis/con                        :: 1: Fighter (armor), 2-5: Ranger
+
+// Shadow  : *Fighter / Cleric / Ranger (BM)                                      :: wis/dex/con                        :: 1: Fighter (armor), 2: Cleric (life), 3: Druid, 4: Ranger,
+// Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) / Monk (1)     :: wis/con/dex        :: Off tank     :: 1: Barbarian, 2: Monk, 3: Druid, 4: Cleric (tempest), 5: Barbarian, 6-8: Druid (spore), ?  || DW - Dex build
 // Wyll    : *Sorceror (draconic) / Warlock                                       :: cha/con                            :: 1: Sorcerer, 2-6: Warlock, 7-10: Sorc
 
 

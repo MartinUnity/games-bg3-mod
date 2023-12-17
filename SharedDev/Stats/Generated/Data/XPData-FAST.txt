@@ -21,98 +21,51 @@
 //key "MaxXPLevel","12"
 // END - ORIG
 
-//key "Level6","825"
-key "Level6","5360"
-
-//key "Level7","950"
-key "Level7","6030"
-
+key "Level6","825"
+key "Level7","950"
 key "Level8","1000"
-
 key "Level9","1100"
-
 key "Level10","1150"
-
 key "Level11","1175"
-
 key "Level12","1200"
-
 key "Level13","1350"
-
 key "Level14","1500"
-
 key "Level15","1650"
-
 key "Level16","1750"
-
 key "Level17","1850"
-
 key "Level18","1950"
-
 key "Level19","2000"
-
 key "Level20","2125"
-
 key "Level21","2250"
-
 key "Level22","2350"
-
 key "Level23","2500"
-
 key "Level24","2550"
-
 key "Level25","2600"
-
 key "Level26","2650"
-
 key "Level27","2700"
-
 key "Level28","2750"
-
 key "Level29","2800"
-
 key "Level30","2850"
-
 key "Level31","3050"
-
 key "Level32","3100"
-
 key "Level33","3150"
-
 key "Level34","3300"
-
 key "Level35","4200"
-
 key "Level36","4300"
-
 key "Level37","4400"
-
 key "Level38","4500"
-
 key "Level39","4750"
-
 key "Level40","5000"
-
 key "Level41","5250"
-
 key "Level42","5500"
-
 key "Level43","5500"
-
 key "Level44","5825"
-
 key "Level45","5500"
-
 key "Level46","5750"
-
 key "Level47","6000"
-
 key "Level48","6250"
-
 key "Level49","6500"
-
 key "Level50","7150"
-
 key "MaxXPLevel","50"
 
 // OLD - ORIG
