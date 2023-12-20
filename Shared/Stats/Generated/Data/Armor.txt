@@ -2364,6 +2364,7 @@ new entry "ARM_Underwear_Humans"
 type "Armor"
 using "ARM_Underwear"
 data "RootTemplate" "d40b567d-6b66-447e-8923-2bbd0d7aea00"
+data "Boosts" "Skill(Survival, 4)"
 // Cleric/Mage
 //data "Boosts" "AbilityOverrideMinimum(Strength,18);AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Intelligence,26);AbilityOverrideMinimum(Constitution,22);Skill(SleightOfHand, 2);Skill(Survival, 2);Skill(Perception, 2);Skill(Insight, 4);Skill(Arcana, 6);Skill(Investigation, 6);AC(1)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Cold"
