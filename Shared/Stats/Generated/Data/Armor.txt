@@ -3136,4 +3136,9 @@ data "Unique" "1"
 // Karlach : *Barbarian (2) / Cleric (Tempest) (1) / Druid (spore) / Monk (1)     :: wis/con/dex        :: Off tank     :: 1: Barbarian, 2: Monk, 3: Druid, 4: Cleric (tempest), 5: Barbarian, 6-8: Druid (spore), ?  || DW - Dex build
 // Wyll    : *Sorceror (draconic) / Warlock                                       :: cha/con                            :: 1: Sorcerer, 2-6: Warlock, 7-10: Sorc
 
+//------ TEAM #7 ----- UTIL/LIGHT/HIGH-LVL/MULTI
+// Rogue, bard & ranger gets +1 skill pr. level
+// Tav2    : *Fighter / Cleric / Rogue / Druid / Bard / Ranger (non-BM)           :: wis/con/dex        :: Main tank    :: 1: Fighter (armor), 2-6: Cleric (thunder), 7: Rogue
+// Hireling: *Barbarian / Druid / Ranger (BM)                                     :: dex/wis/con                        :: 1-6: Druid, 7: Ranger
+// Shadow  : *Fighter / Cleric / Ranger (BM)                                      :: wis/dex/con                        :: 1: Fighter (armor), 2-6: Ranger (BM), 7-9: Cleric (light),
 
