@@ -2476,13 +2476,14 @@ EndLevel "11"
 object category "I_ARM_HalfPlate_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "11"
-EndLevel "15"
+EndLevel "13"
 object category "I_ARM_HalfPlate_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "15"
+StartLevel "13"
+EndLevel "20"
 object category "I_ARM_HalfPlate_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "22"
+StartLevel "20"
 object category "I_ARM_HalfPlate_Body_150",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Heavy_Magic"
 new subtable "1,1"
