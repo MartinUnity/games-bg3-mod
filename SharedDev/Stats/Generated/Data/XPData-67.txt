@@ -24,17 +24,17 @@
 
 //key "Level6","825"
 // To allow multiclass to 'catch' up a bit
-key "Level6","1360"
-//key "Level6","5360"
+//key "Level6","1360"
+key "Level6","4360"
 
 //key "Level7","950"
-key "Level7","6030"
+key "Level7","5030"
 
-key "Level8","2000"
-//key "Level8","8000"
+//key "Level8","2000"
+key "Level8","7000"
 
-key "Level9","2100"
-//key "Level9","9340"
+//key "Level9","2100"
+key "Level9","8340"
 
 key "Level10","2150"
 //key "Level10","13340"

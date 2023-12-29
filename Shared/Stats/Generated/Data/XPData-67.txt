@@ -13,7 +13,7 @@ key "Level1","25"
 
 key "Level2","275"
 
-key "Level3","400"
+key "Level3","1200"
 
 key "Level4","3090"
 
