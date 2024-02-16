@@ -28,13 +28,16 @@
 key "Level6","4360"
 
 //key "Level7","950"
-key "Level7","5030"
+//key "Level7","5030"
+key "Level7","4030"
 
 //key "Level8","2000"
-key "Level8","7000"
+//key "Level8","7000"
+key "Level8","5500"
 
 //key "Level9","2100"
-key "Level9","8340"
+//key "Level9","8340"
+key "Level9","6340"
 
 key "Level10","2150"
 //key "Level10","13340"

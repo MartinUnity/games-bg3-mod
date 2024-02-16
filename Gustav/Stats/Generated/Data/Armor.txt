@@ -1180,6 +1180,9 @@ using "ARM_Underwear"
 data "RootTemplate" "185ab1be-e93d-4518-b053-d6d4d7168d68"
 //data "Boosts" "AbilityOverrideMinimum(Constitution,22);RollBonus(Attack, 1);Skill(Athletics, 6)"
 data "Boosts" "Skill(Athletics, 4)"
+// Starter
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_Minsc"
 type "Armor"
