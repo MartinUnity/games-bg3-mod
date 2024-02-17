@@ -2252,11 +2252,16 @@ type "Armor"
 using "ARM_Underwear"
 data "RootTemplate" "d19364cf-18f9-4841-919b-1e3f0ba2c58c"
 
+// Half-elf
 new entry "ARM_Underwear_Elves"
 type "Armor"
 using "ARM_Underwear"
 data "RootTemplate" "0ec7d956-e65f-4bfa-b677-22f399f81a32"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+// Starter
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 new entry "ARM_Underwear_Elves_Blue"
 type "Armor"
@@ -2284,6 +2289,10 @@ data "RootTemplate" "6d076cab-f23a-4a80-89b6-107be7f345bd"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 // Rogue
 //data "Boosts" "AbilityOverrideMinimum(Strength,12);Skill(SleightOfHand, 7)"
+// Starter
+//data "Boosts" "RollBonus(Attack, 20)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 
 new entry "ARM_Underwear_Githyanki"
@@ -3149,5 +3158,15 @@ data "Unique" "1"
 // Shadow  : Fighter / Cleric                                                     :: str/wis/con                        :: 1: Fighter, 2-5: Cleric (thunder), 6+: Fighter
 // Karlach : Barbarian                                                            :: str/wis|con                        :: 1+: Barbarian
 
+//------ TEAM #8 ----- Caster mania
+// Tav     : Sorceror/Warlock  [Tank]                                             :: dex/wis/con                        :: 1: Sorceror, 2-6: Warlock, 6-9: Sorceror, 10: Warlock?
+// Laezel  : Wizard                                                               :: str/con            :: Main tank    :: 1+: Fighter
+// Shadow  : Cleric (healing)/Wizard                                              :: str/wis/con                        :: 1: Fighter, 2-5: Cleric (thunder), 6+: Fighter
+// Karlach : Druid                                                                :: str/wis|con                        :: 1+: Barbarian
 
+//------ TEAM #8 ----- Lockinator
+// Tav     : Warlock        [Tank]                                                :: dex/wis/con                        :: 1-3: Rogue (Thief), 4: Fighter (DW), 5+: Barbarian
+// Laezel  : Warlock                                                              :: str/con            :: Main tank    :: 1+: Fighter
+// Shadow  : Warlock                                                              :: str/wis/con                        :: 1: Fighter, 2-5: Cleric (thunder), 6+: Fighter
+// Karlach : Warlock                                                              :: str/wis|con                        :: 1+: Barbarian
 
