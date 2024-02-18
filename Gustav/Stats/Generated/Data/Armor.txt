@@ -28,7 +28,7 @@ using "_Amulet_Magic"
 data "RootTemplate" "8b5fb90f-f957-4a1a-b8eb-2baff0c3b40b"
 data "Rarity" "Uncommon"
 data "Boosts" "UnlockSpell(Target_Guidance)"
-data "PassivesOnEquip" "HP_Buff_low_4"
+data "PassivesOnEquip" "HP_Buff_low"
 data "Unique" "1"
 
 new entry "_DEN_a"
