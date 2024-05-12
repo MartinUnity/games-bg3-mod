@@ -1272,6 +1272,7 @@ new subtable "1,1"
 object category "I_WPN_Longbow",1,0,0,0,0,0,0,0
 new treasuretable "ST_SimpleMeleeWeapons_1"
 new subtable "1,1"
+StartLevel "4"
 object category "I_WPN_Dagger_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Handaxe_1",1,0,0,0,0,0,0,0
@@ -1358,7 +1359,7 @@ object category "I_WPN_Scimitar_2",1,0,0,0,0,0,0,0
 object category "I_WPN_Shortsword_1",1,0,0,0,0,0,0,0
 object category "I_WPN_Shortsword_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "7"
+StartLevel "8"
 object category "I_WPN_Shortsword_10_Cold",1,0,0,0,0,0,0,0
 object category "I_WPN_Shortsword_10_Fire",1,0,0,0,0,0,0,0
 new subtable "1,1"
@@ -2504,8 +2505,8 @@ StartLevel "8"
 object category "I_ARM_RingMail_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_RingMail_Body_21",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "4"
-EndLevel "6"
+StartLevel "5"
+EndLevel "7"
 object category "I_ARM_ChainMail_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"

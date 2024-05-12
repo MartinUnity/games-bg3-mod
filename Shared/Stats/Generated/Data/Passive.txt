@@ -3497,8 +3497,8 @@ data "Boosts" "IncreaseMaxHP(Level)"
 
 new entry "ARM_Stealthy_1_Passive_root"
 type "PassiveData"
-data "DisplayName" "h1ef55a95g7073g4a06g82feg1cb443bce5a8;2"
-data "Description" "h3e1bf121gff26g45fbg8fcdgcc2b96ca7298;2"
+data "DisplayName" "h1ef55a95g7073g4a06g82feg1cb443bce5a8;1"
+data "Description" "h3e1bf121gff26g45fbg8fcdgcc2b96ca7298;1"
 data "DescriptionParams" "1"
 data "Boosts" "RollBonus(SkillCheck, 1, Stealth)"
 
