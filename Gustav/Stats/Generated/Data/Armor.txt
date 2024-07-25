@@ -1172,6 +1172,10 @@ using "ARM_Underwear"
 data "RootTemplate" "e865db4c-4df3-48e9-8cf3-5abad75510ba"
 //data "Boosts" "AbilityOverrideMinimum(Constitution,22);RollBonus(Attack, 1);Skill(Athletics, 6)"
 data "Boosts" "Skill(Athletics, 4)"
+// Solo-run
+//data "Boosts" "RollBonus(SavingThrow, 6, Wisdom);Skill(Athletics, 4);RollBonus(SavingThrow, 2, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 //data "PassivesOnEquip" "MAG_Generic_Leeching_Passive_low"
 
 new entry "ARM_Underwear_Laezel"

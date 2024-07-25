@@ -1301,12 +1301,14 @@ EndLevel "11"
 object category "I_WPN_Quarterstaff_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Dagger_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "11"
 object category "I_WPN_Quarterstaff_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Greatclub_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Mace_11",1,0,0,0,0,0,0,0
+object category "I_WPN_Dagger_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Spear_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Longsword_Tanking_11",1,0,0,0,0,0,0,0
 new subtable "1,1"

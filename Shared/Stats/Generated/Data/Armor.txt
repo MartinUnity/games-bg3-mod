@@ -2245,6 +2245,8 @@ data "Boosts" "Skill(Survival, 4)"
 // Starter
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);Skill(Survival, 4);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+
 
 
 new entry "ARM_Underwear_Dwarves_Green"
@@ -2311,6 +2313,8 @@ data "RootTemplate" "d692d48f-9a39-4001-8a38-c01e397953dc"
 //data "Boosts" "AbilityOverrideMinimum(Strength,18);AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Dexterity,24);AbilityOverrideMinimum(Constitution,22);Skill(Survival, 4);Skill(Athletics, 3);Skill(Acrobatics, 3);Skill(Insight, 4)"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive_poison"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive_monk;MAG_Generic_Weapon_Radiant;MAG_Generic_Weapon_Lightning;MAG_Generic_Weapon_Fire"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_Gnomes_Blue"
 type "Armor"
@@ -2358,10 +2362,11 @@ data "RootTemplate" "3caad2f1-719f-4070-b7f0-887c49c773d3"
 
 //data "Boosts" "AbilityOverrideMinimum(Strength,26);AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Dexterity,22);AbilityOverrideMinimum(Constitution,30);AbilityOverrideMinimum(Intelligence,20);AbilityOverrideMinimum(Charisma,22);RollBonus(Attack, 1);Skill(SleightOfHand, 6);Skill(Survival, 6);Skill(Perception, 6);AC(1)"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive;MAG_Generic_Leeching_Passive_low"
+//data "Boosts" "AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Intelligence,22)"
 
 // Starter
 //data "Boosts" "RollBonus(Attack, 20)"
-//data "Boosts" "AbilityOverrideMinimum(Wisdom,22);AbilityOverrideMinimum(Intelligence,22)"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_HalfOrcs_Orange"
@@ -2928,6 +2933,8 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "ValueScale" "1"
 data "Rarity" "Uncommon"
 data "Boosts" "AC(1);Ability(Wisdom, 1)"
+data "PassivesOnEquip" "MAG_Druid_ExtraWildShape_Passive;MAG_Druid_ExtraWildShape_Cooldown_Passive"
+data "StatusOnEquip" "MAG_DRUID_EXTRA_WILDSHAPE_TECHNICAL"
 
 new entry "ARM_Robe_Body_10"
 type "Armor"
@@ -2983,6 +2990,8 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "ValueScale" "1"
 data "Rarity" "Rare"
 data "Boosts" "AC(2);Ability(Wisdom, 1)"
+data "PassivesOnEquip" "MAG_Druid_ExtraWildShape_Passive;MAG_Druid_ExtraWildShape_Cooldown_Passive"
+data "StatusOnEquip" "MAG_DRUID_EXTRA_WILDSHAPE_TECHNICAL"
 
 new entry "ARM_Robe_Body_15"
 type "Armor"
@@ -2994,6 +3003,8 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "ValueScale" "1"
 data "Rarity" "Rare"
 data "Boosts" "AC(2);Ability(Wisdom, 2)"
+data "PassivesOnEquip" "MAG_Druid_ExtraWildShape_Passive;MAG_Druid_ExtraWildShape_Cooldown_Passive"
+data "StatusOnEquip" "MAG_DRUID_EXTRA_WILDSHAPE_TECHNICAL"
 
 new entry "ARM_Robe_Body_16"
 type "Armor"
@@ -3016,6 +3027,8 @@ data "ValueUUID" "4024ce6c-f02d-4d7c-8033-869ada06ef82"
 data "ValueScale" "1"
 data "Rarity" "VeryRare"
 data "Boosts" "AC(3);Ability(Charisma, 2);Ability(Wisdom, 2);Ability(Intelligence, 2)"
+data "PassivesOnEquip" "MAG_Druid_ExtraWildShape_Passive;MAG_Druid_ExtraWildShape_Cooldown_Passive"
+data "StatusOnEquip" "MAG_DRUID_EXTRA_WILDSHAPE_TECHNICAL"
 
 new entry "ARM_Robe_Body_20"
 type "Armor"
