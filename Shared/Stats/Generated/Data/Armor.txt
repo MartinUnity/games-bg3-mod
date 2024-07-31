@@ -2216,6 +2216,12 @@ data "RootTemplate" "8494f6d9-d588-4d18-bb0d-c5a58e911771"
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
+//data "Boosts" "Skill(Athletics, 4);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution)"
+data "Boosts" "Skill(Athletics, 6);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 4, Wisdom)"
+//data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
+//data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 new entry "ARM_Underwear_Dragonborn_Bronze"
 type "Armor"
@@ -2227,7 +2233,7 @@ new entry "ARM_Underwear_Dwarves"
 type "Armor"
 using "ARM_Underwear"
 data "RootTemplate" "9fecf84d-911f-4986-9454-0429ac437f45"
-data "Boosts" "Skill(Survival, 4)"
+//data "Boosts" "Skill(Survival, 4)"
 //data "Boosts" "AbilityOverrideMinimum(Strength,22);AbilityOverrideMinimum(Wisdom,16);AbilityOverrideMinimum(Dexterity,16);AbilityOverrideMinimum(Constitution,26);RollBonus(Attack, 1);Skill(SleightOfHand, 7);Skill(Survival, 6);Skill(Perception, 4);AC(1)"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive;MAG_PHB_OfRegeneration_Ring_Passive"
 //data "PassivesOnEquip" "MAG_Generic_Leeching_Passive_low;GOB_PainPriest_Scourge_Passive"
@@ -2245,7 +2251,9 @@ data "Boosts" "Skill(Survival, 4)"
 // Starter
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
-data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);Skill(Survival, 4);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
+data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+//data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 
 
 
@@ -2292,7 +2300,7 @@ data "RootTemplate" "6d076cab-f23a-4a80-89b6-107be7f345bd"
 // Rogue
 //data "Boosts" "AbilityOverrideMinimum(Strength,12);Skill(SleightOfHand, 7)"
 // Starter
-//data "Boosts" "RollBonus(Attack, 20)"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 new entry "ARM_Underwear_Githyanki"

@@ -1,1 +1,1 @@
-XPData-FAST.txt
+XPData-80.txt

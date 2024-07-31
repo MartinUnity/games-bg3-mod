@@ -2406,17 +2406,18 @@ new subtable "1,1"
 StartLevel "9"
 object category "I_ARM_StuddedLeather_Body_2",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "11"
+StartLevel "8"
+EndLevel "12"
 object category "I_ARM_Leather_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "10"
 EndLevel "15"
 object category "I_ARM_StuddedLeather_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "13"
+StartLevel "12"
 object category "I_ARM_Leather_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
-StartLevel "15"
+StartLevel "14"
 object category "I_ARM_StuddedLeather_Body_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "22"
