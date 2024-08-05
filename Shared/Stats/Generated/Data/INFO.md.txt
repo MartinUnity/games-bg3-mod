@@ -1,0 +1,59 @@
+Level 6 (+1):
++1 con
+
+Level 7 (+1):
++1 Primary stat
+OR (+1):
++1 con
++ Special ability
+
+Level 8 (+2):
++1 primary stat
++ Special ability
+
+Level 9 (+2):
++1 con + 1 primary stat
+
+Level 10 (+2):
++2 con, +1 primary stat
+OR (+2)
++1 con, +1 primary stat
++ Special ability
+
+Level 13 (+3):
++2 con, +2 primary
++ Special ability
+-----
+Light:
+Padded: +0 lvl
+Leather: +0 lvl
+Studded: +1 lvl
+
+Medium:
+Hide: -1 lvl
+Chainshirt: +0 lvl
+Scalemail: +0 lvl
+Breastplate: +1 lvl
+Halfplate: +2 lvl
+
+Heavy:
+Ringmail: -1 lvl
+Chainmail: +0 lvl
+Splint: +1 lvl
+Plate: +2 lvl
+
+Level 5 (+1):
++1 con
+
+Level 6 (+2):
++1 primary stat
+
+Level 8 (+3):
++2 con, +1 primary stat
+OR (+2):
++1 primary stat
++ Special ability
+
+Level 11 (+4):
++2 con, +1 primary stat
+

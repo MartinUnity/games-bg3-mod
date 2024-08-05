@@ -121,7 +121,7 @@ data "DisplayName" "h857a218bg02e7g4adega730gad7384ec71d0;1"
 data "Description" "h67f8875eg9b72g442ag831cg6c703d20f893;1"
 data "StatsFunctorContext" "OnHeal"
 data "Conditions" "Character() and not Self()"
-data "StatsFunctors" "ApplyStatus(BLADE_WARD,100,2)"
+data "StatsFunctors" "ApplyStatus(BLADE_WARD,100,3)"
 
 new entry "DEN_FaithwardenStaff_Passive"
 type "PassiveData"
