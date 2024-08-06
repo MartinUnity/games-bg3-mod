@@ -3453,6 +3453,7 @@ data "DescriptionParams" "DealDamage(1d6, Poison);
 data "Boosts" "CharacterUnarmedDamage(1d6, Poison)"
 data "StatsFunctors" "ApplyStatus(BLEEDING, 100, 2,,,,not SavingThrow(Ability.Constitution,12))"
 
+
 new entry "GOB_PainPriest_Scourge_Passive_low"
 type "PassiveData"
 data "DisplayName" "h9b54a786gdb66g4f99g8f42g89cba4cfbca1;1"
@@ -3699,4 +3700,44 @@ using "ARM_SuperiorPlate_1_Passive_root"
 data "DescriptionParams" "4"
 data "Boosts" "DamageReduction(Piercing, Flat, 4)"
 
+// Unarmed - lowest (1-3)
+new entry "MAG_Monky_Passive_lowest"
+type "PassiveData"
+data "DisplayName" "hd6e187fag627eg42bbgb90eg737260214df3;3"
+data "Description" "h901a1160gba15g47d9g9427gf970bbcb58ad;6"
+data "DescriptionParams" "DealDamage(1d4/2+1, Force)"
+data "Boosts" "CharacterUnarmedDamage(1d4/2+1, Force)"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsUnarmedAttack()"
+//data "StatsFunctors" "ApplyStatus(BLEEDING, 100, 2,,,,not SavingThrow(Ability.Constitution,15))"
 
+// Unarmed - lowmiddle (4-6)
+new entry "MAG_Monky_Passive_lowmiddle"
+type "PassiveData"
+data "DisplayName" "hd6e187fag627eg42bbgb90eg737260214df3;3"
+data "Description" "h901a1160gba15g47d9g9427gf970bbcb58ad;6"
+data "DescriptionParams" "DealDamage(1d4+1, Force)"
+data "Boosts" "CharacterUnarmedDamage(1d4+1, Force)"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsUnarmedAttack()"
+//data "StatsFunctors" "ApplyStatus(BLEEDING, 100, 2,,,,not SavingThrow(Ability.Constitution,15))"
+
+// Unarmed - highmiddle (7-9)
+new entry "MAG_Monky_Passive_highmiddle"
+type "PassiveData"
+data "DisplayName" "hd6e187fag627eg42bbgb90eg737260214df3;3"
+data "Description" "h901a1160gba15g47d9g9427gf970bbcb58ad;6"
+data "DescriptionParams" "DealDamage(1d6+2, Force)"
+data "Boosts" "CharacterUnarmedDamage(1d6+2, Force)"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsUnarmedAttack()"
+
+// Unarmed - high
+new entry "MAG_Monky_Passive_high"
+type "PassiveData"
+data "DisplayName" "hd6e187fag627eg42bbgb90eg737260214df3;3"
+data "Description" "h901a1160gba15g47d9g9427gf970bbcb58ad;6"
+data "DescriptionParams" "DealDamage(2d4+3, Force)"
+data "Boosts" "CharacterUnarmedDamage(2d4+3, Force)"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsUnarmedAttack()"

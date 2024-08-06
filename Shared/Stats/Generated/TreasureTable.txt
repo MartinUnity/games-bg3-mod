@@ -1483,13 +1483,17 @@ StartLevel "22"
 object category "I_ARM_Shield_150",1,0,0,0,0,0,0,0
 new treasuretable "ST_ClothArmor"
 new subtable "1,1"
-StartLevel "5"
+StartLevel "3"
+EndLevel "4"
+object category "I_ARM_Robe_Body_30",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "4"
 EndLevel "7"
 object category "I_ARM_Robe_Body_50",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_51",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_52",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_20",1,0,0,0,0,0,0,0
-object category "I_ARM_Robe_Body_21",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_31",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
 EndLevel "9"
@@ -1497,6 +1501,7 @@ object category "I_ARM_Robe_Body_10",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_12",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_32",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
 EndLevel "12"
@@ -1504,6 +1509,7 @@ object category "I_ARM_Robe_Body_13",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_14",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_15",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_16",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_33",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
 object category "I_ARM_Robe_Body_17",1,0,0,0,0,0,0,0

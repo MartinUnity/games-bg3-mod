@@ -3779,3 +3779,11 @@ using "ARM_Stealthy_1_Passive"
 data "DescriptionParams" "2"
 data "Boosts" "RollBonus(SkillCheck, 2, Stealth)"
 
+// Custom
+//new entry "MAG_Unarmed_Dam_Poison_low"
+//type "PassiveData"
+//data "DisplayName" "had8f929ag3f84g4fa9gb627g703f5a219c05;2"
+//data "Description" "hdaa67da7g28bcg4585gae58g5d55ddb84b7e;5"
+//data "DescriptionParams" "DealDamage(1d4, Poison)"
+//data "Icon" "GenericIcon_DamageType_Poison"
+//data "Boosts" "IF(IsMeleeUnarmedAttack()):CharacterUnarmedDamage(1d4, Poison)"
