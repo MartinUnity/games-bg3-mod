@@ -3508,6 +3508,23 @@ data "Rarity" "Uncommon"
 data "Boosts" "UnlockSpell(Zone_DEN_ColorSpray_HarpyMeal_NestRing);UnlockSpell(Target_Guidance);Ability(Wisdom, 1);Advantage(Skill, Nature)"
 data "Unique" "1"
 
+new entry "FOR_Random_Ring_Str"
+type "Armor"
+using "_Ring_Magic"
+data "RootTemplate" "35688051-90df-40e1-890b-c3cde2c82fde"
+data "ItemGroup" ""
+data "Rarity" "Uncommon"
+data "Boosts" "Ability(Strengt, 1);ProficiencyBonus(SavingThrow, Strength)"
+data "Unique" "1"
+
+new entry "FOR_Random_Ring_Dex"
+type "Armor"
+using "_Ring_Magic"
+data "RootTemplate" "8b1c2137-76e4-4a47-bebb-cf50847aca08"
+data "ItemGroup" ""
+data "Rarity" "Uncommon"
+data "Boosts" "Ability(Dexterity, 1);ProficiencyBonus(SavingThrow, Dexterity)"
+data "Unique" "1"
 
 //data "Boosts" "Ability(Constitution,1);ProficiencyBonus(SavingThrow,Constitution)"
 

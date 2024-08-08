@@ -1215,8 +1215,12 @@ object category "I_OBJ_Candle",1,0,0,0,0,0,0,0
 new treasuretable "FOR_ThayanCellar_Coffin_First"
 new subtable "1,1"
 object category "I_OBJ_Scroll_SummonQuasit",0,0,0,0,0,0,0,0
-new subtable "1,1"
+new subtable "2,1"
 object category "T_Gold_Stash_Poor",1,0,0,0,0,0,0,0
+object category "T_Gold_Stash_Normal",1,0,0,0,0,0,0,0
+new subtable "1,1;1,2"
+object category "T_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
+object category "T_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_FOR_ThayanCellar_Coffin_Generic",1,0,0,0,0,0,0,0
 new treasuretable "FOR_ThayanCellar_Ingredients_Rare"

@@ -3,22 +3,28 @@ new treasuretable "Empty"
 new subtable "0,1"
 new treasuretable "_TradeItems"
 new treasuretable "Gold_Meager"
-new subtable "1,1;2,1;3,1;4,1"
+// new subtable "1,1;2,1;3,1;4,1" - orig
+new subtable "1,2;2,2;3,2;4,2"
 object category "I_OBJ_GoldCoin",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Poor"
-new subtable "1,2; 2,1"
+// new subtable "1,2; 2,1" - orig
+new subtable "1,3; 2,2"
 object category "T_Gold_Meager",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Modest"
-new subtable "2,1"
+// new subtable "2,1"
+new subtable "3,1"
 object category "Gold",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Normal"
-new subtable "4,1"
+// new subtable "4,1" -- orig
+new subtable "6,1"
 object category "Gold",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Wealthy"
-new subtable "10,1;11,1;12,1;13,1"
+// new subtable "10,1;11,1;12,1;13,1" -- orig
+new subtable "13,1;15,1;17,1;20,1"
 object category "Gold",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Opulent"
-new subtable "20,1;25,1;30,1"
+// new subtable "20,1;25,1;30,1" -- orig
+new subtable "30,1;37,1;45,1"
 object category "Gold",1,0,0,0,0,0,0,0
 new treasuretable "Gold_Pocket_Random"
 new subtable "1,1"
