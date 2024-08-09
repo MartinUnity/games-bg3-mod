@@ -42,6 +42,8 @@ object category "I_OBJ_Bone",1,0,0,0,0,0,0,0
 object category "I_OBJ_Skull",1,0,0,0,0,0,0,0
 object category "I_OBJ_Bottle",1,0,0,0,0,0,0,0
 object category "T_ST_Alchemy_Mushroom_Common",2,0,0,0,0,0,0,0
+new subtable "0,50;1,1"
+object category "I_FOR_Random_Ring_Con",1,0,0,0,0,0,0,0
 new treasuretable "GOB_Goblin_Generic_Rare"
 new subtable "1,1"
 object category "I_OBJ_Candle",1,0,0,0,0,0,0,0
@@ -229,6 +231,11 @@ new subtable "1,1"
 object category "I_OBJ_Potion_Of_Fire_Resistance",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "I_OBJ_MindflayerBulb_Caustic",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "I_FOR_Random_Ring_Con",1,0,0,0,0,0,0,0
+new subtable "0,1;1,1"
+object category "I_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
+object category "I_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new treasuretable "CRA_ShipwreckContainer_Water"
 new subtable "1,1"
 object category "I_CONS_DRINK_Water_Bottle",1,0,0,0,0,0,0,0
@@ -1219,8 +1226,8 @@ new subtable "2,1"
 object category "T_Gold_Stash_Poor",1,0,0,0,0,0,0,0
 object category "T_Gold_Stash_Normal",1,0,0,0,0,0,0,0
 new subtable "1,1;1,2"
-object category "T_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
-object category "T_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
+object category "I_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
+object category "I_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_FOR_ThayanCellar_Coffin_Generic",1,0,0,0,0,0,0,0
 new treasuretable "FOR_ThayanCellar_Ingredients_Rare"
