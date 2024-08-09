@@ -678,6 +678,29 @@ object category "I_ARM_Boots_Leather_C",1,0,0,0,0,0,0,0
 object category "I_ARM_Boots_Leather_D",1,0,0,0,0,0,0,0
 object category "I_ARM_Boots_Leather_E",1,0,0,0,0,0,0,0
 object category "I_ARM_Boots_Leather_F",1,0,0,0,0,0,0,0
+// Magic shoes
+new treasuretable "Clothes_Variation_Shoes_Magic"
+new subtable "1,1"
+object category "I_FOR_Shoes_Str",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Dex",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Con",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Wis",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Int",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Cha",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Variation_Shoes_Magic_2"
+new subtable "1,1"
+object category "I_FOR_Shoes_Str_2",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Dex_2",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Con_2",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Wis_2",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Int_2",1,0,0,0,0,0,0,0
+object category "I_FOR_Shoes_Cha_2",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Shoes_Random"
+new subtable "1,1"
+object category "T_Clothes_Variation_Shoes_Magic",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Shoes_Random_2"
+new subtable "1,1"
+object category "T_Clothes_Variation_Shoes_Magic_2",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Variation_Shoes"
 new subtable "1,1"
 object category "I_ARM_Shoes_B",1,0,0,0,0,0,0,0
@@ -1487,6 +1510,14 @@ object category "I_ARM_Shield_13",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "22"
 object category "I_ARM_Shield_150",1,0,0,0,0,0,0,0
+new treasuretable "ST_ClothArmor_Shoes"
+new subtable "1,1"
+StartLevel "3"
+EndLevel "8"
+object category "T_Clothes_Magic_Shoes_Random",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "8"
+object category "T_Clothes_Magic_Shoes_Random_2",1,0,0,0,0,0,0,0
 new treasuretable "ST_ClothArmor"
 new subtable "1,1"
 StartLevel "3"
@@ -2351,6 +2382,11 @@ new treasuretable "EquipmentTrader_BodyArmor_Cloth_Magic"
 new subtable "1,1"
 object category "T_ST_ClothArmor",1,0,0,0,0,0,0,0
 // End
+// Zethrok - add Clotharmor - Shoes
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Shoes_Magic"
+new subtable "1,1"
+object category "T_ST_ClothArmor_Shoes",1,0,0,0,0,0,0,0
+// End
 new treasuretable "EquipmentTrader_Melee_Magic"
 new subtable "2,1"
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
@@ -2899,6 +2935,7 @@ object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
 object category "T_ST_MartialMeleeWeapons_1",2,0,0,0,0,0,0,0
 object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
 object category "T_ST_ClothArmor",2,0,0,0,0,0,0,0
+object category "T_ST_ClothArmor_Shoes",2,0,0,0,0,0,0,0
 new treasuretable "_Rewards"
 new treasuretable "Combat_Minor"
 new subtable "1,1"
