@@ -3494,6 +3494,10 @@ data "Conditions" "Enemy() and IsAttack()"
 data "StatsFunctors" "IF((HasDamageEffectFlag(DamageFlags.Hit) or HasDamageEffectFlag(DamageFlags.Critical)):DealDamage(SWAP,3d4+1,Fire,Magical)"
 data "Properties" "Highlighted"
 
+//data "StatsFunctorContext" "OnAttacked"
+//data "Conditions" "IsMeleeAttack() and HasDamageEffectFlag(DamageFlags.Hit)"
+//data "StatsFunctors" "DealDamage(SWAP,1d4, Radiant,Magical)"
+
 new entry "MAG_Reflect_Armor_Passive_middle"
 type "PassiveData"
 data "DisplayName" "h9efbb201g3e37g4fc4g924ag70a6a9dfe279;3"
