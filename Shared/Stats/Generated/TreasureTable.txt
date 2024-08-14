@@ -1367,30 +1367,36 @@ new subtable "1,1"
 StartLevel "6"
 object category "I_WPN_Morningstar_10",1,0,0,0,0,0,0,0
 object category "I_WPN_Maul_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Longsword_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
-object category "I_WPN_Longsword_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Longsword_11",1,0,0,0,0,0,0,0
+new subtable "0,1;1,1"
+StartLevel "7"
 object category "I_WPN_Morningstar_21",1,0,0,0,0,0,0,0
+object category "I_WPN_Morningstar_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
-object category "I_WPN_Longsword_11",1,0,0,0,0,0,0,0
-object category "I_WPN_Morningstar_11",1,0,0,0,0,0,0,0
 object category "I_WPN_Maul_11",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
+object category "I_WPN_Longsword_12",1,0,0,0,0,0,0,0
+new subtable "0,1;1,1"
+StartLevel "9"
 object category "I_WPN_Morningstar_22",1,0,0,0,0,0,0,0
+object category "I_WPN_Morningstar_12",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "10"
-object category "I_WPN_Longsword_12",1,0,0,0,0,0,0,0
-object category "I_WPN_Morningstar_12",1,0,0,0,0,0,0,0
 object category "I_WPN_Maul_12",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
+object category "I_WPN_Longsword_13",1,0,0,0,0,0,0,0
+new subtable "0,1;1,1"
+StartLevel "12"
 object category "I_WPN_Morningstar_23",1,0,0,0,0,0,0,0
+object category "I_WPN_Morningstar_13",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "13"
-object category "I_WPN_Longsword_13",1,0,0,0,0,0,0,0
-object category "I_WPN_Morningstar_13",1,0,0,0,0,0,0,0
 object category "I_WPN_Maul_13",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "22"
@@ -2404,10 +2410,12 @@ new subtable "1,1"
 object category "T_ST_ClothArmor_Shoes",1,0,0,0,0,0,0,0
 // End
 new treasuretable "EquipmentTrader_Melee_Magic"
-new subtable "2,1"
+new subtable "1,1"
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
-new subtable "2,1"
+new subtable "1,1"
 object category "T_ST_MartialMeleeWeapons_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_ST_Finesse_MeleeWeapons_Magic",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_Ranged_Magic"
 new subtable "1,1"
 object category "T_ST_SimpleRangedWeapons_1",1,0,0,0,0,0,0,0
