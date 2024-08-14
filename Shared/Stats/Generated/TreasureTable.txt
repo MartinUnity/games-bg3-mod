@@ -2949,6 +2949,7 @@ new subtable "1,1"
 object category "T_ST_MartialMeleeWeapons",2,0,0,0,0,0,0,0
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
 object category "T_ST_MartialMeleeWeapons_1",2,0,0,0,0,0,0,0
+object category "T_ST_Finesse_MeleeWeapons_Magic",1,0,0,0,0,0,0,0
 object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
 object category "T_ST_ClothArmor",2,0,0,0,0,0,0,0
 object category "T_ST_ClothArmor_Shoes",2,0,0,0,0,0,0,0
