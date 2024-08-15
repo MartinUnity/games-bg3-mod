@@ -2271,8 +2271,8 @@ data "RootTemplate" "0ec7d956-e65f-4bfa-b677-22f399f81a32"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 // Starter
 //data "Boosts" "RollBonus(Attack, 20)"
-//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
-
+data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 12);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom);RollBonus(Attack, 20)"
 
 new entry "ARM_Underwear_Elves_Blue"
 type "Armor"
