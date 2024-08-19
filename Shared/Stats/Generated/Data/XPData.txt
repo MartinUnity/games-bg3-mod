@@ -9,17 +9,11 @@
 //key "Level5","650"
 // END BEFORE
 
-key "Level1","25"
-
-key "Level2","275"
-
-key "Level3","1200"
-
-///key "Level4","3090"
-key "Level4","2490"
-
-///key "Level5","4885"
-key "Level5","4185"
+key "Level1","26"
+key "Level2","680"
+key "Level3","144"
+key "Level4","3080"
+key "Level5","5200"
 
 key "MaxXPLevel","5"
 
