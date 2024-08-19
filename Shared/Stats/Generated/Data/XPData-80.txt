@@ -11,7 +11,7 @@
 
 key "Level1","26"
 key "Level2","680"
-key "Level3","144"
+key "Level3","1440"
 key "Level4","3080"
 key "Level5","5200"
 
