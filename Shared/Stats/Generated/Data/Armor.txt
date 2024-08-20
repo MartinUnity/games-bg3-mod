@@ -2217,10 +2217,14 @@ data "RootTemplate" "8494f6d9-d588-4d18-bb0d-c5a58e911771"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 //data "Boosts" "Skill(Athletics, 4);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution)"
-data "Boosts" "Skill(Athletics, 6);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 4, Wisdom)"
+//data "Boosts" "Skill(Athletics, 6);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 4, Wisdom)"
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
+data "Boosts" "Skill(Athletics, 6);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 4, Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 
 new entry "ARM_Underwear_Dragonborn_Bronze"
