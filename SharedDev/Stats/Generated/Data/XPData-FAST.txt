@@ -21,6 +21,8 @@
 //key "MaxXPLevel","12"
 // END - ORIG
 
+// MISSING (3000 + 3000)
+
 key "Level6","825"
 key "Level7","950"
 key "Level8","1000"

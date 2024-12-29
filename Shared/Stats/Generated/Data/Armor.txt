@@ -2256,7 +2256,7 @@ data "RootTemplate" "9fecf84d-911f-4986-9454-0429ac437f45"
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
-data "Boosts" "RollBonus(SavingThrow, 5, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 5, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
+data "Boosts" "RollBonus(SavingThrow, 3, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 3, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 
