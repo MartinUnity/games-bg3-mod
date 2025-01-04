@@ -2613,6 +2613,7 @@ object category "I_ARM_ScaleMail_Body_1",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "4"
 EndLevel "5"
+object category "I_ARM_ChainShirt_Body_0",1,0,0,0,0,0,0,0
 object category "I_ARM_Hide_Body_10",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "5"

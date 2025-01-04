@@ -1190,6 +1190,8 @@ object category "T_ST_Food_Sausage",1,0,0,0,0,0,0,0
 new treasuretable "FOR_SchoolOgre_Smart_Corpse"
 new subtable "1,1"
 object category "I_FOR_OgresForHire_HeadbandOfIntellect",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_EquipmentTrader_BodyArmor_Medium_Magic",1,0,0,0,0,0,0,0
 new treasuretable "FOR_SchoolOgre_DeadTiefling"
 new subtable "1,1"
 object category "T_Gold_Pocket_Modest",1,0,0,0,0,0,0,0
@@ -1199,6 +1201,8 @@ new subtable "1,1"
 object category "T_ST_SimpleMeleeWeapons",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "I_OBJ_Kit_ThievesTools",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_ST_MartialMeleeWeapons_1",1,0,0,0,0,0,0,0
 new treasuretable "FOR_SchoolOgre_Books"
 new subtable "1,1;2,1"
 object category "BookChildren",1,0,0,0,0,0,0,0
