@@ -761,6 +761,7 @@ object category "T_ST_Tools",2,0,0,0,0,0,0,0
 object category "T_ST_RandomPotion",2,0,0,0,0,0,0,0
 object category "T_Scroll",1,0,0,0,0,0,0,0
 object category "T_Empty",1,0,0,0,0,0,0,0
+// Dammon - Act1 - Tiefling
 new treasuretable "DEN_Weaponsmith_Trade"
 new subtable "1,1"
 object category "I_MAG_Hunting_Shortbow",1,0,0,0,0,0,0,0
@@ -786,6 +787,10 @@ new subtable "5,1"
 object category "T_ST_Dye",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_Clothes_Magic_Shoes_Random",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Body_Random_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Body_Random_2",1,0,0,0,0,0,0,0
 new treasuretable "ST_DEN_Entrance_Trade_Armor"
 new subtable "1,1"
 object category "I_ARM_Leather_Body",1,0,0,0,0,0,0,0
@@ -798,9 +803,10 @@ new subtable "9,1"
 object category "T_ST_SpecialArrow_Common",1,0,0,0,0,0,0,0
 new subtable "5,1"
 object category "T_ST_SpecialArrow_Uncommon",1,0,0,0,0,0,0,0
+// Act 1 - Arron - Tiefling city
 new treasuretable "DEN_Entrance_Trade"
 new subtable "1,1"
-object category "T_Gold_Trader_Normal",1,0,0,0,0,0,0,0
+object category "T_Gold_Trader_Wealthy",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_ST_DEN_Entrance_Trade_Armor",1,0,0,0,0,0,0,0
 new subtable "3,1"
@@ -839,6 +845,21 @@ new subtable "-1"
 object category "I_UNI_ARM_OfMissileSnaring_Gloves",1,0,0,0,0,0,0,0
 new subtable "-1"
 object category "I_UNI_Bow_SpellslotRecharge",1,0,0,0,0,0,0,0
+// Custom extra Act1
+new subtable "1,1"
+object category "T_Clothes_Magic_Shoes_Random",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Shoes_Random_2",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Boots_Random",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Boots_Random_2",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Body_Random_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_Clothes_Magic_Body_Random_2",1,0,0,0,0,0,0,0
+new subtable "1,1"
+object category "T_EquipmentTrader_Melee",1,0,0,0,0,0,0,0
 new treasuretable "DEN_DruidLeader"
 new subtable "1,1"
 object category "I_OBJ_FOOD_Chicken",1,0,0,0,0,0,0,0

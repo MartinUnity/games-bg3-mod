@@ -681,6 +681,8 @@ object category "I_ARM_Boots_Leather_F",1,0,0,0,0,0,0,0
 // Magic shoes
 new treasuretable "Clothes_Variation_Shoes_Magic"
 new subtable "1,1"
+StartLevel "4"
+EndLevel "6"
 object category "I_FOR_Shoes_Str",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Dex",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Con",1,0,0,0,0,0,0,0
@@ -689,14 +691,18 @@ object category "I_FOR_Shoes_Int",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Cha",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Variation_Shoes_Magic_2"
 new subtable "1,1"
+StartLevel "7"
 object category "I_FOR_Shoes_Str_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Dex_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Con_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Wis_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Int_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Shoes_Cha_2",1,0,0,0,0,0,0,0
+// Magic Boots
 new treasuretable "Clothes_Variation_Boots_Magic"
 new subtable "1,1"
+StartLevel "5"
+EndLevel "7"
 object category "I_FOR_Boots_Str",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Dex",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Con",1,0,0,0,0,0,0,0
@@ -705,12 +711,32 @@ object category "I_FOR_Boots_Int",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Cha",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Variation_Boots_Magic_2"
 new subtable "1,1"
+StartLevel "8"
 object category "I_FOR_Boots_Str_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Dex_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Con_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Wis_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Int_2",1,0,0,0,0,0,0,0
 object category "I_FOR_Boots_Cha_2",1,0,0,0,0,0,0,0
+// Magic Clothes - Body
+new treasuretable "Clothes_Variation_Body_Magic_1"
+new subtable "1,1"
+StartLevel "6"
+object category "I_ARM_Vanity_Body_Refugee_Gray_Str_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Dex_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Con_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Wis_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Int_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Cha_1",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Variation_Body_Magic_2"
+new subtable "1,1"
+StartLevel "9"
+object category "I_ARM_Vanity_Body_Refugee_Gray_Str_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Dex_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Con_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Wis_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Int_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Vanity_Body_Refugee_Gray_Cha_2",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Magic_Shoes_Random"
 new subtable "1,1"
 object category "T_Clothes_Variation_Shoes_Magic",1,0,0,0,0,0,0,0
@@ -723,6 +749,12 @@ object category "T_Clothes_Variation_Boots_Magic",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Magic_Boots_Random_2"
 new subtable "1,1"
 object category "T_Clothes_Variation_Boots_Magic_2",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Body_Random_1"
+new subtable "1,1"
+object category "T_Clothes_Variation_Body_Magic_1",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Body_Random_2"
+new subtable "1,1"
+object category "T_Clothes_Variation_Body_Magic_2",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Variation_Shoes"
 new subtable "1,1"
 object category "I_ARM_Shoes_B",1,0,0,0,0,0,0,0
@@ -1562,6 +1594,7 @@ object category "T_Clothes_Magic_Shoes_Random",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 object category "T_Clothes_Magic_Shoes_Random_2",1,0,0,0,0,0,0,0
+new treasuretable "ST_ClothArmor_Boots"
 new subtable "1,1"
 StartLevel "3"
 EndLevel "8"
@@ -1569,6 +1602,12 @@ object category "T_Clothes_Magic_Boots_Random",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 object category "T_Clothes_Magic_Boots_Random_2",1,0,0,0,0,0,0,0
+// Cloth-body
+new treasuretable "ST_ClothArmor_Body"
+new subtable "1,1"
+StartLevel "3"
+EndLevel "8"
+object category "T_Clothes_Magic_Body_Random",1,0,0,0,0,0,0,0
 new treasuretable "ST_ClothArmor"
 new subtable "1,1"
 StartLevel "3"
@@ -2438,6 +2477,16 @@ new treasuretable "EquipmentTrader_BodyArmor_Cloth_Shoes_Magic"
 new subtable "1,1"
 object category "T_ST_ClothArmor_Shoes",1,0,0,0,0,0,0,0
 // End
+// Zethrok - add Clotharmor - Boots
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Boots_Magic"
+new subtable "1,1"
+object category "T_ST_ClothArmor_Boots",1,0,0,0,0,0,0,0
+// End
+// Zethrok - add Clotharmor - Body
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Boots_Magic"
+new subtable "1,1"
+object category "T_ST_ClothArmor_Boots",1,0,0,0,0,0,0,0
+// End
 new treasuretable "EquipmentTrader_Melee_Magic"
 new subtable "1,1"
 object category "T_ST_SimpleMeleeWeapons_1",1,0,0,0,0,0,0,0
@@ -2686,17 +2735,17 @@ new subtable "1,1"
 StartLevel "7"
 EndLevel "9"
 object category "I_ARM_Plate_Body_10",1,0,0,0,0,0,0,0
-object category "I_ARM_Splint_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_RingMail_Body_12",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "8"
 EndLevel "10"
-object category "I_ARM_Plate_Body_11",1,0,0,0,0,0,0,0
+object category "I_ARM_Splint_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_ChainMail_Body_12",1,0,0,0,0,0,0,0
 object category "I_ARM_ChainMail_Body_22",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
 EndLevel "11"
+object category "I_ARM_Plate_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_Splint_Body_12",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "10"
@@ -2991,6 +3040,7 @@ object category "T_ST_Finesse_MeleeWeapons_Magic",1,0,0,0,0,0,0,0
 object category "T_ST_ArmorShield",1,0,0,0,0,0,0,0
 object category "T_ST_ClothArmor",2,0,0,0,0,0,0,0
 object category "T_ST_ClothArmor_Shoes",2,0,0,0,0,0,0,0
+object category "T_ST_ClothArmor_Boots",2,0,0,0,0,0,0,0
 new treasuretable "_Rewards"
 new treasuretable "Combat_Minor"
 new subtable "1,1"
