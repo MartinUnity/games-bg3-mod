@@ -2234,6 +2234,7 @@ data "RootTemplate" "8494f6d9-d588-4d18-bb0d-c5a58e911771"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 data "Boosts" "Skill(Athletics, 10);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom)"
+//data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 
@@ -2267,9 +2268,11 @@ data "RootTemplate" "9fecf84d-911f-4986-9454-0429ac437f45"
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
-data "Boosts" "RollBonus(SavingThrow, 3, Wisdom);Skill(Athletics, 5);RollBonus(SavingThrow, 3, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
+data "Boosts" "RollBonus(SavingThrow, 6, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 6, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
+
 //data "Boosts" "RollBonus(SavingThrow, 3, Wisdom);Skill(Athletics, 5);RollBonus(SavingThrow, 3, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom);RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 
 // Stay - Tim Foust (spotify)
@@ -2410,6 +2413,9 @@ data "RootTemplate" "3caad2f1-719f-4070-b7f0-887c49c773d3"
 data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 8);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
+data "Boosts" "Skill(Athletics, 6);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 6, Wisdom)"
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 new entry "ARM_Underwear_HalfOrcs_Orange"
 type "Armor"
 using "ARM_Underwear"
@@ -2476,6 +2482,10 @@ data "RootTemplate" "498c155f-8675-4a55-9cb0-89dd7270469f"
 //data "Boosts" "AbilityOverrideMinimum(Strength,22);AbilityOverrideMinimum(Wisdom,16);AbilityOverrideMinimum(Dexterity,16);AbilityOverrideMinimum(Constitution,26);RollBonus(Attack, 1);Skill(SleightOfHand, 7);Skill(Survival, 6);Skill(Perception, 4);AC(1)"
 //data "PassivesOnEquip" "MAG_Lesser_Infernal_Metal_Gloves_FireDamage_Passive;MAG_PHB_OfRegeneration_Ring_Passive;MAG_Generic_Weapon_Radiant;MAG_Generic_Weapon_Lightning"
 
+//data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
+//data "Boosts" "Skill(Athletics, 12);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom);RollBonus(Attack, 20)"
+data "Boosts" "Skill(Athletics, 12);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 // New items

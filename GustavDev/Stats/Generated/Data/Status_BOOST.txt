@@ -11514,3 +11514,17 @@ data "StatusType" "BOOST"
 using "GROUNDED_APPLYTODEAD"
 data "StackId" ""
 
+// Zethrok - TEST
+new entry "HEALTHBOOST_HARDCORE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_HARDCORE"
+//data "Boosts" "IncreaseMaxHP(220%)"
+data "Boosts" "IncreaseMaxHP(42%);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*(2d4+4))"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//
+// IncreaseMaxHP(Level*2)
+// IncreaseMaxHP(5)
+// IncreaseMaxHP(50%)
+// IncreaseMaxHP(-2d8)

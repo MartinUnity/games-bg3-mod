@@ -503,7 +503,7 @@ object category "T_GEN_Torch_Colored",1,0,0,0,0,0,0,0
 new treasuretable "Monster_Eagle"
 new subtable "1,1;2,1;3,1"
 object category "I_ALCH_Ingredient_Part_EagleFeather",1,0,0,0,0,0,0,0
-new subtable "0,4;1,3;2,1"
+new subtable "0,4;1,1;2,1"
 object category "I_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
 object category "I_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new treasuretable "Monster_Hyena"
@@ -512,7 +512,7 @@ object category "I_ALCH_Ingredient_Part_HyenaEar",1,0,0,0,0,0,0,0
 new treasuretable "Monster_Gnoll"
 new subtable "1,1"
 object category "T_Monster_Hyena",1,0,0,0,0,0,0,0
-new subtable "0,4;1,3;2,1"
+new subtable "0,25;1,1"
 object category "I_FOR_Random_Ring_Str",1,0,0,0,0,0,0,0
 object category "I_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new treasuretable "Monster_Gremishka"
@@ -538,15 +538,9 @@ object category "T_ST_Alchemy_Loot_Rare",1,0,0,0,0,0,0,0
 new treasuretable "TUT_Monster_Mindflayer"
 new subtable "1,1"
 object category "T_Valuables_Gems",1,0,0,0,0,0,0,0
-new subtable "1,1"
-object category "T_FOR_Random_Ring",1,0,0,0,0,0,0,0
 object category "T_Clothes_Magic_Random",2,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_Clothes_Magic_Random",2,0,0,0,0,0,0,0
-new subtable "1,1"
-object category "T_FOR_Random_Ring_NoLVL",1,0,0,0,0,0,0,0
-new subtable "1,1"
-object category "I_FOR_Random_Ring_Dex",1,0,0,0,0,0,0,0
 new treasuretable "Monster_Sahuagin"
 new subtable "1,1; 2,1"
 object category "T_Valuables_Jewelry",1,0,0,0,0,0,0,0
