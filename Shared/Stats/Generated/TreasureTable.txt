@@ -1372,6 +1372,15 @@ new subtable "1,1"
 object category "I_WPN_Longbow",1,0,0,0,0,0,0,0
 new treasuretable "ST_SimpleMeleeWeapons_1"
 new subtable "1,1"
+StartLevel "3"
+EndLevel "5"
+object category "I_WPN_Club_Con_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Greatclub_Str_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Greatclub_Con_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Greatclub_Dex_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Greatclub_Wis_10",1,0,0,0,0,0,0,0
+object category "I_WPN_Greatclub_Int_10",1,0,0,0,0,0,0,0
+new subtable "1,1"
 StartLevel "4"
 EndLevel "6"
 object category "I_WPN_Dagger_1",1,0,0,0,0,0,0,0
@@ -1646,6 +1655,7 @@ new subtable "1,1"
 StartLevel "3"
 EndLevel "4"
 object category "I_ARM_Robe_Body_30",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_60",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "4"
 EndLevel "7"
@@ -1654,6 +1664,7 @@ object category "I_ARM_Robe_Body_51",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_52",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_20",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_31",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_61",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "7"
 EndLevel "9"
@@ -1662,6 +1673,7 @@ object category "I_ARM_Robe_Body_11",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_12",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_22",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_32",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_62",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "9"
 EndLevel "12"
@@ -1670,6 +1682,7 @@ object category "I_ARM_Robe_Body_14",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_15",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_16",1,0,0,0,0,0,0,0
 object category "I_ARM_Robe_Body_33",1,0,0,0,0,0,0,0
+object category "I_ARM_Robe_Body_63",1,0,0,0,0,0,0,0
 new subtable "1,1"
 StartLevel "12"
 object category "I_ARM_Robe_Body_17",1,0,0,0,0,0,0,0

@@ -4371,6 +4371,10 @@ data "Vitality" "32"
 data "Armor" "13"
 data "Passives" "HuntersMark_RangerCompanion;ShortResting;AttackOfOpportunity;DarknessRules"
 data "DifficultyStatuses" "STATUS_EASY:PLAYER_BONUSES_EASYMODE"
+// For high HP mode
+//data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(Level*6);IncreaseMaxHP(Level*(2d4+2));IncreaseMaxHP(Level*1d12+2);IncreaseMaxHP(2d20+10)"
+//data "DefaultBoosts" "Skill(Perception, 5); Skill(Stealth, 7); ProficiencyBonus(SavingThrow, Dexterity); BlockRegainHP(Undead;Construct)"
+data "DefaultBoosts" "IncreaseMaxHP(Level*(2d4+2));IncreaseMaxHP(1d12)"
 
 new entry "Companion_Bear_5"
 type "Character"
@@ -4384,6 +4388,7 @@ data "Vitality" "48"
 data "ProficiencyBonusScaling" "265d62c4-9b82-4ed6-9a86-da675b4ef8fe"
 data "ProficiencyBonus" ""
 data "Passives" "HuntersMark_RangerCompanion;ShortResting;CompanionsBond_Creature;AttackOfOpportunity;DarknessRules;CompanionsBond_Extra"
+data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(Level*6);IncreaseMaxHP(Level*(2d4+2));IncreaseMaxHP(Level*1d12+2);IncreaseMaxHP(2d20+10)"
 
 new entry "Companion_Boar"
 type "Character"

@@ -11514,17 +11514,148 @@ data "StatusType" "BOOST"
 using "GROUNDED_APPLYTODEAD"
 data "StackId" ""
 
-// Zethrok - TEST
-new entry "HEALTHBOOST_HARDCORE"
-type "StatusData"
-data "StatusType" "BOOST"
-using "DIFFICULTY"
-data "StackId" "HEALTHBOOST_HARDCORE"
-//data "Boosts" "IncreaseMaxHP(220%)"
-data "Boosts" "IncreaseMaxHP(42%);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*(2d4+4))"
-data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//// Zethrok - TEST
+//new entry "HEALTHBOOST_HARDCORE"
+//type "StatusData"
+//data "StatusType" "BOOST"
+//using "DIFFICULTY"
+//data "StackId" "HEALTHBOOST_HARDCORE"
+////data "Boosts" "IncreaseMaxHP(42%);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*(2d4+4))"
+////data "Boosts" "IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(10%)"
+////data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(3d20);IncreaseMaxHP(Level*(2d4+4))"
+//data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(Level*1d12+2)"
+////data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(Level*1d12+2);IncreaseMaxHP((Level*Level/2)*1d8+1)"
+////data "Boosts" "IncreaseMaxHP(10%);IncreaseMaxHP(Level*(2d4+3));IncreaseMaxHP(1d6);IncreaseMaxHP(1d8);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*1d12)"
+////data "Boosts" "IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(1d100);IncreaseMaxHP(Level*(2d4+4))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
 //
 // IncreaseMaxHP(Level*2)
 // IncreaseMaxHP(5)
 // IncreaseMaxHP(50%)
 // IncreaseMaxHP(-2d8)
+
+//// Small: small spread
+//new entry "HEALTHBOOST_SMALL"
+//type "StatusData"
+//using "BOOST"
+//data "StatusType" "BOOST"
+////using "DIFFICULTY"
+////data "StackId" "HEALTHBOOST_SMALL"
+//data "StackId" "HealthBoostLocal"
+//data "Boosts" "IncreaseMaxHP(20);IncreaseMaxHP(1d10);IncreaseMaxHP(Level*(1d4))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// Middle: medium spread
+//new entry "HEALTHBOOST_MIDDLE"
+//type "StatusData"
+//using "BOOST"
+//data "StatusType" "BOOST"
+////using "DIFFICULTY"
+////data "StackId" "HEALTHBOOST_MIDDLE"
+//data "StackId" "HealthBoostLocal"
+//data "Boosts" "IncreaseMaxHP(40);IncreaseMaxHP(1d12)"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// High: larger spread
+//new entry "HEALTHBOOST_HIGH"
+//type "StatusData"
+//using "BOOST"
+//data "StatusType" "BOOST"
+////using "DIFFICULTY"
+////data "StackId" "HEALTHBOOST_HIGH"
+//data "StackId" "HealthBoostLocal"
+//data "Boosts" "IncreaseMaxHP(60);IncreaseMaxHP(1d20);IncreaseMaxHP(Level*(2d4+1))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// Very high: wide spread, rare big rolls
+//new entry "HEALTHBOOST_VERYHIGH"
+//type "StatusData"
+//using "BOOST"
+//data "StatusType" "BOOST"
+////using "DIFFICULTY"
+////data "StackId" "HEALTHBOOST_VERYHIGH"
+//data "StackId" "HealthBoostLocal"
+//data "Boosts" "IncreaseMaxHP(80);IncreaseMaxHP(1d100)"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// Optional Spike: enable only if you want true lottery outliers
+//new entry "HEALTHBOOST_CHAOS"
+//type "StatusData"
+//using "BOOST"
+//data "StatusType" "BOOST"
+////using "DIFFICULTY"
+////data "StackId" "HEALTHBOOST_CHAOS"
+//data "StackId" "HealthBoostLocal"
+//data "Boosts" "IncreaseMaxHP(100);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// This is your main "trigger" status
+//new entry "HEALTHBOOST_RANDOM"
+//type "StatusData"
+//using "DIFFICULTY"
+//data "StackId" "HEALTHBOOST_HARDCORE"
+//data "Duration" "0"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//// This block runs when the status is first applied
+//data "StatsFunctorContext" "OnApply"
+//data "StatsFunctors" "
+//    IF(RollDieAgainstDC(100, 5)):ApplyStatus(SELF,HEALTHBOOST_CHAOS,100,1);
+//    ELSE(IF(RollDieAgainstDC(100, 15))):ApplyStatus(SELF,HEALTHBOOST_VERYHIGH,100,1);
+//    ELSE(IF(RollDieAgainstDC(100, 30))):ApplyStatus(SELF,HEALTHBOOST_HIGH,100,1);
+//    ELSE(IF(RollDieAgainstDC(100, 60))):ApplyStatus(SELF,HEALTHBOOST_MEDIUM,100,1);
+//    ELSE:ApplyStatus(SELF,HEALTHBOOST_SMALL,100,1)
+//"
+
+//new entry "HEALTHBOOST_RANDOM"
+//type "StatusData"
+//using "DIFFICULTY"
+//data "StackId" "HEALTHBOOST_HARDCORE"
+//data "Duration" "0"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//// This block runs when the status is first applied
+//data "StatsFunctorContext" "OnApply"
+//data "StatsFunctors" "
+//    CHARACTER_VariableSet(SELF, 'RandomHPCheck', Roll(100));
+//    IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 5)):
+//        ApplyStatus(SELF,HEALTHBOOST_CHAOS,100,1);
+//        DisplayText(SELF,'CHAOS HP BOOST!',3.0);
+//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 15))):
+//        ApplyStatus(SELF,HEALTHBOOST_VERYHIGH,100,1);
+//        DisplayText(SELF,'Very High HP Boost!',3.0);
+//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 30))):
+//        ApplyStatus(SELF,HEALTHBOOST_HIGH,100,1);
+//        DisplayText(SELF,'High HP Boost!',3.0);
+//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 60))):
+//        ApplyStatus(SELF,HEALTHBOOST_MEDIUM,100,1);
+//        DisplayText(SELF,'Medium HP Boost!',3.0);
+//    ELSE:
+//        ApplyStatus(SELF,HEALTHBOOST_SMALL,100,1);
+//        DisplayText(SELF,'Small HP Boost!',3.0)
+//"
+
+//// Zethrok - TEST 2
+new entry "HEALTHBOOST_HARDCORE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_HARDCORE"
+//data "Boosts" "IncreaseMaxHP(Level*10d4+40);IncreaseMaxHP(3d100)"
+//data "Boosts" "IncreaseMaxHP(Level*1d100);IncreaseMaxHP(1d6*Level*2)"
+data "Boosts" "IncreaseMaxHP(50%);IncreaseMaxHP(Level*2d20)"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+//// Zethrok - TEST
+//new entry "HEALTHBOOST_HARDCORE"
+//type "StatusData"
+//data "StatusType" "BOOST"
+//using "DIFFICULTY"
+//data "StackId" "HEALTHBOOST_HARDCORE"
+////data "Boosts" "IncreaseMaxHP(42%);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*(2d4+4))"
+////data "Boosts" "IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(10%)"
+////data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(3d20);IncreaseMaxHP(Level*(2d4+4))"
+//data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(Level*1d12+2)"
+////data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d10);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4));IncreaseMaxHP(Level*1d12+2);IncreaseMaxHP((Level*Level/2)*1d8+1)"
+////data "Boosts" "IncreaseMaxHP(10%);IncreaseMaxHP(Level*(2d4+3));IncreaseMaxHP(1d6);IncreaseMaxHP(1d8);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*1d12)"
+////data "Boosts" "IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(1d100);IncreaseMaxHP(Level*(2d4+4))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
