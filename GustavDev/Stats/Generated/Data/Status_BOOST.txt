@@ -11590,60 +11590,17 @@ data "StackId" ""
 //data "Boosts" "IncreaseMaxHP(100);IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4))"
 //data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
 
-//// This is your main "trigger" status
-//new entry "HEALTHBOOST_RANDOM"
+
+////// Zethrok - TEST 2
+//new entry "HEALTHBOOST_HARDCORE"
 //type "StatusData"
+//data "StatusType" "BOOST"
 //using "DIFFICULTY"
 //data "StackId" "HEALTHBOOST_HARDCORE"
-//data "Duration" "0"
+////data "Boosts" "IncreaseMaxHP(Level*10d4+40);IncreaseMaxHP(3d100)"
+////data "Boosts" "IncreaseMaxHP(Level*1d100);IncreaseMaxHP(1d6*Level*2)"
+//data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)"
 //data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
-//// This block runs when the status is first applied
-//data "StatsFunctorContext" "OnApply"
-//data "StatsFunctors" "
-//    IF(RollDieAgainstDC(100, 5)):ApplyStatus(SELF,HEALTHBOOST_CHAOS,100,1);
-//    ELSE(IF(RollDieAgainstDC(100, 15))):ApplyStatus(SELF,HEALTHBOOST_VERYHIGH,100,1);
-//    ELSE(IF(RollDieAgainstDC(100, 30))):ApplyStatus(SELF,HEALTHBOOST_HIGH,100,1);
-//    ELSE(IF(RollDieAgainstDC(100, 60))):ApplyStatus(SELF,HEALTHBOOST_MEDIUM,100,1);
-//    ELSE:ApplyStatus(SELF,HEALTHBOOST_SMALL,100,1)
-//"
-
-//new entry "HEALTHBOOST_RANDOM"
-//type "StatusData"
-//using "DIFFICULTY"
-//data "StackId" "HEALTHBOOST_HARDCORE"
-//data "Duration" "0"
-//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
-//// This block runs when the status is first applied
-//data "StatsFunctorContext" "OnApply"
-//data "StatsFunctors" "
-//    CHARACTER_VariableSet(SELF, 'RandomHPCheck', Roll(100));
-//    IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 5)):
-//        ApplyStatus(SELF,HEALTHBOOST_CHAOS,100,1);
-//        DisplayText(SELF,'CHAOS HP BOOST!',3.0);
-//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 15))):
-//        ApplyStatus(SELF,HEALTHBOOST_VERYHIGH,100,1);
-//        DisplayText(SELF,'Very High HP Boost!',3.0);
-//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 30))):
-//        ApplyStatus(SELF,HEALTHBOOST_HIGH,100,1);
-//        DisplayText(SELF,'High HP Boost!',3.0);
-//    ELSE(IF(CHARACTER_VariableCompare(SELF, 'RandomHPCheck', '<=', 60))):
-//        ApplyStatus(SELF,HEALTHBOOST_MEDIUM,100,1);
-//        DisplayText(SELF,'Medium HP Boost!',3.0);
-//    ELSE:
-//        ApplyStatus(SELF,HEALTHBOOST_SMALL,100,1);
-//        DisplayText(SELF,'Small HP Boost!',3.0)
-//"
-
-//// Zethrok - TEST 2
-new entry "HEALTHBOOST_HARDCORE"
-type "StatusData"
-data "StatusType" "BOOST"
-using "DIFFICULTY"
-data "StackId" "HEALTHBOOST_HARDCORE"
-//data "Boosts" "IncreaseMaxHP(Level*10d4+40);IncreaseMaxHP(3d100)"
-//data "Boosts" "IncreaseMaxHP(Level*1d100);IncreaseMaxHP(1d6*Level*2)"
-data "Boosts" "IncreaseMaxHP(50%);IncreaseMaxHP(Level*2d20)"
-data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
 
 //// Zethrok - TEST
 //new entry "HEALTHBOOST_HARDCORE"
@@ -11659,3 +11616,15 @@ data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndi
 ////data "Boosts" "IncreaseMaxHP(10%);IncreaseMaxHP(Level*(2d4+3));IncreaseMaxHP(1d6);IncreaseMaxHP(1d8);IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(Level*1d12)"
 ////data "Boosts" "IncreaseMaxHP(1d12);IncreaseMaxHP(1d20);IncreaseMaxHP(2d20);IncreaseMaxHP(1d100);IncreaseMaxHP(Level*(2d4+4))"
 //data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+// Zethrok - TEST 2
+new entry "HEALTHBOOST_HARDCORE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_HARDCORE"
+data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)"
+//data "Boosts" "IncreaseMaxHP(1d4+1);IncreaseMaxHP(Level*1d12)"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+
