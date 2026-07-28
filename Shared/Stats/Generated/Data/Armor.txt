@@ -2292,6 +2292,7 @@ data "RootTemplate" "0ec7d956-e65f-4bfa-b677-22f399f81a32"
 // Starter
 //data "Boosts" "RollBonus(Attack, 20)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+////data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 12);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 12);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 
 new entry "ARM_Underwear_Elves_Blue"
@@ -2485,8 +2486,10 @@ data "RootTemplate" "498c155f-8675-4a55-9cb0-89dd7270469f"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
 
 //data "Boosts" "Skill(Athletics, 12);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom);RollBonus(Attack, 20)"
-data "Boosts" "Skill(Athletics, 12);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom)"
+//data "Boosts" "Skill(Athletics, 12);Advantage(SavingThrow, Wisdom);Advantage(SavingThrow, Constitution);RollBonus(SavingThrow, 4, Constitution);RollBonus(SavingThrow, 10, Wisdom)"
+data "Boosts" "RollBonus(SavingThrow, 12, Wisdom);Skill(Athletics, 12);RollBonus(SavingThrow, 8, Constitution);ProficiencyBonus(SavingThrow,Wisdom);Advantage(SavingThrow, Wisdom)"
 //data "PassivesOnEquip" "MAG_Generic_Weapon_Start"
+
 
 // New items
 //// SHIELDS
