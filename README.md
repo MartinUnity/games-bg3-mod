@@ -1,5 +1,11 @@
 # BG3 'mod'
 
+## Dir for mod
+
+```
+/home/martin/.local/share/Steam/steamapps/compatdata/1086940/pfx/drive_c/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/
+```
+
 ## Overview
 
 Goto BG3 placement (Rightclick game in Steam -> Manage -> Browse Local Files)

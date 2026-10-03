@@ -1,0 +1,66 @@
+//entry "HEALTHBOOST_HC_SMALL"
+//type "StatusData"
+//data "StatusType" "BOOST"
+//data "StackId" "HEALTHBOOST_HC_SMALL"
+//data "Boosts" "IncreaseMaxHP(10%);IncreaseMaxHP(1d8)"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//
+//entry "HEALTHBOOST_HC_MEDIUM"
+//type "StatusData"
+//data "StatusType" "BOOST"
+//data "StackId" "HEALTHBOOST_HC_MEDIUM"
+//data "Boosts" "IncreaseMaxHP(15%);IncreaseMaxHP(1d20);IncreaseMaxHP(Level*(1d6+2))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+//
+//entry "HEALTHBOOST_HC_LARGE"
+//type "StatusData"
+//data "StatusType" "BOOST"
+//data "StackId" "HEALTHBOOST_HC_LARGE"
+//data "Boosts" "IncreaseMaxHP(20%);IncreaseMaxHP(1d100);IncreaseMaxHP(Level*(1d12+6))"
+//data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+
+// Small: small spread
+new entry "HEALTHBOOST_SMALL"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_SMALL"
+data "Boosts" "IncreaseMaxHP(1d10);IncreaseMaxHP(Level*(1d4))"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+// Middle: medium spread
+new entry "HEALTHBOOST_MIDDLE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_MIDDLE"
+data "Boosts" "IncreaseMaxHP(1d12)"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+// High: larger spread
+new entry "HEALTHBOOST_HIGH"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_HIGH"
+data "Boosts" "IncreaseMaxHP(1d20);IncreaseMaxHP(Level*(2d4+1))"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+// Very high: wide spread, rare big rolls
+new entry "HEALTHBOOST_VERYHIGH"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_VERYHIGH"
+data "Boosts" "IncreaseMaxHP(1d100)"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
+
+// Optional Spike: enable only if you want true lottery outliers
+new entry "HEALTHBOOST_CHAOS"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DIFFICULTY"
+data "StackId" "HEALTHBOOST_CHAOS"
+data "Boosts" "IncreaseMaxHP(2d100);IncreaseMaxHP(Level*(2d4+4))"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
