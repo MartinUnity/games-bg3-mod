@@ -11623,8 +11623,8 @@ type "StatusData"
 data "StatusType" "BOOST"
 using "DIFFICULTY"
 data "StackId" "HEALTHBOOST_HARDCORE"
+//data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12);IncreaseMaxHP(1d100)"
 data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)"
+//data "Boosts" "IncreaseMaxHP(1d100);IncreaseMaxHP(Level*(3d10))"
 //data "Boosts" "IncreaseMaxHP(1d4+1);IncreaseMaxHP(Level*1d12)"
 data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;ApplyToDead"
-
-
