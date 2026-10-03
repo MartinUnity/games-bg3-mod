@@ -772,6 +772,29 @@ object category "T_Clothes_Variation_Cloak_Magic_1",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Magic_Cloak_Random_2"
 new subtable "1,1"
 object category "T_Clothes_Variation_Cloak_Magic_2",1,0,0,0,0,0,0,0
+// Magic Clothes - Necklace
+new treasuretable "Clothes_Variation_Necklace_Magic_1"
+new subtable "1,1"
+object category "I_ARM_Zeth_STR_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_DEX_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CON_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_WIS_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_INT_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CHA_Necklace_1",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Variation_Necklace_Magic_2"
+new subtable "1,1"
+object category "I_ARM_Zeth_STR_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_DEX_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CON_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_WIS_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_INT_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CHA_Necklace_2",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Necklace_Random_1"
+new subtable "1,1"
+object category "T_Clothes_Variation_Necklace_Magic_1",1,0,0,0,0,0,0,0
+new treasuretable "Clothes_Magic_Necklace_Random_2"
+new subtable "1,1"
+object category "T_Clothes_Variation_Necklace_Magic_2",1,0,0,0,0,0,0,0
 new treasuretable "Clothes_Variation_Shoes"
 new subtable "1,1"
 object category "I_ARM_Shoes_B",1,0,0,0,0,0,0,0
@@ -1643,13 +1666,28 @@ new treasuretable "ST_ClothArmor_Body"
 new subtable "1,1"
 StartLevel "3"
 EndLevel "8"
-object category "T_Clothes_Magic_Body_Random",1,0,0,0,0,0,0,0
+object category "T_Clothes_Magic_Body_Random_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "8"
+object category "T_Clothes_Magic_Body_Random_2",1,0,0,0,0,0,0,0
 // Cloth-cloak
 new treasuretable "ST_ClothArmor_Cloak"
 new subtable "1,1"
 StartLevel "8"
 EndLevel "12"
-object category "T_Clothes_Magic_Cloak_Random",1,0,0,0,0,0,0,0
+object category "T_Clothes_Magic_Cloak_Random_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "12"
+object category "T_Clothes_Magic_Cloak_Random_2",1,0,0,0,0,0,0,0
+// Cloth-necklace
+new treasuretable "ST_ClothArmor_Necklace"
+new subtable "1,1"
+StartLevel "7"
+EndLevel "13"
+object category "T_Clothes_Magic_Necklace_Random_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "14"
+object category "T_Clothes_Magic_Necklace_Random_2",1,0,0,0,0,0,0,0
 new treasuretable "ST_ClothArmor"
 new subtable "1,1"
 StartLevel "3"
@@ -2529,7 +2567,7 @@ new subtable "1,1"
 object category "T_ST_ClothArmor_Boots",1,0,0,0,0,0,0,0
 // End
 // Zethrok - add Clotharmor - Body
-new treasuretable "EquipmentTrader_BodyArmor_Cloth_Boots_Magic"
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Body_Magic"
 new subtable "1,1"
 object category "T_ST_ClothArmor_Body",1,0,0,0,0,0,0,0
 // End
@@ -2537,6 +2575,11 @@ object category "T_ST_ClothArmor_Body",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_BodyArmor_Cloth_Cloak_Magic"
 new subtable "1,1"
 object category "T_ST_ClothArmor_Cloak",1,0,0,0,0,0,0,0
+// End
+// Zethrok - add Clotharmor - Necklace
+new treasuretable "EquipmentTrader_BodyArmor_Cloth_Necklace_Magic"
+new subtable "1,1"
+object category "T_ST_ClothArmor_Necklace",1,0,0,0,0,0,0,0
 // End
 new treasuretable "EquipmentTrader_Melee_Magic"
 new subtable "1,1"
@@ -2829,6 +2872,9 @@ new subtable "1,1"
 object category "T_EquipmentTrader_Shield_Melee",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_EquipmentTrader_BodyArmor_Heavy_Magic",1,0,0,0,0,0,0,0
+// Zethrok - add necklaces
+new subtable "1,1"
+object category "T_EquipmentTrader_BodyArmor_Cloth_Necklace_Magic",1,0,0,0,0,0,0,0
 new treasuretable "EquipmentTrader_Shield"
 new subtable "1,1"
 EndLevel "9"
