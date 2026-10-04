@@ -111,6 +111,20 @@ object category "I_ARM_Zeth_CON_Cloak_2",1,0,0,0,0,0,0,0
 object category "I_ARM_Zeth_WIS_Cloak_2",1,0,0,0,0,0,0,0
 object category "I_ARM_Zeth_INT_Cloak_2",1,0,0,0,0,0,0,0
 object category "I_ARM_Zeth_CHA_Cloak_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_STR_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_DEX_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CON_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_WIS_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_INT_Necklace_1",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CHA_Necklace_1",1,0,0,0,0,0,0,0
+new subtable "1,1"
+StartLevel "14"
+object category "I_ARM_Zeth_STR_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_DEX_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CON_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_WIS_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_INT_Necklace_2",1,0,0,0,0,0,0,0
+object category "I_ARM_Zeth_CHA_Necklace_2",1,0,0,0,0,0,0,0
 
 // Clothes - shoes
 new treasuretable "FOR_Random_Clothes_Shoes_1"
