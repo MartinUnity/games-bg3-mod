@@ -3114,7 +3114,7 @@ object category "Gold",1,0,0,0,0,0,0,0
 new subtable "1,1"
 object category "T_Exploration_Minor_DoublingPack",15,0,0,0,0,0,0,0
 object category "T_Exploration_Minor_GuaranteedSinglePack",1,0,0,0,0,0,0,0
-new subtable "0,50;1,1"
+new subtable "0,200;1,1"
 object category "T_FOR_Random_Ring",1,0,0,0,0,0,0,0
 object category "T_Clothes_Magic_Random",2,0,0,0,0,0,0,0
 new treasuretable "Exploration_Major"
@@ -3129,7 +3129,7 @@ object category "T_Exploration_Major_Potions",2,0,0,0,0,0,0,0
 object category "T_Exploration_Major_Arrows",1,0,0,0,0,0,0,0
 object category "T_Exploration_Major_Scroll",1,0,0,0,0,0,0,0
 object category "T_ST_Alchemy_Loot_Rare",1,0,0,0,0,0,0,0
-new subtable "0,25;1,1"
+new subtable "0,200;1,1"
 object category "T_FOR_Random_Ring",1,0,0,0,0,0,0,0
 object category "T_Clothes_Magic_Random",2,0,0,0,0,0,0,0
 new treasuretable "Exploration_Additional"
@@ -3137,7 +3137,7 @@ new subtable "0,1; 1,2; 2,1"
 object category "T_Gold_Stash_Modest",1,0,0,0,0,0,0,0
 new subtable "0,2; 2,1; 2,1"
 object category "T_Exploration_Minor_Consumables",1,0,0,0,0,0,0,0
-new subtable "0,50;1,1"
+new subtable "0,200;1,1"
 object category "T_FOR_Random_Ring",1,0,0,0,0,0,0,0
 object category "T_Clothes_Magic_Random",2,0,0,0,0,0,0,0
 new treasuretable "DisplayCase_Weapons_Melee"

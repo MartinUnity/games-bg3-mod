@@ -61,10 +61,10 @@ Example — a generic goblin corpse, player level ≤ 6:
 ```
 corpse rolls GOB_Goblin_Generic                       (binary-wired, 100%)
  → GOB_Goblin_Generic_Common                          100%
-   → subtable "0,25;1,1":  T_FOR_Random_Ring freq 5   1/26 × 5/9
-     T_Clothes_Magic_Random freq 4                    1/26 × 4/9
+   → subtable "0,65;1,1":  T_FOR_Random_Ring freq 5   1/66 × 5/9
+     T_Clothes_Magic_Random freq 4                    1/66 × 4/9
  → Clothes_Magic_Random, subtable SL 1–6: 24 items    1/24
-P(one specific tier-1 item, per goblin) ≈ 0.0385 × 0.444 × 0.0417 ≈ 0.00071 (0.07%)
+P(one specific tier-1 item, per goblin) ≈ 0.0152 × 0.444 × 0.0417 ≈ 0.00028 (0.03%)
 ```
 
 ## 5. The current injection surface for magic clothes
@@ -80,25 +80,22 @@ P(one specific tier-1 item, per goblin) ≈ 0.0385 × 0.444 × 0.0417 ≈ 0.0007
 
 All 25+ parent tables were injected this way. Grouped by roll chance:
 
-**Guaranteed when the table rolls (`"1,1"`)** — fixed/scripted rewards
+**Guaranteed when the table rolls (`"1,1"`)** — fixed/scripted rewards, tutorial only
 - `TUT_Mindflayer_Dead`, `TUT_Monster_Mindflayer` (dead mindflayer always drops magic clothes)
-- `FOR_DeathOfATrueSoul_TrueSoul`, `FOR_DeathOfATrueSoul_Novice`
-- `FOR_Spiders_Cocoon` — actually `"1,3; 2,1"` (75% one / 25% two)
 
-**50%** (`"0,1;1,1"`)
-- `FOR_SchoolOgre_Stash_Valuables`, `FOR_UnfortunateGnome_MillCellarChest`, `WLD_CRA_RidgeSecretChest`
+**≈33%** (`"0,2;1,1"`) — `TUT_Victim_Generic` (tutorial)
 
-**≈33%** (`"0,2;1,1"`) — `TUT_Victim_Generic`
-
-**≈17%** (`"0,5;1,1"`)
+**≈17%** (`"0,5;1,1"`) — tutorial
 - `TUT_Imp_Handaxe`, `TUT_Imp_Dagger`, `TUT_Imp_Scimitar`, `TUT_Imp_Crossbow`, `TUT_Chest_Potions`
 
-**≈3.8%** (`"0,25;1,1"`) — the main "low chance pr. encounter" band
+**≈1.5%** (`"0,65;1,1"`) — the main "low chance pr. encounter" band. In prepare-2 this was set uniformly across everything outside the tutorial/vendor: was `"0,25;1,1"` ≈ 3.8% (corpses/chests/trader stock), `"1,1"`/`"1,3; 2,1"` 100% (spider cocoon, True Soul rewards), and `"0,1;1,1"` 50% (Act 1 stashes) — lowered so any magic drop feels special
 - Corpses: `GOB_Goblin_Generic_Common`, `GOB_Goblin_Generic_Rare` (via `GOB_Goblin_Generic`, also used by `GOB_Goblin_Kid`, `FOR_Village_SleepingBugbear`)
 - Chests/stashes: `DEN_BardChest`, `DEN_Entrance_Trade`, `DEN_Weaponsmith_Trade`, `DEN_GoblinHunt_RewardBag`, `DEN_Harpy_HiddenChest`, `FOR_DeathOfATrueSoul_SeluneStash`
-- Vendor stock: `ST_DEN_Trader_Ranged_Arrows` (traders may stock one magic clothing, 4%)
+- Act 1, from 100%: `FOR_Spiders_Cocoon`, `FOR_DeathOfATrueSoul_TrueSoul`, `FOR_DeathOfATrueSoul_Novice`
+- Act 1, from 50%: `FOR_SchoolOgre_Stash_Valuables`, `FOR_UnfortunateGnome_MillCellarChest`, `WLD_CRA_RidgeSecretChest`
+- Vendor stock: `ST_DEN_Trader_Ranged_Arrows` (traders may stock one magic clothing, 1.5%)
 
-**≈2%** (`"0,50;1,1"`) — generic exploration pools (these feed the biggest surface: dozens of area chests/ambushes)
+**≈0.5%** (`"0,200;1,1"`) — generic exploration pools (these feed the biggest surface: dozens of area chests/ambushes; was 2–3.8%, lowered in prepare-2)
 - `Exploration_Minor`, `Exploration_Additional` (Shared layer) — rolled `"1,1"` by `HAG_Swamp_Chest`, `HAG_WoodWoad_Chest`, `PLA_Cave_BanditChest`, `UND_KC_TrappedChasmChest`, `UND_SeluneOutpost_Treasure`, `LOW_Undercity_Ambush_Treasure`, `FOR_Goblin_OverlookChest`, `FOR_VillageFightReward`, ...
 - `Exploration_Major` (Shared layer) — same pattern via `HAG_*`, `S_HAV_BuriedChest_02`, `S_TWN_BuriedChest_06`, `S_WYR_BuriedChest_08/09`, `UND_KC_*`, `UND_Tower_SecretCellar_RewardChest`, `GOB_WaterfallChest`, `TUT_BackupCambion_Reward` (`"2,1"`), `Combat_Major`
 
@@ -117,7 +114,7 @@ Done by editing only `Clothes_Magic_Random`; the entire existing injection surfa
 
 Because **all eligible subtables roll independently** (see §3 / Example 3 in the Larian doc), at player level 14+ every magic-clothes drop yields **two** items: one from the 30-item SL7+ pool and one guaranteed `_2` necklace. Below 14, the `_1` necklaces simply add to the 30-item pool.
 
-Probability per goblin corpse (level 7–13): 1/26 × 4/9 × 1/30 ≈ 0.00057 per specific necklace, plus the much larger exploration-pool surface at 2–3.8% parent roll.
+Probability per goblin corpse (level 7–13): 1/66 × 4/9 × 1/30 ≈ 0.00028 per specific necklace, plus the much larger exploration-pool surface at 0.5–1.5% parent roll.
 
 Caveats:
 - Adding items to a shared subtable **dilutes** every existing item in it (1/24 → 1/30). If that matters, use a separate subtable/parent slot instead.

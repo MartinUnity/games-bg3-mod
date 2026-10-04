@@ -49,6 +49,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--vanilla", default=str(ROOT / "bg3-vanilla-data"),
                     help="path to vanilla unpack (default: bg3-vanilla-data)")
+    ap.add_argument("--strict", action="store_true",
+                    help="require the vanilla baseline; fail if it is absent")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
     quiet = args.quiet
@@ -70,9 +72,16 @@ def main():
     parse_files(entry_paths, repo_entries, {}, {})
 
     vanilla_root = Path(args.vanilla)
+    vanilla_present = vanilla_root.is_dir()
+    if not vanilla_present and args.strict:
+        print(f"error: --strict requires the vanilla baseline at {vanilla_root}", file=sys.stderr)
+        return 2
     vanilla_tables, vanilla_entries, vanilla_refs = {}, {}, {}
     vpaths = []
-    if vanilla_root.is_dir():
+    if not vanilla_present and not quiet:
+        print(f"[vanilla] baseline absent at {vanilla_root} — refs undefined in the repo "
+              f"are reported as WARN (cannot verify against vanilla)")
+    if vanilla_present:
         for top in ("Gustav", "Shared"):
             for layer in LAYERS:
                 base = vanilla_root / top / "Public" / layer
@@ -108,12 +117,12 @@ def main():
             if ref.startswith("T_"):
                 if ref[2:] not in table_names:
                     msg = f"{fpath}:{lineno}: undefined treasure table {ref}"
-                    (warnings if ref in vanilla_ref_set else errors).append(
+                    (warnings if (not vanilla_present or ref in vanilla_ref_set) else errors).append(
                         msg + (" (already dangling in vanilla)" if ref in vanilla_ref_set else ""))
             elif ref.startswith("I_"):
                 if ref[2:] not in item_names:
                     msg = f"{fpath}:{lineno}: undefined item {ref}"
-                    (warnings if ref in vanilla_ref_set else errors).append(
+                    (warnings if (not vanilla_present or ref in vanilla_ref_set) else errors).append(
                         msg + (" (already dangling in vanilla)" if ref in vanilla_ref_set else ""))
             else:
                 if ref not in item_names and ref not in table_names:
