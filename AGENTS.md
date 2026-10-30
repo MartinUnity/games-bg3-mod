@@ -14,7 +14,13 @@ Where things live:
   `Status_BOOST.txt`, `Character.txt`; global balance in `Shared/.../Data.txt`,
   XP curves in `XPData*.txt`)
 - Loot: `<Layer>/Stats/Generated/TreasureTable.txt`
-- No loca/story files here — those live outside the repo (`Data/Mods/*/Story/`)
+- No loca/story files here — those live outside the repo
+  (`Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt`).
+  They are loose Osiris goal text, also hand-edited and also live (not in git)
+- Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
+  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → overridden in
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); story-side equivalent is
+  the vanilla predicate `DB_HonorMode_Enabled(1)`
 - `bg3-vanilla-data/` is a gitignored unpack of vanilla data, used as baseline
 
 After touching treasure tables, validate:
@@ -32,6 +38,10 @@ dangling `I_`/`T_` references; `--strict` escalates warnings)
 - `item-chains.md` — vendor-side chain (trader → treasure tables) and Boosts
   grammar. Mostly current, but its §5 "orphaned wrapper" bug and §6 necklace
   plan were superseded by drop-chains §5/§6 — trust drop-chains there.
+- `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
+  goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
+  combat-group joining, spawn-position solving), what stays binary (level layout),
+  ranked recipes. Refines drop-chains' "not possible in text" claim.
 - `larian_treasuretables_description.md` — official Larian treasure-table
   format reference (columns, DropCount, rarity weights).
 
