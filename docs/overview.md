@@ -158,7 +158,11 @@ Our own story goals live **in the repo** at `SharedDev/Story/RawFiles/Goals/MART
 validate them, and `tools/deploy_story.sh` to mirror them into `Data/Mods/…` if the engine
 turns out to compile goals only from there (that mount is read-only: `/home/martin/.local`
 is an `ro` bind mount; only `Data/Public` is `rw`). Whether loose goal text is loaded at all
-is still unproven on this install — `docs/spawn-chains.md` §3/§12.
+is still unproven on this install — `docs/spawn-chains.md` §3/§12. The vanilla corpus also
+carries a helper library worth reading before writing new goals — `Shared/Story/RawFiles/Goals/__PROC.txt`
+(457 `PROC_`/`QRY_` rules), `_Greevers_Little_Helpers.txt` (`QRY_OnlyOnce`), `_Attitude.txt`
+(`PROC_MakeNPCHostile`) — but cross-module visibility of those names is unverified, so our own
+files declare everything they use.
 
 ### Other on-disk notes
 - `Data/Armor.txt` (loose at Data root, mtime 2023-08-21) is **byte-identical**

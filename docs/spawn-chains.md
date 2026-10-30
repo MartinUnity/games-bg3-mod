@@ -108,6 +108,32 @@ ParentTargetEdge "GLO_Hag"      // optional: attach to another goal (see GLO_Hag
 The goal's *name* is its file name; there is no registry to update. Real example end to
 end: `GustavDev/.../Goals/Act1_FOR_DangerousBook_PostEA.txt:32-72`.
 
+Mechanical rules we verified on this install ✅ (and which `tools/check_goal.py` enforces):
+
+- Every goal file on disk is **CRLF**; write CRLF.
+- `EXITSECTION` + `ENDEXITSECTION` are a required **pair**, even when the exit section is
+  empty (our file keeps only a comment there).
+- Conditions never end with `;`; every action in a `THEN` block must.
+- A goal file may declare its own `DB_`/`QRY_`/`PROC_` names: a bare `PROC` or `QRY` line,
+  then the declaration (`PROC_MakeNPCHostile((CHARACTER)_Player,(CHARACTER)_Npc)`), then its
+  own `AND` conditions and `THEN` block — see `Shared/.../Goals/_Attitude.txt:6-13`.
+- Vanilla keeps a **shared helper library** in `Shared/`, and calls it from the story modules:
+  `Shared/.../Goals/__PROC.txt` declares 457 `PROC_`/`QRY_` rules (e.g.
+  `PROC_SetRelationMutual` at `:987`), `_Greevers_Little_Helpers.txt` declares
+  `QRY_OnlyOnce((STRING)_OnlyOnceUUID)` (`:892`) and `QRY_IsInRange` (`:2270`),
+  `_CRIME_CrimeTriggers.txt:792-811` declares `PROC_CharacterDisableAllCrimes`.
+  Corpus-wide mention counts: `QRY_OnlyOnce` 2461, `PROC_SetRelationMutual` 305,
+  `PROC_CharacterDisableAllCrimes` 111, `PROC_MakeNPCHostile` 36, `QRY_IsInRange` 59 — all
+  defined in `Shared/` and used from `Gustav`/`GustavDev` goals, so rule names resolve across
+  the whole story compile rather than per file. ⚠️ That is inference from vanilla depending
+  on it; we cannot see the compiler, and the loose corpus is partial, so **our own files
+  declare everything they use** (`check_goal.py` rejects a `QRY_`/`PROC_` that no file in
+  this checkout declares). Engine calls/queries/events are the safe set: all of them are in
+  `story_header.div`.
+- Factoring work into a `PROC` and calling it from several `THEN` blocks is normal vanilla
+  style (`PROC_HAG_SpawnDoubles(...)` is *called* 8× in `GLO_HagDoubles.txt`), so it is safe
+  for our own reuse.
+
 ## 5. Making bodies: the primitives ✅
 
 Signatures verbatim from `GustavDev/Story/RawFiles/story_header.div` (line numbers
@@ -126,12 +152,25 @@ Notes on the shared argument shape: `_Temporary` `1` = summon-like (vanilla Hag 
 pass `1`); `_PlaySpawn` `1` = play the spawn VFX; `_SpawnFinishEvent` is a script event
 string (`""` is fine); `_MatchOrientation` `1` = face the anchor. Templates are
 `CHARACTERROOT` UUID names, e.g. `Hag_Green_Act1Hag_Double_8c85932d-12dd-4046-a694-6534071470a2`,
-`Shadow_A_749b1e7d-63a1-4a3d-b0ca-f237b9ada5c4`, `Kobolds_Melee_Drunk_45e31b7d-32ec-4f3d-8067-79061aeec77b`.
+`Shadow_A_749b1e7d-63a1-4a3d-b0ca-f237b9ada5c4`, `Kobolds_Melee_Drunk_45e31b7d-32ec-4f3d-8067-79061aeec77b`,
+`Wolf_41da0eff-b533-43cc-a014-218f7d23fa11` (Larian's own spawn test —
+`Gustav/.../Goals/Test.txt:345-356`: `GetPosition(_Player,_X,_Y,_Z)` (:349) +
+`RealSum(_X,2.0,_XOffset)` (:351) + `CreateAt((CHARACTERROOT)Wolf_…, _XOffset,_Y,_Z, 1, 0, "", _Wolf)` (:353)
+then `SetFaction(_Wolf,(FACTION)Evil_…)` (:355) + `PROC_MakeNPCHostile(_Wolf,_Player)` (:356);
+note `_Temporary=1`, `_PlaySpawn=0`, and that the hostility helper there is a Shared-module
+PROC, not an engine call). It is also the template our E1 file seeds.
 
 Working vanilla call sites ✅:
 - Barrel → kobold: `GustavDev/.../Act1b_CRE_Brewery.txt:120` — `CreateAtObject((CHARACTERROOT)Kobolds_Melee_Drunk_…, _Barrel, 0, 1, "", 1, _Kobold)` fired by `DB_PermaDefeated(_Barrel)`.
 - N copies at a position: `GustavDev/.../Act1_FOR_DangerousBook_PostEA.txt:49-57` — `PROC_…_SummonShades(3, _X,_Y,_Z)` + `QRY_DoNTimes(_Num)` loop + `CreateAt(Shadow_A_…, _PosX,_PosY,_PosZ, 0, 1, "", _Creature)` + `SetFaction(...)`.
 - Item → creature: `SharedDev/.../GLO_CombatNPCs_PostEA.txt:598-606`.
+
+Which primitive to pick (our heuristic, vanilla-consistent): anchor on something that already
+exists (`CreateAtObject`, 589) whenever there is a usable anchor — it needs no coordinates, and
+every extra query in a rule is another chance for the rule to fail silently (§6). Fall back to
+`CreateAt` + `FindValidPosition` (§9) when the anchor tile is contested or the body appears
+inside geometry; use `CreateOutOfSightAtDirection(FromObject)` (590/591) when the arrival should
+not be witnessed.
 
 ## 6. Legal positions, factions, and joining a running fight ✅
 
@@ -163,13 +202,20 @@ Working vanilla call sites ✅:
   is the vanilla one-liner, always written with a real faction pair, e.g.
   `SetHostileAndEnterCombat((FACTION)Act3_LOW_ArajBloodMerchant_4f198d21-…, (FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360, S_MOO_InfernalVendor_…, _Player)`.
   `Hero_a1542c81-6895-929e-4522-10ce218bb360` is the player faction; `Evil_4be9261a-e481-8d9d-3528-f36956a19b17`
-  is the catch-all hostile faction (`Gustav/.../Goals/Test.txt:354`). Set one directly with
+  is the catch-all hostile faction (`Gustav/.../Goals/Test.txt:355`). Set one directly with
   `SetFaction(_Target,(FACTION)…)` (1014), read one with `GetFaction` (1015), or wire relations
-  with the vanilla helper `PROC_SetRelationMutual((FACTION)_A,(FACTION)_B,_Value)` (defined in 88
-  goal files, 305 uses).
+  with the vanilla helper `PROC_SetRelationMutual((FACTION)_A,(FACTION)_B,_Value)` (declared
+  once at `Shared/Story/RawFiles/Goals/__PROC.txt:987`, 305 call sites corpus-wide; the Shared
+  helper library is described in §4).
 - **Clean up:** `RemoveSummons(_Character,_Die)` (240); `_Temporary=1` bodies go away with the
   combat; `SetImmortal((CHARACTER)_C,1)` (193) and the `DB_PermaDefeated` / `DB_Defeated`
   predicates control death handling; `IsInCombat` (776) / `SetCanJoinCombat` (779) gate participation.
+- **Rule hygiene — why E1 looks so plain.** A rule that never fires is silent: no compile
+  error, no log. Every condition in the `IF` chain (and every query with an `out` argument) is
+  another way the whole rule can quietly fail, so keep the condition set as small as the
+  behaviour allows, do the work in one `PROC` that all trigger rules call, and let
+  `tools/check_goal.py` cover the grammar/names (§3.2, §11). If a test run shows nothing,
+  *subtract* conditions before adding features.
 
 ## 7. Honour-mode gating ✅ (this is the piece that makes it "Honour only")
 
@@ -217,7 +263,7 @@ Two other difficulty levers we already use or could pair with this:
 | `EnteredTrigger((CHARACTER)_Character,(TRIGGER)_Trigger)` (347), `LeftTrigger` (348), `IsInTrigger` (652) | the moment the player walks into an encounter. The event is `EnteredTrigger` — **not** `PlayerEnteredTrigger` |
 | `StatusApplied(_Object,_Status,_Causee,_StoryActionID)` (1169), `StatusRemoved` (1170), `UsingSpell(_Caster,_Spell,…)` (1267), `Saw(_A,_B,_WasSneaking)` (341), `Died((CHARACTER)_C)` (312), `ShortRested(_C)` (1247) | reactive spawns (barrel→kobold, hag counterswap) |
 | `EntityEvent(_Object,_Event)` (1158) / `DualEntityEvent` (1159) + `SetEntityEvent` (600), `SetEntityEventReal` (602), `IterateActiveObjectsInSameCombatGroup(_Object,_Event,_CompletionEvent)` (609) | fan a rule out to every participant of the running combat |
-| `Random(_Modulo,out _Random)` (97), `QRY_OnlyOnce("key")` (~2.6k call sites), `QRY_DoNTimes(_N)` (~50), `TimerLaunch(_Timer,_Time)` (676) / `TimerFinished(_Timer)` (1139), `PROC_LevelLoadedOnce("<level>")` (`Gustav/.../TUT_Start.txt:275`) | chance gates, caps, waves, once-per-level |
+| `Random(_Modulo,out _Random)` (97), `QRY_OnlyOnce("key")` (~2.6k call sites), `QRY_DoNTimes(_N)` (~50), `TimerLaunch(_Timer,_Time)` (676) / `TimerFinished(_Timer)` (1139), `PROC_LevelLoadedOnce("<level>")` | chance gates, caps, waves, once-per-level. `QRY_OnlyOnce` is declared at `Shared/.../_Greevers_Little_Helpers.txt:892`, `QRY_DoNTimes` at `:3146`, `PROC_LevelLoadedOnce` at `:4835` / `Shared/.../ZZZ_LastGoal.txt:207` — all three are Shared-module *helpers*, not engine primitives (`QRY_DoNTimes` is not in `story_header.div`), so treat them as unverified for our files (§4); the once-guard shape is `NOT DB_X(k)` in the conditions + `DB_X(k);` in the `THEN` |
 | `SetLevel(_Object,_Level)` (598) + `GetLevel` (599) + `RequestAutoLevel(_Target)` (985) | level up the mobs the level already placed |
 | `SetAmbushing(_Entity,1)` (1129) | make *existing* mobs hidden reinforcements — no spawn at all |
 
@@ -327,10 +373,12 @@ Rules in `KBSECTION`:
 
 1. `martin_on` / `martin_off` — `TextEvent` toggles, the same idiom as
    `SharedDev/.../GLO_HonorMode.txt:8,19,26`.
-2. **Probe (proof of life, no console needed):** `LevelLoaded("TUT_Avernus_C") AND
-   QRY_OnlyOnce("MARTIN_Probe")` → `DebugText(...)` + `PROC_MARTIN_SpawnAtHost()`. If you see
-   the message and/or a wolf in the first room, the engine compiles goal text from this mount
-   and `CreateAtObject` + `SetFaction` + `SetHostileAndEnterCombat` all work.
+2. **Probe (proof of life, no console needed):** `LevelLoaded("TUT_Avernus_C")` +
+   `NOT DB_MARTIN_ProbeDone("TUT_Avernus_C")` → `DebugText(...)` + `PROC_MARTIN_SpawnAtHost()`.
+   If you see the message and/or a wolf in the first room, the engine compiles goal text from
+   this mount and `CreateAtObject` + `SetFaction` + `SetHostileAndEnterCombat` all work. The
+   once-guard is deliberately our own `DB_` fact rather than vanilla's `QRY_OnlyOnce`, so a
+   null result cannot be explained away by cross-module helper visibility (§4, §13).
 3. **Auto rule:** `CombatStarted(_CombatGuid)` + `DB_HonorMode_Enabled(1)` +
    `DB_MARTIN_AutoEnabled(1)` + `NOT DB_MARTIN_CombatDone(_CombatGuid)` +
    `DB_CurrentLevel(_LevelName)` + `NOT DB_MARTIN_LevelBlacklist(_LevelName)` → marks the
@@ -371,6 +419,11 @@ must be deployed, and §3.1 gets closed.
   runtime on this install (§3, §3.1). The probe in §12 answers it; nothing else on disk does.
 - **Dev console availability** on this Proton install: is `TextEvent` reachable at all? If not,
   all interaction must go through automatic rules like the probe above.
+- **Cross-module helper visibility**: vanilla defines `PROC_`/`QRY_` helpers in `Shared/`
+  (`__PROC.txt`, 457 rules) and calls them from `Gustav`/`GustavDev` goals thousands of times,
+  which suggests one story compile — but we have not proven it here, and paks may carry the
+  same source. E1 avoids the question entirely by declaring everything it uses; once the probe
+  works, a follow-up test could call `QRY_OnlyOnce("…")` to settle it (§4).
 - Do script-spawned characters roll corpse loot, and can their level/`Treasure` property be
   set from a goal (`SetLevel` 598 / `GetLevel` 599 / `RequestAutoLevel` 985)? Where
   `drop-chains.md` and this doc meet.

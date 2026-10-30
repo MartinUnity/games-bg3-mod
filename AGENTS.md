@@ -20,7 +20,9 @@ Where things live:
   944 files, all still stock vanilla (install mtime 2025-09-06). Whether the engine
   compiles loose goal text at all, and from which mount, is **unverified** — see
   `docs/spawn-chains.md` §3. `Data/Mods` is on a read-only mount; only `Data/Public` is
-  writable. No loca files anywhere in the repo.
+  writable. Vanilla keeps a helper library there — `Shared/Story/RawFiles/Goals/__PROC.txt`
+  declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
+  so our own files declare everything they use. No loca files anywhere in the repo.
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
   `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → overridden in
   `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); the story-side equivalent is the

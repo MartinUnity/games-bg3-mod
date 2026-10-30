@@ -20,10 +20,12 @@ INITSECTION
 // Every primitive used here is declared in Story/RawFiles/story_header.div, and the
 // action shape is taken from vanilla call sites (citations in docs/spawn-chains.md):
 //   CreateAtObject              header:589      (vanilla CreateAt: GLO_HagDoubles.txt:205)
-//   SetFaction + Evil faction   header:1014     Gustav/.../Goals/Test.txt:353-355
+//   SetFaction + Evil faction   header:1014     Gustav/.../Goals/Test.txt:345-356
 //   SetHostileAndEnterCombat    header:1002     15 vanilla call sites, e.g. Act3b_LOW_Guildhall
-//   QRY_OnlyOnce                ~2.6k vanilla call sites
 //   DB_HonorMode_Enabled        GLO_HonorMode.txt:66-70 (the PROC that sets it)
+// No Shared-module helper PROC/QRY is used: those live in Shared/.../Goals/__PROC.txt and
+// _Greevers_Little_Helpers.txt, and cross-module visibility is not verified on this install
+// (docs/spawn-chains.md sec.4), so every name in this file is engine-declared or ours.
 // Deliberately no GetPosition/FindValidPosition: anchoring on the host needs no maths,
 // and every extra condition in a rule is another way for it to silently not fire.
 
@@ -39,7 +41,8 @@ DB_MARTIN_LevelBlacklist("END_Main");
 DB_MARTIN_LevelBlacklist("EPI_Main_A");
 
 // What we add: a CHARACTERROOT template. Wolf_41da0eff-... is the one Larian's own
-// spawn test uses (Gustav/.../Goals/Test.txt:353); alternatives are listed there too.
+// spawn test uses (Gustav/.../Goals/Test.txt:353) - the only template in that test file,
+// and a cheap level-1 body. Add more DB_MARTIN_ReinforcementTemplate rows to diversify.
 DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11);
 
 KBSECTION
@@ -69,12 +72,15 @@ DebugText(_Host,"MARTIN_Reinforcements loaded");
 
 // Same proof without the dev console: fires once when the prologue level loads, because
 // TUT_Avernus_C is deliberately not blacklisted above. Seeing the print/wolf means the
-// channel and the mount are both live. QRY_OnlyOnce is the vanilla idiom (~2.6k uses).
+// channel and the mount are both live. Once-guard is our own DB_ fact, in the shape of
+// vanilla's QRY_OnlyOnce body (Shared/.../Goals/_Greevers_Little_Helpers.txt:892-899), so
+// this rule uses no helper declared in another module and its result stays interpretable.
 IF
 LevelLoaded("TUT_Avernus_C")
 AND
-QRY_OnlyOnce("MARTIN_Probe")
+NOT DB_MARTIN_ProbeDone("TUT_Avernus_C")
 THEN
+DB_MARTIN_ProbeDone("TUT_Avernus_C");
 DebugText(NULL_00000000-0000-0000-0000-000000000000,"MARTIN_Reinforcements loaded");
 PROC_MARTIN_SpawnAtHost();
 
