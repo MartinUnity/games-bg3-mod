@@ -323,7 +323,7 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
 
 | # | Recipe | Layer | Confidence | Notes |
 |---|---|---|---|---|
-| E1 | **Global Honour-only reinforcements**: `CombatStarted(_CombatGuid) AND DB_HonorMode_Enabled(1) AND NOT DB_MARTIN_CombatDone(_CombatGuid)` + level blacklist → `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `CreateAtObject(template,_Host,1,1,"",1,_N)` → `SetFaction(_N,(FACTION)Evil_…)` + `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_N,_Host)` | story | **implemented**, in-game result pending | live at `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` + `LevelLoaded` probe, §12 |
+| E1 | **Global Honour-only reinforcements**: `CombatStarted(_CombatGuid) AND DB_HonorMode_Enabled(1) AND NOT DB_MARTIN_CombatDone(_CombatGuid)` + level blacklist → `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `CreateAtObject(template,_Host,1,1,"",1,_N)` → `SetFaction(_N,(FACTION)Evil_…)` + `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_N,_Host)` | story | **implemented**, in-game result pending | live at `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` + `LevelLoaded` probe + Nautiloid room probes (E6), §12 |
 | E2 | **Per-encounter reinforcements** = E1 + `DB_CurrentLevel("<lvl>")` and `EnteredTrigger((CHARACTER)_C,(TRIGGER)S_…)` scoped rules, reusing the level's own spawn markers where a vanilla goal already names them | story | ⚠️ | Precise, avoids story fights. Level names: §12. Marker `S_…` GUIDs must be copied out of existing goals (§6) — they are not enumerable from text |
 | E3 | **Elite-ify what the level already placed**: `ApplyStatus(_M,"OUR_STATUS",-1.0)` on `CombatStarted`, `SetLevel(_M,_L+2)` (`GetLevel` first), `SetAmbushing(_M,1)` before the fight, `DB_CMB_LevelUpNpcInRegion` for named NPCs (`SharedDev/.../GLO_CombatNPCs_PostEA.txt:43-58`), honour-gated `ApplyStatus` on a named NPC (`Gustav/.../Act1_GOB_SpiderNest.txt:1360-1365`) | story + stats | ✅ primitives confirmed | Cheapest, no new bodies → no loot/XP/perf surprises. Needs named NPCs or a way to enumerate enemies (§8 `IterateActiveObjectsInSameCombatGroup`) |
 | E4 | **Stats-layer summons**: give encounter leaders innate/castable summon spells (`SpellProperties "…Summon(<uuid>,…)"`, 183 occurrences in `SharedDev/…/Spell_Target.txt`), or a status whose passive `TriggerRandomCast(chance,,Spell)` (`Shared/…/Passive.txt:1623` `WildMagic`) fires it. A passive on `_Base` + `DifficultyStatuses "STATUS_HARD: …"` would make it Honour-only | stats | ⚠️ the AI has to actually cast it; `OnCombatStarted`/`OnRound` functor contexts exist in `Enumerations.xml` but are used 0× by vanilla passives | Slower to iterate than E1/E2, and summon-AI is the weak link |
@@ -355,7 +355,7 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
 - **Cutscenes and companion-critical fights** (Myrnath, Ketheric, the Emperor…) are scripted
   state machines; reinforcements there break scripts. Gate by level/trigger.
 
-## 12. E1 as implemented, and how to test it
+## 12. E1 + E6 (Nautiloid room probes) as implemented, and how to test them
 
 File: `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` (in this repo, CRLF,
 git-tracked). Validator-clean: `python3 tools/check_goal.py`. Delete the file to remove the
@@ -379,28 +379,58 @@ Rules in `KBSECTION`:
    this mount and `CreateAtObject` + `SetFaction` + `SetHostileAndEnterCombat` all work. The
    once-guard is deliberately our own `DB_` fact rather than vanilla's `QRY_OnlyOnce`, so a
    null result cannot be explained away by cross-module helper visibility (§4, §13).
-3. **Auto rule:** `CombatStarted(_CombatGuid)` + `DB_HonorMode_Enabled(1)` +
+3. **Nautiloid room probes (E6)** — `EnteredTrigger((CHARACTER)_Char,(TRIGGER)S_…)` +
+   `DB_HonorMode_Enabled(1)` + `DB_MARTIN_AutoEnabled(1)` + own once-guard
+   `NOT DB_MARTIN_RoomDone("…")` → `DebugText(_Char,"MARTIN probe: …")` + `PROC_MARTIN_SpawnAt(_Char)`.
+   The triggers are registered in `INITSECTION` with the engine call
+   `TriggerRegisterForPlayers` (header:1305 — the call vanilla wraps in
+   `PROC_TriggerRegisterForPlayers`, `Shared/.../__AAA_FirstGoal.txt:3044`), so no
+   Shared helper is needed. Anchors, all named by vanilla goals (✅ GUIDs diffed against
+   `Data/Mods`):
+
+   | Room | Trigger | Vanilla names it at |
+   |---|---|---|
+   | 2 (transform chamber, Shadowheart's pod) | `S_TUT_TransformChamber_EnterChamber_096ae849-…` | `TUT_TransformChamber.txt:153` |
+   | 2b (lab rubble room, devourer callout) | `S_TUT_Misc_RubbleRoom_001_5873b16d-…` | `TUT_Laboratory.txt:515` |
+   | 3 (imp room entry, pre-combat) | `S_TUT_ImpRoom_ShakeTrigger_711cd164-…` | `TUT_LowerDeck.txt:9,396` |
+   | 3b (imp combat region) | `S_TUT_LowerDeck_CombatEvent_5eb34cda-…` | `TUT_LowerDeck.txt:4` |
+   | 3c (lower-deck room) | `S_TUT_LowerDeck_RoomTrigger_ebbf3bb5-…` | `TUT_LowerDeck.txt:418` |
+
+   Room 2/3 probes spawn a *hostile* wolf on the entering character — i.e. they create a
+   brand-new fight in a room that has none (room 2) or reinforce the first combat (room 3).
+   The imp room's own NPCs are also nameable if an imp anchor is ever wanted:
+   `S_FirstFight_Imp_Melee_01_07f1512b-…`, `_Ranged_01_38d1ce2f-…`, `_Melee_02_5c5bd50b-…`,
+   `_Ranged_02_df44fa65-…` (`TUT_LowerDeck.txt:15-21`), and
+   `TUT_ImpRoom_CombatPlayerPosition_001_df89b981-…` is a position marker vanilla reads
+   with `GetPosition` (`TUT_LowerDeck.txt:329`).
+4. **Auto rule:** `CombatStarted(_CombatGuid)` + `DB_HonorMode_Enabled(1)` +
    `DB_MARTIN_AutoEnabled(1)` + `NOT DB_MARTIN_CombatDone(_CombatGuid)` +
    `DB_CurrentLevel(_LevelName)` + `NOT DB_MARTIN_LevelBlacklist(_LevelName)` → marks the
    combat done, calls the spawner. One body per combat, nothing else.
-4. **Spawner PROC:** `GetHostCharacter` → `CreateAtObject((CHARACTERROOT)_Template,_Host,1,1,"",1,_Spawn)`
-   (temporary, no spawn VFX gate, matched orientation) → `SetFaction(_Spawn,(FACTION)Evil_…)`
-   → `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_Spawn,_Host)`.
+5. **Spawner PROC:** `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `PROC_MARTIN_SpawnAt(_Host)`;
+   `PROC_MARTIN_SpawnAt((CHARACTER)_Anchor)` = `CreateAtObject((CHARACTERROOT)_Template,_Anchor,1,1,"",1,_Spawn)`
+   (temporary, spawn VFX on, matched orientation) → `SetFaction(_Spawn,(FACTION)Evil_…)`
+   → `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_Spawn,_Anchor)`.
    `CreateAtObject` (header:589) is chosen over `CreateAt` because it needs no coordinates:
    fewer queries in the rule = fewer ways for it to silently fail. If it turns up on top of
    the host, switch to the `CreateAt` + `FindValidPosition` shape of §9.
-5. **Bookkeeping:** forget spawned bodies that reach `DB_Defeated`.
+6. **Bookkeeping:** forget spawned bodies that reach `DB_Defeated`.
 
-Test protocol (≈2 minutes, no save needed):
+Test protocol (≈5 minutes, no save needed — this is the Nautiloid walkthrough):
 
 1. Start a **new Honour-mode** game.
-2. Watch the first room (the nautiloid bridge/lab). Expected if the file is live: a
-   `MARTIN_Reinforcements loaded` debug print and/or a wolf attacking.
-3. If you have the dev console (`bg3.exe` dev build, or a beta-branch launch option — ⚠️ not
+2. **Room 1 (pod):** expected if the file is live: a `MARTIN_Reinforcements loaded` debug
+   print and/or a wolf attacking on load.
+3. Walk to **room 2** (transform chamber, then the rubble room): expect the
+   `MARTIN probe: room 2…` prints and a hostile wolf spawning on top of you — a new
+   encounter created from text in a room that has none.
+4. Walk to **room 3** (imp room): expect the room-3 probe wolf *and*, when the imp fight
+   starts, the `CombatStarted` rule's wolf — i.e. reinforcements joining an existing
+   encounter. (Up to ~3 wolves total here: one per room probe that fired + one per combat.)
+5. If you have the dev console (`bg3.exe` dev build, or a beta-branch launch option — ⚠️ not
    verified on this install), also try `martin_hello`, `martin_spawn`, `martin_off`,
    `martin_on`. The vanilla analogue is documented at `GLO_HonorMode.txt:6-31`.
-4. Start any fight on the nautiloid; expect exactly one extra wolf joining it.
-5. Negative control: turn Honour off (or start a non-Honour save) → no spawns.
+6. Negative control: start a non-Honour save → no prints, no spawns.
 
 Interpreting a null result: nothing appearing means **the channel or the mount is wrong**,
 not the rule — the checker already guarantees the grammar and names (§3.2). Then:
