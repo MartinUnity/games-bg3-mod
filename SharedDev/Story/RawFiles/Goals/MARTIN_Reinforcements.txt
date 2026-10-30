@@ -1,0 +1,130 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+// MARTIN_Reinforcements - experiment E1 from docs/spawn-chains.md:
+// one extra hostile body per combat, Honour mode only.
+//
+// Master copy: this repo, Data/Public/SharedDev/Story/RawFiles/Goals/ (git-tracked).
+// If an in-game test shows goals are not compiled out of Data/Public, run
+// tools/deploy_story.sh --copy to also drop it in Data/Mods/SharedDev/Story/RawFiles/Goals/.
+// Keep CRLF line endings (every vanilla goal file is CRLF).
+//
+// Kill switch: dev-console command "martin_off", or delete/rename this file.
+// Check the grammar before deploying: python3 tools/check_goal.py
+//
+// Is this file compiled at all? Test order (docs/spawn-chains.md sec.12):
+//   martin_hello  -> proof the story engine reads this file from this mount
+//   martin_spawn  -> proof CreateAt + positioning + faction work
+//   (start any fight) -> the auto rule above
+//
+// Every primitive used here is declared in Story/RawFiles/story_header.div, and the
+// action shape is taken from vanilla call sites (citations in docs/spawn-chains.md):
+//   CreateAtObject              header:589      (vanilla CreateAt: GLO_HagDoubles.txt:205)
+//   SetFaction + Evil faction   header:1014     Gustav/.../Goals/Test.txt:353-355
+//   SetHostileAndEnterCombat    header:1002     15 vanilla call sites, e.g. Act3b_LOW_Guildhall
+//   QRY_OnlyOnce                ~2.6k vanilla call sites
+//   DB_HonorMode_Enabled        GLO_HonorMode.txt:66-70 (the PROC that sets it)
+// Deliberately no GetPosition/FindValidPosition: anchoring on the host needs no maths,
+// and every extra condition in a rule is another way for it to silently not fire.
+
+DB_MARTIN_AutoEnabled(1);
+
+// Levels where we do NOT add bodies: endgame / cutscene-driven. The prologue
+// (TUT_Avernus_C) is deliberately NOT blacklisted, so the Nautiloid lab fight is a test case.
+DB_MARTIN_LevelBlacklist("CRE_Main_A");
+DB_MARTIN_LevelBlacklist("INT_Main_A");
+DB_MARTIN_LevelBlacklist("BGO_Main_A");
+DB_MARTIN_LevelBlacklist("IRN_Main_A");
+DB_MARTIN_LevelBlacklist("END_Main");
+DB_MARTIN_LevelBlacklist("EPI_Main_A");
+
+// What we add: a CHARACTERROOT template. Wolf_41da0eff-... is the one Larian's own
+// spawn test uses (Gustav/.../Goals/Test.txt:353); alternatives are listed there too.
+DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11);
+
+KBSECTION
+// On/off toggle, same dev-console idiom as SharedDev/.../GLO_HonorMode.txt:17-27.
+IF
+TextEvent("martin_on")
+AND
+NOT DB_MARTIN_AutoEnabled(1)
+THEN
+DB_MARTIN_AutoEnabled(1);
+
+IF
+TextEvent("martin_off")
+AND
+DB_MARTIN_AutoEnabled(1)
+THEN
+NOT DB_MARTIN_AutoEnabled(1);
+
+// Proof-of-life probe: if this prints, the story engine compiled this file from this
+// mount. DebugText is declared at story_header.div:668; GLO_HonorMode.txt:12-16 uses it.
+IF
+TextEvent("martin_hello")
+AND
+GetHostCharacter(_Host)
+THEN
+DebugText(_Host,"MARTIN_Reinforcements loaded");
+
+// Same proof without the dev console: fires once when the prologue level loads, because
+// TUT_Avernus_C is deliberately not blacklisted above. Seeing the print/wolf means the
+// channel and the mount are both live. QRY_OnlyOnce is the vanilla idiom (~2.6k uses).
+IF
+LevelLoaded("TUT_Avernus_C")
+AND
+QRY_OnlyOnce("MARTIN_Probe")
+THEN
+DebugText(NULL_00000000-0000-0000-0000-000000000000,"MARTIN_Reinforcements loaded");
+PROC_MARTIN_SpawnAtHost();
+
+// THE RULE: one extra body per combat that is already running.
+IF
+CombatStarted(_CombatGuid)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_CombatDone(_CombatGuid)
+AND
+DB_CurrentLevel(_LevelName)
+AND
+NOT DB_MARTIN_LevelBlacklist(_LevelName)
+THEN
+DB_MARTIN_CombatDone(_CombatGuid);
+PROC_MARTIN_SpawnAtHost();
+
+// Manual single spawn from the dev console: tests CreateAt/position/faction without a fight.
+IF
+TextEvent("martin_spawn")
+THEN
+PROC_MARTIN_SpawnAtHost();
+
+// The spawn itself, shared by the console command and the LevelLoaded probe.
+// CreateAtObject anchors on a character, so no coordinate maths is needed;
+// _MatchOrientation=1 faces the copy the same way as the anchor (header:589).
+PROC
+PROC_MARTIN_SpawnAtHost()
+AND
+GetHostCharacter(_Host)
+AND
+DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)_Template)
+AND
+CreateAtObject((CHARACTERROOT)_Template,_Host,1,1,"",1,_Spawn)
+THEN
+DB_MARTIN_Spawned((CHARACTER)_Spawn);
+SetFaction(_Spawn,(FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17);
+SetHostileAndEnterCombat((FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17,(FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360,_Spawn,_Host);
+
+// Bookkeeping: forget bodies that died.
+IF
+DB_MARTIN_Spawned((CHARACTER)_Spawn)
+AND
+DB_Defeated((CHARACTER)_Spawn)
+THEN
+NOT DB_MARTIN_Spawned((CHARACTER)_Spawn);
+
+EXITSECTION
+// Nothing to clean up: the bodies we create are temporary objects owned by the level.
+ENDEXITSECTION

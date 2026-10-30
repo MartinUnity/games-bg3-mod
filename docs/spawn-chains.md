@@ -10,23 +10,26 @@ from the grammar/precedent but needs an in-game test before we rely on it.
 
 ## 1. Verdict
 
-**Yes.** An Osiris goal file can create brand-new characters at runtime, gate them on
-Honour mode, place them at a legal position, and drop them into a combat that is already
-running. ✅ Vanilla itself does exactly this (the Hag's "doubles", extra ones **only in
-Honour mode**), and it does it in the same loose goal files we already hand-edit.
+**Yes in principle, unproven on this install.** An Osiris goal file can create brand-new
+characters at runtime, gate them on Honour mode, place them at a legal position, and drop
+them into a combat that is already running. ✅ Vanilla itself does exactly this (the Hag's
+"doubles", extra ones **only in Honour mode**) — see §9 for the call sites. ⚠️ What is *not*
+yet verified here is that the engine compiles goal text on this install at all (§3), nor
+which mount it reads (§3.1). Experiment E1 (§12) is built to answer both in one minute of
+gameplay.
 
 What stays binary: where an encounter *is* — which mobs the level places, its trigger
 regions, its spawn markers, its AI grid. We cannot add a brand-new encounter to a level,
 nor move its markers. But we can add bodies to encounters that already exist, anchored on
-the level's own spawn markers (addressable by name from goals), on the players, or on
-props/casualties.
+the level's own spawn markers (addressable by name from goals — but only ones some goal
+already names, §6), on the players, or on props/casualties.
 
 ## 2. Three layers — and a correction to `drop-chains.md` §5
 
 | Layer | Editable? | What lives there |
 |---|---|---|
-| **Level / scene data** (`.lvl`, `.lsf`, `.lsx` inside `Data/*.pak`) | No | the encounter's placed mobs, trigger regions, spawn-point markers, AI grid, loot wiring |
-| **Story goals** (`Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt`) | **Yes — already part of our deployment** (`overview.md` §6) | Osiris rules: create/transform/teleport characters, factions, combat grouping, flags, timers |
+| **Level / scene data** (`.lvl`, `.lsf`, `.lsx`; packed in `Data/*.pak` per Larian's format — ⚠️ not verified on this install, §3) | No | the encounter's placed mobs, trigger regions, spawn-point markers, AI grid, loot wiring |
+| **Story goals** (`Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt`) | Loose text is present and editable — ⚠️ never edited by us, runtime loading unproven (§3) | Osiris rules: create/transform/teleport characters, factions, combat grouping, flags, timers |
 | **Stat tables** (this repo, `Data/Public/**/Stats/Generated/`) | Yes | template stats, statuses, passives, innate/summon spells, difficulty hooks |
 
 `drop-chains.md`:121 says new-encounter wiring "is not possible in text". Correct for
@@ -35,19 +38,52 @@ X"), but **the mob itself can be created in text**. ⚠️ Whether a script-spaw
 drops anything (equipment only? nothing?) is untested — check before depending on spawns
 for loot.
 
-## 3. Why this channel is known-live (the question that gated everything)
+## 3. What we actually know about the goal channel (read this before trusting §1)
 
-- ✅ `overview.md` §6: our story/goal edits ("level cap, 3 short rests, companion & pet
-  changes") are hand-edited files under `Data/Mods/*/Story/RawFiles/`, deployed with the
-  game, not registered as mods. They work in game → the engine reads loose goal text.
-- ✅ `Data/Mods/*/Story/RawFiles/Goals/` on this install holds 944 loose `.txt` goals
-  (Gustav 253, GustavDev 554, Shared 122, SharedDev 17, GustavX 8) and **nothing compiled**
-  — no `.osiris`/`.loca` story blobs anywhere on disk.
+- ✅ `Data/Mods/*/Story/RawFiles/Goals/` holds **944 loose goal `.txt` files** on this install
+  (Gustav 251, GustavDev 552, Shared 120, SharedDev 15, GustavX 6) plus `story_header.div`
+  and an **empty (0-byte) `story_definitions.div`** per module. `GustavDev/.../GLO_ActivitiesPS5.txt`
+  among them says this tree shipped with a console/PS5-flavoured install.
+- ✅ Those files are all vanilla: every one has the install mtime (2025-09-06), and
+  `find Data/Mods -name '*.txt' -newermt 2025-11-20` returns nothing — **we have never edited a
+  story file here.** The "level cap / 3 short rests / companion changes" in `overview.md` §6 are
+  implemented in **stats**, not in these goal files (grepping the story tree for
+  `SHORT_REST_LIMIT`/`MaxShortRest`/`LevelCap` finds nothing). ⚠️ So there is currently **no
+  local evidence that loose goal text is read at runtime** — §1's verdict rests on the grammar
+  and on vanilla precedent, and the experiment in §12 is what settles it.
 - ✅ The header file is machine-generated text listing the engine's installed calls and
   queries (`story_header.div`, "Story header automatically generated. Do not modify!") —
-  558 `call`, 425 `query`, 320 `event` lines in the GustavDev copy. It declares **no**
-  `DB_` predicates, so a new goal file may introduce its own `DB_`/`FLAG`/`TAG` names
-  without registering them anywhere. ⚠️ (Unique names are still on us; collisions are silent.)
+  558 `call`, 425 `query`, 320 `event` lines in the GustavDev copy (Shared: 541/407/311). It
+  declares **no** `DB_` predicates, so a new goal file may introduce its own `DB_`/`FLAG`/`TAG`
+  names without registering them anywhere. ⚠️ (Unique names are still on us; collisions are silent.)
+- ⚠️ **Pak contents cannot be checked by grepping on this box.** There is no `limpak`/`bg3pak`
+  installed, and `grep -a` over `Data/*.pak` is useless: it finds `Stats/Generated` and
+  `TreasureTable` only 3 times each (and those files are certainly in the pak) because the
+  payloads and the file-name index are compressed. Any earlier claim of the form "`limpak -l`
+  shows no story/level paths in the paks" was a **missing-binary artifact, not a result** —
+  including the "no `.lvl` in paks" claim in §2's table, which is Larian's documented format,
+  not something we verified here. Install a pak reader before restating either direction.
+
+### 3.1 Which mount a *new* goal file is compiled from — unresolved
+
+| Location | Writable? | What it holds |
+|---|---|---|
+| `Data/Public/<Module>/Story/RawFiles/Goals/` | **yes** — this repo, a `rw` bind mount | our master copy; no vanilla goal ever lived here |
+| `Data/Mods/<Module>/Story/RawFiles/Goals/` | **no** — `/home/martin/.local` is mounted `ro` (`findmnt`: `errors=remount-ro`); only `Data/Public` is a separate `rw` mount | where the vanilla loose goals actually sit |
+
+`tools/deploy_story.sh --copy` mirrors our `MARTIN_*.txt` goals into `Data/Mods/…`; it
+refuses to run if the target is not writable (needs `sudo mount -o remount,rw /home/martin/.local`
+first). The in-game test in §12 settles the question: if `martin_spawn` works with only the
+repo copy present, `Data/Public` is compiled and no fallback is needed.
+
+### 3.2 Trust only names you have grepped
+
+An earlier research pass over this material invented plausible API names. Confirmed **not to
+exist** anywhere on this install: `CombatGetCombatGroupIDFor`, `PlayerEnteredTrigger`,
+`GetLevelName`, `GetEntityList`, `CharacterGetGuid`, `RemoveCharacter`. The real ones are in
+`story_header.div` (§5, §8). `python3 tools/check_goal.py` now enforces this: every
+call/query/event in a goal file we write must appear in a `story_header.div`, and every
+`DB_` predicate must be written by at least one vanilla goal (or by our own file).
 
 ## 4. Goal file skeleton ✅
 
@@ -82,9 +118,9 @@ there; other modules' headers differ slightly):
 | 588 | `CreateAt(_TemplateId, _X, _Y, _Z, _Temporary, _PlaySpawn, _SpawnFinishEvent, out _CreatedObject)` |
 | 589 | `CreateAtObject(_TemplateId, _Anchor, _Temporary, _PlaySpawn, _SpawnFinishEvent, _MatchOrientation, out _CreatedObject)` — no coordinates needed, anchors on any object/character |
 | 590 | `CreateOutOfSightAtDirection(_TemplateId, _X,_Y,_Z, _DirectionAngle, _Temporary, _PlaySpawn, _SpawnFinishEvent, out _CreatedObject)` — ambush arrivals |
-| — | `CreateOutOfSightAtDirectionFromObject(_TemplateId, _AnchorObject, _DirectionFrom, _Temporary, _PlaySpawn, _SpawnFinishEvent, out _CreatedObject)` — the crime-guard spawn idiom (`Shared/.../_CRIME_CrimeGuards.txt:1647-1661`) |
-| 100 | `AppearOutOfSightTo(_Character, _Target, _DirectionFrom, _PlaySpawn, _Anim, _Event, _PreventTeleportOnFailure)` — also `AppearAt`, `AppearAtPosition` — teleport an *existing* NPC in |
-| — | `Transform(_Object, _TargetTemplate, _ShapeshiftRule)` (158 uses in loose goals) — swap one body for another, e.g. escort → monster |
+| 591 | `CreateOutOfSightAtDirectionFromObject(_TemplateId, _AnchorObject, _DirectionFrom, _Temporary, _PlaySpawn, _SpawnFinishEvent, out _CreatedObject)` — the crime-guard spawn idiom (`Shared/.../_CRIME_CrimeGuards.txt:1647-1661`) |
+| 98-100 | `AppearAt(_Character,_Target,…)`, `AppearAtPosition(_Character,_X,_Y,_Z,…)`, `AppearOutOfSightTo(_Character,_Target,_DirectionFrom,…)` — teleport an *existing* NPC in |
+| 898 | `Transform(_Object, _TargetTemplate, _ShapeshiftRules)` — swap one body for another, e.g. escort → monster; vanilla uses it in the prologue lab (`Gustav/.../TUT_Laboratory.txt:80`) |
 
 Notes on the shared argument shape: `_Temporary` `1` = summon-like (vanilla Hag doubles
 pass `1`); `_PlaySpawn` `1` = play the spawn VFX; `_SpawnFinishEvent` is a script event
@@ -99,42 +135,68 @@ Working vanilla call sites ✅:
 
 ## 6. Legal positions, factions, and joining a running fight ✅
 
-- **Don't spawn inside geometry.** `FindValidPosition(_X,_Y,_Z, _Radius, _Object, _AvoidDangerousSurfaces, out _NX,_NY,_NZ)` (`story_header.div:654`) with a plain-position fallback — this is exactly what vanilla does in `Gustav/.../GLO_HagDoubles.txt:249-266`, then `CreateAt(…,1,1,"",_HagDouble)` at `:205`.
-- **Anchor sources**: level spawn markers are addressable *by name* from goals
-  (`DB_LOW_HagDoublesSpawnPoints((TRIGGER)…)` → `GLO_HagDoubles_PostEA.txt:68-78`; trigger
-  GUIDs appear in goals all the time, e.g. `GLO_CombatNPCs_PostEA.txt:10`). Also
-  `GetPosition` (588→624), `GetDistanceTo` (626), `GetClosestAlivePlayer(_Target, out _Player, out _Dist)` (895),
+- **Don't spawn inside geometry.** `FindValidPosition(_X,_Y,_Z, _Radius, _Object,
+  _AvoidDangerousSurfaces, out _NX,_NY,_NZ)` (`story_header.div:654`). Vanilla wraps it in a
+  `QRY` plus a plain-position fallback: `QRY_HAG_SpawnDoubles_FindValidPosition` at
+  `Gustav/.../GLO_HagDoubles.txt:251-257` (solver) and `:261-267` (fallback, guarded by
+  `NOT DB_HAG_SpawnDoubles_FindValidPosition(_Char,_,_,_)`), consumed at `:201-205` before
+  `CreateAt(…,1,1,"",_HagDouble)`. Inline in a rule chain also works (vanilla does it inside
+  the QRY at `:255`).
+- **Anchor sources**: level spawn markers are addressable *by name* from goals — vanilla seeds
+  trigger GUIDs into a predicate: `DB_LOW_HagDoublesSpawnPoints((TRIGGER)S_LOW_BlushingMermaid_DoublesSpawnPoint_001_…)`
+  (`GustavDev/.../Act3b_LOW_BlushingMermaid.txt:149-152`). Those `S_…` names come from the level
+  and are copied into goals by Larian, so **a marker you want is only usable if some goal already
+  names it**. Position helpers: `GetPosition` (624), `GetDistanceTo` (626), `GetClosestAlivePlayer(_Target,
+  out _Player, out _Dist)` (895), `IsInTrigger` (652), `PositionIsInTrigger` (653),
   `CharacterTemplatesInTrigger(_CHARACTERROOT, _TRIGGER, out _Count)` (1309).
-- **Join the combat that is already going:** `SetCombatGroupID(_New, "<GroupID>")` (946) —
-  vanilla: `SetCombatGroupID(_HagDouble,"HAG_Hag_State_HagInLair")` (`GLO_HagDoubles.txt:218`);
-  the group-ID string is authored in level data, so **reuse one you can read in a goal file**.
-  `SetCombatGroupAndEnterCombat(_New, _GroupID, _Enemy)` (922) or plain
-  `EnterCombat(_Source,_Target)` (993; used directly in goals, e.g.
-  `EnterCombat(S_SHA_Necromancer_FleshGolem_…, _Char)`).
-  `IGNORE_COMBAT_LATE_JOIN_PENALTY_6d60bed7-…` tag exists to skip the late-join initiative
-  penalty (`GLO_HagDoubles_PostEA.txt:14`).
-- **Make them mean:** copy an existing faction rather than inventing one —
-  `GetFaction(_ExistingEnemy,_F)` then `SetFaction(_New,_F)`; or the vanilla hostility
-  engine `PROC_SetRelationMutual((FACTION)_Mine,_Faction,0)` on `Saw(_A,_B,_)`
-  (`Act1_FOR_DangerousBook_PostEA.txt:64-79`). `SetHostileAndEnterCombat(_FA,_FB,_A,_B)` (921).
-- **Clean up:** `RemoveSummons(_Character, _Die)` (240); `_Temporary=1` bodies go away with
-  the combat; `DB_PermaDefeated`/`SetImmortal` control death handling.
+- **Join the combat that is already going.** `SetCombatGroupID(_New,"<GroupID>")` (946) —
+  vanilla sets the encounter's own group string: `SetCombatGroupID(_HagDouble,"HAG_Hag_State_HagInLair")`
+  (`GLO_HagDoubles.txt:218`) and `SetCombatGroupID(_HagDouble,"LOW_HagBossFight")`
+  (`GLO_HagDoubles_PostEA.txt:18`); read one with `GetCombatGroupID(_Target,out _GroupID)` (945),
+  or set-and-fight with `SetCombatGroupAndEnterCombat(_Target,_GroupID,_Enemy)` (1003).
+  `EnterCombat(_Source,_Target)` (993) is used directly, e.g.
+  `EnterCombat(S_HAG_Hag_c457d064-…,_Player)`. The late-join initiative penalty is skipped by
+  tagging: `SetTag(_New,(TAG)IGNORE_COMBAT_LATE_JOIN_PENALTY_6d60bed7-10cc-4b52-8fb7-baa75181cd49)`
+  (`GLO_HagDoubles_PostEA.txt:15`). ⚠️ There is **no** `CombatGetCombatGroupIDFor` — that name
+  appears in some online write-ups and does not exist in this header.
+- **Make them mean.** `SetHostileAndEnterCombat((FACTION)_A,(FACTION)_B,_Attacker,_Target)` (1002)
+  is the vanilla one-liner, always written with a real faction pair, e.g.
+  `SetHostileAndEnterCombat((FACTION)Act3_LOW_ArajBloodMerchant_4f198d21-…, (FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360, S_MOO_InfernalVendor_…, _Player)`.
+  `Hero_a1542c81-6895-929e-4522-10ce218bb360` is the player faction; `Evil_4be9261a-e481-8d9d-3528-f36956a19b17`
+  is the catch-all hostile faction (`Gustav/.../Goals/Test.txt:354`). Set one directly with
+  `SetFaction(_Target,(FACTION)…)` (1014), read one with `GetFaction` (1015), or wire relations
+  with the vanilla helper `PROC_SetRelationMutual((FACTION)_A,(FACTION)_B,_Value)` (defined in 88
+  goal files, 305 uses).
+- **Clean up:** `RemoveSummons(_Character,_Die)` (240); `_Temporary=1` bodies go away with the
+  combat; `SetImmortal((CHARACTER)_C,1)` (193) and the `DB_PermaDefeated` / `DB_Defeated`
+  predicates control death handling; `IsInCombat` (776) / `SetCanJoinCombat` (779) gate participation.
 
 ## 7. Honour-mode gating ✅ (this is the piece that makes it "Honour only")
 
 `SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt` is a vanilla global goal that keeps a
 single predicate in step with the ruleset modifier:
 
-- `:10` `CheckRulesetModifierBool(HONOUR_STATS_ef0506df-da9f-40e2-903a-1349523c1ae4, 1, _Return)`
-- `:31-45` on `LevelLoaded(_LevelName)` / `RulesetModifierChangedBool(…)` it runs
-  `PROC_HonorMode_Enable/Disable`
-- `:66-77` which flips `DB_HonorMode_Enabled(1)`
+- `:8,19,26` dev-console `TextEvent`s `honormode` / `honormodeon` / `honormodeoff`
+- `:10,39,53` `CheckRulesetModifierBool(HONOUR_STATS_ef0506df-da9f-40e2-903a-1349523c1ae4,…)` (header `:1042`)
+- `:36-62` on `LevelLoaded(_LevelName)` and on `RulesetModifierChangedBool(…)` (header `:1292`)
+  it runs `PROC_HonorMode_Enable/_Disable`
+- `:65-77` those PROCs flip the single predicate `DB_HonorMode_Enabled(1)`
 
-So **any** goal we write can simply say `DB_HonorMode_Enabled(1)`. Vanilla uses it that way
-in `GLO_HagHonourMode.txt`, `GLO_HagDoubles_PostEA.txt:22,58`,
-`SharedDev/.../GLO_CombatNPCs_PostEA.txt:878,890`, `Gustav/.../Act1_GOB_SpiderNest.txt:1363`.
-`GLO_HonorMode.txt:6-27` also wires the dev console: `TextEvent("honormode")`,
-`"honormodeon"`, `"honormodeoff"` → handy for A/B testing a spawn rule without restarting.
+So **any** goal we write can simply say `DB_HonorMode_Enabled(1)`. Verified vanilla consumers:
+`GustavDev/.../GLO_HagDoubles_PostEA.txt:22,58`, `GustavDev/.../GLO_HonorMode_Gustav.txt:14,30`,
+`GustavDev/.../GLO_Tutorials.txt:1012,1037`, `GustavDev/.../Act3b_LOW_BhaalTemple_Combat.txt:261,268`,
+`Gustav/.../Act1_GOB_SpiderNest.txt:1363,1370`, `SharedDev/.../GLO_CombatNPCs_PostEA.txt:878,890`.
+A clean one to copy — honour-only status on a level-placed NPC:
+
+```
+// Gustav/Story/RawFiles/Goals/Act1_GOB_SpiderNest.txt:1360-1365
+PROC
+PROC_GOB_SpiderNest_ProcessVictimFall((CHARACTER)S_GOB_GoblinKing_11337af0-…)
+AND
+DB_HonorMode_Enabled(1)
+THEN
+ApplyStatus((CHARACTER)S_GOB_GoblinKing_11337af0-…, "GOB_DROR_UNLOCK_SPIDER_SPELL", -1.0);
+```
 
 Two other difficulty levers we already use or could pair with this:
 - Stats layer: `Shared/Stats/Generated/Data/Character.txt:25` (`_Base`) →
@@ -145,18 +207,22 @@ Two other difficulty levers we already use or could pair with this:
   (`GLO_HagDoubles.txt:224-230`) — same interaction applies to anything we spawn.
 - NPC level-ups by region, no new bodies needed: `DB_CMB_LevelUpNpcInRegion((CHARACTER)S_…, "CTY_Main_A", 11, "LOW_WULBREN_LEVEL_11")` (`GLO_CombatNPCs_PostEA.txt:44-58`).
 
-## 8. Hooks available in goals (counts = uses across the 944 loose goals) ✅
+## 8. Hooks available in goals ✅ (header line numbers; vanilla use counts noted inline)
 
-| Hook | Use for |
+| Hook (header line) | Use for |
 |---|---|
-| `CombatStarted(_CombatID)` (27), `CombatRoundStarted(_CombatID,_Round)` (35), `EnteredCombat(_A,_ID)`, `CombatEnded(` (164) | reinforcement waves, round-N ambushes |
-| `DB_Is_InCombat(_Char,_ID)`, `CombatGetInvolvedPlayersCount(_ID,out _N)` (765), `CombatGetActiveEntity` | size the response off the fight |
-| `LevelLoaded("TUT_…")` / `DB_CurrentLevel("CTY_Main_A")` | scope a rule to one level (198 uses of `DB_CurrentLevel("CTY_Main_A")` alone) |
-| `PlayerEnteredTrigger((TRIGGER)S_…)` | the moment the player walks into an encounter |
-| `StatusApplied(_C,"STATUS",_,_)`, `UsingSpell(_C,"Spell",_,_,_)`, `CharacterDied(` | reactive spawns (barrel/kobold, hag counterswap) |
-| `Saw(_A,_B,_)`, `DB_Sees`, `QRY_IsEnemyToAnyPlayerInCombat` | aggro/faction wiring |
-| `Random(_Modulo, out _R)` (97), `QRY_OnlyOnce("key")` (2458), `QRY_DoNTimes(_N)` (34), `TimerLaunch`/`TimerFinished`, `DB_PermaDefeated` | chance gates, caps, waves |
+| `CombatStarted(_CombatGuid)` (1197), `EnteredCombat(_Object,_CombatGuid)` (1194), `CombatEnded(_CombatGuid)` (1199) | reinforcement waves, one-per-combat rules |
+| `CombatGetInvolvedPlayersCount` (765), `CombatGetInvolvedPlayer(_Guid,_Index,out _Player)` (770), `CombatGetInvolvedPartyMembersCount` (769) / `CombatGetInvolvedPartyMember` (771), `CombatGetActiveEntity` (773), `IsInCombat` (776) | size the response off the fight; enumerate who is in it |
+| `LevelLoaded(_NewLevel)` (1141), `LevelGameplayStarted(_LevelName,_)` (1134), `EnteredLevel` (1144) / `LeftLevel` (1145), `DB_CurrentLevel(_L)` | scope a rule to one level. `DB_CurrentLevel` is maintained for us: `IF LevelLoaded((STRING)_NewRegion) THEN DB_CurrentLevel(_NewRegion);` at `Shared/.../Goals/__AAA_FirstGoal.txt:2954-2957` |
+| `EnteredTrigger((CHARACTER)_Character,(TRIGGER)_Trigger)` (347), `LeftTrigger` (348), `IsInTrigger` (652) | the moment the player walks into an encounter. The event is `EnteredTrigger` — **not** `PlayerEnteredTrigger` |
+| `StatusApplied(_Object,_Status,_Causee,_StoryActionID)` (1169), `StatusRemoved` (1170), `UsingSpell(_Caster,_Spell,…)` (1267), `Saw(_A,_B,_WasSneaking)` (341), `Died((CHARACTER)_C)` (312), `ShortRested(_C)` (1247) | reactive spawns (barrel→kobold, hag counterswap) |
+| `EntityEvent(_Object,_Event)` (1158) / `DualEntityEvent` (1159) + `SetEntityEvent` (600), `SetEntityEventReal` (602), `IterateActiveObjectsInSameCombatGroup(_Object,_Event,_CompletionEvent)` (609) | fan a rule out to every participant of the running combat |
+| `Random(_Modulo,out _Random)` (97), `QRY_OnlyOnce("key")` (~2.6k call sites), `QRY_DoNTimes(_N)` (~50), `TimerLaunch(_Timer,_Time)` (676) / `TimerFinished(_Timer)` (1139), `PROC_LevelLoadedOnce("<level>")` (`Gustav/.../TUT_Start.txt:275`) | chance gates, caps, waves, once-per-level |
+| `SetLevel(_Object,_Level)` (598) + `GetLevel` (599) + `RequestAutoLevel(_Target)` (985) | level up the mobs the level already placed |
 | `SetAmbushing(_Entity,1)` (1129) | make *existing* mobs hidden reinforcements — no spawn at all |
+
+There is **no damage/hit event** in the header (no `event *Damage*` line), so "react when an
+enemy is hurt" is not available in text; the closest are `StatusApplied` and `Died`.
 
 DOS2-era `EncounterPrepare` / `SpawnGroup` / `CrowdSpawnRegion` are **gone** in BG3. ⚠️ No
 text-visible "encounter size × difficulty" knob exists; honour-mode crowd sizes are baked
@@ -164,20 +230,43 @@ into the levels.
 
 ## 9. Canonical example to copy (Honour-only extra enemies, mid-combat) ✅
 
+The hag "doubles" are vanilla creating new characters **during** a fight. Read end to end:
+
 ```
-// SharedDev/.../GLO_HagHonourMode.txt:4-10   — how much extra, per spell level
+// GustavDev/.../GLO_HagHonourMode.txt:4-12    how many extra, keyed off the spell that triggers it
 DB_GLO_NewDoublesByCounteredSpellLevel("Shout_HAG_Counterswap_5", 3);
-//                                          :107-110  — fire it, Honour only
-// Gustav/.../GLO_HagDoubles.txt:201-230     — the spawn itself
-QRY_HAG_SpawnDoubles_FindValidPosition(_Char,_Trigger)          // FindValidPosition + fallback :249-266
-CreateAt(Hag_Green_Act1Hag_Double_…, _X,_Y,_Z, 1, 1, "", _HagDouble)
+DB_GLO_MaximumHagDoublesAmount(9);
+// GustavDev/.../GLO_HagHonourMode.txt:104-111  fire the spawner
+PROC_HAG_SpawnDoubles_GetAvailableSpawnPoints(S_HAG_Hag_c457d064-…);
+PROC_HAG_SpawnDoubles(S_HAG_Hag_c457d064-…, _NewDoublesToSpawn);
+
+// Gustav/.../GLO_HagDoubles.txt:193-230       the spawn itself
+PROC_HAG_SpawnDoubles((CHARACTER)_Char,(INTEGER)_Int)
+AND _Int != 0
+AND DB_HAG_HagLair_DoublesSpawnPoints_Available(_Trigger)          // spawn markers seeded by name
+AND QRY_HAG_SpawnDoubles_FindValidPosition(_Char,_Trigger)         // FindValidPosition + fallback, :251-267
+AND DB_HAG_SpawnDoubles_FindValidPosition(_Char,_X,_Y,_Z)
+AND CreateAt(Hag_Green_Act1Hag_Double_8c85932d-…, _X,_Y,_Z, 1, 1, "", _HagDouble)
+AND GetHitpoints(_Char,_Hp)
+THEN
 DB_HAG_HagLair_Doubles(_HagDouble);
-SetImmortal((CHARACTER)_HagDouble, 1);
+SetImmortal((CHARACTER)_HagDouble,1);
 PROC_CharacterDisableAllCrimes(_HagDouble, 1);
-SetCombatGroupID(_HagDouble, "HAG_Hag_State_HagInLair");        // joins the running combat
-PROC_HAG_SetDoublesAttitudeToPlayers(_HagDouble);               // faction/hostility
-IF EnteredCombat(_HagDouble,_CombatID) THEN SetHitpoints(_HagDouble,_Hp);   // after HEALTHBOOST_HARDCORE
+SetCombatGroupID(_HagDouble,"HAG_Hag_State_HagInLair");            // the level's own group string
+PROC_HAG_SetDoublesAttitudeToPlayers(_HagDouble);                  // faction/hostility wiring
+// :224-230 — HP is set later, "so HEALTHBOOST_HARDCORE doesn't override it"
+IF EnteredCombat(_HagDouble,_CombatID) AND DB_GLO_SetHagDoubleHP(_HagDouble,_Hp)
+THEN SetHitpoints(_HagDouble,_Hp);
+
+// GustavDev/.../GLO_HagDoubles_PostEA.txt:9-22  per-region post-spawn setup, Honour-gated at :22
+SetTag(_HagDouble,(TAG)IGNORE_COMBAT_LATE_JOIN_PENALTY_6d60bed7-…);
+ApplyStatus(_HagDouble,"LOW_HAG_MAGICRESISTANCE",-1.0);
+SetCombatGroupID(_HagDouble,"LOW_HagBossFight");
 ```
+
+Two things to notice: the doubles' **HP is a story-side number** (`SetHitpoints` deferred to
+`EnteredCombat`) because our stats-layer `HEALTHBOOST_HARDCORE` would otherwise win — see
+`AGENTS.md` difficulty hook; and hostility is done by a helper PROC, not by hand.
 
 Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.txt:1647-1661`
 — `DB_…SpawnPool(_Region,_Pool,_Home,_Chest,_Max,_InUse)` + `_InUse < _Max` +
@@ -188,22 +277,27 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
 
 | # | Recipe | Layer | Confidence | Notes |
 |---|---|---|---|---|
-| E1 | **Global Honour-only reinforcements**: new goal file, `CombatStarted(_ID) AND DB_HonorMode_Enabled(1) AND QRY_OnlyOnce(…)` → `GetClosestAlivePlayer` → `FindValidPosition` → `CreateAt(template,…,1,1,"",_N)` → copy faction of an involved enemy → `EnterCombat(_N,_Player)` | story | ⚠️ untested, but every primitive is vanilla-used | Best first experiment: works everywhere, one file, easy to bound (cap per level, `Random` gate, level blacklist for cutscenes/companions) |
-| E2 | **Per-encounter reinforcements** = E1 + `DB_CurrentLevel("<lvl>")` / `PlayerEnteredTrigger((TRIGGER)S_…)` and reuse of the level's own spawn markers named in existing goals | story | ⚠️ | Precise, avoids story fights; needs the level name and a trigger GUID — both are readable in the existing goal files |
-| E3 | **Elite-ify what the level already placed**: on `EnteredCombat`, `ApplyStatus` our own HP/extra-action statuses, `SetAmbushing(_M,1)` before the fight, `DB_CMB_LevelUpNpcInRegion` for regional mobs | story + stats | ✅ primitives confirmed | Cheapest, no new bodies → no loot/XP/perf surprises |
+| E1 | **Global Honour-only reinforcements**: `CombatStarted(_CombatGuid) AND DB_HonorMode_Enabled(1) AND NOT DB_MARTIN_CombatDone(_CombatGuid)` + level blacklist → `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `CreateAtObject(template,_Host,1,1,"",1,_N)` → `SetFaction(_N,(FACTION)Evil_…)` + `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_N,_Host)` | story | **implemented**, in-game result pending | live at `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` + `LevelLoaded` probe, §12 |
+| E2 | **Per-encounter reinforcements** = E1 + `DB_CurrentLevel("<lvl>")` and `EnteredTrigger((CHARACTER)_C,(TRIGGER)S_…)` scoped rules, reusing the level's own spawn markers where a vanilla goal already names them | story | ⚠️ | Precise, avoids story fights. Level names: §12. Marker `S_…` GUIDs must be copied out of existing goals (§6) — they are not enumerable from text |
+| E3 | **Elite-ify what the level already placed**: `ApplyStatus(_M,"OUR_STATUS",-1.0)` on `CombatStarted`, `SetLevel(_M,_L+2)` (`GetLevel` first), `SetAmbushing(_M,1)` before the fight, `DB_CMB_LevelUpNpcInRegion` for named NPCs (`SharedDev/.../GLO_CombatNPCs_PostEA.txt:43-58`), honour-gated `ApplyStatus` on a named NPC (`Gustav/.../Act1_GOB_SpiderNest.txt:1360-1365`) | story + stats | ✅ primitives confirmed | Cheapest, no new bodies → no loot/XP/perf surprises. Needs named NPCs or a way to enumerate enemies (§8 `IterateActiveObjectsInSameCombatGroup`) |
 | E4 | **Stats-layer summons**: give encounter leaders innate/castable summon spells (`SpellProperties "…Summon(<uuid>,…)"`, 183 occurrences in `SharedDev/…/Spell_Target.txt`), or a status whose passive `TriggerRandomCast(chance,,Spell)` (`Shared/…/Passive.txt:1623` `WildMagic`) fires it. A passive on `_Base` + `DifficultyStatuses "STATUS_HARD: …"` would make it Honour-only | stats | ⚠️ the AI has to actually cast it; `OnCombatStarted`/`OnRound` functor contexts exist in `Enumerations.xml` but are used 0× by vanilla passives | Slower to iterate than E1/E2, and summon-AI is the weak link |
-| E5 | Edit the levels themselves (add mobs to the encounter) | binary | ❌ not available | No Divine on this install, no `.lvl` compiler in lslib, nothing loose on disk |
+| E5 | Edit the levels themselves (add mobs to the encounter) | binary | ❌ not available | No Divine/editor on this install, no `.lvl` tooling, and nothing level-shaped loose on disk — this repo carries only stats text (29 `.txt` + one `.StatusData`) |
 
 ## 11. Costs and gotchas
 
-- **Same-path loose file replaces the vanilla file wholesale** (as with our tables). Adding
-  a *new* goal file is safer than editing a big vanilla one; keep our goal names unique
-  (`MARTIN_*`) so nothing collides. ⚠️ Two modules can contain the same goal name
-  (`GLO_HagDoubles.txt` in `Gustav`, `GLO_HagDoubles_PostEA.txt` in `GustavDev`) — be
-  deliberate about which module a new file goes in.
-- **Story files are outside git** (`overview.md` §6: "Not version-controlled here"). Any
-  spawn experiment is unreproducible and a game patch can reset those folders. Pull the
-  goal files we touch into the repo (or at least copy them to a branch) before experimenting.
+- **Same-path loose file replaces the vanilla file wholesale** — true for our stat tables;
+  ⚠️ **untested for goal files**, and we have never edited a vanilla one (§3). Adding a *new*
+  file is the safer first move; keep our goal names unique (`MARTIN_*`) so nothing collides.
+  ⚠️ Two modules can hold related goal names (`GLO_HagDoubles.txt` in `Gustav`,
+  `GLO_HagDoubles_PostEA.txt` in `GustavDev`) — be deliberate about which module a new file goes in.
+- **Story text is a separate deploy from stats.** Our goal masters live in the repo at
+  `SharedDev/Story/RawFiles/Goals/MARTIN_*.txt` (CRLF, git-tracked). The vanilla goal files
+  in `Data/Mods/*/Story/` are **not** in git and a game patch can rewrite that tree, so keep
+  our changes in our own files rather than editing vanilla ones. `tools/deploy_story.sh`
+  mirrors our files into `Data/Mods/…` if that mount turns out to be the one that is compiled (§3.1).
+- **A bad goal file fails silently.** Run `python3 tools/check_goal.py` before testing: it
+  rejects unknown call/query/event names, unknown `DB_` predicates, `;` in the wrong places
+  and LF line endings (§3.2 — this already caught a name that does not exist).
 - **XP / loot / achievements**: spawned bodies may grant XP (inflating Honour-mode XP that
   we deliberately tuned in `XPData*.txt`) and may drop nothing at all. ⚠️ Measure on the
   first test.
@@ -215,33 +309,73 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
 - **Cutscenes and companion-critical fights** (Myrnath, Ketheric, the Emperor…) are scripted
   state machines; reinforcements there break scripts. Gate by level/trigger.
 
-## 12. Fastest in-game test (the Nautiloid lab)
+## 12. E1 as implemented, and how to test it
 
-Second room after the start: Myrnath strapped to the chair, "Us" the intellect devourer.
-Good testbed because a new game reaches it in ~1 minute and it contains a live searchable
-NPC. Its wiring is `Gustav/Story/RawFiles/Goals/TUT_Laboratory.txt` — note that everything
-in it is a **pre-placed level entity** (`S_TUT_Lab_…` names) driven by
-`SetOnStage`/`TeleportTo`/`UseSpell`/`Transform`; the *freeing* of "Us" is not a spawn, it's
-a state change on a level-placed character (`Transform(victim, QUEST_TUT_LAB_TrappedDevourerVictim_Brainless_…)`).
-So this room proves the opposite of "everything is spawnable from level data": the level's
-cast is fixed, but a goal can still add bodies to it (E2). Steps:
+File: `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` (in this repo, CRLF,
+git-tracked). Validator-clean: `python3 tools/check_goal.py`. Delete the file to remove the
+feature; `martin_off` disables it without a restart.
 
-1. Pick an `INITSECTION`-free new file, e.g. `GustavDev/Story/RawFiles/Goals/MARTIN_SpawnTest.txt`.
-2. Gate: `DB_HonorMode_Enabled(1)` + `DB_CurrentLevel("<nautiloid level name>")` —
-   get the name by logging it with `TextEvent("lvl")` + `DB_CurrentLevel(_L)` + `DebugText`
-   (pattern at `GLO_HonorMode.txt:6-16`).
-3. Spawn one obvious creature (`Shadow_A_749b1e7d-…`) near `GetClosestAlivePlayer`,
-   faction-copy an enemy, `EnterCombat`.
-4. Verify in ~2 minutes of a new game; iterate with the `honormodeon/off` console commands.
+Seeded in `INITSECTION`:
 
-## 13. Open questions (next research pass)
+| Predicate | Purpose |
+|---|---|
+| `DB_MARTIN_AutoEnabled(1)` | master switch, flipped by the `martin_on`/`martin_off` console events |
+| `DB_MARTIN_LevelBlacklist("<level>")` ×6 | no bodies on `CRE_Main_A`, `INT_Main_A`, `BGO_Main_A`, `IRN_Main_A`, `END_Main`, `EPI_Main_A` (tutorial/underdark city/iron throne/endgame/epilogue). **`TUT_Avernus_C` is deliberately not blacklisted** — the Nautiloid is the test bed |
+| `DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11)` | the wolf Larian's own spawn test uses (`Gustav/.../Goals/Test.txt:353`). Add more rows to diversify |
 
-- Do script-spawned characters roll corpse loot at all, and can their level/`Treasure`
-  property be set from a goal (`SetLevel`? `RequestAutoLevel`?) — this is where
+Rules in `KBSECTION`:
+
+1. `martin_on` / `martin_off` — `TextEvent` toggles, the same idiom as
+   `SharedDev/.../GLO_HonorMode.txt:8,19,26`.
+2. **Probe (proof of life, no console needed):** `LevelLoaded("TUT_Avernus_C") AND
+   QRY_OnlyOnce("MARTIN_Probe")` → `DebugText(...)` + `PROC_MARTIN_SpawnAtHost()`. If you see
+   the message and/or a wolf in the first room, the engine compiles goal text from this mount
+   and `CreateAtObject` + `SetFaction` + `SetHostileAndEnterCombat` all work.
+3. **Auto rule:** `CombatStarted(_CombatGuid)` + `DB_HonorMode_Enabled(1)` +
+   `DB_MARTIN_AutoEnabled(1)` + `NOT DB_MARTIN_CombatDone(_CombatGuid)` +
+   `DB_CurrentLevel(_LevelName)` + `NOT DB_MARTIN_LevelBlacklist(_LevelName)` → marks the
+   combat done, calls the spawner. One body per combat, nothing else.
+4. **Spawner PROC:** `GetHostCharacter` → `CreateAtObject((CHARACTERROOT)_Template,_Host,1,1,"",1,_Spawn)`
+   (temporary, no spawn VFX gate, matched orientation) → `SetFaction(_Spawn,(FACTION)Evil_…)`
+   → `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_Spawn,_Host)`.
+   `CreateAtObject` (header:589) is chosen over `CreateAt` because it needs no coordinates:
+   fewer queries in the rule = fewer ways for it to silently fail. If it turns up on top of
+   the host, switch to the `CreateAt` + `FindValidPosition` shape of §9.
+5. **Bookkeeping:** forget spawned bodies that reach `DB_Defeated`.
+
+Test protocol (≈2 minutes, no save needed):
+
+1. Start a **new Honour-mode** game.
+2. Watch the first room (the nautiloid bridge/lab). Expected if the file is live: a
+   `MARTIN_Reinforcements loaded` debug print and/or a wolf attacking.
+3. If you have the dev console (`bg3.exe` dev build, or a beta-branch launch option — ⚠️ not
+   verified on this install), also try `martin_hello`, `martin_spawn`, `martin_off`,
+   `martin_on`. The vanilla analogue is documented at `GLO_HonorMode.txt:6-31`.
+4. Start any fight on the nautiloid; expect exactly one extra wolf joining it.
+5. Negative control: turn Honour off (or start a non-Honour save) → no spawns.
+
+Interpreting a null result: nothing appearing means **the channel or the mount is wrong**,
+not the rule — the checker already guarantees the grammar and names (§3.2). Then:
+
+```
+sudo mount -o remount,rw /home/martin/.local      # Data/Mods is on a ro mount (§3.1)
+tools/deploy_story.sh --copy                      # mirrors MARTIN_*.txt into Data/Mods/SharedDev/Story/...
+```
+
+If it works from `Data/Mods` but not from `Data/Public`, the repo copy becomes a master that
+must be deployed, and §3.1 gets closed.
+
+## 13. Open questions
+
+- **Live or not?** Whether goal text under `Data/Public` (or even `Data/Mods`) is compiled at
+  runtime on this install (§3, §3.1). The probe in §12 answers it; nothing else on disk does.
+- **Dev console availability** on this Proton install: is `TextEvent` reachable at all? If not,
+  all interaction must go through automatic rules like the probe above.
+- Do script-spawned characters roll corpse loot, and can their level/`Treasure` property be
+  set from a goal (`SetLevel` 598 / `GetLevel` 599 / `RequestAutoLevel` 985)? Where
   `drop-chains.md` and this doc meet.
 - Do `OnCombatStarted` / `OnRound` `StatsFunctorContext`s and `Summon()` inside
-  `OnApplyFunctors` actually fire (E4's weak link — 0 vanilla precedents).
-- Exact `.lvl` inventory of the paks (which encounters exist, their level names and spawn
-  markers) — needs a working pak unpacker; `Data/Gustav.pak` is 13 GB, TOC-only is enough.
-- Whether a *new* goal file in a module whose story we also override wholesale is always
-  picked up (we only ever edited existing files so far).
+  `OnApplyFunctors` actually fire (E4's weak link — 0 vanilla precedents found).
+- Real XP cost of one extra body per combat against the `XPData*.txt` tuning.
+- Exact `.lvl` inventory of the paks (encounters, level names, spawn markers) — needs a
+  working pak reader; none is installed and byte-grepping a 13 GB pak proves nothing (§3).

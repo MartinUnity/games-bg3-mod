@@ -14,18 +14,31 @@ Where things live:
   `Status_BOOST.txt`, `Character.txt`; global balance in `Shared/.../Data.txt`,
   XP curves in `XPData*.txt`)
 - Loot: `<Layer>/Stats/Generated/TreasureTable.txt`
-- No loca/story files here — those live outside the repo
-  (`Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt`).
-  They are loose Osiris goal text, also hand-edited and also live (not in git)
+- Story/goal text: our own files go in `<Layer>/Story/RawFiles/Goals/MARTIN_*.txt`
+  (CRLF, in git). The vanilla goal text still lives outside the repo at
+  `Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt` —
+  944 files, all still stock vanilla (install mtime 2025-09-06). Whether the engine
+  compiles loose goal text at all, and from which mount, is **unverified** — see
+  `docs/spawn-chains.md` §3. `Data/Mods` is on a read-only mount; only `Data/Public` is
+  writable. No loca files anywhere in the repo.
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
   `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → overridden in
-  `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); story-side equivalent is
-  the vanilla predicate `DB_HonorMode_Enabled(1)`
-- `bg3-vanilla-data/` is a gitignored unpack of vanilla data, used as baseline
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); the story-side equivalent is the
+  vanilla predicate `DB_HonorMode_Enabled(1)`, usable from any goal file (maintained by
+  `Data/Mods/SharedDev/.../Goals/GLO_HonorMode.txt:66-70`)
+- `bg3-vanilla-data/` is gitignored and meant to be an unpack of vanilla data used as a
+  baseline; on this checkout it is **absent/empty**, so re-unpack before relying on it
 
 After touching treasure tables, validate:
 `python3 tools/validate_treasure.py` (exit 1 on duplicate entry names or
 dangling `I_`/`T_` references; `--strict` escalates warnings)
+
+After touching story goals, validate:
+`python3 tools/check_goal.py` (checks our `MARTIN_*.txt` goals against
+`Data/Mods/*/Story/RawFiles/story_header.div`: unknown calls/queries/events, unknown
+`DB_` predicates, misplaced `;`, non-CRLF endings). A broken goal file fails silently
+in game. `tools/deploy_story.sh` (--dry-run by default, `--copy`, `--remove`) mirrors
+them into the `Data/Mods` story mount when needed.
 
 ## docs/ — reference material
 
@@ -41,7 +54,10 @@ dangling `I_`/`T_` references; `--strict` escalates warnings)
 - `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
   goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
   combat-group joining, spawn-position solving), what stays binary (level layout),
-  ranked recipes. Refines drop-chains' "not possible in text" claim.
+  ranked recipes, and experiment **E1** (implemented at
+  `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt`, §12 = how to test it).
+  Read §3 first: whether loose goal text loads at all on this install is still unproven.
+  Refines drop-chains' "not possible in text" claim.
 - `larian_treasuretables_description.md` — official Larian treasure-table
   format reference (columns, DropCount, rarity weights).
 

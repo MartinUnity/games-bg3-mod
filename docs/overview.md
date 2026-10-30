@@ -146,12 +146,19 @@ configurablepartylimit, noinspirationreroll, flarecommonerclass, Goon's
 Library, all-in-one-collector, Automated Summons SE, dynamicsidebar, impui,
 musicperformworkaround, ModFixer.)
 
-**Story / goal changes** (level cap, 3 short rests, companion & pet changes, …)
-live **outside** the repo, edited in place under
-`Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/` —
-decompiled vanilla story files, also hand-edited, also part of the deployment
-(not registered mods). Edited-since-2024 counts: Gustav 253, GustavDev 554,
-Shared 122, SharedDev 17, GustavX 8. Not version-controlled here.
+**Story / goal changes.** Corrected 2026-10-30 (the earlier version of this paragraph was
+wrong): the story tree under `Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/`
+is **unmodified vanilla** — 944 loose goal `.txt` files (Gustav 251, GustavDev 552, Shared 120,
+SharedDev 15, GustavX 6) plus a `story_header.div` and an empty `story_definitions.div` per
+module, every file carrying the install mtime 2025-09-06. The "level cap, 3 short rests,
+companion & pet changes" are implemented in **stats**, not in story goals.
+
+Our own story goals live **in the repo** at `SharedDev/Story/RawFiles/Goals/MARTIN_*.txt`
+(CRLF, git-tracked) — see `docs/spawn-chains.md` for what they do, `tools/check_goal.py` to
+validate them, and `tools/deploy_story.sh` to mirror them into `Data/Mods/…` if the engine
+turns out to compile goals only from there (that mount is read-only: `/home/martin/.local`
+is an `ro` bind mount; only `Data/Public` is `rw`). Whether loose goal text is loaded at all
+is still unproven on this install — `docs/spawn-chains.md` §3/§12.
 
 ### Other on-disk notes
 - `Data/Armor.txt` (loose at Data root, mtime 2023-08-21) is **byte-identical**
