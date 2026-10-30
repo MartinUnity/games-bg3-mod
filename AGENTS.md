@@ -20,7 +20,12 @@ Where things live:
   944 files, all still stock vanilla (install mtime 2025-09-06). Whether the engine
   compiles loose goal text at all, and from which mount, is **unverified** — see
   `docs/spawn-chains.md` §3. `Data/Mods` is on a read-only mount; only `Data/Public` is
-  writable. Vanilla keeps a helper library there — `Shared/Story/RawFiles/Goals/__PROC.txt`
+  writable, and vanilla has **no** `Story/` dir under `Data/Public` at all. ⚠️ First in-game
+  test (E1, repo copy only) spawned nothing — mount is the prime suspect; current test is
+  `SharedDev/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (E7, §3.1.1). This is the Windows
+  build under Proton: prefix `compatdata/1086940`, logs `bin/gold.*.log`, profile
+  `…/AppData/Local/Larian Studios/Baldur's Gate 3/`. Vanilla keeps its helper library in
+  `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
   declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
   so our own files declare everything they use. No loca files anywhere in the repo.
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries

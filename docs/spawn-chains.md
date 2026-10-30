@@ -76,6 +76,41 @@ refuses to run if the target is not writable (needs `sudo mount -o remount,rw /h
 first). The in-game test in §12 settles the question: if `martin_spawn` works with only the
 repo copy present, `Data/Public` is compiled and no fallback is needed.
 
+### 3.1.1 E1 in-game result: **nothing spawned** (2026-10-30, fresh Honour game, imp room)
+
+The first live test (repo copy in `Data/Public/SharedDev/Story/…`, rooms 2 and 3 of the
+prologue) produced no extra bodies and no print. Evidence gathered afterwards, all ✅ from disk:
+
+- **The prologue level name was right.** Every `TUT_*.txt` goal that gates on a level uses
+  `DB_CurrentLevel("TUT_Avernus_C")` (4 hits) — no other level name appears in them. So the
+  `LevelLoaded`/level-gate part of E1 was aimed correctly.
+- **`Data/Public` has no precedent for story text.** The only `Story/` directory anywhere under
+  `Data/Public` is the one we created; vanilla ships story text only in
+  `Data/Mods/{Shared,SharedDev,Gustav,GustavDev,GustavX}/Story/RawFiles/`. Stats have always
+  shipped in both (`Data/Public/*/Stats/...` *and* paks), which is why the stats channel works
+  from Public — that precedent does **not** transfer to `Story/`.
+- **There is no pre-compiled story cache to blame.** `Data/Generated/` holds only
+  `Public/Engine/Assets`; nothing that looks like a compiled Osiris program.
+- **`Data/Mods` really is unwritable right now** (`touch` → `Read-only file system`).
+- **Template choice was a second, independent suspect.** `Wolf_41da0eff-…` comes from
+  `Gustav/…/Goals/Test.txt`, i.e. a *different level*; whether a template that is not in the
+  current level can be instantiated is untested and may be the reason a compiled rule still
+  spawns nothing.
+- Install forensics for future runs (✅): this is the **Windows** build under Proton, prefix
+  `steamapps/compatdata/1086940`; logs are `bin/gold.<timestamp>.log` + `bin/network.…` (no
+  story/Osiris compile output), profile at `…/compatdata/1086940/pfx/drive_c/users/steamuser/
+  AppData/Local/Larian Studios/Baldur's Gate 3/` (`modsettings.lsx` load order: **GustavDev** +
+  5eSpells + Ututu's + EncountersOverhaul + Teleport To You, file mtime 2024-08-02 → stale).
+  Saves are `HonourMode.lsv` (LSOF container, first zstd frame decodes but carries no `DB_`
+  fact strings) — **not** a usable channel for reading story facts.
+
+Next test is **E7**, `SharedDev/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (the E1 file is
+parked at `docs/goals/MARTIN_Reinforcements.txt` so exactly one goal file is in the compile
+path): two ungated `CombatStarted` rules, each its own once-guard, one spawning the
+level-native imp `S_FirstFight_Imp_Melee_01_07f1512b-…` (cited from `TUT_LowerDeck.txt`, so it
+exists in `TUT_Avernus_C`) and one the cross-level `Wolf_41da0eff-…`. Any extra body proves the
+mount; nothing at all, in *any* combat, points at the mount rather than the rule.
+
 ### 3.2 Trust only names you have grepped
 
 An earlier research pass over this material invented plausible API names. Confirmed **not to
