@@ -374,10 +374,16 @@ Rules in `KBSECTION`:
 1. `martin_on` / `martin_off` — `TextEvent` toggles, the same idiom as
    `SharedDev/.../GLO_HonorMode.txt:8,19,26`.
 2. **Probe (proof of life, no console needed):** `LevelLoaded("TUT_Avernus_C")` +
-   `NOT DB_MARTIN_ProbeDone("TUT_Avernus_C")` → `DebugText(...)` + `PROC_MARTIN_SpawnAtHost()`.
-   If you see the message and/or a wolf in the first room, the engine compiles goal text from
-   this mount and `CreateAtObject` + `SetFaction` + `SetHostileAndEnterCombat` all work. The
-   once-guard is deliberately our own `DB_` fact rather than vanilla's `QRY_OnlyOnce`, so a
+   `NOT DB_MARTIN_ProbeDone("TUT_Avernus_C")` → `DebugText(...)` + `PROC_MARTIN_SpawnAtHost(0)`.
+   A second, generic probe `LevelLoaded(_Level)` + `DB_HonorMode_Enabled(1)` +
+   `NOT DB_MARTIN_AnyLevelProbe(_Level)` fires on **any** level, so loading an existing
+   Honour save is a valid (faster) test. If you see the message and/or a wolf, the engine
+   compiles goal text from this mount and `CreateAtObject` + `SetFaction` +
+   `SetHostileAndEnterCombat` all work. ⚠️ `DebugText` may be a no-op in a release build —
+   the **wolf is the reliable signal**. Probes spawn with `_Temporary=0` because the
+   prologue applies `TUT_SUMMON_BLOCK` to players (`TUT_LowerDeck.txt:36-38`) and whether
+   that also blocks script-made temporary bodies is unverified. The once-guards are
+   deliberately our own `DB_` facts rather than vanilla's `QRY_OnlyOnce`, so a
    null result cannot be explained away by cross-module helper visibility (§4, §13).
 3. **Nautiloid room probes (E6)** — `EnteredTrigger((CHARACTER)_Char,(TRIGGER)S_…)` +
    `DB_HonorMode_Enabled(1)` + `DB_MARTIN_AutoEnabled(1)` + own once-guard
@@ -396,8 +402,9 @@ Rules in `KBSECTION`:
    | 3b (imp combat region) | `S_TUT_LowerDeck_CombatEvent_5eb34cda-…` | `TUT_LowerDeck.txt:4` |
    | 3c (lower-deck room) | `S_TUT_LowerDeck_RoomTrigger_ebbf3bb5-…` | `TUT_LowerDeck.txt:418` |
 
-   Room 2/3 probes spawn a *hostile* wolf on the entering character — i.e. they create a
-   brand-new fight in a room that has none (room 2) or reinforce the first combat (room 3).
+   Room 2/3 probes spawn a *hostile* wolf on the entering character (`_Temporary=0`) — i.e.
+   they create a brand-new fight in a room that has none (room 2) or reinforce the first
+   combat (room 3). The `CombatStarted` rule spawns with `_Temporary=1`.
    The imp room's own NPCs are also nameable if an imp anchor is ever wanted:
    `S_FirstFight_Imp_Melee_01_07f1512b-…`, `_Ranged_01_38d1ce2f-…`, `_Melee_02_5c5bd50b-…`,
    `_Ranged_02_df44fa65-…` (`TUT_LowerDeck.txt:15-21`), and
@@ -431,17 +438,30 @@ Test protocol (≈5 minutes, no save needed — this is the Nautiloid walkthroug
    verified on this install), also try `martin_hello`, `martin_spawn`, `martin_off`,
    `martin_on`. The vanilla analogue is documented at `GLO_HonorMode.txt:6-31`.
 6. Negative control: start a non-Honour save → no prints, no spawns.
+7. Fast variant: load any existing **Honour** save → the any-level probe should spawn a
+   wolf on load (once per level per save).
 
-Interpreting a null result: nothing appearing means **the channel or the mount is wrong**,
-not the rule — the checker already guarantees the grammar and names (§3.2). Then:
+Test log: run 1 (new Honour game, walked to rooms 2/3) — nothing seen there; room-1 probe
+result not recorded, which is the key missing data point. Run 2 uses the `_Temporary=0`
+probes + any-level probe to remove the `TUT_SUMMON_BLOCK` confound.
+
+Interpreting a null result: nothing appearing anywhere (room 1, rooms 2/3, any-level probe
+on an existing Honour save) means **the channel or the mount is wrong**, not the rule — the
+checker already guarantees the grammar and names (§3.2). Then:
 
 ```
 sudo mount -o remount,rw /home/martin/.local      # Data/Mods is on a ro mount (§3.1)
+cd "$(dirname "$(find /home/martin/.local -name deploy_story.sh -path '*/tools/*' | head -1)")/.."
 tools/deploy_story.sh --copy                      # mirrors MARTIN_*.txt into Data/Mods/SharedDev/Story/...
 ```
 
 If it works from `Data/Mods` but not from `Data/Public`, the repo copy becomes a master that
-must be deployed, and §3.1 gets closed.
+must be deployed, and §3.1 gets closed. If it works from **neither**, the working hypothesis
+is that on this install the runtime story comes from the compiled story database inside
+`Data/Mods/<Module>/*.pak` (Gustav.pak etc.) and loose `RawFiles/Goals/*.txt` are editor
+source only — stats tables are read loose (that is why this repo works), story text is not.
+That would close the question in the negative: no new encounters in text on this install,
+and the difficulty work stays in the stats layer (E4).
 
 ## 13. Open questions
 
