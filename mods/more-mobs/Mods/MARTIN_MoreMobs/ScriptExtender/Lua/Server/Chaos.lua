@@ -367,8 +367,11 @@ local function reinforce(host, enemies, combatId)
     local okN, n = pcall(Osi.CombatGetInvolvedPartyMembersCount, combatId)
     if combatId and okN and tonumber(n) then party = tonumber(n) end
     local budget = math.floor(base * rand(BUDGET_LO, BUDGET_HI) * (1 + PARTY_KNOB * math.max(0, party - 4)))
-    local anchors = { host }
+    -- anchor at the fight's own enemies when we know them ("reinforcements arrive near their
+    -- allies"); the host is only a fallback for fights we could not classify
+    local anchors = {}
     for _, e in ipairs(enemies) do anchors[#anchors + 1] = e.guid end
+    if #anchors == 0 then anchors = { host } end
 
     local etype = dominantType(enemies)
     -- no heavy types (dragons, giants...) below HEAVY_LEVEL even if the encounter is one
