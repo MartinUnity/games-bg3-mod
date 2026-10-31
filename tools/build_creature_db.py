@@ -49,6 +49,13 @@ BAD_NAME = re.compile(
 # stats entries may also betray bossiness
 BAD_STATS = re.compile(r"(Boss|Commander|General|Prince|Pope)", re.I)
 
+# player-race humanoids (owner list: Human, Elf, Drow, Half-Elf, Half-Orc, Halfling,
+# Dwarf, Gnome, Tiefling, Githyanki, Dragonborn) - only these may roll as neutral
+# "travelers" in the wild; template names carry the race as the first segment
+PLAYER_RACE = re.compile(
+    r"^(BASE_)?(Humans|Elves|Dwarves|Duergar|DeepGnome|Halflings|Gnomes|Tieflings|"
+    r"HalfElves|HalfOrcs|Githyanki|Dragonborn)_")
+
 # passives that betray story-scripted NPCs (death scripts, location buffs, plot bonds);
 # the template names above catch most, this catches the rest data-driven
 BAD_PASSIVE = re.compile(
@@ -240,13 +247,14 @@ def main():
             level = int(level) if level else 1
         except ValueError:
             level = 1
+        pr = bool(PLAYER_RACE.match(name))
         rows[name] = (guid, t, hp, cost, statsname, level, len(immunes),
-                      ac, strength, dex, con, wis, cha, ea, prof, unarmed != "")
+                      ac, strength, dex, con, wis, cha, ea, prof, unarmed != "", pr)
 
     print(f"generic spawnable creatures: {len(rows)}")
     bytype = {}
-    for name, (guid, t, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed) in rows.items():
-        bytype.setdefault(t, []).append((name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed))
+    for name, (guid, t, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr) in rows.items():
+        bytype.setdefault(t, []).append((name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr))
     for t in sorted(bytype):
         print(f"  {t}: {len(bytype[t])}")
 
@@ -266,7 +274,7 @@ def main():
              "CHAOS_DB = {"]
     for t in sorted(bytype):
         lines.append(f"  {t} = {{")
-        for name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed in sorted(bytype[t]):
+        for name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr in sorted(bytype[t]):
             extra = f", lvl = {level}" if level > 1 else ""
             extra += f", imm = {imm}" if imm > 0 else ""
             extra += f", ac = {num(ac)}" if num(ac) is not None else ""
@@ -278,6 +286,8 @@ def main():
             extra += ", ea = true" if ea else ""
             if unarmed:
                 extra += ", unarmed = true"
+            if pr:
+                extra += ", pr = true"
             if prof and prof != "None":
                 extra += f', prof = "{prof}"'
             lines.append(f'    {{ id = "{name}_{guid}", hp = {hp}, cost = {cost}{extra} }},')

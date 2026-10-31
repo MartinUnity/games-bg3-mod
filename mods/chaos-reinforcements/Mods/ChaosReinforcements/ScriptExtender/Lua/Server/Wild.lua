@@ -215,8 +215,23 @@ local function spawnWildGroup(host, base)
     end
     local tier = roll <= 80 and 1 or (roll <= 98 and 2 or 3)
 
-    -- per-group faction roll: red Evil NPC pack or harmless neutral "travelers"
-    local groupFaction = (rand(1, 100) <= WILD_EVIL_CHANCE) and WILD_EVIL_FACTION or nil
+    -- per-group faction roll (owner spec: neutral "travelers" ONLY as an
+    -- all-player-race Humanoid group - every other type/theme is a red enemy pack;
+    -- a neutral roll restricts members to pr = true entries so the group is FULL of
+    -- player races, never mixed)
+    local groupFaction = WILD_EVIL_FACTION
+    local neutralPool = nil
+    if not theme and etype == "Humanoid" and rand(1, 100) <= WILD_EVIL_CHANCE then
+        neutralPool = {}
+        for _, e in ipairs(gatedPool("Humanoid", base) or {}) do
+            if e.pr then neutralPool[#neutralPool + 1] = e end
+        end
+        if #neutralPool > 0 then
+            groupFaction = nil   -- template default = harmless yellow travelers
+        else
+            neutralPool = nil   -- no player races available at this level - stay evil
+        end
+    end
     local count = rand(2, 6)
     local leaderSlots = {}
     if tier == 2 then count = count + rand(1, 4); leaderSlots = { 2 } end
@@ -244,7 +259,9 @@ local function spawnWildGroup(host, base)
                     ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
     for i = 1, count do
         local entry
-        if themedPool then
+        if neutralPool then
+            entry = neutralPool[rand(1, #neutralPool)]
+        elseif themedPool then
             entry = themedPool[rand(1, #themedPool)]
         else
             local pool = gatedPool(etype, base) or gatedPool(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], base)
