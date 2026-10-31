@@ -75,6 +75,21 @@ local GATES = {
 local HEAVY_TYPES = { Dragon = true, Giant = true, Celestial = true }
 local HEAVY_LEVEL = 5
 
+-- Equipment (phase 1: Larian random tables via GenerateTreasure; own item-cost DB later).
+-- Only HUMANOID spawns get gear - other types have innate attacks an equipped weapon would
+-- replace (and imps do not hold swords). Tiers follow the owner's band spec; "cost x1.5/x2"
+-- maps to the next-better vanilla random table. Loot tables are level-segmented internally
+-- (ST_LightArmor switches contents at level 5), so we pass the player level.
+local EQUIP_MOBS = true
+local POTION_HEAL = {
+    "CONS_Potion_Healing_A_d47006e9-8a51-453d-b200-9e0d42e9bbab",
+    "CONS_Potion_Healing_A_Greater_e3b95c96-dc26-40fe-bfc0-baa05e1abd20",
+    "CONS_Potion_Healing_A_Superior_df4f3495-abaf-4732-b82f-55bcccd561db",
+    "CONS_Potion_Healing_A_Supreme_7d78f227-e8d4-486d-8121-25cf0bee751d",
+}
+local POTION_SPEED = "CONS_Potion_Speed_ad9f3f24-d755-48b6-aa7b-c34da068209f"
+local equipPending = {}   -- guid of freshly spawned humanoid -> true (auto-equip guard)
+
 -- race string (Osiris GetRace) -> creature type; grow from discovery logs
 local RACE_TO_TYPE = {
     Wolf = "Beast", Bear = "Beast", Bat = "Beast", Hyena = "Beast", Panther = "Beast",
@@ -147,8 +162,50 @@ local function factGuids(dbName, ncols)
     return out
 end
 
+-- equipment: roll loot tables + consumables into the mob's inventory. The TemplateAddedTo
+-- listener below auto-equips whatever gear lands there; potions stay in inventory (mob AI
+-- drinks them on its own).
+local function healPotionFor(base)
+    if base >= 11 then return POTION_HEAL[3] end
+    if base >= 6 then return POTION_HEAL[2] end
+    return POTION_HEAL[1]
+end
+
+local function equipMob(created, base)
+    if not EQUIP_MOBS then return end
+    equipPending[created] = true
+    -- owner's bands: <=80% basic, <=95% weapon up, <=98% weapon+armor up, else jackpot
+    local roll = rand(1, 100)
+    local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
+    if base <= SOFT_CAP_LEVEL then tier = 1 end           -- early game: cheap gear only
+    local weaponTable = tier == 1 and "ST_SimpleMeleeWeapons" or "ST_MartialMeleeWeapons"
+    local armorTable = "ST_LightArmor"
+    if tier == 3 then armorTable = "ST_MediumArmor" end
+    if tier == 4 then armorTable = base >= HEAVY_LEVEL and "ST_HeavyArmor" or "ST_MediumArmor" end
+    log("equip: tier", tier, "(roll", roll .. ")", weaponTable, "+", armorTable)
+    pcall(Osi.GenerateTreasure, created, weaponTable, base, created)
+    pcall(Osi.GenerateTreasure, created, armorTable, base, created)
+    -- consumables
+    local potions = {}
+    if tier == 1 then
+        if rand(1, 100) <= 10 then potions[#potions + 1] = healPotionFor(base) end
+    elseif tier == 2 then
+        if rand(1, 100) <= 25 then potions[#potions + 1] = healPotionFor(base) end
+    elseif tier == 3 then
+        potions[#potions + 1] = healPotionFor(base)
+    else
+        potions[#potions + 1] = healPotionFor(base)
+        potions[#potions + 1] = healPotionFor(base)
+        potions[#potions + 1] = POTION_SPEED   -- "extra random thing", not overpowered
+    end
+    for _, p in ipairs(potions) do
+        pcall(Osi.TemplateAddTo, p, created, 1, 0)
+    end
+    if #potions > 0 then log("equip: potions", #potions) end
+end
+
 -- spawn ----------------------------------------------------------------------
-local function spawnCreature(anchor, entry, targetLevel)
+local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
     local ok = pcall(function ()
         local dx, dy = rand(1, 3), rand(1, 3)
         local created = Osi.CreateAtObject(entry.id, anchor, dx, dy, "", 1)
@@ -177,6 +234,7 @@ local function spawnCreature(anchor, entry, targetLevel)
                 "str", entry.str or entry.dex or "?",
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
+            if doEquip then equipMob(created, base or 1) end
         else
             log("spawn FAILED", entry.id)
         end
@@ -325,6 +383,7 @@ local function reinforce(host, enemies, combatId)
 
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
+    equipPending = {}
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
         local e = pickFrom(etype, budget - spent, base)
         if not e then
@@ -334,7 +393,7 @@ local function reinforce(host, enemies, combatId)
             log("pack: nothing fits budget", budget - spent, "at level", base)
             break
         end
-        spawnCreature(anchors[rand(1, #anchors)], e, targetLevel)
+        spawnCreature(anchors[rand(1, #anchors)], e, targetLevel, etype == "Humanoid", base)
         spawned, spent = spawned + 1, spent + e.cost
     end
 
@@ -357,7 +416,7 @@ local function reinforce(host, enemies, combatId)
                 local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
                 log("leader: type", ltype, "(pack", etype .. ")", leader.id,
                     "hp", leader.hp, "cost", leader.cost, "lvl", lvl, "(outside budget)")
-                spawnCreature(anchors[rand(1, #anchors)], leader, lvl)
+                spawnCreature(anchors[rand(1, #anchors)], leader, lvl, ltype == "Humanoid", base)
                 spawned = spawned + 1
             else
                 log("leader: no", ltype, "entries in DB")
@@ -379,6 +438,15 @@ local ok, err = pcall(function ()
             roster = {}; combatRoster[combatGuid] = roster
         end
         roster[#roster + 1] = object
+    end)
+
+    -- auto-equip gear that GenerateTreasure rolls into our spawned humanoids
+    Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
+        if equipPending[holder] then
+            -- weapons/armor equip into their slot; potions fail into inventory (param 3)
+            local okE, eE = pcall(Osi.Equip, holder, object, 1, 0, 1)
+            if okE then log("equipped", object, "on", holder) end
+        end
     end)
 
     Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)

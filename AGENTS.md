@@ -80,7 +80,12 @@ Where things live:
   EA) and 2 (hp≤35/ac≤15/ability≤14/no EA), `HEAVY_TYPES` (Dragon/Giant/Celestial) need lvl≥5;
   Honour HP boost commented out of `GustavDev Status_BOOST.txt` for calibration (Lua-side
   MOB_HP_BOOST placeholder off); ⚠️ SE databases are keyed by ARITY: `DB_Is_InCombat` has 2
-  columns → `Get(nil, nil)` via `table.unpack({}, 1, ncols)`; RNG =
+  columns → `Get(nil, nil)` via `table.unpack({}, 1, ncols)`; **equipment phase 1**: humanoid
+  spawns get random gear via `Osi.GenerateTreasure` (vanilla tables `ST_SimpleMeleeWeapons`/
+  `ST_MartialMeleeWeapons`/`ST_Light|Medium|HeavyArmor`) + potions via `TemplateAddTo`
+  (healing scales with player level, speed potion in the jackpot tier), auto-equipped by a
+  `TemplateAddedTo` listener + `Osi.Equip` (gear lives on level instances, NOT root templates;
+  non-humanoids keep innate attacks — equipping would replace them); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/MARTIN_chaos.log`; console `!martin_chaos`/`!martin_status`/`!martin_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at

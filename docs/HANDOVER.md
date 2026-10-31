@@ -234,14 +234,24 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
      out (entry still defined, now inert); Lua-side `MOB_HP_BOOST = ""` placeholder in
      Chaos.lua stays off until native mob stats are gauged — reimplementation needs the
      custom-stats-file route (Lua cannot define stat boosts directly).
-  6. **Equipment: spawned mobs are NAKED** (no armor/weapons, Merregon + "Raphael" alike).
-     Investigation: character root templates carry NO equipment attributes (checked merged.lsx
-     attr census) and vanilla stats have no EquipmentSet entries — gear lives on
-     level-placed instances. Candidate fixes (NOT implemented): `Osi.CopyCharacterEquipment(
-     target, source)` from a live same-kind enemy in the fight (we have enemy guids!),
-     `Osi.CharacterGiveEquipmentSet(target, setname)` (needs set names — none found yet), or
-     spawn item root templates + `Osi.Equip(character, item, …)` (story_header.div:160).
-     Owner is thinking about direction.
+  6. **Equipment phase 1 implemented in v3.4** (owner chose: Larian tables now, own item DB
+     next; consumables in). Key discoveries: mobs' gear lives on level-placed instances, NOT
+     on root templates (merged.lsx has no equipment attrs; no vanilla EquipmentSet stats) —
+     BUT vanilla ships generic random tables (`ST_SimpleMeleeWeapons`, `ST_MartialMeleeWeapons`,
+     `ST_LightArmor`/`ST_MediumArmor`/`ST_HeavyArmor`, level-segmented via StartLevel/EndLevel)
+     and Osiris has `GenerateTreasure(holder, tableId, level, finder)` (story_header.div:786)
+     + `TemplateAddTo(template, holder, count, showNotification)` (:411) + `Equip(character,
+     item, addToMainInventoryOnFail, …)` (:160) + event `TemplateAddedTo(tmpl, object, holder,
+     addType)` (:1237). v3.4 flow: HUMANOID spawns only (others keep innate attacks — a sword
+     would REPLACE a monster's innate multiattack); owner's band tiers (≤80% simple+light,
+     ≤95% martial+light+25% potion, ≤98% martial+medium+1 potion, jackpot martial+heavy+2
+     potions+speed potion; tier forced to 1 at host lvl ≤2; heavy armor needs lvl ≥5); potions
+     added via `TemplateAddTo` (healing potion scales with player level: A/Greater/Superior
+     at 1-5/6-10/11+); `TemplateAddedTo` listener auto-equips rolled gear (potions fail into
+     inventory and mob AI drinks them). No sqlite in SE v33 (grepped vendor API) — generated
+     Lua modules remain the DB medium. Phase 2 (when we want cost control): ItemDB.lua from
+     Weapon.txt/Armor.txt/Object.txt (`RootTemplate` GUID → dump Name_GUID, `ValueScale`,
+     `ValueLevel`, `Proficiency Group`).
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load
