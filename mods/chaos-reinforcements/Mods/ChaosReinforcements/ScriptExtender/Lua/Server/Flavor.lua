@@ -1,22 +1,19 @@
 -- "Chaos Reinforcements" flavor module (server side). Ext.Require'd AFTER Common.lua.
 -- Names, buffs and tells for LEADER spawns (pack mobs keep their template names by design).
 --
--- v3.10: playtest round 3 - buffs WORK (leader got +stats/+hp from CHAOS_Boosts.txt), bark
--- works but broadcast to every party member (owner wants a single, silent, text-only tell),
--- and the entity-Replicate rename path is a dead end in v33 ("Param 3" error for string AND
--- component args). New strategy: the STORY call SetStoryDisplayName(target, key) applied with
--- a RAW STRING (vanilla type is LocalizedTextKey, but engines usually display unknown keys
--- verbatim - the next playtest log + overhead names will confirm). It powers both:
---   - leader rename (permanent, no restore needed)
---   - the tell: the PLAYER's overhead name becomes the message for ~4 s, then the saved
---     GetDisplayName key is written back. No sound, single character, disappears on its own.
--- Every attempt is logged separately; TELL_MODE switches tells: "name" | "bark" | "off".
+-- v3.13: the display-name-swap tell is REMOVED at owner request (risk of save weirdness);
+-- the tell is now floating Osiris DebugText (story_header.div:648 - the only floating-text
+-- call in BG3; the DOS2 CombatLogText family does NOT exist here) over the player AND the
+-- leader. There is NO Osiris combat-log call in BG3 - a combat-log entry would need SE
+-- client-side Lua (Ext.UI), an open experiment. The v3.10 restore-bug repair and the
+-- !chaos_rename escape hatch stay as safety nets. Leader rename (SetStoryDisplayName with
+-- a raw string) and leader buffs (CHAOS_Boosts.txt statuses) are proven working.
 
 local LEADER_RENAME = true       -- rename the leader to a villain name
 local LEADER_BUFFS = true        -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
-local TELL_MODE = "debugtext"   -- "debugtext": Osiris DebugText floating over the player;
-                                -- "name": 4 s display-name swap; "bark": voice bark; "off"
-local TELL_SECONDS = 4          -- "name" mode: how long the tell text stays over the player's head
+local TELL_MODE = "debugtext"   -- "debugtext": floating Osiris DebugText over player AND leader
+                                -- "bark": voice bark; "off" (the v3.10/v3.11 display-name swap
+                                -- mode was REMOVED at owner request - risky for save weirdness)
 
 -- procedural villain names: FIRST x EPITHET = ~1600 combinations, no external DB needed
 local FIRST = {
@@ -100,37 +97,26 @@ local function displayNameText(char)
     return nil
 end
 
-local function tellViaName(player, name)
-    local saved = displayNameText(player)
-    if not saved then
-        log("tell: cannot read current display name - SKIPPING (never risk a stuck name)")
-        return
-    end
-    local msg = pick(TELLS):format(name)
-    local okS, eS = pcall(Osi.SetStoryDisplayName, player, msg)
-    if not okS then
-        log("tell: SetStoryDisplayName threw:", eS)
-        return
-    end
-    log("tell: showing", msg, "(will restore to", saved .. ")")
-    pcall(Ext.Timer.WaitFor, TELL_SECONDS * 1000, function ()
-        local okR, eR = pcall(Osi.SetStoryDisplayName, player, saved)
-        log("tell: restore to", saved, okR and "ok" or ("threw: " .. tostring(eR)))
-    end)
-end
-
 local function tellViaBark(player)
     local okB, eB = pcall(Osi.StartVoiceBark, pick(BARKS), player)
     log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
 end
 
 -- "debugtext" tell: Osiris DebugText(object, text) - floating raw text over the character,
--- fades on its own (story_header.div:648). The cleanest mechanism; verified to exist,
--- display behavior needs one playtest.
-local function tellViaDebugText(player, name)
+-- fades on its own (story_header.div:648). Full line over the player (guaranteed visible)
+-- plus a short line over the leader itself - eyes are drawn to the new arrival.
+-- NOTE: there is NO combat-log Osiris call in BG3: CombatLogText/DisplayText/
+-- CharacterStatusText/CharacterDisplayTextWithParam are DOS2-family only (verified absent
+-- from story_header.div). A combat-log entry would need SE client-side Lua (Ext.UI) - open
+-- experiment.
+local function tellViaDebugText(player, leader, name)
     local msg = pick(TELLS):format(name)
     local okD, eD = pcall(Osi.DebugText, player, msg)
-    log("tell(DebugText):", okD and "shown" or ("threw: " .. tostring(eD)), msg)
+    log("tell(DebugText player):", okD and "shown" or ("threw: " .. tostring(eD)), msg)
+    if leader then
+        local okL, eL = pcall(Osi.DebugText, leader, "Reinforcements!")
+        log("tell(DebugText leader):", okL and "shown" or ("threw: " .. tostring(eL)))
+    end
 end
 
 -- public: call right after a leader spawned
@@ -144,9 +130,7 @@ function FlavorLeader(created, host)
     end
     if host then
         if TELL_MODE == "debugtext" then
-            tellViaDebugText(host, name)
-        elseif TELL_MODE == "name" then
-            tellViaName(host, name)
+            tellViaDebugText(host, created, name)
         elseif TELL_MODE == "bark" then
             tellViaBark(host)
         end
