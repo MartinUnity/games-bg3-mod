@@ -1,8 +1,8 @@
 -- MARTIN_MoreMobs probe v2 (server-side Lua).
 -- v1 lesson (2026-10-31): the mod DOES load (template dump was written on SessionLoaded) but the
 -- spawn attempts were silent: SE v33 has no "LogEnabled" key and no bg3-print.log -- runtime logs
--- go to <prefix>/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log and need
--- "LogRuntime": true in bin/ScriptExtenderSettings.json (verified against the v33 DLL strings).
+-- go to profile "Script Extender Logs/Extender Runtime*.log" and need "LogRuntime": true in
+-- bin/ScriptExtenderSettings.json (verified against the v33 DLL strings).
 -- v2 still file-logs through Ext.IO.SaveFile (proven on this install) so diagnostics are
 -- inspectable offline: profile "Script Extender/MARTIN_probe.log".
 --
@@ -31,8 +31,11 @@ local TEMPLATES = {
     "S_FirstFight_Imp_Melee_01_07f1512b-efe9-4eb8-8ade-783435e9d7c9",
 }
 
--- Factions verified from vanilla goals (Hero_... appears 179x; Evil_fb046e51 is the common Evil).
-local EVIL = "Evil_fb046e51-c544-4836-81eb-754ca8a021b6"
+-- Faction pair copied VERBATIM from the E8b story probe that made this wolf attack the party
+-- (docs/goals/MARTIN_SpawnProbe.txt:55-56). v2 used Evil_fb046e51 + the host's real per-player
+-- faction ("Hero Player1_<guid>", surfaced by GetFaction) and the pair silently did nothing --
+-- wolf spawned neutral/yellow.
+local EVIL = "Evil_4be9261a-e481-8d9d-3528-f36956a19b17"
 local HERO = "Hero_a1542c81-6895-929e-4522-10ce218bb360"
 
 log("Probe.lua loaded")
@@ -62,7 +65,7 @@ local ok, err = pcall(function ()
                 if created and created ~= "" then
                     local okG, eG = pcall(Osi.SetFaction, created, EVIL)
                     log("SetFaction EVIL:", okG and "ok" or eG)
-                    local hostileTo = (hostFaction and hostFaction ~= "" and hostFaction ~= EVIL) and hostFaction or HERO
+                    local hostileTo = HERO  -- E8b-proven fixed pair; do NOT use the per-player faction
                     local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, hostileTo, created, host)
                     log("SetHostileAndEnterCombat (EVIL vs", hostileTo, "):", okX and "ok" or eX)
                 end
@@ -95,8 +98,8 @@ end
 Ext.Events.SessionLoaded:Subscribe(function ()
     log("SessionLoaded")
     dumpTemplates()
-    local ok3, rows = pcall(function () return Osi.DB_CurrentLevel:Get(nil) end)
-    log("DB_CurrentLevel:", ok3 and Ext.DumpExport(rows) or ("threw: " .. tostring(rows)))
+    -- NB: do NOT read Osiris DB facts here -- v2 hit "Attempted to read Osiris database in
+    -- restricted context" for Osi.DB_CurrentLevel:Get(nil) at SessionLoaded time.
 end)
 
 -- Console command for manual tests: !martin_spawn

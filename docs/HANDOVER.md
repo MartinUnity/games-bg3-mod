@@ -129,11 +129,17 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Probe v2 also file-logs via `Ext.IO.SaveFile` → profile `Script Extender/MARTIN_probe.log`
   (channel already proven working). **Not yet verified producing output** (needs one game start
   with the new settings).
-- Probe v1 result (2026-10-31, partial ✅): mod enabled in modsettings, loaded server-side —
-  template dump written at SessionLoaded (32016 entries, keys = bare GUIDs; wolf GUID present,
-  imp-instance GUID absent — confirms story-side finding). But NO spawn on combat and no visible
-  error (logging was dead). Probe v2 = same shape + full file logging + SetFaction before
-  SetHostileAndEnterCombat + GetPlayers fallback anchor.
+- Probe v1 result (2026-10-31, partial ✅): mod enabled + loaded server-side — template dump
+  written at SessionLoaded (keys = bare GUIDs; wolf GUID present, prologue imp-instance GUID
+  absent — confirms the story-side instance-vs-root finding). Spawn itself invisible (logging dead).
+- Probe v2 result (2026-10-31): **wolf spawns via Lua** (CreateAtObject + host anchor work) but
+  stays neutral/yellow. Log (`MARTIN_probe.log`) showed SetFaction/SetHostileAndEnterCombat
+  "ok"-without-effect: v2 used `Evil_fb046e51…` + the host's real **per-player faction**
+  (`GetFaction(host)` = `Hero Player1_<guid>`). Lesson: replicate the E8b-proven pair verbatim
+  (`Evil_4be9261a-e481-8d9d-3528-f36956a19b17` vs `Hero_a1542c81-6895-929e-4522-10ce218bb360`)
+  → probe v3. Other facts: `Osi.DB_*:Get` at SessionLoaded throws "restricted context"; runtime
+  logs live in profile `Script Extender Logs/`; template dump = GUID<TAB>Name (wolf = name
+  "Wolf"), and GetAllRootTemplates includes props/items — filter creature templates for pools.
 - Probe mod **packed + installed** (pak toolchain proven, `tools/pack_mod.sh --install`):
   `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. Source `mods/more-mobs/` =
   `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`, `Folder=MARTIN_MoreMobs`,

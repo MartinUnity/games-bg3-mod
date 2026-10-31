@@ -39,9 +39,9 @@ Logging on this SE v33 (verified against the DLL's strings, 2026-10-31): the set
 `LogRuntime` (Lua `Ext.Print`/errors — the one we want), `LogCompile` (story compile),
 `EnableLogging` (very verbose Osiris runtime), `LogDirectory`, `CreateConsole`. The old
 `LogEnabled` key and `bg3-print.log` filename are obsolete — nothing is written unless
-`LogRuntime:true`. Default log dir is under the *Proton prefix*:
-`compatdata/1086940/pfx/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log`
-(readable natively; `LogDirectory` can redirect, e.g. `"Z:\\home\\martin\\..."`).
+`LogRuntime:true`. Actual log dir on this install (proven 2026-10-31): profile
+`…/Larian Studios/Baldur's Gate 3/Script Extender Logs/Extender Runtime <date time>.log`
+(one file per launch). `LogDirectory` can redirect, e.g. `"Z:\\home\\martin\\..."`.
 `CreateConsole:true` opens the SE Lua console but renders unreliably under Proton; the file
 route is the reliable one. `Ext.IO.SaveFile` writes into the profile's `Script Extender/`
 folder and was proven to work — probe v2 mirrors all its logging there too
