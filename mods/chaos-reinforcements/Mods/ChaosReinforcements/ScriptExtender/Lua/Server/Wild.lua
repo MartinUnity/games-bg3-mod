@@ -117,13 +117,20 @@ local function findGroupSpot(px, py, pz, host)
         local tx, tz = px + math.cos(angle) * radius, pz + math.sin(angle) * radius
         local ok, vx, vy, vz = pcall(Osi.FindValidPosition, tx, py, tz, WILD_SPOT_SLACK, host, 1)
         if ok and type(vx) == "number" then
-            local drift = math.sqrt((vx - tx) ^ 2 + (vz - tz) ^ 2)
+            -- 3D drift: FindValidPosition can snap DOWN a floor through a ceiling -
+            -- in-game 2026-10-31 a patrol spawned in the disk-puzzle room BELOW the
+            -- Sanctum (GOB_) and the old x/z-only drift read it as "0m away"
+            local drift = math.sqrt((vx - tx) ^ 2 + (vy - py) ^ 2 + (vz - tz) ^ 2)
             if drift <= WILD_SPOT_SLACK then
                 -- keep new groups away from existing ones (no pack-on-pack chain aggro)
                 local clash = false
                 for _, g in ipairs(groups) do
-                    if g.cx and math.sqrt((vx - g.cx) ^ 2 + (vz - g.cz) ^ 2) < WILD_GROUP_GAP then
-                        clash = true break
+                    if g.cx then
+                        local dy = (g.cy or py) - vy
+                        local d3 = math.sqrt((vx - g.cx) ^ 2 + dy * dy + (vz - g.cz) ^ 2)
+                        if d3 < WILD_GROUP_GAP then
+                            clash = true break
+                        end
                     end
                 end
                 if not clash then return vx, vy, vz, radius end
@@ -177,7 +184,7 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
         pcall(Ext.Timer.WaitFor, 500, function ()
             local okP, mx, my, mz = pcall(Osi.GetPosition, mob)
             if okP and type(mx) == "number" then
-                local drift = math.sqrt((mx - x) ^ 2 + (mz - z) ^ 2)
+                local drift = math.sqrt((mx - x) ^ 2 + (my - y) ^ 2 + (mz - z) ^ 2)
                 local fac = "-"
                 if faction then
                     local okF, f = pcall(Osi.GetFaction, mob)
@@ -355,7 +362,9 @@ local function monitor()
                 for _, p in ipairs(players) do
                     local okP, px, py, pz = pcall(Osi.GetPosition, p)
                     if okP then
-                        local d2 = (mx - px) ^ 2 + (mz - pz) ^ 2
+                        -- 3D distance: a group on the floor below (the GOB_ Sanctum
+                        -- disk-puzzle room) must NOT aggro through the ceiling
+                        local d2 = (mx - px) ^ 2 + (my - py) ^ 2 + (mz - pz) ^ 2
                         if d2 < nearDist then nearest, nearDist = p, d2 end
                     end
                 end
