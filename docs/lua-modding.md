@@ -97,6 +97,11 @@ root's `Mods/`). Against the layout above, four defects, in order of severity:
    (v33 needs `LogRuntime:true`; `LogEnabled` is not a real key), every load error was silently
    invisible.
 
+⚠️ Correction (2026-10-31, DLL strings + v33 API): `Ext.RandomInteger` does **not** exist —
+randomness is engine-seeded `math.random(lo, hi)`, and `math.randomseed` is a stub that throws
+(`error("math.randomseed() not implemented")` baked into the DLL). Lua syntax can be checked
+offline without the game: python venv + `lupa` (`rt.eval('load')(src)` compiles the file).
+
 So nothing about the SE install was broken; the mod was never registered and the script was
 hallucinated. Both fixable, and `mods/more-mobs/` is the corrected skeleton.
 

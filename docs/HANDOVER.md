@@ -132,6 +132,21 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 - Probe v1 result (2026-10-31, partial ✅): mod enabled + loaded server-side — template dump
   written at SessionLoaded (keys = bare GUIDs; wolf GUID present, prologue imp-instance GUID
   absent — confirms the story-side instance-vs-root finding). Spawn itself invisible (logging dead).
+- **Probe v3 result (2026-10-31): POSITIVE — wolf spawns HOSTILE at CombatStarted via Lua.**
+  Full pipeline proven: pak → SE v33 → mod → `Osi.CreateAtObject` (name+`_`+GUID root template,
+  anchor=GetHostCharacter) → `SetFaction(EVIL)` → `SetHostileAndEnterCombat(EVIL, HERO, ...)`
+  with the E8b pair verbatim → joins the fight as a red enemy.
+- **Chaos engine v1 installed (2026-10-31, awaiting playtest):** `Server/Chaos.lua` is now the
+  required product file (Probe.lua stays unrequired as reference). Per `CombatStarted`
+  (once-guard per combatId): roll → 10% silence / 30% weak swarm 2-5 / 35% normal 1-3 / 17%
+  elite 1-2 / 8% jackpot (1 elite + 2-4 weak); 52 curated templates in weak/normal/elite pools
+  mined from the root-template dump (formula `Name_GUID`, cross-checked vs vanilla goal
+  references); spawn offsets 1-3 tiles with 1,1 retry; hostility = proven pair. Log: profile
+  `Script Extender/MARTIN_chaos.log`. Console: `!martin_chaos`, `!martin_wolf`.
+- ⚠️ RNG gotchas (DLL strings + API forensics 2026-10-31): `Ext.RandomInteger` does NOT exist
+  in v33 (older docs wrong); use `math.random(lo,hi)` — and NEVER `math.randomseed` (SE ships a
+  stub that throws). Lua syntax can be compile-checked offline: `pip` venv + `lupa`,
+  `rt.eval('load')(src)` (no interpreter on this box otherwise).
 - Probe v2 result (2026-10-31): **wolf spawns via Lua** (CreateAtObject + host anchor work) but
   stays neutral/yellow. Log (`MARTIN_probe.log`) showed SetFaction/SetHostileAndEnterCombat
   "ok"-without-effect: v2 used `Evil_fb046e51…` + the host's real **per-player faction**
@@ -148,9 +163,10 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
   to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
-- **Waiting on owner (probe v2):** restart → mod stays enabled → load → one combat. Then read
-  profile `Script Extender/MARTIN_probe.log` and
-  `…/users/steamuser/Script Extender Logs/Extender Runtime.log` — every step now logged.
+- **Waiting on owner (chaos v1 playtest):** restart → mod stays enabled → play a few combats.
+  Expect: most fights get ambushers (sometimes nothing, sometimes a wolf pack, sometimes a
+  Githyanki gish or Steel Watcher pair). Read profile `Script Extender/MARTIN_chaos.log` after
+  — it records every roll ("silence"/tier x count) and every spawn result.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load

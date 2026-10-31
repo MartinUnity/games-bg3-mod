@@ -52,9 +52,15 @@ Where things live:
   Runtime.log`, and probes also file-log to profile `Script Extender/MARTIN_probe.log` via
   `Ext.IO.SaveFile`. `bin/DWrite.dll` = official Oct-12 v33 updater (old kept `.bak-2024`;
   `WINEDLLOVERRIDES="DWrite.dll=n,b"` still required — launch options have it). SE itself stages
-  under AppData `BG3ScriptExtender/`, not `bin/`. Pak toolchain: native lslib Divine at
-  `tools/divine.sh` + `tools/pack_mod.sh` (proven); probe v2 pak installed, spawn-on-combat
-  pending diagnosis. A loaded mod flags the save as modded (achievements off — user doesn't care).
+  under AppData `BG3ScriptExtender/`, not `bin/`. **Spawn-on-combat PROVEN (probe v3: hostile
+  wolf joins fights); chaos engine v1 installed** (`Server/Chaos.lua`: per-combat roll — silence/
+  weak swarm/normal/elite/jackpot — 52 curated root templates in tiered pools, `Name_GUID` ids
+  from the root-template dump, E8b faction pair verbatim, RNG = `math.random` only
+  (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log = profile
+  `Script Extender/MARTIN_chaos.log`; console `!martin_chaos`/`!martin_wolf`; offline syntax
+  check via python+lupa). Pak toolchain: native lslib Divine at
+  `tools/divine.sh` + `tools/pack_mod.sh` (proven). A loaded mod flags the save as modded
+  (achievements off — user doesn't care).
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
   `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → live override at
   `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630`,
