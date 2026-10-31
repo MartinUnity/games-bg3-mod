@@ -2,12 +2,16 @@
 -- Names, buffs and tells for LEADER spawns (pack mobs keep their template names by design).
 --
 -- v3.13: the display-name-swap tell is REMOVED at owner request (risk of save weirdness);
--- the tell is now floating Osiris DebugText (story_header.div:648 - the only floating-text
--- call in BG3; the DOS2 CombatLogText family does NOT exist here) over the player AND the
--- leader. There is NO Osiris combat-log call in BG3 - a combat-log entry would need SE
--- client-side Lua (Ext.UI), an open experiment. The v3.10 restore-bug repair and the
--- !chaos_rename escape hatch stay as safety nets. Leader rename (SetStoryDisplayName with
--- a raw string) and leader buffs (CHAOS_Boosts.txt statuses) are proven working.
+-- the tell is now Osiris DebugText (story_header.div:648 - the only floating-text call in
+-- BG3; the DOS2 CombatLogText family does NOT exist here) over the player AND the leader.
+-- ⚠️ CORRECTION (owner, 2026-10-31): DebugText's visible effect is UNVERIFIED - probably
+-- NEVER rendered (the one "confirmation" was in a cinematic->combat scene, indistinguishable
+-- from nothing; toggle casts show no floating text either). The call logs as "shown" but
+-- is likely a release-build no-op - see the tell section below. There is NO Osiris
+-- combat-log call in BG3 - a combat-log entry would need SE client-side Lua (Ext.UI), an
+-- open experiment. The v3.10 restore-bug repair and the !chaos_rename escape hatch stay as
+-- safety nets. Leader rename (SetStoryDisplayName with a raw string) and leader buffs
+-- (CHAOS_Boosts.txt statuses) are proven working.
 
 local LEADER_RENAME = true       -- rename the leader to a villain name
 local LEADER_BUFFS = true        -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
@@ -102,9 +106,13 @@ local function tellViaBark(player)
     log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
 end
 
--- "debugtext" tell: Osiris DebugText(object, text) - floating raw text over the character,
--- fades on its own (story_header.div:648). Full line over the player (guaranteed visible)
--- plus a short line over the leader itself - eyes are drawn to the new arrival.
+-- "debugtext" tell: Osiris DebugText(object, text) - CLAIMED floating raw text over the
+-- character, fades on its own (story_header.div:648). ⚠️ VISIBLE EFFECT NEVER VERIFIED:
+-- the only "confirmation" was during a cinematic -> combat sequence where it could not be
+-- distinguished from nothing; owner recall (2026-10-31): it has probably NEVER worked.
+-- The call itself succeeds (log shows "shown") - likely a DOS2 leftover no-op in BG3.
+-- Keep it as best-effort (costs nothing), but do NOT rely on it: player-facing state
+-- feedback lives in the toggle spell tooltips (Toggle.lua) and the log.
 -- NOTE: there is NO combat-log Osiris call in BG3: CombatLogText/DisplayText/
 -- CharacterStatusText/CharacterDisplayTextWithParam are DOS2-family only (verified absent
 -- from story_header.div). A combat-log entry would need SE client-side Lua (Ext.UI) - open

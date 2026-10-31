@@ -57,8 +57,15 @@ The toggle shouts now swap their Description stat handle per state (tooltip show
 "Currently ENABLED/DISABLED"); UNVERIFIED assumption: the client tooltip re-reads the
 Sync()ed stat. If it turns out the hotbar caches the description at load, next option is
 the ToggleGroup passive route (like vanilla "Toggle Non-Lethal Attacks" / other mods'
-passive-bar buttons - owner referenced this). Also pending: why DebugText over the caster
-showed nothing at toggle time (result now logged in flip()).
+passive-bar buttons - owner referenced this).
+
+CORRECTION same day (owner recall): Osiris DebugText has probably NEVER rendered visibly
+in this game - the lone "leader joined" confirmation happened in a cinematic -> combat
+sequence where it was indistinguishable from nothing, and toggle casts show no floating
+text either. The CALL succeeds (logs "shown"), so it's likely a DOS2 leftover no-op in the
+BG3 release build. flip() now logs the pcall result; if it says "shown" while nothing
+appears, retire DebugText as a player-feedback channel for good (keep the call or drop
+it) and rely on tooltips/log.
 
 ## Leader visual distinction (owner idea, earlier)
 
