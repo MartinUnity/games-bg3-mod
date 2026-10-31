@@ -57,6 +57,8 @@ them into the `Data/Mods` story mount when needed.
 
 - `overview.md` — repo-wide orientation: layers, what has been changed, how
   overrides load. Start here.
+- `HANDOVER.md` — dated state-of-play snapshot for a fresh session (open experiments, E7 null
+  result, pak-toolchain progress, ranked next moves). Read after `overview.md` when resuming.
 - `drop-chains.md` — drop-side loot wiring: what is editable (table pool
   contents) vs binary/uneditable (encounter→table wiring), `subtable "x,y"`
   semantics, probability math, injected parent tables. Most current of the
