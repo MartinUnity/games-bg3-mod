@@ -16,6 +16,8 @@ local WILD_CHANCE = 25               -- % per heartbeat
 local WILD_TEST = true               -- 100% per heartbeat while testing
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
 local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
+local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
+local WILD_SPOT_TRIES = 6       -- angle attempts before giving up on a spot
 local WILD_CLUSTER = 4               -- max meters between group members
 local WILD_AGGRO_RANGE = 12          -- meters: player this close -> the group attacks
 local WILD_MONITOR_MS = 2000        -- proximity check interval
@@ -36,6 +38,26 @@ local function wildType(base)
     return opts[rand(1, #opts)]
 end
 
+-- pick a valid, out-of-sight group spot: random angle/radius, then FindValidPosition
+-- corrects the raw point to the nearest walkable ground within WILD_SPOT_SLACK; if the
+-- correction is bigger than that (target was inside a wall / off the map - common in
+-- cramped TUT interiors), try another angle.
+local function findGroupSpot(px, py, pz, host)
+    for _ = 1, WILD_SPOT_TRIES do
+        local angle = math.random() * 2 * math.pi
+        local radius = rand(WILD_SPAWN_MIN, WILD_SPAWN_MAX)
+        local tx, tz = px + math.cos(angle) * radius, pz + math.sin(angle) * radius
+        local ok, vx, vy, vz = pcall(Osi.FindValidPosition, tx, py, tz, WILD_SPOT_SLACK, host, 1)
+        if ok and type(vx) == "number" then
+            local drift = math.sqrt((vx - tx) ^ 2 + (vz - tz) ^ 2)
+            if drift <= WILD_SPOT_SLACK then
+                return vx, vy, vz, radius
+            end
+        end
+    end
+    return nil
+end
+
 -- spawn one mob at a position; returns the created guid (or nil)
 local function spawnWildMob(entry, x, y, z, base, doEquip)
     local ok, created = pcall(function ()
@@ -43,7 +65,13 @@ local function spawnWildMob(entry, x, y, z, base, doEquip)
         local mx = x + rand(-jitter, jitter) * 0.5
         local mz = z + rand(-jitter, jitter) * 0.5
         local mob = Osi.CreateAt(entry.id, mx, y, mz, 1, 1, "")
-        if not mob or mob == "" then return nil end
+        if (not mob or mob == "") then
+            mob = Osi.CreateAt(entry.id, x, y, z, 1, 1, "")  -- retry at the validated center
+        end
+        if not mob or mob == "" then
+            log("wild: CreateAt failed for", entry.id, "at", mx, ",", y, ",", mz, "and center", x, ",", y, ",", z)
+            return nil
+        end
         pcall(Osi.SetLevel, mob, targetLevelFor(base))
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
@@ -76,15 +104,18 @@ local function spawnWildGroup(host, base)
     local slotMap = {}
     for _, s in ipairs(leaderSlots) do slotMap[s] = true end
 
-    -- spawn position: out of sight ring around the player
+    -- spawn position: valid ground in an out-of-sight ring around the player
     local okP, px, py, pz = pcall(Osi.GetPosition, host)
     if not okP or type(px) ~= "number" then
         log("wild: GetPosition failed, skipping")
         return
     end
-    local angle = math.random() * 2 * math.pi
-    local radius = rand(WILD_SPAWN_MIN, WILD_SPAWN_MAX)
-    local x, z = px + math.cos(angle) * radius, pz + math.sin(angle) * radius
+    local x, y, z, radius = findGroupSpot(px, py, pz, host)
+    if not x then
+        log("wild: no valid spot found within", WILD_SPAWN_MIN .. "-" .. WILD_SPAWN_MAX ..
+            "m (cramped interiors?), skipping this heartbeat")
+        return
+    end
 
     local group = { members = {}, type = etype }
     local spawnedHumanoid = (etype == "Humanoid")
