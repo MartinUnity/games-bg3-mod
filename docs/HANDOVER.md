@@ -37,12 +37,29 @@ Remaining untested sub-cases: (a) wrong mount (`Data/Public` never scanned for `
 (b) wrong module (`SharedDev` not searched for the TUT levels' goals, which live in Gustav/GustavDev),
 (c) the engine never compiles loose goal text at all on this install.
 
-⚠️ Also unconfirmed from that run: whether the **balance/stats** overrides still take effect on a new
-game (user said "nothing out of the normal", which may or may not include the HP/damage edits).
-Ask, and if stats are dead too, suspect the base-module choice in `modsettings.lsx` (currently
-`GustavDev`, mtime 2024-08-02) before suspecting the overlay.
+✅ Resolved afterwards (owner, same day): the **stats** side does work on a new game — the HP boost is
+live (see "E8b" below). So the overlay is healthy; it is specifically the **story-goal** channel that
+is dead. The earlier worry about `modsettings.lsx` (base module `GustavDev`, mtime 2024-08-02) is not
+the cause for stats, and `GustavDev` is the layer where the working override lives.
 
-### E8 — next experiment, cheap, no tooling (do this first)
+### E8b — preferred over E8 (owner confirmed the stats analogue on 2026-10-31)
+
+The owner's **HP change works** — the live one is an appended entry inside an existing vanilla file:
+`GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630` (`HEALTHBOOST_HARDCORE`,
+`IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)`), reached via `Character.txt` →
+`DifficultyStatuses` → `STATUS_HARD`. Their new, separately-named stat files **never** worked.
+So the repo's loading rule is **file identity**: only files vanilla already defines are read, and
+changes land as entry-name overrides inside them. Codified in `docs/overview.md` §6.1 and in
+`AGENTS.md`. (Also fixed: AGENTS.md credited a `Status_BOOST.txt` override that was commented out —
+grep before trusting line numbers in this repo.)
+
+Why it matters for spawning: E1 and E7 were both a **new file name** *and* a **new mount**, so
+neither experiment isolated the variable. E8b appends the probe rules into an existing vanilla goal
+file in the story mount (back it up first — `Data/Mods` is not in git; e.g.
+`Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt`), which tests the mount without also
+changing file identity. Full protocol in `docs/spawn-chains.md` §3.1.2.
+
+### E8 — cheap, no tooling (superseded by E8b above, but it costs one command)
 
 `Data/Mods/` is writable now (user fixed the ro bind). Put the probe where vanilla goal text
 provably lives, then restart the game (story text is compiled at start, so a restart is required):
@@ -145,8 +162,10 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 8. Ranked next moves
 
-1. **E8** (§3) — copy the probe into the `Data/Mods` story mount, restart, one combat. Cheapest
-   decisive answer about the story channel; also ask the user whether balance stats visibly worked.
+1. **E8b** (§3) — append the probe rules into an existing vanilla goal file in the `Data/Mods` story
+   mount (backup first), restart, one combat. Isolates the mount from file identity, and the stats
+   analogue says file identity is what the loader keys on. E8 (`tools/deploy_story.sh --copy`) is the
+   one-command version of the old test if you want both signals at once.
 2. **Pak CLI** (§4) — tiny C# console app over LSLib `Package`/`PackageWriterFactory`; prove by
    round-tripping `ModFixer.pak`, then pack `mods/more-mobs/` (internal paths `Mods/MARTIN_MoreMobs/…`,
    `Public/MARTIN_MoreMobs/…`) into `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, enable

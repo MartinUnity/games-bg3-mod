@@ -8,6 +8,12 @@ keeps achievements working). Game data lives in four layers: `Gustav/`,
 `GustavDev/`, `Shared/`, `SharedDev/`; an edit takes effect by matching the
 vanilla file path and entry name (override).
 
+⚠️ Loading is keyed on **file identity** (`docs/overview.md` §6.1): overrides inside a file vanilla
+already defines are applied, but **invented file names under `Data/Public` are not loaded** —
+confirmed positive/negative in-game by the owner (the live Honour HP boost works as an appended entry
+in an existing `Status_BOOST.txt`; new `MARTIN_*`-style stat files never did). New file names count
+only inside a `.pak`, which is also the leading explanation for the null story-goal tests.
+
 Where things live:
 - Items/spells/passives/balance: `<Layer>/Stats/Generated/Data/*.txt`
   (items: `Armor.txt`, `Weapon.txt`; spells: `Spell_*.txt`; plus `Passive.txt`,
@@ -35,8 +41,10 @@ Where things live:
   via `bin/ScriptExtenderSettings.json` → `bin/bg3-print.log`. Unlike the `Data/Public` overlay,
   a loaded mod flags the save as modded (achievements off) — use it as the lab, not the product.
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
-  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → overridden in
-  `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); the story-side equivalent is the
+  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → live override at
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630`,
+  `IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)`; the drafts at 11518-11618 in that file are
+  commented out, so grep before trusting a line number). The story-side equivalent is the
   vanilla predicate `DB_HonorMode_Enabled(1)`, usable from any goal file (maintained by
   `Data/Mods/SharedDev/.../Goals/GLO_HonorMode.txt:66-70`)
 - `bg3-vanilla-data/` is gitignored and meant to be an unpack of vanilla data used as a

@@ -134,6 +134,27 @@ a file at the same path the original occupies
 only the payload lines you care about. Everything is hand-edited text — the
 Larian mod tools do not work properly on this Linux install.
 
+### 6.1 What the loader keys on: **file identity** (in-game confirmed 2026-10-31)
+
+- ✅ **Positive control (this is the HP change the owner remembers):** the live Honour HP boost is
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630` — a `new entry "HEALTHBOOST_HARDCORE"`
+  (vanilla entry name, `using "DIFFICULTY"`) appended at the end of a file vanilla already defines,
+  with `data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)"`, i.e. level-scaled extra HP
+  per mob. It is reached because `Shared/Stats/Generated/Data/Character.txt` maps `STATUS_HARD` to
+  `HEALTHBOOST_HARDCORE`. The earlier drafts of that entry at lines 11518-11618 are commented out —
+  only the 11620 block is live.
+- ⚠️ **Negative control (owner-reported, consistent since 2025):** inventing **new stat file names**
+  under `Data/Public/<Layer>/Stats/Generated/Data/` never took effect, while edits inside an existing
+  vanilla file always did. Consistent with the stats loader working from a fixed list of file names
+  rather than scanning directories — i.e. **path + file name is the unit of loading**, and only
+  entry-name overrides inside a recognised file are applied.
+- Corollary: to change anything, append to the vanilla file that already defines it, in the layer of
+  the active base module (`GustavDev`, per `modsettings.lsx`). New file names are only safe inside a
+  mod `.pak`, where new files (including new story-goal files) are legitimately added — one more
+  reason the pak route is the one that unblocks story work (`docs/HANDOVER.md`).
+- Same shape as the two null story experiments: our goal text was a new file name *and* a new mount
+  at the same time (`docs/spawn-chains.md` §3.1.2).
+
 **Gustav / GustavX / Shared / SharedDev / GustavDev** as they appear in
 `modsettings.lsx` are **Larian-internal content modules** (the ~7 GB game-data
 set in this same text format), not user mods — ignore them when identifying
@@ -156,8 +177,8 @@ companion & pet changes" are implemented in **stats**, not in story goals.
 Our own story goals live **in the repo** at `SharedDev/Story/RawFiles/Goals/MARTIN_*.txt`
 (CRLF, git-tracked) — see `docs/spawn-chains.md` for what they do, `tools/check_goal.py` to
 validate them, and `tools/deploy_story.sh` to mirror them into `Data/Mods/…` if the engine
-turns out to compile goals only from there (that mount is read-only: `/home/martin/.local`
-is an `ro` bind mount; only `Data/Public` is `rw`). Whether loose goal text is loaded at all
+turns out to compile goals only from there (that mount became writable on 2026-10-31; it used to be
+an `ro` bind mount and only `Data/Public` was `rw`). Whether loose goal text is loaded at all
 is still unproven on this install — `docs/spawn-chains.md` §3/§12. The vanilla corpus also
 carries a helper library worth reading before writing new goals — `Shared/Story/RawFiles/Goals/__PROC.txt`
 (457 `PROC_`/`QRY_` rules), `_Greevers_Little_Helpers.txt` (`QRY_OnlyOnce`), `_Attitude.txt`

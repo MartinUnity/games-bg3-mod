@@ -129,6 +129,19 @@ text is compiled at start. Any spawn means the `Data/Mods` story mount is live a
 there (and inside the pak); still nothing means loose goal text is not compiled here at all and
 the pak (and/or lslib `StoryCompiler`) is the only route.
 
+**E8b (added 2026-10-31, now the preferred cheap test).** The owner confirmed the stats analogue:
+the live Honour HP boost works as an appended entry inside an existing vanilla file
+(`GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630`), while **invented stat file names
+never took effect** — see `docs/overview.md` §6.1, "file identity". Both story nulls so far had a
+new file name *and* a new mount, so E8b removes the first variable too: append the E7 rules **into
+an existing vanilla goal file in the story mount** instead of shipping a `MARTIN_*.txt`.
+Protocol: back the target up first (`Data/Mods` is not in git), pick a small always-compiled goal
+such as `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt`, append the rules verbatim
+(rules are global once compiled; they are not level-scoped), restart, one combat. Restore the file
+afterwards from the backup. Reading: spawns ⇒ story text loads from the `Data/Mods` mount and the
+blocker is file registration (pak or an append-into-vanilla shipping shape); nothing ⇒ loose goal
+text is not compiled on this install at all, and the pak / `StoryCompiler` route is mandatory.
+
 Balance/stats overrides were not separately confirmed in that run ("nothing out of the normal" is
 ambiguous about the HP/damage edits). If stats turn out to be dead too, suspect the stale
 `modsettings.lsx` base-module choice (`GustavDev`, mtime 2024-08-02) before blaming the overlay.
