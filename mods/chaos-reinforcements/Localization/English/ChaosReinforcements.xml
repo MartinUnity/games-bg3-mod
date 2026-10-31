@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <contentList>
 	<content contentuid="h5a1e8f2ag9c44g4d31gb7e0g2f6a8d3c91b7" version="1">Chaos: Toggle Wild Groups</content>
-	<content contentuid="h8f3d2b71g4e2ag4c9fg9d81g3b0c5e7a2d14" version="1">Toggles the chaos engine's random wild encounter groups (wandering patrols) on or off. No action cost - the reply floats above your head.</content>
+	<content contentuid="h8f3d2b71g4e2ag4c9fg9d81g3b0c5e7a2d14" version="1">Toggles the chaos engine's random wild encounter groups (wandering patrols) on or off. No action cost.</content>
 	<content contentuid="hc4b9f7e2g1d3ag4e8bg8f52g9a6d0c3b7e21" version="1">Chaos: Toggle Reinforcements</content>
-	<content contentuid="h2e7c5a19g6f8dg4b3eg9c41g7d5e0a2b8f63" version="1">Toggles the chaos engine's combat reinforcements (extra mobs joining fights) on or off. No action cost - the reply floats above your head.</content>
+	<content contentuid="h2e7c5a19g6f8dg4b3eg9c41g7d5e0a2b8f63" version="1">Toggles the chaos engine's combat reinforcements (extra mobs joining fights) on or off. No action cost.</content>
+	<content contentuid="h7b2e9d4ag1c58g4f6ega3d2g8e1f0b9c4a57" version="1">Currently ENABLED: wild encounter groups (wandering patrols) are spawning. Cast to disable them.</content>
+	<content contentuid="h9d4f2a8bg3e71g4c5agb8f6g2a9d0e5c1b83" version="1">Currently DISABLED: no new wild encounter groups will spawn (existing patrols stay until they expire). Cast to enable them.</content>
+	<content contentuid="h4c8b1e6fg2d93g4a7eg9f5cg6a1b7d3e9c24" version="1">Currently ENABLED: combat reinforcements (extra mobs joining fights) are rolling. Cast to disable them.</content>
+	<content contentuid="h6f3a7c5dg8e42g4b19ga2d7g4f8c1e6b9a35" version="1">Currently DISABLED: no extra mobs will join fights. Cast to enable them.</content>
 </contentList>

@@ -19,6 +19,30 @@ TOGGLE_SETTINGS_FILE = "ChaosReinforcements.settings"
 -- Defaults ON; overwritten by the persisted setting at SessionLoaded.
 CHAOS_STATE = { wilds = true, reinforce = true }
 
+-- Per-state description handles (Localization/English/ChaosReinforcements.loca):
+-- the spell TOOLTIP carries the current state ("Currently ENABLED/DISABLED...") -
+-- owner request 2026-10-31 after the cast gave no visible feedback.
+local DESC_ON = {
+    wilds = "h7b2e9d4ag1c58g4f6ega3d2g8e1f0b9c4a57;1",
+    reinforce = "h4c8b1e6fg2d93g4a7eg9f5cg6a1b7d3e9c24;1",
+}
+local DESC_OFF = {
+    wilds = "h9d4f2a8bg3e71g4c5agb8f6g2a9d0e5c1b83;1",
+    reinforce = "h6f3a7c5dg8e42g4b19ga2d7g4f8c1e6b9a35;1",
+}
+
+-- reflect state into the spell tooltip; Sync() is required for post-load edits
+-- (docs/vendor/bg3se-Lua-API.md "Writing stat attributes")
+local function describeSpell(key)
+    local spell = key == "wilds" and TOGGLE_SPELL_WILDS or TOGGLE_SPELL_REINFORCE
+    local ok, err = pcall(function ()
+        local stat = Ext.Stats.Get(spell)
+        stat.Description = CHAOS_STATE[key] and DESC_ON[key] or DESC_OFF[key]
+        stat:Sync()
+    end)
+    if not ok then log("toggle: description swap failed for", spell, "-", tostring(err)) end
+end
+
 local function persist()
     local ok, err = pcall(Ext.IO.SaveFile, TOGGLE_SETTINGS_FILE,
         (CHAOS_STATE.wilds and 1 or 0) .. " " .. (CHAOS_STATE.reinforce and 1 or 0))
@@ -36,6 +60,8 @@ local function restore()
         if w then CHAOS_STATE.wilds = w == "1" end
         if r then CHAOS_STATE.reinforce = r == "1" end
     end
+    describeSpell("wilds")     -- tooltip matches persisted state from the start
+    describeSpell("reinforce")
     log("toggle: restored state wilds =", CHAOS_STATE.wilds and "ON" or "OFF",
         "reinforce =", CHAOS_STATE.reinforce and "ON" or "OFF")
 end
@@ -43,12 +69,15 @@ end
 local function flip(key, caster)
     CHAOS_STATE[key] = not CHAOS_STATE[key]
     persist()
+    describeSpell(key)
     local what = key == "wilds" and "Wild groups" or "Reinforcements"
     local msg = what .. ": " .. (CHAOS_STATE[key] and "ON" or "OFF")
     if caster and caster ~= "" then
-        pcall(Osi.DebugText, caster, msg)
+        local okD, resD = pcall(Osi.DebugText, caster, msg)
+        log("toggle:", msg, "- tell(DebugText):", okD and "shown" or ("threw: " .. tostring(resD)))
+    else
+        log("toggle:", msg, "(console)")
     end
-    log("toggle:", msg, caster and ("(cast by " .. tostring(caster) .. ")") or "(console)")
 end
 
 local granted = {}   -- per-character, so late joiners don't re-toast every heartbeat
