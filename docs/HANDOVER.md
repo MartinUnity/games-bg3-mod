@@ -157,8 +157,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   (level-3 harpy multiattack one-shots a level-1 party). **Leader:** rolls only when a pack of
   ≥ 2 spawned; ~10% chance (LEADER_TEST=true forces 100% while testing); ~90% same type,
   ~10% cross-type from the `AFFINITY` map (Beast pack → Beast/Monstrosity/Humanoid leaders,
-  never e.g. an undead leading wolves); leader cost ≤ budget/2 on top of the pack;
-  +0-2 levels. Level scaling: `Osi.SetLevel(created, target)` with immediate + delayed
+  never e.g. an undead leading wolves); leader is spawned OUTSIDE the budget (the 10% roll is
+  the jackpot escalation — biased to the beefier half of the pool; no cross-type while the
+  low-level ceiling is active); Level scaling: `Osi.SetLevel(created, target)` with immediate + delayed
   (2 s `Ext.Timer.WaitFor`) GetLevel verification.
 - **v3 first-playtest results (owner, 2026-10-31, tutorial imp fight) → all three issues
   fixed in v3.1:**

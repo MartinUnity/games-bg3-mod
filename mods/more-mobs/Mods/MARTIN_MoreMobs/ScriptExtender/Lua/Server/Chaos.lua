@@ -51,7 +51,6 @@ local SOFT_CAP_LEVEL = 2            -- host level <= this: mobs never exceed the
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
 local LEADER_TEST = true            -- 100% leader while testing (still needs pack >= 2)
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
-local LEADER_ALLOWANCE = 2         -- leader may cost up to budget / this, on top of the pack
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
 local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification
 
@@ -233,6 +232,18 @@ local function pickFrom(typeName, maxCost)
     return cheapest.cost <= maxCost and cheapest or nil
 end
 
+-- leaders are deliberately OUTSIDE the budget: the ~10% roll is meant to occasionally
+-- escalate a fight hard. Pick from the beefier half of the pool.
+local function pickLeaderFrom(typeName)
+    local pool = CHAOS_DB and CHAOS_DB[typeName]
+    if not pool or #pool == 0 then return nil end
+    local sorted = {}
+    for _, e in ipairs(pool) do sorted[#sorted + 1] = e end
+    table.sort(sorted, function (a, b) return a.cost < b.cost end)
+    local from = math.max(1, math.floor(#sorted / 2) + 1)
+    return sorted[rand(from, #sorted)]
+end
+
 -- level math: never above the player's level while they are SOFT_CAP_LEVEL or lower
 local function targetLevelFor(base)
     if base <= SOFT_CAP_LEVEL then
@@ -268,30 +279,33 @@ local function reinforce(host, enemies)
         spawned, spent = spawned + 1, spent + e.cost
     end
 
-    -- leader: roll once per pack; same type ~90%, cross-type from the AFFINITY map
+    -- leader: roll once per pack (>= 2 mobs); same type ~90%, cross-type from the AFFINITY map.
+    -- Spawned OUTSIDE the budget - the 10% roll is the "fight just got serious" jackpot.
     if spawned >= 2 then
         local chance = LEADER_TEST and 100 or LEADER_CHANCE
         if rand(1, 100) <= chance then
             local ltype = etype
-            if rand(1, 100) > SAME_TYPE_LEADER then
+            -- no cross-type surprises while the low-level ceiling is active (lvl-1 owlbear = TPK)
+            if base > SOFT_CAP_LEVEL and rand(1, 100) > SAME_TYPE_LEADER then
                 local opts = {}
                 for _, t in ipairs(AFFINITY[etype] or {}) do
                     if t ~= etype then opts[#opts + 1] = t end
                 end
                 if #opts > 0 then ltype = opts[rand(1, #opts)] end
             end
-            local leader = pickFrom(ltype, math.floor(budget / LEADER_ALLOWANCE))
+            local leader = pickLeaderFrom(ltype)
             if leader then
                 local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
-                log("leader: type", ltype, "(pack", etype .. ")", leader.id, "hp", leader.hp, "lvl", lvl)
+                log("leader: type", ltype, "(pack", etype .. ")", leader.id,
+                    "hp", leader.hp, "cost", leader.cost, "lvl", lvl, "(outside budget)")
                 spawnCreature(anchors[rand(1, #anchors)], leader, lvl)
-                spawned, spent = spawned + 1, spent + leader.cost
+                spawned = spawned + 1
             else
-                log("leader: no", ltype, "within allowance", math.floor(budget / LEADER_ALLOWANCE))
+                log("leader: no", ltype, "entries in DB")
             end
         end
     end
-    log("wave done:", spawned, "spawned,", spent, "/", budget, "spent")
+    log("wave done:", spawned, "spawned, pack", spent, "/", budget, "spent (leader outside budget)")
 end
 
 -- listeners --------------------------------------------------------------------
