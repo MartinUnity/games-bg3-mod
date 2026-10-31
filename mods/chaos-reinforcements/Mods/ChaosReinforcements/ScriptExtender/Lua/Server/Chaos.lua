@@ -18,14 +18,14 @@
 --     only a fallback when the fight could not be classified.
 
 -- Tunables ------------------------------------------------------------------
-local TEST_MODE = true              -- 100% trigger while testing
+local TEST_MODE = false             -- real odds: base 20% + 5..25% per miss
 local BASE_CHANCE = 20
 local STACK_MIN, STACK_MAX = 5, 25  -- +% per encounter that didn't trigger
 local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs are hp/10
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
-local LEADER_TEST = true            -- 100% leader while testing (still needs pack >= 2)
+local LEADER_TEST = false           -- real odds: 10% leader for packs >= 2
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
 local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification

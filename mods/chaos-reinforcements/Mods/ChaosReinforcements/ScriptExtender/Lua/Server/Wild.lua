@@ -10,14 +10,17 @@
 -- safe havens/towns are deferred until we know it works in TUT.
 
 -- Tunables ------------------------------------------------------------------
-local WILD_LEVEL_PATTERN = "^TUT_"    -- level-name gate (testing: tutorial only)
+-- tutorial + act-1 overworld (WLD_Main/Forest/GoblinCamp/Hag/Crashsite...);
+-- interiors (CRE grove, GOB goblin camp, UND underdark, CMP) stay exempt = no wilds in towns/dungeons.
+-- Lua patterns have NO alternation, hence a list.
+local WILD_LEVEL_PATTERNS = { "^TUT_", "^WLD_" }
 local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (owner: 1-2 min)
 local WILD_CHANCE = 25               -- % per heartbeat
-local WILD_TEST = true               -- 100% per heartbeat while testing
+local WILD_TEST = false              -- real odds: WILD_CHANCE per heartbeat
 local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups after an encounter
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
-local WILD_FORCE_TIER = 3            -- TESTING: force the NEXT group's tier (nil = off)
+local WILD_FORCE_TIER = nil          -- one-shot test knob consumed (v3.19 playtest OK)
 local WILD_EVIL_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
 local WILD_EVIL_CHANCE = 50         -- % of groups that spawn as (red) Evil NPC; the rest
 -- keep their template-default faction (observed: generic "Neutral NPC" = harmless
@@ -215,7 +218,11 @@ end
 -- heartbeat: try to spawn a wild group while exploring
 local function heartbeat()
     pcall(Ext.Timer.WaitFor, WILD_HEARTBEAT_MS, heartbeat)
-    if not currentLevel:find(WILD_LEVEL_PATTERN) then return end
+    local allowed = false
+    for _, p in ipairs(WILD_LEVEL_PATTERNS) do
+        if currentLevel:find(p) then allowed = true break end
+    end
+    if not allowed then return end
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
     if #groups >= WILD_MAX_GROUPS then return end
@@ -292,7 +299,7 @@ pcall(function ()
         log("wild: level", currentLevel)
     end)
     Ext.Events.SessionLoaded:Subscribe(function ()
-        log("Wild.lua loaded (level gate:", WILD_LEVEL_PATTERN .. ")")
+        log("Wild.lua loaded (level gate:", table.concat(WILD_LEVEL_PATTERNS, " / "), ")")
         pcall(Ext.Timer.WaitFor, WILD_HEARTBEAT_MS, heartbeat)
         pcall(Ext.Timer.WaitFor, WILD_MONITOR_MS, monitor)
     end)
