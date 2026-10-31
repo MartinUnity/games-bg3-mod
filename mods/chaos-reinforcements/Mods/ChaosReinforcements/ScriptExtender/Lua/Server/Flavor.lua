@@ -14,8 +14,9 @@
 
 local LEADER_RENAME = true       -- rename the leader to a villain name
 local LEADER_BUFFS = true        -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
-local TELL_MODE = "name"         -- "name": 4 s overhead text on the player; "bark": voice bark; "off"
-local TELL_SECONDS = 4          -- how long the tell text stays over the player's head
+local TELL_MODE = "debugtext"   -- "debugtext": Osiris DebugText floating over the player;
+                                -- "name": 4 s display-name swap; "bark": voice bark; "off"
+local TELL_SECONDS = 4          -- "name" mode: how long the tell text stays over the player's head
 
 -- procedural villain names: FIRST x EPITHET = ~1600 combinations, no external DB needed
 local FIRST = {
@@ -123,6 +124,15 @@ local function tellViaBark(player)
     log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
 end
 
+-- "debugtext" tell: Osiris DebugText(object, text) - floating raw text over the character,
+-- fades on its own (story_header.div:648). The cleanest mechanism; verified to exist,
+-- display behavior needs one playtest.
+local function tellViaDebugText(player, name)
+    local msg = pick(TELLS):format(name)
+    local okD, eD = pcall(Osi.DebugText, player, msg)
+    log("tell(DebugText):", okD and "shown" or ("threw: " .. tostring(eD)), msg)
+end
+
 -- public: call right after a leader spawned
 function FlavorLeader(created, host)
     local name = villainName()
@@ -133,7 +143,9 @@ function FlavorLeader(created, host)
         applyLeaderBuffs(created)
     end
     if host then
-        if TELL_MODE == "name" then
+        if TELL_MODE == "debugtext" then
+            tellViaDebugText(host, name)
+        elseif TELL_MODE == "name" then
             tellViaName(host, name)
         elseif TELL_MODE == "bark" then
             tellViaBark(host)
