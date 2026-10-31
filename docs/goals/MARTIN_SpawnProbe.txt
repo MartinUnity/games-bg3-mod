@@ -3,8 +3,11 @@ SubGoalCombiner SGC_AND
 INITSECTION
 // MARTIN_SpawnProbe - the smallest possible "can the story engine spawn mobs for us at all"
 // test (docs/spawn-chains.md sec.3.2, sec.12.1). Nothing here is gated on Honour, on the
-// current level, or on a trigger name, so there are only two ways this can fail: the file
-// was not compiled, or the template name cannot be instantiated.
+// current level, or on a trigger name, so there are only three ways this can fail: the file
+// was not compiled, it is compiled and rejected as a grammar error (the game then refuses
+// new games with "likely due to mods" - that happened 2026-10-31 when GetHostCharacter /
+// CreateAtObject, both QUERYs, were used as THEN actions; they must bind in AND instead),
+// or the template name cannot be instantiated.
 //
 // Two independent rules, one per candidate template, each with its own once-guard, so a
 // failure in one cannot stop the other, and the KIND of extra body tells us which template
@@ -23,14 +26,18 @@ INITSECTION
 
 KBSECTION
 // Rule A: duplicate the level's own imp, anchored on the host character.
+// GetHostCharacter/CreateAtObject are QUERYs (story_header.div 113/508): they must bind in
+// the AND section, like Larian's own spawn test (Gustav/.../Goals/Test.txt:345-356), NOT in THEN.
 IF
 CombatStarted(_CombatGuid)
 AND
 NOT DB_MARTIN_ProbeA(_CombatGuid)
+AND
+GetHostCharacter(_Host)
+AND
+CreateAtObject((CHARACTERROOT)S_FirstFight_Imp_Melee_01_07f1512b-efe9-4eb8-8ade-783435e9d7c9, _Host, 1, 1, "", 1, _Imp)
 THEN
 DB_MARTIN_ProbeA(_CombatGuid);
-GetHostCharacter(_Host);
-CreateAtObject((CHARACTERROOT)S_FirstFight_Imp_Melee_01_07f1512b-efe9-4eb8-8ade-783435e9d7c9, _Host, 1, 1, "", 1, _Imp);
 SetFaction(_Imp, (FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17);
 SetHostileAndEnterCombat((FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17, (FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360, _Imp, _Host);
 
@@ -39,10 +46,12 @@ IF
 CombatStarted(_CombatGuid)
 AND
 NOT DB_MARTIN_ProbeB(_CombatGuid)
+AND
+GetHostCharacter(_Host)
+AND
+CreateAtObject((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11, _Host, 1, 1, "", 1, _Wolf)
 THEN
 DB_MARTIN_ProbeB(_CombatGuid);
-GetHostCharacter(_Host);
-CreateAtObject((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11, _Host, 1, 1, "", 1, _Wolf);
 SetFaction(_Wolf, (FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17);
 SetHostileAndEnterCombat((FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17, (FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360, _Wolf, _Host);
 

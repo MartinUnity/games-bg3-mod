@@ -12,6 +12,10 @@ the mechanical mistakes that grammar makes easy:
     only exists in some other module's goals. Checked against story_header.div
     (the machine-generated list of installed calls/queries/events); SysClear/SysCount
     are engine helpers the header does not list, so Sys* is allowed.
+  - a QUERY used as a THEN action, or a CALL used as a condition -> the compiler rejects
+    these and then REFUSES NEW GAMES ("likely due to mods"). Happened 2026-10-31:
+    GetHostCharacter/CreateAtObject are queries; they must bind in the AND section like
+    Gustav/.../Goals/Test.txt:345-356 does, and their outputs are used in THEN.
   - our own DB_/QRY_/PROC_ names used without ever being introduced in the same file,
     unless some vanilla goal introduces them (DB_CurrentLevel, DB_Defeated, ...).
 
@@ -39,15 +43,15 @@ NAME_RE = re.compile(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 FACT_AT_LINE_START = re.compile(r"^(?:NOT\s+)?(DB_[A-Za-z0-9_]*)\s*\(")
 
 
-def engine_api() -> set[str]:
-    """call/query/event names the engine exposes."""
-    names: set[str] = set()
+def engine_api() -> dict[str, set[str]]:
+    """call/query/event names the engine exposes, keyed by kind."""
+    kinds: dict[str, set[str]] = {"call": set(), "query": set(), "event": set()}
     for header in HEADERS:
         for line in header.read_text(encoding="utf-8", errors="replace").splitlines():
-            m = re.match(r"\s*(?:call|query|event)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", line)
+            m = re.match(r"\s*(call|query|event)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", line)
             if m:
-                names.add(m.group(1))
-    return names
+                kinds[m.group(1)].add(m.group(2))
+    return kinds
 
 
 def vanilla_facts() -> tuple[set[str], set[str]]:
@@ -93,7 +97,7 @@ def statements(lines: list[str]):
         yield i, s, section, in_then, False
 
 
-def check(path: pathlib.Path, api: set[str], facts: set[str], procs: set[str]) -> list[str]:
+def check(path: pathlib.Path, kinds: dict[str, set[str]], facts: set[str], procs: set[str]) -> list[str]:
     raw = path.read_bytes()
     problems: list[str] = []
     if b"\r\n" not in raw:
@@ -108,6 +112,7 @@ def check(path: pathlib.Path, api: set[str], facts: set[str], procs: set[str]) -
 
     referenced: set[str] = set()
     introduced: set[str] = set()
+    api = set().union(*kinds.values())
     for lineno, s, section, in_then, is_decl in statements(lines):
         if section not in ("INITSECTION", "KBSECTION", "EXITSECTION"):
             continue
@@ -123,6 +128,17 @@ def check(path: pathlib.Path, api: set[str], facts: set[str], procs: set[str]) -
         if not in_then and section != "INITSECTION" and s.endswith(";"):
             problems.append(f"line {lineno}: condition must not end with ';' -> {s[:60]}")
         body = s[4:] if s.startswith("NOT ") else s
+        lead = re.match(r"([A-Za-z_][A-Za-z0-9_]*)\s*\(", body)
+        if lead:
+            n = lead.group(1)
+            if n not in KEYWORDS and not LOCAL.match(n) and not n.startswith("Sys"):
+                if in_then and n in kinds["query"] and n not in kinds["call"]:
+                    problems.append(
+                        f"line {lineno}: '{n}' is a QUERY - bind it in the AND section "
+                        f"and use its output in THEN (compiler rejects it here)")
+                if not in_then and section != "INITSECTION" and n in kinds["call"] and n not in kinds["query"]:
+                    problems.append(
+                        f"line {lineno}: '{n}' is a CALL - conditions take events/queries/facts only")
         for name in NAME_RE.findall(body.rstrip(";")):
             if name in KEYWORDS:
                 continue
@@ -159,11 +175,11 @@ def main() -> int:
         print(f"error: no story_header.div under {MODS}", file=sys.stderr)
         return 1
 
-    api = engine_api()
+    kinds = engine_api()
     facts, procs = vanilla_facts()
     bad = 0
     for f in files:
-        problems = check(f, api, facts, procs)
+        problems = check(f, kinds, facts, procs)
         if problems:
             bad += 1
             print(f"FAIL {f}")

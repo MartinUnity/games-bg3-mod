@@ -59,12 +59,20 @@ file in the story mount (back it up first — `Data/Mods` is not in git; e.g.
 `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt`), which tests the mount without also
 changing file identity. Full protocol in `docs/spawn-chains.md` §3.1.2.
 
-**Update (later 2026-10-31): E8b is injected and ready to play.** `tools/e8b_inject.py`
-(`--inject`/`--status`/`--restore`, backups in gitignored `tools/e8b_backup/`) put the rules into
-`SharedDev/GLO_HonorMode.txt` **and** `GustavDev/GLO_BackgroundGoals.txt` (splits the wrong-module
-sub-case); both pass `check_goal.py`. The repo probe file moved to `docs/goals/MARTIN_SpawnProbe.txt`
-(inject source), so nothing new-named is in the compile path. Remaining move = the in-game run:
-restart, one combat, count bodies, then `--restore`. ⚠️ No mod enabled while testing (see §8.5).
+**Update (later 2026-10-31): E8b produced a PARTIAL RESULT, then was fixed and re-armed.** The
+first injection made **new-game creation fail** ("likely due to mods; check the log") => the
+`Data/Mods/<Module>/Story/RawFiles/Goals/` text *is* compiled per new game, and bad rules fail
+loudly, not silently. Cause: `GetHostCharacter`/`CreateAtObject` are QUERYs and were used as THEN
+actions; rewritten to bind in `AND` (Larian pattern, `Gustav/.../Test.txt:345-356`), and
+`check_goal.py` now flags query-in-THEN / call-in-condition. Hosts are now three:
+`SharedDev/GLO_HonorMode.txt`, `GustavDev/GLO_BackgroundGoals.txt`, plus
+`GustavX/Act1b_PaladinMoments_Crown.txt` — the ACTIVE `PlayerProfiles/Public/modsettings.lsx`
+(mtime = last play) has base module **GustavX**; the stale 2024 root `modsettings.lsx` the first
+pass read is legacy. All three hosts injected + validator-green; backups in `tools/e8b_backup/`.
+Remaining = the in-game run: restart, new game must now START, one combat, count bodies, then
+`--restore`. If new games still refuse, `--restore` immediately and re-diagnose. ⚠️ No *extra*
+mod enabled while testing (see §8.5) — but note the profile already runs several enabled mods
+(EncountersOverhaul, Extra encounters plus, …) in every test, E1/E7 included, so comparisons hold.
 
 ### E8 — cheap, no tooling (superseded by E8b above, but it costs one command)
 
@@ -169,12 +177,14 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 8. Ranked next moves
 
-1. **E8b — injected 2026-10-31, needs the in-game run only.** Both hosts (`SharedDev/GLO_HonorMode.txt`,
-   `GustavDev/GLO_BackgroundGoals.txt`) carry the probe rules now; `tools/e8b_inject.py --status`
-   shows state. Owner: full game restart, start/continue any game, fight ONE combat, count bodies.
-   Imps/wolves appear ⇒ story text loads from `Data/Mods` and file registration (pak) is the blocker;
-   nothing ⇒ loose goal text is dead on this install, pak/`StoryCompiler` mandatory. Then
-   `python3 tools/e8b_inject.py --restore`. Reading details: `docs/spawn-chains.md` §3.1.2.
+1. **E8b — re-armed (3 hosts) with grammar fixed; needs the in-game run only.**
+   `SharedDev/GLO_HonorMode.txt` + `GustavDev/GLO_BackgroundGoals.txt` +
+   `GustavX/Act1b_PaladinMoments_Crown.txt` carry the rules (`tools/e8b_inject.py --status`).
+   Owner: full game restart, new Honour game — it must **start** now — fight ONE combat, count
+   bodies. Imps/wolves = story channel fully live from `Data/Mods` (build reinforcements on it);
+   starts but nothing spawns = templates/rules dead; refuses again = run
+   `python3 tools/e8b_inject.py --restore` to unbreak, then re-diagnose. Details:
+   `docs/spawn-chains.md` §3.1.2.
 2. **Pak CLI** (§4) — tiny C# console app over LSLib `Package`/`PackageWriterFactory`; prove by
    round-tripping `ModFixer.pak`, then pack `mods/more-mobs/` (internal paths `Mods/MARTIN_MoreMobs/…`,
    `Public/MARTIN_MoreMobs/…`) into `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, enable

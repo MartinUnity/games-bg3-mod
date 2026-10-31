@@ -101,6 +101,9 @@ prologue) produced no extra bodies and no print. Evidence gathered afterwards, a
   story/Osiris compile output), profile at `…/compatdata/1086940/pfx/drive_c/users/steamuser/
   AppData/Local/Larian Studios/Baldur's Gate 3/` (`modsettings.lsx` load order: **GustavDev** +
   5eSpells + Ututu's + EncountersOverhaul + Teleport To You, file mtime 2024-08-02 → stale).
+  **Correction (2026-10-31):** that root-level file is legacy; the live one is
+  `PlayerProfiles/Public/modsettings.lsx` — base module **GustavX**, mods incl. D20Initiative,
+  Ututu's, Goon's Library, EncountersOverhaul, Extra encounters plus, Enemies full rework.
   Saves are `HonourMode.lsv` (LSOF container, first zstd frame decodes but carries no `DB_`
   fact strings) — **not** a usable channel for reading story facts.
 
@@ -146,31 +149,53 @@ Balance/stats overrides were not separately confirmed in that run ("nothing out 
 ambiguous about the HP/damage edits). If stats turn out to be dead too, suspect the stale
 `modsettings.lsx` base-module choice (`GustavDev`, mtime 2024-08-02) before blaming the overlay.
 
-**E8b status (2026-10-31): injected, awaiting the in-game run.** `tools/e8b_inject.py`
-(dry-run default; `--inject` / `--status` / `--restore`) appends the E7 rules *verbatim* into
-two vanilla hosts and backs both up first to gitignored `tools/e8b_backup/`:
+**E8b status (2026-10-31, evening): injected into THREE hosts, awaiting the in-game run.**
+`tools/e8b_inject.py` (dry-run default; `--inject` / `--status` / `--restore`) appends the E7
+rules into vanilla hosts, backing up first to gitignored `tools/e8b_backup/`:
 
 - `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt` — the mount test;
-- `Data/Mods/GustavDev/Story/RawFiles/Goals/GLO_BackgroundGoals.txt` — a 133-byte empty
-  wrapper (zero own rules), so this also splits sub-case (b): base module per
-  `modsettings.lsx` is GustavDev, so if any module's loose goals compile, that one does.
+- `Data/Mods/GustavDev/Story/RawFiles/Goals/GLO_BackgroundGoals.txt` — 133-byte empty wrapper;
+- `Data/Mods/GustavX/Story/RawFiles/Goals/Act1b_PaladinMoments_Crown.txt` — added after the
+  modsettings correction below (GustavX is the actual base module; its 6 goal files are certainly
+  compiled, unlike SharedDev/GustavDev which may not be in the chain).
 
-Both injected copies pass `tools/check_goal.py`; rules land in KBSECTION before `EXITSECTION`,
-CRLF preserved, host rules untouched. The same `DB_MARTIN_ProbeA/B` guards live in both files,
-so a double-compiled pair still spawns at most one extra body per template. The repo's
-`MARTIN_SpawnProbe.txt` was parked to `docs/goals/` (it is the inject source), so the
-Public-mount copy is out of the compile path too — E8b now varies exactly one thing:
-vanilla file identity inside the story mount.
+The rules are global once compiled, so landing them in the host's KBSECTION before `EXITSECTION`
+is enough; the same `DB_MARTIN_ProbeA/B` guards sit in every host, so duplicates still spawn at
+most one extra body per template. The repo's `MARTIN_SpawnProbe.txt` was parked to `docs/goals/`
+(it is the inject source), so nothing new-named is in the compile path — E8b varies exactly one
+thing: vanilla file identity inside the `Data/Mods` story mount.
 
-Confounding check (✅ 2026-10-31): `modsettings.lsx` mtime still 2024-08-02; its three
-still-extant enabled paks (`EncountersOverhaul`, `UtutsCoreLibrary`, `Teleport_To_You`) all
-predate the E1/E7 null runs, so story-compile inputs are identical across E1/E7/E8b. Paks
-sitting in the profile `Mods/` dir are inert unless in that load order. ⚠️ Do **not** enable
-any mod (pak work!) while running E8b — an enabled mod changes story-compile inputs and ruins
-the reading. ⚠️ Run: full game restart (story text compiles at startup) -> ANY one combat ->
-count bodies. Imp and/or wolf appear = story text loads from the `Data/Mods` mount and
-file-name registration is the blocker; nothing = loose goal text is not compiled at all and
-the pak/`StoryCompiler` route is mandatory. Afterwards `python3 tools/e8b_inject.py --restore`.
+**E8b partial result (2026-10-31): the injection BROKE new-game creation — which is a positive
+signal.** With the first (2-host) injection live, starting a new game failed with "Could not
+start a new game - this is likely due to mods; check the log"; the 07:04 pre-injection run had
+created new games fine, and `modsettings.lsx` was untouched between runs, so the delta was our
+goal edits alone. Reading: **loose goal text under `Data/Mods/<Module>/Story/RawFiles/Goals/`
+IS compiled into every new game**, at least one host module included, and a broken rule does NOT
+fail silently — it refuses new games. (The repo folklore "a broken goal file fails silently" is
+wrong for whole-file/compile errors; `bin/gold.*.log` carries no compile output, the failure is
+UI-only.)
+
+Root cause, ✅ grepped: the E7 rules used `GetHostCharacter` (`query`, header 113) and
+`CreateAtObject` (`query`, header 508) as THEN **actions**; the Osiris compiler wants queries
+bound in the `AND` section — Larian's own spawn test (`Gustav/.../Goals/Test.txt:345-356`) does
+exactly that. Fixed in `docs/goals/MARTIN_SpawnProbe.txt` (bind in AND, use outputs in THEN), and
+`tools/check_goal.py` now catches the whole class: every header name's kind (call/query/event) is
+known, and query-in-THEN or call-in-condition is reported (the old broken block now fails with 4
+hits; vanilla hosts pass clean).
+
+**Modsettings correction (2026-10-31).** The load-order file that matters is
+`PlayerProfiles/Public/modsettings.lsx` (mtime = last play session), NOT the root-level
+`modsettings.lsx` (mtime 2024-08-02) quoted by §3.1.1 — that one is legacy. Active base module
+is **GustavX** (not GustavDev), with enabled mods incl. D20Initiative, UtutsCoreLibrary,
+Goon's Library, EncountersOverhaul, Extra encounters and Minibosses, Enemies full rework. These
+were enabled during E1/E7 too (same profile), so E1/E7 nulls and E8b share the same story-compile
+inputs — but SharedDev/GustavDev being in the compiled chain is now uncertain, hence the third
+host. ⚠️ Still do **not** enable any *additional* mod while E8b runs — an enabled mod changes
+story-compile inputs and ruins the reading. ⚠️ Run: full game restart -> new game must START
+(grammar is now validated) -> ONE combat -> count bodies. Extra imp and/or wolf = story channel
+fully live from `Data/Mods`; new game fine but nothing spawns = rules compile yet never fire
+(template instantiation dead); new game refuses again = grammar problem, run
+`python3 tools/e8b_inject.py --restore` to unbreak the game, then re-diagnose.
 
 Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
 `mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature

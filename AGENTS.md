@@ -57,8 +57,10 @@ dangling `I_`/`T_` references; `--strict` escalates warnings)
 After touching story goals, validate:
 `python3 tools/check_goal.py` (checks our `MARTIN_*.txt` goals against
 `Data/Mods/*/Story/RawFiles/story_header.div`: unknown calls/queries/events, unknown
-`DB_` predicates, misplaced `;`, non-CRLF endings). A broken goal file fails silently
-in game. `tools/deploy_story.sh` (--dry-run by default, `--copy`, `--remove`) mirrors
+`DB_` predicates, misplaced `;`, non-CRLF endings, and query/call misuse — QUERY-in-THEN etc.;
+that class does NOT fail silently: it refuses new-game creation (confirmed 2026-10-31), while a
+wrong name in one rule may drop just that rule.
+`tools/deploy_story.sh` (--dry-run by default, `--copy`, `--remove`) mirrors
 them into the `Data/Mods` story mount when needed. `tools/e8b_inject.py`
 (--dry-run/--inject/--status/--restore) is the E8b story-mount test: it appends probe
 rules into vanilla-named goal files in `Data/Mods` and restores them from gitignored

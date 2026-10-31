@@ -18,6 +18,9 @@ compiled. Two hosts, so one game restart splits all remaining sub-cases:
                                                         wrapper, zero own rules)
 
 Rules are global once compiled, so inserting into the host's KBSECTION is enough.
+(2026-10-31: three hosts, not two - the ACTIVE modsettings.lsx is PlayerProfiles/Public/
+(modsettings.lsx, mtime same day) and its base module is GustavX, not the stale root-level
+file the first pass read; the injected-grammar crash then proved some host compiles.)
 
 Backups go to tools/e8b_backup/ (gitignored, outside Data/Mods). The first
 backup wins and is never overwritten, so re-injecting cannot corrupt the copy.
@@ -44,6 +47,7 @@ SRC = REPO / "docs" / "goals" / "MARTIN_SpawnProbe.txt"
 HOSTS = [
     MODS / "SharedDev" / "Story" / "RawFiles" / "Goals" / "GLO_HonorMode.txt",
     MODS / "GustavDev" / "Story" / "RawFiles" / "Goals" / "GLO_BackgroundGoals.txt",
+    MODS / "GustavX" / "Story" / "RawFiles" / "Goals" / "Act1b_PaladinMoments_Crown.txt",
 ]
 
 MARKER = b"DB_MARTIN_ProbeA"                 # present iff our rules are in the host
