@@ -59,7 +59,10 @@ After touching story goals, validate:
 `Data/Mods/*/Story/RawFiles/story_header.div`: unknown calls/queries/events, unknown
 `DB_` predicates, misplaced `;`, non-CRLF endings). A broken goal file fails silently
 in game. `tools/deploy_story.sh` (--dry-run by default, `--copy`, `--remove`) mirrors
-them into the `Data/Mods` story mount when needed.
+them into the `Data/Mods` story mount when needed. `tools/e8b_inject.py`
+(--dry-run/--inject/--status/--restore) is the E8b story-mount test: it appends probe
+rules into vanilla-named goal files in `Data/Mods` and restores them from gitignored
+`tools/e8b_backup/`.
 
 ## docs/ — reference material
 

@@ -146,6 +146,32 @@ Balance/stats overrides were not separately confirmed in that run ("nothing out 
 ambiguous about the HP/damage edits). If stats turn out to be dead too, suspect the stale
 `modsettings.lsx` base-module choice (`GustavDev`, mtime 2024-08-02) before blaming the overlay.
 
+**E8b status (2026-10-31): injected, awaiting the in-game run.** `tools/e8b_inject.py`
+(dry-run default; `--inject` / `--status` / `--restore`) appends the E7 rules *verbatim* into
+two vanilla hosts and backs both up first to gitignored `tools/e8b_backup/`:
+
+- `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt` — the mount test;
+- `Data/Mods/GustavDev/Story/RawFiles/Goals/GLO_BackgroundGoals.txt` — a 133-byte empty
+  wrapper (zero own rules), so this also splits sub-case (b): base module per
+  `modsettings.lsx` is GustavDev, so if any module's loose goals compile, that one does.
+
+Both injected copies pass `tools/check_goal.py`; rules land in KBSECTION before `EXITSECTION`,
+CRLF preserved, host rules untouched. The same `DB_MARTIN_ProbeA/B` guards live in both files,
+so a double-compiled pair still spawns at most one extra body per template. The repo's
+`MARTIN_SpawnProbe.txt` was parked to `docs/goals/` (it is the inject source), so the
+Public-mount copy is out of the compile path too — E8b now varies exactly one thing:
+vanilla file identity inside the story mount.
+
+Confounding check (✅ 2026-10-31): `modsettings.lsx` mtime still 2024-08-02; its three
+still-extant enabled paks (`EncountersOverhaul`, `UtutsCoreLibrary`, `Teleport_To_You`) all
+predate the E1/E7 null runs, so story-compile inputs are identical across E1/E7/E8b. Paks
+sitting in the profile `Mods/` dir are inert unless in that load order. ⚠️ Do **not** enable
+any mod (pak work!) while running E8b — an enabled mod changes story-compile inputs and ruins
+the reading. ⚠️ Run: full game restart (story text compiles at startup) -> ANY one combat ->
+count bodies. Imp and/or wolf appear = story text loads from the `Data/Mods` mount and
+file-name registration is the blocker; nothing = loose goal text is not compiled at all and
+the pak/`StoryCompiler` route is mandatory. Afterwards `python3 tools/e8b_inject.py --restore`.
+
 Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
 `mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature
 template name in the loaded game. Achievements are not a concern for this user, so the Lua probe

@@ -59,6 +59,13 @@ file in the story mount (back it up first — `Data/Mods` is not in git; e.g.
 `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt`), which tests the mount without also
 changing file identity. Full protocol in `docs/spawn-chains.md` §3.1.2.
 
+**Update (later 2026-10-31): E8b is injected and ready to play.** `tools/e8b_inject.py`
+(`--inject`/`--status`/`--restore`, backups in gitignored `tools/e8b_backup/`) put the rules into
+`SharedDev/GLO_HonorMode.txt` **and** `GustavDev/GLO_BackgroundGoals.txt` (splits the wrong-module
+sub-case); both pass `check_goal.py`. The repo probe file moved to `docs/goals/MARTIN_SpawnProbe.txt`
+(inject source), so nothing new-named is in the compile path. Remaining move = the in-game run:
+restart, one combat, count bodies, then `--restore`. ⚠️ No mod enabled while testing (see §8.5).
+
 ### E8 — cheap, no tooling (superseded by E8b above, but it costs one command)
 
 `Data/Mods/` is writable now (user fixed the ro bind). Put the probe where vanilla goal text
@@ -162,10 +169,12 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 8. Ranked next moves
 
-1. **E8b** (§3) — append the probe rules into an existing vanilla goal file in the `Data/Mods` story
-   mount (backup first), restart, one combat. Isolates the mount from file identity, and the stats
-   analogue says file identity is what the loader keys on. E8 (`tools/deploy_story.sh --copy`) is the
-   one-command version of the old test if you want both signals at once.
+1. **E8b — injected 2026-10-31, needs the in-game run only.** Both hosts (`SharedDev/GLO_HonorMode.txt`,
+   `GustavDev/GLO_BackgroundGoals.txt`) carry the probe rules now; `tools/e8b_inject.py --status`
+   shows state. Owner: full game restart, start/continue any game, fight ONE combat, count bodies.
+   Imps/wolves appear ⇒ story text loads from `Data/Mods` and file registration (pak) is the blocker;
+   nothing ⇒ loose goal text is dead on this install, pak/`StoryCompiler` mandatory. Then
+   `python3 tools/e8b_inject.py --restore`. Reading details: `docs/spawn-chains.md` §3.1.2.
 2. **Pak CLI** (§4) — tiny C# console app over LSLib `Package`/`PackageWriterFactory`; prove by
    round-tripping `ModFixer.pak`, then pack `mods/more-mobs/` (internal paths `Mods/MARTIN_MoreMobs/…`,
    `Public/MARTIN_MoreMobs/…`) into `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, enable
@@ -174,7 +183,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    `story_header.div`/`story_definitions.div` + gplex/gppg) so goal grammar errors stop being silent.
 4. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
    `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`.
-5. Do **not** install the mod pak while the user is running a new-game E7/E8 test (confounds signal).
+5. Do **not** install/enable any mod pak while the user is running the E7/E8/E8b new-game tests —
+   an enabled mod changes the story-compile inputs and ruins the reading. Park pak *building* too if
+   there is any chance of it getting enabled mid-test.
 
 ## 9. Git state
 
