@@ -42,7 +42,9 @@ BAD_NAME = re.compile(
     r"|Gazer_.*Mylac|Gazemaster|Woe_|Mephit_Grease_Young|Crippled"
     r"|^\[WIP\]|(^|_)CINE_|(^|_)WIP_|TOBEDELETED"
     r"|^BHAAL_|HouseOfHope|Redcap_Pirate|Sharran_|DarkJusticiar|SteelWatcher|"
-    r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway)", re.I)
+    r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway"
+    r"|Ketheric|^MOO_|baptismTrigger|Form_Player|FindFamiliar|ConjureElemental|"
+    r"DarkUrge|Slayer_A|Oathbreaker|^Brewer\b)", re.I)
 
 # stats entries may also betray bossiness
 BAD_STATS = re.compile(r"(Boss|Commander|General|Prince|Pope)", re.I)
@@ -60,7 +62,7 @@ def load_stats():
     using_re = re.compile(r'^using "([^"]+)"')
     # fields captured (first occurrence wins - child entries override parents)
     fields = {f: re.compile(r'^data "%s" "([^"]*)"' % f) for f in
-              ("Vitality", "Strength", "Dexterity", "Constitution", "Armor", "Passives", "Level",
+              ("Vitality", "Strength", "Dexterity", "Constitution", "Wisdom", "Charisma", "Armor", "Passives", "Level",
                "Proficiency Group", "UnarmedAttackAbility")}
     for f in sorted(VANILLA.rglob("Stats/Generated/Data/Character*.txt")):
         cur = None
@@ -198,6 +200,8 @@ def main():
         strength = resolve_field(statsname, stats, "Strength")
         dex = resolve_field(statsname, stats, "Dexterity")
         con = resolve_field(statsname, stats, "Constitution")
+        wis = resolve_field(statsname, stats, "Wisdom")
+        cha = resolve_field(statsname, stats, "Charisma")
         passives = resolve_field(statsname, stats, "Passives") or ""
         if BAD_PASSIVE.search(passives):
             continue
@@ -211,12 +215,12 @@ def main():
         except ValueError:
             level = 1
         rows[name] = (guid, t, hp, cost, statsname, level,
-                      ac, strength, dex, con, ea, prof, unarmed != "")
+                      ac, strength, dex, con, wis, cha, ea, prof, unarmed != "")
 
     print(f"generic spawnable creatures: {len(rows)}")
     bytype = {}
-    for name, (guid, t, hp, cost, sn, level, ac, strength, dex, con, ea, prof, unarmed) in rows.items():
-        bytype.setdefault(t, []).append((name, guid, hp, cost, level, ac, strength, dex, con, ea, prof, unarmed))
+    for name, (guid, t, hp, cost, sn, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed) in rows.items():
+        bytype.setdefault(t, []).append((name, guid, hp, cost, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed))
     for t in sorted(bytype):
         print(f"  {t}: {len(bytype[t])}")
 
@@ -236,12 +240,14 @@ def main():
              "CHAOS_DB = {"]
     for t in sorted(bytype):
         lines.append(f"  {t} = {{")
-        for name, guid, hp, cost, level, ac, strength, dex, con, ea, prof, unarmed in sorted(bytype[t]):
+        for name, guid, hp, cost, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed in sorted(bytype[t]):
             extra = f", lvl = {level}" if level > 1 else ""
             extra += f", ac = {num(ac)}" if num(ac) is not None else ""
             extra += f", str = {num(strength)}" if num(strength) is not None else ""
             extra += f", dex = {num(dex)}" if num(dex) is not None else ""
             extra += f", con = {num(con)}" if num(con) is not None else ""
+            extra += f", wis = {num(wis)}" if num(wis) is not None else ""
+            extra += f", cha = {num(cha)}" if num(cha) is not None else ""
             extra += ", ea = true" if ea else ""
             if unarmed:
                 extra += ", unarmed = true"
