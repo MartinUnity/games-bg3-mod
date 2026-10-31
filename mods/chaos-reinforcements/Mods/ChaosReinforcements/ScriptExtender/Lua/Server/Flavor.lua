@@ -89,11 +89,20 @@ local function applyLeaderBuffs(created)
     log("leader buffs:", vit, okV and "ok" or tostring(eV), "|", stats, okS and "ok" or tostring(eS))
 end
 
--- "name" tell: temporarily replace the player's overhead display name with the message
+-- "name" tell: temporarily replace the player's overhead display name with the message.
+-- v3.11: the restore MUST use the display TEXT (from DisplayName.Name:Get()), never the
+-- GetDisplayName resource key (v3.10 "restored" a host to the literal string
+-- "ResStr_1233106546" - raw text is exactly what SetStoryDisplayName writes).
+local function displayNameText(char)
+    local ok, text = pcall(function () return Ext.Entity.Get(char).DisplayName.Name:Get() end)
+    if ok and type(text) == "string" and text ~= "" then return text end
+    return nil
+end
+
 local function tellViaName(player, name)
-    local okG, oldKey = pcall(Osi.GetDisplayName, player)
-    if not okG then
-        log("tell: GetDisplayName threw:", oldKey)
+    local saved = displayNameText(player)
+    if not saved then
+        log("tell: cannot read current display name - SKIPPING (never risk a stuck name)")
         return
     end
     local msg = pick(TELLS):format(name)
@@ -102,10 +111,10 @@ local function tellViaName(player, name)
         log("tell: SetStoryDisplayName threw:", eS)
         return
     end
-    log("tell: showing", msg, "(old key", oldKey .. ")")
+    log("tell: showing", msg, "(will restore to", saved .. ")")
     pcall(Ext.Timer.WaitFor, TELL_SECONDS * 1000, function ()
-        local okR, eR = pcall(Osi.SetStoryDisplayName, player, oldKey)
-        log("tell: restore", okR and "ok" or ("threw: " .. tostring(eR)))
+        local okR, eR = pcall(Osi.SetStoryDisplayName, player, saved)
+        log("tell: restore to", saved, okR and "ok" or ("threw: " .. tostring(eR)))
     end)
 end
 
@@ -140,6 +149,40 @@ pcall(function ()
     Ext.Osiris.RegisterListener("VoiceBarkFailed", 1, "after", function (bark)
         log("bark FAILED:", bark)
     end)
+end)
+
+-- repair for saves hit by the v3.10 restore bug (host stuck with literal "ResStr_<id>"
+-- as its display name): at session load, known companion GUIDs whose displayed text
+-- looks like a resource key get their proper name back.
+local REPAIR_NAMES = {
+    ["S_Player_Laezel_58a69333-40bf-8358-1d17-fff240d7fb12"] = "Lae'zel",
+    -- other origin companions can be added by GUID if ever needed
+}
+
+pcall(function ()
+    Ext.Events.SessionLoaded:Subscribe(function ()
+        for guid, proper in pairs(REPAIR_NAMES) do
+            local text = displayNameText(guid)
+            if text and text:find("^ResStr_%d") then
+                local okR, eR = pcall(Osi.SetStoryDisplayName, guid, proper)
+                log("repair:", guid, "->", proper, okR and "ok" or ("threw: " .. tostring(eR)))
+            end
+        end
+    end)
+end)
+
+-- manual escape hatch: !chaos_rename <text> renames the host character
+Ext.RegisterConsoleCommand("chaos_rename", function (...)
+    local parts = {}
+    for i = 1, select("#", ...) do parts[#parts + 1] = tostring(select(i, ...)) end
+    local text = table.concat(parts, " ")
+    local host = Osi.GetHostCharacter()
+    if host and host ~= "" and text ~= "" then
+        local okR, eR = pcall(Osi.SetStoryDisplayName, host, text)
+        log("chaos_rename:", host, "->", text, okR and "ok" or ("threw: " .. tostring(eR)))
+    else
+        log("chaos_rename: need a host and a non-empty name")
+    end
 end)
 
 log("Flavor.lua loaded (tell mode:", TELL_MODE .. ")")
