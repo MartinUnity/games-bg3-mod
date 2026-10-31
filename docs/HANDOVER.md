@@ -262,6 +262,22 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   native AC; jackpot tier (lvl ≥4) upgrades to magic/scaled tables (`ST_*_1`,
   `ST_Finesse_MeleeWeapons_Magic`). Useful extra vanilla tables found: `ST_RandomPotion`,
   `ST_RandomConsumable`, `ST_Throwable` (chaos fodder for later).
+- **v3.14: Wild.lua — standing world encounters** (owner spec 2026-10-31): random mob
+  groups spawned OUT of combat, standing and neutral, ~18-28 m from the player at a
+  random angle (out of sight ring; `CreateAt` at raw coords from `GetPosition`).
+  NOT ambushing (owner decision: vigilant players must be able to avoid them; wandering
+  deferred to backlog). A 2 s proximity monitor turns a group hostile (SetFaction +
+  SetHostileAndEnterCombat per member) only when a player comes within 12 m — so the
+  fight starts on approach, not on spawn. Group tiers per owner spec: <=80%: 2-6 mobs;
+  <=98%: +1-4 mobs + 1 leader; >98%: +2-8 mobs + 2 leaders + 1 "BOSS " (placeholder =
+  leader with prefix, via `FlavorLeaderCommon(created, isBoss)`). **Gated to `^TUT_`
+  levels only while testing** (LevelLoaded event tracks the level name; safe-haven/town
+  exemption deferred until proven). Heartbeat 45 s, 100% roll while testing
+  (`WILD_TEST`), max 3 concurrent groups, level-appropriate pools (same GATES),
+  humanoid groups get equipment, mobs SetLevel'd to `targetLevelFor(base)`.
+  Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
+  factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
+  Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
 - **v3.9: leader flavor (owner playtest feedback round 2):** the v3.8 popup
   (`OpenMessageBox`) broke immersion AND halted combat until clicked — REMOVED. Replaced
   by a vanilla **voice bark** on the player: `Osi.StartVoiceBark(barkResource, source)`

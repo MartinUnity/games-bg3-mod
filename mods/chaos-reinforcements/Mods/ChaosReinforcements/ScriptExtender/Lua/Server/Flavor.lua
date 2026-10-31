@@ -119,15 +119,23 @@ local function tellViaDebugText(player, leader, name)
     end
 end
 
--- public: call right after a leader spawned
-function FlavorLeader(created, host)
+-- public: name + buff a leader (no tell). isBoss prefixes "BOSS " (placeholder until real
+-- boss mechanics exist - owner decision 2026-10-31). Returns the name used.
+function FlavorLeaderCommon(created, isBoss)
     local name = villainName()
+    if isBoss then name = "BOSS " .. name end
     if LEADER_RENAME and created then
         renameViaStory(created, name)
     end
     if LEADER_BUFFS and created then
         applyLeaderBuffs(created)
     end
+    return name
+end
+
+-- public: call right after a reinforcement leader spawned (name + buffs + tell)
+function FlavorLeader(created, host)
+    local name = FlavorLeaderCommon(created, false)
     if host then
         if TELL_MODE == "debugtext" then
             tellViaDebugText(host, created, name)

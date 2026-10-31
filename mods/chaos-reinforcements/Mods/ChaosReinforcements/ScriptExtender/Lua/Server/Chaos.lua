@@ -24,7 +24,6 @@ local STACK_MIN, STACK_MAX = 5, 25  -- +% per encounter that didn't trigger
 local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs are hp/10
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included
-local LEVEL_JITTER = 2              -- SetLevel target = hostLevel + rand(-J, +J) above the soft cap
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
 local LEADER_TEST = true            -- 100% leader while testing (still needs pack >= 2)
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
@@ -39,10 +38,6 @@ local MOB_HP_BOOST = ""
 -- native-stat gates: at low levels pick creatures that are NATIVELY harmless:
 -- hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's 2x hits were
 -- the actual killer). From level 3 anything goes except heavy types (HEAVY_TYPES/HEAVY_LEVEL).
-local GATES = {
-    [1] = { stat = 12, ac = 14, hp = 20 },
-    [2] = { stat = 14, ac = 15, hp = 35 },
-}
 
 -- race string (Osiris GetRace) -> creature type; grow from discovery logs
 local RACE_TO_TYPE = {
@@ -77,8 +72,6 @@ local AFFINITY = {
     Undead = { "Undead", "Humanoid" },
 }
 
-local DEFAULT_TYPES = { "Beast", "Monstrosity", "Humanoid", "Undead", "Fiend" }
-
 local misses = 0
 local seen = {}
 local combatRoster = {}   -- combatGuid -> { participant guids, via EnteredCombat }
@@ -86,34 +79,6 @@ local rosterPlayers = {}  -- guid -> true (skip list), refreshed per wave
 local raceDumped = false
 
 local function rand(lo, hi) return math.random(lo, hi) end
-
--- fact helpers ---------------------------------------------------------------
-local function rowGuid(row)
-    if type(row) ~= "table" then return row end
-    for _, k in ipairs({ "Object", "Character", "Player", "PartyMember", "Target" }) do
-        if row[k] ~= nil and row[k] ~= "" then return row[k] end
-    end
-    for _, v in ipairs(row) do
-        if type(v) == "string" and v ~= "" then return v end
-    end
-    return nil
-end
-
--- ncols MUST match the database's column count (SE names DBs by arity)
-local function factGuids(dbName, ncols)
-    local db = Osi[dbName]
-    if not db then return {} end
-    local ok, rows = pcall(function () return db:Get(table.unpack({}, 1, ncols or 1)) end)
-    if not ok then log(dbName .. ":Get threw:", rows); return {} end
-    local out = {}
-    if type(rows) == "table" then
-        for _, row in pairs(rows) do
-            local g = rowGuid(row)
-            if g then out[#out + 1] = g end
-        end
-    end
-    return out
-end
 
 -- spawn ----------------------------------------------------------------------
 local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
@@ -213,63 +178,6 @@ local function dominantType(enemies)
     local best, n = nil, 0
     for t, c in pairs(counts) do if c > n then best, n = t, c end end
     return best
-end
-
--- native-stat gate for the player's level: nil = entry is fine
-local function passesGate(e, base)
-    local g = GATES[base]
-    if g then
-        if e.hp > g.hp then return false end
-        if e.ac and e.ac > g.ac then return false end
-        local best = math.max(e.str or 0, e.dex or 0)
-        if best > g.stat then return false end
-        if e.ea then return false end  -- ExtraAttack at lvl 1-2 = TPK fuel
-    end
-    return true
-end
-
-local function gatedPool(typeName, base)
-    local pool = CHAOS_DB and CHAOS_DB[typeName]
-    if not pool or #pool == 0 then return nil end
-    if HEAVY_TYPES[typeName] and base < HEAVY_LEVEL then return nil end
-    local out = {}
-    for _, e in ipairs(pool) do
-        if passesGate(e, base) then out[#out + 1] = e end
-    end
-    return out
-end
-
-local function pickFrom(typeName, maxCost, base)
-    local pool = gatedPool(typeName, base)
-    if not pool or #pool == 0 then return nil end
-    -- try 20 random picks for one within budget; fall back to cheapest entry
-    for _ = 1, 20 do
-        local e = pool[rand(1, #pool)]
-        if e.cost <= maxCost then return e end
-    end
-    local cheapest = pool[1]
-    for _, e in ipairs(pool) do if e.cost < cheapest.cost then cheapest = e end end
-    return cheapest.cost <= maxCost and cheapest or nil
-end
-
--- leaders are deliberately OUTSIDE the budget: the ~10% roll is meant to occasionally
--- escalate a fight hard. Pick from the beefier half of the gated pool.
-local function pickLeaderFrom(typeName, base)
-    local pool = gatedPool(typeName, base)
-    if not pool or #pool == 0 then return nil end
-    local sorted = {}
-    for _, e in ipairs(pool) do sorted[#sorted + 1] = e end
-    table.sort(sorted, function (a, b) return a.cost < b.cost end)
-    local from = math.max(1, math.floor(#sorted / 2) + 1)
-    return sorted[rand(from, #sorted)]
-end
-
--- level math: never above the player's level while they are SOFT_CAP_LEVEL or lower
-local function targetLevelFor(base)
-    if base <= SOFT_CAP_LEVEL then
-        return math.max(1, base + rand(-2, 0))
-    end
-    return math.max(1, base + rand(-LEVEL_JITTER, LEVEL_JITTER))
 end
 
 -- main wave -------------------------------------------------------------------
