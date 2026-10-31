@@ -118,14 +118,22 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 5. Script Extender state (corrected 2026-10-31, see lua-modding.md §1)
 
-- ⚠️ **SE was NOT loading** despite earlier notes: the `bin/DWrite.dll` auto-updater was the
-  April-2024 build with a dead update channel — no `BG3ScriptExtender.dll`, no `bg3-print.log`
-  ever, profile `Script Extender/` frozen Dec 2024. This explains every past Lua-mod failure.
-- **Fixed:** v33 updater (`BG3SE-Updater-20261012.zip`) installed to `bin/DWrite.dll`; old DLL
-  kept as `bin/DWrite.dll.bak-2024`. Launch options already correct. First game start after
-  this should let the updater fetch SE v33 itself.
-- Logging on: `bin/ScriptExtenderSettings.json` = `{"CreateConsole": false,"LogEnabled": true}`
-  → log at `bin/bg3-print.log`. **Still unverified** — needs one game start.
+- **Correction:** SE v33 WAS already staged/running (pkg under
+  `AppData/Local/BG3ScriptExtender/ScriptExtender/33.0.0.0_…`, mtime Oct 30 20:44 — the old
+  April-2024 updater did fetch it). What was broken was **visibility**: no valid logging config
+  ever, so Lua mods failed silently for years. `bin/DWrite.dll` replaced with the official
+  Oct-12 v33 updater anyway (old kept as `bin/DWrite.dll.bak-2024`); launch options already correct.
+- Logging FIXED 2026-10-31 (the earlier `LogEnabled` key is fake in v33 — no log was ever
+  written). Correct keys: `{"LogRuntime": true}` in `bin/ScriptExtenderSettings.json` →
+  `…/compatdata/1086940/pfx/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log`.
+  Probe v2 also file-logs via `Ext.IO.SaveFile` → profile `Script Extender/MARTIN_probe.log`
+  (channel already proven working). **Not yet verified producing output** (needs one game start
+  with the new settings).
+- Probe v1 result (2026-10-31, partial ✅): mod enabled in modsettings, loaded server-side —
+  template dump written at SessionLoaded (32016 entries, keys = bare GUIDs; wolf GUID present,
+  imp-instance GUID absent — confirms story-side finding). But NO spawn on combat and no visible
+  error (logging was dead). Probe v2 = same shape + full file logging + SetFaction before
+  SetHostileAndEnterCombat + GetPlayers fallback anchor.
 - Probe mod **packed + installed** (pak toolchain proven, `tools/pack_mod.sh --install`):
   `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. Source `mods/more-mobs/` =
   `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`, `Folder=MARTIN_MoreMobs`,
@@ -134,8 +142,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
   to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
-- **Waiting on owner:** start game → Mods screen → enable "MARTIN More Mobs" → load game →
-  check `bin/bg3-print.log` for `[MARTIN] MARTIN_MoreMobs bootstrap loaded` + template dump.
+- **Waiting on owner (probe v2):** restart → mod stays enabled → load → one combat. Then read
+  profile `Script Extender/MARTIN_probe.log` and
+  `…/users/steamuser/Script Extender Logs/Extender Runtime.log` — every step now logged.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load

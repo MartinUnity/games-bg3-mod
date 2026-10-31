@@ -27,19 +27,27 @@ install; ⚠️ still needs an in-game test.
 | Windows build under Proton; prefix `steamapps/compatdata/1086940` | `C:/users/steamuser/...` paths in `bin/gold.*.log` |
 | `bin/DWrite.dll` is the **SE auto-updater**, not the game's DWrite | `strings -el` → "BG3 Script Extender Auto-Updater DLL", "(c) Norbyte" |
 | Loaded only because Steam launch options force it native: `WINEDLLOVERRIDES="DWrite.dll=n,b" %command%` | user-reported; required because Wine would otherwise satisfy DWrite itself |
-| **Root cause of all past Lua failures (2026-10-31 forensics):** the DWrite.dll in `bin/` was the April-2024 auto-updater whose download channel is dead — no `BG3ScriptExtender.dll` ever landed, no `bg3-print.log` despite `LogEnabled:true`, profile `Script Extender/` frozen at Dec 2024. **SE was not loading.** | file mtime Apr 2024, `strings` shows old updater, missing log |
-| Fixed 2026-10-31: installed the v33 updater release (`Norbyte/bg3se` → `BG3SE-Updater-20261012.zip`, its `DWrite.dll` → `bin/DWrite.dll`; old one kept as `bin/DWrite.dll.bak-2024`). Next game start the updater should fetch SE v33 itself | GitHub release + deployed file |
-| SE settings live in `bin/ScriptExtenderSettings.json` (`LogEnabled:true` since 2026-10-31) | file on disk |
+| **Lua mods were silently failing for other reasons (2026-10-31 forensics):** no SE runtime log was ever configured (`LogEnabled` is not a real v33 key) and `bg3-print.log` is obsolete in v33, so Lua errors were invisible. The extender itself *is* present — v33 is staged under `AppData/Local/BG3ScriptExtender/ScriptExtender/` (pkg mtime Oct 30) and **loads** (evidence: our probe's template dump was written on `SessionLoaded` 2026-10-31 09:56). | prefix forensics + `Ext.IO.SaveFile` dump present |
+| Re-installed the official v33 updater (Oct-12) to `bin/DWrite.dll` to be safe (old kept as `bin/DWrite.dll.bak-2024`) | GitHub release + deployed file |
+| SE settings live in `bin/ScriptExtenderSettings.json` (v33 keys: `LogRuntime`/`LogCompile`/`EnableLogging`/`LogDirectory`/`CreateConsole`) | `strings` of the staged v33 DLL |
 | SE per-mod config/state under `…/AppData/Local/Larian Studios/Baldur's Gate 3/Script Extender/` | `5eSpells/`, `Expansion/` jsons from old SE mods |
 | Installed mod `.pak`s live in `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/` | 20 paks there (EncountersOverhaul, ManyMoreMonsters, `extra_enemies_honour`, …) |
 | Load order lives in `…/Baldur's Gate 3/PlayerProfiles/Public/modsettings.lsx` (live; base module **GustavX**, several mods enabled). The root-level `…/Baldur's Gate 3/modsettings.lsx` (2024) is legacy | mtime forensics |
 | `Data/Mods/` and `Data/Public/` are both writable as of 2026-10-31 | `touch` probe |
 
-Turn logging on before debugging anything: `bin/ScriptExtenderSettings.json` →
-`{"CreateConsole": false, "LogEnabled": true}`; the log lands next to `bin/bg3.exe`
-(`bg3-print.log`). `CreateConsole: true` adds the SE Lua console (`<enter>` to type, `client`/
-`server` context, `!`-prefixed mod commands, `--[[` multiline). `Ext.IO.SaveFile` writes into
-the profile's `Script Extender/` folder.
+Logging on this SE v33 (verified against the DLL's strings, 2026-10-31): the settings keys are
+`LogRuntime` (Lua `Ext.Print`/errors — the one we want), `LogCompile` (story compile),
+`EnableLogging` (very verbose Osiris runtime), `LogDirectory`, `CreateConsole`. The old
+`LogEnabled` key and `bg3-print.log` filename are obsolete — nothing is written unless
+`LogRuntime:true`. Default log dir is under the *Proton prefix*:
+`compatdata/1086940/pfx/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log`
+(readable natively; `LogDirectory` can redirect, e.g. `"Z:\\home\\martin\\..."`).
+`CreateConsole:true` opens the SE Lua console but renders unreliably under Proton; the file
+route is the reliable one. `Ext.IO.SaveFile` writes into the profile's `Script Extender/`
+folder and was proven to work — probe v2 mirrors all its logging there too
+(`MARTIN_probe.log`) as a belt-and-braces channel. SE itself stages into
+`AppData/Local/BG3ScriptExtender/ScriptExtender/<version>_<hash>/BG3ScriptExtender.dll` (not
+`bin/`) — check there, not bin, for "is SE installed".
 
 ## 2. Anatomy of a mod ✅ (layout is not optional)
 
@@ -85,8 +93,9 @@ root's `Mods/`). Against the layout above, four defects, in order of severity:
 4. **The Lua used APIs that do not exist** in SE: `Ext.RegisterListener("CharacterCreated", …)`,
    `Ext.GetDifficulty`, `Ext.StatusAdd`, `Ext.Debug`, `Ext.Random(1,100)`. The real ones are
    `Ext.Osiris.RegisterListener(name, arity, when, fn)`, `Ext.Events.<Name>:Subscribe(fn)`,
-   `Ext.RandomInteger`, `Osi.StatusApply(...)` / `_C().Vars.*`. With `LogEnabled:false`, every
-   load error was silently invisible.
+   `Ext.RandomInteger`, `Osi.StatusApply(...)` / `_C().Vars.*`. With no runtime logging enabled
+   (v33 needs `LogRuntime:true`; `LogEnabled` is not a real key), every load error was silently
+   invisible.
 
 So nothing about the SE install was broken; the mod was never registered and the script was
 hallucinated. Both fixable, and `mods/more-mobs/` is the corrected skeleton.

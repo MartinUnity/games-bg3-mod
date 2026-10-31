@@ -1,90 +1,112 @@
--- MARTIN_MoreMobs probe (server-side Lua).
--- Purpose: prove the Lua channel works end to end, and answer the two questions the
--- story-overlay experiment could not (docs/spawn-chains.md sec.3.1.1):
---   (1) does the rule run at all?  -> every step is logged
---   (2) which creature templates can actually be instantiated here?
--- Every API used below appears in docs/vendor/bg3se-Lua-API.md; the Osiris signatures come
--- from Data/Mods/GustavDev/Story/RawFiles/story_header.div (CreateAtObject 508, SetFaction
--- 933, SetHostileAndEnterCombat 921, GetPosition 543).
+-- MARTIN_MoreMobs probe v2 (server-side Lua).
+-- v1 lesson (2026-10-31): the mod DOES load (template dump was written on SessionLoaded) but the
+-- spawn attempts were silent: SE v33 has no "LogEnabled" key and no bg3-print.log -- runtime logs
+-- go to <prefix>/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log and need
+-- "LogRuntime": true in bin/ScriptExtenderSettings.json (verified against the v33 DLL strings).
+-- v2 still file-logs through Ext.IO.SaveFile (proven on this install) so diagnostics are
+-- inspectable offline: profile "Script Extender/MARTIN_probe.log".
 --
--- Log output needs Script Extender logging on: bin/ScriptExtenderSettings.json
--- {"LogEnabled": true} -> bg3-print.log next to bin/bg3.exe.
+-- v1 template-dump facts: keys are bare GUIDs (32016 of them); the E8b wolf GUID
+-- 41da0eff-b533-... IS present; prologue imp-instance GUID is NOT (matches story findings).
 
 local TAG = "MARTIN"
+local LINES = {}
+
+local function flush()
+    pcall(function () Ext.IO.SaveFile("MARTIN_probe.log", table.concat(LINES, "\n")) end)
+end
 
 local function log(...)
-    Ext.Print("[" .. TAG .. "]", ...)
+    local parts = {}
+    for i = 1, select("#", ...) do
+        parts[#parts + 1] = tostring(select(i, ...))
+    end
+    LINES[#LINES + 1] = "[" .. TAG .. "] " .. table.concat(parts, " ")
+    flush()
 end
 
--- Templates to try. A: a character the prologue level itself places (named by vanilla goals
--- in Gustav/Story/RawFiles/Goals/TUT_LowerDeck.txt), so it must exist in TUT_Avernus_C.
--- B: the template from Larian's own spawn test (Gustav/.../Goals/Test.txt:353), which lives
--- in a different level - the control case for "can we use a foreign template".
+-- E8b-proven global root template, plus the level-placed prologue instance (expected failure).
 local TEMPLATES = {
-    "S_FirstFight_Imp_Melee_01_07f1512b-efe9-4eb8-8ade-783435e9d7c9",
     "Wolf_41da0eff-b533-43cc-a014-218f7d23fa11",
+    "S_FirstFight_Imp_Melee_01_07f1512b-efe9-4eb8-8ade-783435e9d7c9",
 }
 
-local EVIL = "Evil_4be9261a-e481-8d9d-3528-f36956a19b17"
+-- Factions verified from vanilla goals (Hero_... appears 179x; Evil_fb046e51 is the common Evil).
+local EVIL = "Evil_fb046e51-c544-4836-81eb-754ca8a021b6"
 local HERO = "Hero_a1542c81-6895-929e-4522-10ce218bb360"
 
-local function spawnOne(anchor, templateId)
-    local created = Osi.CreateAtObject(templateId, anchor, 1, 1, "", 1)
-    if not created then
-        log("CreateAtObject produced nothing for", templateId)
-        return nil
-    end
-    log("created", templateId, "->", created)
-    Osi.SetFaction(created, EVIL)
-    Osi.SetHostileAndEnterCombat(EVIL, HERO, created, anchor)
-    return created
-end
+log("Probe.lua loaded")
 
-local function spawnAll(anchor)
-    for _, templateId in ipairs(TEMPLATES) do
-        local ok, err = pcall(spawnOne, anchor, templateId)
-        if not ok then log("spawn threw for", templateId, ":", err) end
-    end
-end
+local ok, err = pcall(function ()
+    Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
+        log("CombatStarted", combatId)
+        local host = nil
+        local okH, h = pcall(Osi.GetHostCharacter)
+        if okH then host = h else log("GetHostCharacter threw:", h) end
+        if (not host or host == "") and Osi.DB_CurrentLevel ~= nil then
+            local okP, players = pcall(Osi.GetPlayers)
+            if okP and players and players[1] then host = players[1] end
+        end
+        log("anchor host:", host)
+        if not host or host == "" then log("no anchor, giving up"); return end
 
--- One-off dump of every root template in the loaded game, so template naming can be checked
--- offline instead of guessed at. Written to the Script Extender folder in the profile dir.
+        local hostFaction = nil
+        local okF, f = pcall(Osi.GetFaction, host)
+        if okF then hostFaction = f else log("GetFaction threw:", f) end
+        log("host faction:", hostFaction)
+
+        for _, templateId in ipairs(TEMPLATES) do
+            local okS, res = pcall(function ()
+                local created = Osi.CreateAtObject(templateId, host, 1, 1, "", 1)
+                log("CreateAtObject", templateId, "->", created)
+                if created and created ~= "" then
+                    local okG, eG = pcall(Osi.SetFaction, created, EVIL)
+                    log("SetFaction EVIL:", okG and "ok" or eG)
+                    local hostileTo = (hostFaction and hostFaction ~= "" and hostFaction ~= EVIL) and hostFaction or HERO
+                    local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, hostileTo, created, host)
+                    log("SetHostileAndEnterCombat (EVIL vs", hostileTo, "):", okX and "ok" or eX)
+                end
+            end)
+            if not okS then log("spawn threw for", templateId, ":", res) end
+        end
+    end)
+end)
+if ok then log("CombatStarted listener registered") else log("registration threw:", err) end
+
+-- Template dump: key GUID + name where available (v1 dumped GUIDs only).
 local dumped = false
 local function dumpTemplates()
     if dumped then return end
     dumped = true
-    local ok, err = pcall(function ()
-        local names = {}
-        for name, _ in pairs(Ext.Template.GetAllRootTemplates()) do
-            names[#names + 1] = tostring(name)
+    local ok3, err3 = pcall(function ()
+        local rows = {}
+        for key, tmpl in pairs(Ext.Template.GetAllRootTemplates()) do
+            local nm = "?"
+            pcall(function () nm = tmpl.Name end)
+            rows[#rows + 1] = tostring(key) .. "\t" .. tostring(nm)
         end
-        table.sort(names)
-        Ext.IO.SaveFile("MARTIN_root_templates.txt", table.concat(names, "\n"))
-        log("template dump written:", #names, "root templates")
+        table.sort(rows)
+        Ext.IO.SaveFile("MARTIN_root_templates.txt", table.concat(rows, "\n"))
+        log("template dump written:", #rows, "entries (GUID<TAB>Name)")
     end)
-    if not ok then log("template dump failed:", err) end
+    if not ok3 then log("template dump failed:", err3) end
 end
 
--- Proof of life: runs on every save load, and prints the level from Osiris state we know
--- exists (DB_CurrentLevel is maintained by Shared/.../__AAA_FirstGoal.txt:2954).
 Ext.Events.SessionLoaded:Subscribe(function ()
+    log("SessionLoaded")
     dumpTemplates()
-    local rows = Osi.DB_CurrentLevel:Get(nil)
-    log("SessionLoaded; DB_CurrentLevel rows:", Ext.DumpExport and Ext.DumpExport(rows) or rows)
+    local ok3, rows = pcall(function () return Osi.DB_CurrentLevel:Get(nil) end)
+    log("DB_CurrentLevel:", ok3 and Ext.DumpExport(rows) or ("threw: " .. tostring(rows)))
 end)
 
--- The experiment itself: one extra body per template for every combat that starts, logged at
--- each step. Arity 1 matches CombatStarted(_CombatGuid).
-Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
-    local ok, err = pcall(function ()
-        local host = Osi.GetHostCharacter()
-        log("CombatStarted", combatId, "host", host)
-        spawnAll(host)
-    end)
-    if not ok then log("CombatStarted handler threw:", err) end
-end)
-
--- Dev-console handle so a spawn can be tested without starting a fight: !martin_spawn
+-- Console command for manual tests: !martin_spawn
 Ext.RegisterConsoleCommand("martin_spawn", function ()
-    spawnAll(Osi.GetHostCharacter())
+    local host = Osi.GetHostCharacter()
+    for _, templateId in ipairs(TEMPLATES) do
+        local ok3, res = pcall(function ()
+            local created = Osi.CreateAtObject(templateId, host, 1, 1, "", 1)
+            log("console CreateAtObject", templateId, "->", created)
+        end)
+        if not ok3 then log("console spawn threw:", res) end
+    end
 end)
