@@ -35,6 +35,7 @@ TYPESET = {"Aberration", "Beast", "Celestial", "Construct", "Dragon", "Elemental
 # name patterns that mark story/unique/novelty creatures we never want as generic chaos mobs
 BAD_NAME = re.compile(
     r"(^S_|_S_|^UNI_|^SCL_|^TUT_|^ACT\d|^MO_|^DEN_|^LOW_|^UPP_|^CMP_|^WLD_|^GLO_|^QRY_|^DRD_|^MS_"
+    r"|^QUEST_|^Footstep_|Elder_Brain|NetherBrain|Doppelganger|Shapechanger"
     r"|Boss|Raphael|Vlaakith|Gortash|Orin|Yugot|Endbringer|Absolute|Cazador|Kasster|Thaniel"
     r"|Companion|Summon|Wildshape|Portrait|Civilian|PlayerWildshape|Hallucination|Duplicity"
     r"|Mannequin|_Act\d|DrinkingBuddy|Cub\b|Dad\b|Pregnant|Tutorial|Children|Baby|Hunt|Dialog|Double"
@@ -81,6 +82,8 @@ def resolve_type(stats, entries, depth=0):
     if parent is None or parent == "_Base":
         return None, e.get("hp")
     t = parent.lstrip("_")
+    if t.endswith("s"):  # vanilla uses plural parents, e.g. _Giants -> Giant
+        t = t[:-1]
     if t in TYPESET:
         return t, e.get("hp")
     t2, hp2 = resolve_type(parent, entries, depth + 1)
