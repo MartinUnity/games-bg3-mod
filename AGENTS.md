@@ -135,6 +135,9 @@ rules into vanilla-named goal files in `Data/Mods` and restores them from gitign
   pre-placed `.lsf` level instances, treasure-table loot re-wiring, planned custom stat
   blocks + custom root templates in the pak, and what is ruled out. Ranked, with the
   proven primitives and their limits. Read before designing new encounter features.
+- `backlog.md` — parking lot for "could look into" items (spawn-placement edge cases,
+  SE client-side Lua/Ext.UI experiments, leader visual distinction, equipment phase 2,
+  balancing knobs, release prep). Move items to HANDOVER next-moves when they graduate.
 - `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
   goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
   combat-group joining, spawn-position solving), what stays binary (level layout),

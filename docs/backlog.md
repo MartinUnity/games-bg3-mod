@@ -1,0 +1,76 @@
+# Backlog — could-look-into notes
+
+Small parking lot for observations and half-ideas that are NOT worth fixing right now,
+so they don't get lost. Move items to HANDOVER "ranked next moves" (or resolve them)
+when they graduate. Date each entry; delete when done or rejected.
+
+## Spawn placement / combat edge (owner note, 2026-10-31)
+
+A leader spawned next to an enemy at the edge of the player's vision and stood OUT of
+combat, joining only when the player approached. Probably the anchor enemy's combat did
+not propagate to the spawned mob at `SetHostileAndEnterCombat` time (distance or turn
+boundaries). Owner verdict: fine for now, keep an eye on it.
+Possible fix directions if it becomes annoying:
+- after spawn, verify with `Osi.IsInCombat(created, ...)` and if false, force-join via
+  the combat id we already have from `CombatStarted`;
+- spawn closer to the fight's "center" instead of a random single enemy anchor
+  (e.g. average of enemy positions, or the dominant-type enemy);
+- `CreateAtObject` offsets (`dx, dy` 1-3) could try larger radii so mobs path INTO
+  the fight rather than standing at the rim.
+
+## Combat-log entries + custom UI via SE client-side Lua (2026-10-31)
+
+Owner would love a persistent colored line in the combat log ("Reinforcements!"). There
+is NO Osiris combat-log call in BG3 (`CombatLogText`/`DisplayText`/`CharacterStatusText`
+are DOS2-family; verified absent from `story_header.div`). The remaining route is SE
+client-side Lua:
+- ship `ScriptExtender/Lua/BootstrapClient.lua` in the pak (mod currently has no
+  client VM);
+- experiment with `Ext.UI` (find the combat log widget path, write entries, maybe
+  color/format); the vendored v30 API doc does not cover it — pure probe territory
+  (dump `Ext.UI` structures at client SessionLoaded, log, iterate);
+- if the combat log widget is writable this also unlocks: toasts, custom leader
+  banners, colored status text — the whole "inform the player" toolbox.
+
+## Leader visual distinction (owner idea, earlier)
+
+Beyond the villain name + buffs: tint/color or VFX the leader. Candidate primitives:
+- `Osi.PlayEffect(object, fxName, bone, scale)` (story_header.div:635) — needs valid
+  effect resource names (probe: dump/try common ones);
+- an overhead status icon: add a visible (NOT DisableOverhead) CHAOS_LeaderStatus to
+  `CHAOS_Boosts.txt` — the buff statuses are proven to apply, just drop the
+  Disable* flags on a variant.
+
+## Equipment phase 2: own ItemDB with cost control (deferred by design)
+
+`tools/` can generate an ItemDB.lua from Weapon.txt/Armor.txt/Object.txt
+(`RootTemplate` GUID -> dump Name_GUID, `ValueScale`, `ValueLevel`, `Proficiency
+Group`) for the owner's exact cost-multiplier tiers. Currently Larian tables
+approximate it. Also queued:
+- shields (no `ST_Shields` table -> `TemplateAddTo` a shield root template;
+  Merregon prof includes Shields);
+- ranged weapons for dex-based humanoids (tables exist: `ST_SimpleRangedWeapons`,
+  `ST_MartialRangedWeapons` — but melee AI may not use bows; needs a probe);
+- chaos fodder tables: `ST_RandomPotion`, `ST_RandomConsumable`, `ST_Throwable`.
+
+## Balancing / tuning (from playtests)
+
+- RACE_TO_TYPE map grows only from discovery logs (`enemy: ... type ?` lines) —
+  collect from longer play sessions and extend the map in Chaos.lua.
+- Level-2 gate (hp<=35/ac<=15/ability<=14) is guessed, not playtested at lvl 2 yet.
+- Budget formula vs party size: `CombatGetInvolvedPartyMembersCount` worked in the
+  tutorial (returned 3); re-check with the real 6-8 char party (NPC-keeper mod).
+- Global HP boost migration: `MOB_HP_BOOST` placeholder in Chaos.lua is OFF; once
+  native stats are gauged, implement as a CHAOS status in `CHAOS_Boosts.txt`
+  (statuses proven) and remove the commented override in
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt`.
+
+## Release prep (when the mod leaves this machine)
+
+- Honour-only gate: vanilla predicate `DB_HonorMode_Enabled(1)` or an SE-side
+  difficulty check (currently the engine runs on every difficulty — intentional for
+  testing).
+- TEST_MODE / LEADER_TEST / EQUIP test knobs -> config or remove.
+- Custom bark/bark-like text needs a loca file in the pak (if we ever want custom
+  tell lines instead of DebugText).
+- Version bump + workshop-ready description in meta.lsx.
