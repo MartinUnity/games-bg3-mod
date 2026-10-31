@@ -65,6 +65,9 @@ end
 
 -- native-stat gate for the player's level: nil = entry is fine
 function passesGate(e, base)
+    -- native level gate: a stat block that is natively several levels above the party
+    -- (Floating_Head etc.) is out-of-depth even when its hp/ac pass (lvl-7 vs lvl-2 party)
+    if e.lvl and e.lvl > base + LEVEL_JITTER then return false end
     local g = GATES[base]
     if g then
         if e.hp > g.hp then return false end

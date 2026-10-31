@@ -29,7 +29,11 @@ local WILD_COUNTDOWN_EVERY = 60       -- monitor ticks between "time to despawn"
 
 local nextGroupId = 0
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
-local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
+local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 50, 75   -- meters from the player (owner: keep
+-- groups far enough out that a new pack can't lock onto an existing one and chain
+-- the player into their fight - observed in-game when an evil pack spawned near a
+-- neutral traveler group and the two went to war next to the player)
+local WILD_GROUP_GAP = 25            -- min meters between two wild group centers
 local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
 local WILD_SPOT_TRIES = 6       -- angle attempts before giving up on a spot
 local WILD_CLUSTER = 4               -- max meters between group members
@@ -66,7 +70,14 @@ local function findGroupSpot(px, py, pz, host)
         if ok and type(vx) == "number" then
             local drift = math.sqrt((vx - tx) ^ 2 + (vz - tz) ^ 2)
             if drift <= WILD_SPOT_SLACK then
-                return vx, vy, vz, radius
+                -- keep new groups away from existing ones (no pack-on-pack chain aggro)
+                local clash = false
+                for _, g in ipairs(groups) do
+                    if g.cx and math.sqrt((vx - g.cx) ^ 2 + (vz - g.cz) ^ 2) < WILD_GROUP_GAP then
+                        clash = true break
+                    end
+                end
+                if not clash then return vx, vy, vz, radius end
             end
         end
     end
@@ -164,7 +175,7 @@ local function spawnWildGroup(host, base)
 
     nextGroupId = nextGroupId + 1
     local group = { id = nextGroupId, members = {}, type = etype,
-                    faction = groupFaction,
+                    faction = groupFaction, cx = x, cy = y, cz = z,
                     ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
     local spawnedHumanoid = (etype == "Humanoid")
     for i = 1, count do
