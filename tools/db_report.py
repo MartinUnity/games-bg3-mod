@@ -19,7 +19,7 @@ VANILLA = pathlib.Path("/home/martin/Documents/mods/bg3-new/bg3-vanilla-data")
 
 ENTRY_RE = re.compile(
     r'\{ id = "([A-Za-z0-9_]+)_([0-9a-f-]{36})", hp = (\d+), cost = (\d+)'
-    r'(?:, lvl = (\d+))?(?:, ac = (\d+))?(?:, str = (\d+))?(?:, dex = (\d+))?'
+    r'(?:, lvl = (\d+))?(?:, imm = (\d+))?(?:, ac = (\d+))?(?:, str = (\d+))?(?:, dex = (\d+))?'
     r'(?:, con = (\d+))?(?:, wis = (\d+))?(?:, cha = (\d+))?'
     r'(?:, ea = (true))?(?:, unarmed = (true))?(?:, prof = "([^"]*)")?')
 TYPE_RE = re.compile(r'^\s{2}([A-Za-z]+) = \{')
@@ -40,14 +40,15 @@ def load_db():
                 types[cur].append({
                     "name": g[0], "hp": int(g[2]), "cost": int(g[3]),
                     "lvl": int(g[4]) if g[4] else 1,
-                    "ac": int(g[5]) if g[5] else None,
-                    "str": int(g[6]) if g[6] else None,
-                    "dex": int(g[7]) if g[7] else None,
-                    "con": int(g[8]) if g[8] else None,
-                    "wis": int(g[9]) if g[9] else None,
-                    "cha": int(g[10]) if g[10] else None,
-                    "ea": g[11] == "true", "unarmed": g[12] == "true",
-                    "prof": g[13] or ""})
+                    "imm": int(g[5]) if g[5] else 0,
+                    "ac": int(g[6]) if g[6] else None,
+                    "str": int(g[7]) if g[7] else None,
+                    "dex": int(g[8]) if g[8] else None,
+                    "con": int(g[9]) if g[9] else None,
+                    "wis": int(g[10]) if g[10] else None,
+                    "cha": int(g[11]) if g[11] else None,
+                    "ea": g[12] == "true", "unarmed": g[13] == "true",
+                    "prof": g[14] or ""})
     return types
 
 
@@ -238,6 +239,15 @@ def main():
     hi = [c for c in allc if c["lvl"] > 1]
     lines += ["", "## Native level > 1", "",
               ", ".join(f"{c['name']} (lvl {c['lvl']})" for c in hi) or "(none)"]
+
+    lines += ["", "## Damage immunities (build rule: 3+ = blocked, e.g. Grym)", ""]
+    imm1 = [c["name"] for c in allc if c["imm"] == 1]
+    imm2 = [c["name"] for c in allc if c["imm"] == 2]
+    lines += [f"- **1 immunity** ({len(imm1)}): " + ", ".join(imm1[:20])
+              + (", ..." if len(imm1) > 20 else "")]
+    lines += [f"- **2 immunities** ({len(imm2)}): " + ", ".join(imm2[:20])
+              + (", ..." if len(imm2) > 20 else "")]
+    lines += ["- **3+ immunities**: none (blocked at build time)"]
 
     OUT.write_text("\n".join(lines) + "\n")
     print(f"wrote {OUT} ({OUT.stat().st_size} bytes), creatures: {len(allc)}")

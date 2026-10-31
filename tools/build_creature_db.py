@@ -44,7 +44,7 @@ BAD_NAME = re.compile(
     r"|^BHAAL_|HouseOfHope|Redcap_Pirate|Sharran_|DarkJusticiar|SteelWatcher|"
     r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway"
     r"|Ketheric|^MOO_|baptismTrigger|Form_Player|FindFamiliar|ConjureElemental|"
-    r"DarkUrge|Slayer_A|Oathbreaker|^Brewer\b)", re.I)
+    r"DarkUrge|Slayer_A|Oathbreaker|^Brewer\b|Adamantine|Grym)", re.I)
 
 # stats entries may also betray bossiness
 BAD_STATS = re.compile(r"(Boss|Commander|General|Prince|Pope)", re.I)
@@ -64,6 +64,7 @@ def load_stats():
     fields = {f: re.compile(r'^data "%s" "([^"]*)"' % f) for f in
               ("Vitality", "Strength", "Dexterity", "Constitution", "Wisdom", "Charisma", "Armor", "Passives", "Level",
                "Proficiency Group", "UnarmedAttackAbility")}
+    resist_re = re.compile(r'^data "(\w+)Resistance" "(\w+)"')
     for f in sorted(VANILLA.rglob("Stats/Generated/Data/Character*.txt")):
         cur = None
         for line in f.read_text(errors="replace").splitlines():
@@ -71,6 +72,10 @@ def load_stats():
             if m:
                 cur = m.group(1)
                 entries.setdefault(cur, {})
+                continue
+            m = resist_re.match(line)
+            if m and cur is not None:
+                entries[cur].setdefault("resist", {})[m.group(1)] = m.group(2)
                 continue
             if cur is None:
                 continue
@@ -118,6 +123,22 @@ def resolve_field(stats, entries, field, depth=0):
     if parent is None or parent == "_Base":
         return None
     return resolve_field(parent, entries, field, depth + 1)
+
+
+def immune_types(stats, entries):
+    """effective damage immunities, inherited through the `using` chain
+    (a child may override a parent's Immune back to Normal)."""
+    acc, st, depth = {}, stats, 0
+    while st and depth <= 10:
+        e = entries.get(st)
+        if e is None:
+            break
+        acc.update(e.get("resist", {}))
+        st = e.get("using")
+        if st == "_Base":
+            break
+        depth += 1
+    return {t for t, v in acc.items() if v == "Immune"}
 
 
 def load_dump_keys():
@@ -205,6 +226,11 @@ def main():
         passives = resolve_field(statsname, stats, "Passives") or ""
         if BAD_PASSIVE.search(passives):
             continue
+        # owner rule: 3+ damage immunities = puzzle/special-fight mob (Grym), skip;
+        # 1-2 are ordinary resistances - kept but recorded for the report/gates
+        immunes = immune_types(statsname, stats)
+        if len(immunes) >= 3:
+            continue
         ea = "ExtraAttack" in passives
         level = resolve_field(statsname, stats, "Level")
         prof = resolve_field(statsname, stats, "Proficiency Group") or ""
@@ -214,13 +240,13 @@ def main():
             level = int(level) if level else 1
         except ValueError:
             level = 1
-        rows[name] = (guid, t, hp, cost, statsname, level,
+        rows[name] = (guid, t, hp, cost, statsname, level, len(immunes),
                       ac, strength, dex, con, wis, cha, ea, prof, unarmed != "")
 
     print(f"generic spawnable creatures: {len(rows)}")
     bytype = {}
-    for name, (guid, t, hp, cost, sn, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed) in rows.items():
-        bytype.setdefault(t, []).append((name, guid, hp, cost, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed))
+    for name, (guid, t, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed) in rows.items():
+        bytype.setdefault(t, []).append((name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed))
     for t in sorted(bytype):
         print(f"  {t}: {len(bytype[t])}")
 
@@ -240,8 +266,9 @@ def main():
              "CHAOS_DB = {"]
     for t in sorted(bytype):
         lines.append(f"  {t} = {{")
-        for name, guid, hp, cost, level, ac, strength, dex, con, wis, cha, ea, prof, unarmed in sorted(bytype[t]):
+        for name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed in sorted(bytype[t]):
             extra = f", lvl = {level}" if level > 1 else ""
+            extra += f", imm = {imm}" if imm > 0 else ""
             extra += f", ac = {num(ac)}" if num(ac) is not None else ""
             extra += f", str = {num(strength)}" if num(strength) is not None else ""
             extra += f", dex = {num(dex)}" if num(dex) is not None else ""
