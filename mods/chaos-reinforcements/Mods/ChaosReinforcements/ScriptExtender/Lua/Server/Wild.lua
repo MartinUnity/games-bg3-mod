@@ -15,6 +15,8 @@ local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (own
 local WILD_CHANCE = 25               -- % per heartbeat
 local WILD_TEST = true               -- 100% per heartbeat while testing
 local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups after an encounter
+local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
+local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
 local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
 local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
@@ -134,7 +136,8 @@ local function spawnWildGroup(host, base)
         return
     end
 
-    local group = { members = {}, type = etype }
+    local group = { members = {}, type = etype,
+                    ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
     local spawnedHumanoid = (etype == "Humanoid")
     for i = 1, count do
         local pool = gatedPool(etype, base) or gatedPool(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], base)
@@ -207,8 +210,24 @@ local function monitor()
         end
         if nearDist <= WILD_AGGRO_RANGE * WILD_AGGRO_RANGE then
             aggroGroup(group, nearest)
+        elseif nearDist <= WILD_WATCHED_M * WILD_WATCHED_M then
+            remaining[#remaining + 1] = group   -- watched: expiry clock holds
         else
-            remaining[#remaining + 1] = group
+            -- expire quietly out of sight ("they wandered on"); never mid-combat
+            group.ttlMs = group.ttlMs - WILD_MONITOR_MS
+            local inCombat = false
+            for _, guid in ipairs(group.members) do
+                local okI, ic = pcall(Osi.IsInCombat, guid)
+                if okI and ic == 1 then inCombat = true break end
+            end
+            if group.ttlMs <= 0 and not inCombat then
+                for _, guid in ipairs(group.members) do
+                    pcall(Osi.RequestDeleteTemporary, guid)
+                end
+                log("wild: group expired (", #group.members, "mobs wandered on )")
+            else
+                remaining[#remaining + 1] = group
+            end
         end
     end
     groups = remaining
