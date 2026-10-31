@@ -22,6 +22,11 @@ local T_FINESSE_MAGIC = "ST_Finesse_MeleeWeapons_Magic"
 local T_LIGHT = "ST_LightArmor"
 local T_MEDIUM = "ST_MediumArmor"
 local T_HEAVY = "ST_HeavyArmor"
+-- cosmetic decency fallback (owner 2026-10-31: casters without armor prof spawned
+-- weaponless-looking AND naked); vanilla vanity tables, random common/rich garment,
+-- sells for nothing, no proficiency requirement, does not block spellcasting
+local T_CLOTHES_COMMON = "Clothes_Vanity_Body_Common"
+local T_CLOTHES_RICH = "Clothes_Vanity_Body_Rich"
 
 -- potion root templates (Name_GUID from the live root-template dump)
 local POTION_HEAL = {
@@ -100,11 +105,18 @@ function EquipMob(created, base, entry)
     local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
     if base <= 1 then tier = 1 end                                  -- lvl 1: cheapest gear only
     local weapon, armor = equipmentFor(entry, base, tier)
+    -- no armor (innate/native AC) -> still give a random garment so the mob isn't
+    -- naked; jackpot tier gets the rich wardrobe (owner: "make it interesting")
+    local clothes = nil
+    if not armor then
+        clothes = (tier == 4) and T_CLOTHES_RICH or T_CLOTHES_COMMON
+    end
     log("equip: tier", tier, "(roll", roll .. ")",
-        weapon or "innate", "+", armor or "native-armor",
+        weapon or "innate", "+", armor or (clothes and "clothes" or "native-armor"),
         "prof", entry.prof or (entry.unarmed and "innate" or "-"))
     if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
     if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
+    if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
     -- consumables
     local potions = {}
     if tier == 1 then
