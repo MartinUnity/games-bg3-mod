@@ -160,11 +160,16 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 ## 9. Git state
 
 Commits this session: `2ddd041` (E7 probe + E1 forensics), `aeadb2d` (SE/Lua docs + skeleton +
-deploy script). Working tree had only docs edits beyond those. `bg3-vanilla-data/` is gitignored and
+deploy script), `d09c810` (this handover + AGENTS.md pointer), plus a follow-up commit adding
+`spawn-chains.md` sec.3.1.2 (E7 result, E8 plan). `bg3-vanilla-data/` is gitignored and
 **absent/empty** on this checkout — re-unpack before using it as a baseline.
 
 ## 10. Session hygiene note
 
-Late in the session, shell tool calls started rendering into the chat as literal text instead of
-executing (a harness glitch, nothing repo-related). Prefer short, plainly-quoted commands; if it
-recurs, hand over again rather than fighting it.
+Late in the session, some tool calls rendered into the chat as literal text instead of executing.
+Pattern observed: the calls that failed had awkward arguments (backslash escapes, `|` in regex
+patterns, embedded double quotes, `>` in grep patterns); re-issued versions with plain, simple
+arguments worked immediately, including `grep`, `edit`, `write`, `shell`. So: keep tool arguments
+plain — short single-quoted paths, no regex alternation, no escaped quotes, no `echo` separators.
+`docs/spawn-chains.md` sec.3.1.2 now carries the E7 result and the E8 plan (this file and that
+section overlap on purpose: this one is the session brief, that one is the project memory).

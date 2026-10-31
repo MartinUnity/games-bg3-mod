@@ -104,17 +104,40 @@ prologue) produced no extra bodies and no print. Evidence gathered afterwards, a
   Saves are `HonourMode.lsv` (LSOF container, first zstd frame decodes but carries no `DB_`
   fact strings) — **not** a usable channel for reading story facts.
 
-Next test is **E7**, `SharedDev/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (the E1 file is
-parked at `docs/goals/MARTIN_Reinforcements.txt` so exactly one goal file is in the compile
-path): two ungated `CombatStarted` rules, each its own once-guard, one spawning the
-level-native imp `S_FirstFight_Imp_Melee_01_07f1512b-…` (cited from `TUT_LowerDeck.txt`, so it
-exists in `TUT_Avernus_C`) and one the cross-level `Wolf_41da0eff-…`. Any extra body proves the
-mount; nothing at all, in *any* combat, points at the mount rather than the rule.
+**E7** was `SharedDev/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (the E1 file is parked at
+`docs/goals/MARTIN_Reinforcements.txt` so exactly one goal file is in the compile path): two
+ungated `CombatStarted` rules, each its own once-guard, one spawning the level-native imp
+`S_FirstFight_Imp_Melee_01_07f1512b-…` (cited from `TUT_LowerDeck.txt`, so it exists in
+`TUT_Avernus_C`) and one the cross-level `Wolf_41da0eff-…`. Any extra body proves the mount;
+nothing at all, in *any* combat, points at the mount rather than the rule.
 
-If E7 comes back empty again, stop iterating blind: the Script Extender Lua channel
-(`docs/lua-modding.md`, skeleton `mods/more-mobs/`) runs after the story compiler, logs every
-step, and can dump every creature template name in the loaded game — but a loaded mod marks the
-save modded, so treat it as the lab and port results back into `MARTIN_*.txt` goals.
+### 3.1.2 E7 in-game result: **still nothing** (2026-10-31, fresh Honour game, prologue rooms 2-3)
+
+User started a new Honour game and fought the imp battle in room 3: no extra bodies, nothing out
+of the ordinary. So both the honour-gated E1 and the ungated any-level E7 are silent, and the
+**mount hypothesis is now the leading explanation**: `Data/Public/<Module>/Story/RawFiles/` is
+very likely not part of the story compile path (vanilla ships goal text only under
+`Data/Mods/<Module>/Story/RawFiles/`). Untested sub-cases left: wrong mount (`Data/Public` never
+scanned for `Story/`), wrong module (goal text for the TUT levels lives in Gustav/GustavDev, not
+SharedDev), or loose goal text not compiled at all on this install.
+
+**E8 (next, cheap, no tooling):** `Data/Mods` is writable now, so run
+`tools/deploy_story.sh --copy` and hand-copy the probe into
+`Data/Mods/GustavDev/Story/RawFiles/Goals/` as well (base module per `modsettings.lsx` is
+GustavDev, and that splits the module question from the mount question). Restart the game — story
+text is compiled at start. Any spawn means the `Data/Mods` story mount is live and goals ship
+there (and inside the pak); still nothing means loose goal text is not compiled here at all and
+the pak (and/or lslib `StoryCompiler`) is the only route.
+
+Balance/stats overrides were not separately confirmed in that run ("nothing out of the normal" is
+ambiguous about the HP/damage edits). If stats turn out to be dead too, suspect the stale
+`modsettings.lsx` base-module choice (`GustavDev`, mtime 2024-08-02) before blaming the overlay.
+
+Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
+`mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature
+template name in the loaded game. Achievements are not a concern for this user, so the Lua probe
+is now the main instrument rather than just the lab; the pak is the packaging route
+(`docs/HANDOVER.md` sec.4).
 
 ### 3.2 Trust only names you have grepped
 
