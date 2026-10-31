@@ -111,6 +111,11 @@ level-native imp `S_FirstFight_Imp_Melee_01_07f1512b-…` (cited from `TUT_Lower
 exists in `TUT_Avernus_C`) and one the cross-level `Wolf_41da0eff-…`. Any extra body proves the
 mount; nothing at all, in *any* combat, points at the mount rather than the rule.
 
+If E7 comes back empty again, stop iterating blind: the Script Extender Lua channel
+(`docs/lua-modding.md`, skeleton `mods/more-mobs/`) runs after the story compiler, logs every
+step, and can dump every creature template name in the loaded game — but a loaded mod marks the
+save modded, so treat it as the lab and port results back into `MARTIN_*.txt` goals.
+
 ### 3.2 Trust only names you have grepped
 
 An earlier research pass over this material invented plausible API names. Confirmed **not to

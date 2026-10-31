@@ -28,6 +28,12 @@ Where things live:
   `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
   declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
   so our own files declare everything they use. No loca files anywhere in the repo.
+- Lua / Script Extender route (⚠️ parallel channel, not the override workflow): fundamentals in
+  `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, skeleton mod
+  `mods/more-mobs/`, deploy helper `tools/deploy_lua_mod.sh`. SE v33 is installed here
+  (`bin/DWrite.dll` = SE auto-updater, needs `WINEDLLOVERRIDES="DWrite.dll=n,b"`); logging is on
+  via `bin/ScriptExtenderSettings.json` → `bin/bg3-print.log`. Unlike the `Data/Public` overlay,
+  a loaded mod flags the save as modded (achievements off) — use it as the lab, not the product.
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
   `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → overridden in
   `GustavDev/Stats/Generated/Data/Status_BOOST.txt`); the story-side equivalent is the
