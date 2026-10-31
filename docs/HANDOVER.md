@@ -59,20 +59,17 @@ file in the story mount (back it up first — `Data/Mods` is not in git; e.g.
 `Data/Mods/SharedDev/Story/RawFiles/Goals/GLO_HonorMode.txt`), which tests the mount without also
 changing file identity. Full protocol in `docs/spawn-chains.md` §3.1.2.
 
-**Update (later 2026-10-31): E8b produced a PARTIAL RESULT, then was fixed and re-armed.** The
-first injection made **new-game creation fail** ("likely due to mods; check the log") => the
-`Data/Mods/<Module>/Story/RawFiles/Goals/` text *is* compiled per new game, and bad rules fail
-loudly, not silently. Cause: `GetHostCharacter`/`CreateAtObject` are QUERYs and were used as THEN
-actions; rewritten to bind in `AND` (Larian pattern, `Gustav/.../Test.txt:345-356`), and
-`check_goal.py` now flags query-in-THEN / call-in-condition. Hosts are now three:
-`SharedDev/GLO_HonorMode.txt`, `GustavDev/GLO_BackgroundGoals.txt`, plus
-`GustavX/Act1b_PaladinMoments_Crown.txt` — the ACTIVE `PlayerProfiles/Public/modsettings.lsx`
-(mtime = last play) has base module **GustavX**; the stale 2024 root `modsettings.lsx` the first
-pass read is legacy. All three hosts injected + validator-green; backups in `tools/e8b_backup/`.
-Remaining = the in-game run: restart, new game must now START, one combat, count bodies, then
-`--restore`. If new games still refuse, `--restore` immediately and re-diagnose. ⚠️ No *extra*
-mod enabled while testing (see §8.5) — but note the profile already runs several enabled mods
-(EncountersOverhaul, Extra encounters plus, …) in every test, E1/E7 included, so comparisons hold.
+**E8b FINAL RESULT (later 2026-10-31): POSITIVE.** Fresh Honour game, room 3: vanilla 5 imps, then
+**our wolf spawned mid-combat and attacked** — the exact mechanism wanted. Confirmed: `Data/Mods`
+goal text compiles into sessions and fires; cross-level **global** templates instantiate fine
+(`Wolf_…` fired in TUT_Avernus_C); `GetHostCharacter` = the host *player* (wolf dropped on the
+party — placement needs real anchoring later); per-rule compile drops are silent (the imp rule
+never fired — likely because `S_FirstFight_Imp_*` ids are level-placed *instances*, not root
+templates). Hosts `--restore`d after the test; `Data/Public/Story/` remains dead (E1/E7 explained).
+E8 is now armed as the sole live probe: new-name copy at
+`Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` — restart, any game, one combat;
+wolf ⇒ invented file names work in the live mount (cleanest shipping shape), no wolf ⇒
+vanilla-named appends (or pak) only. Full detail: `docs/spawn-chains.md` §3.1.2.
 
 ### E8 — cheap, no tooling (superseded by E8b above, but it costs one command)
 
@@ -169,40 +166,53 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   SE Lua object handles expire per game loop.
 - Imp-room templates named by vanilla goals: `S_FirstFight_Imp_Melee_01_07f1512b-…`,
   `…_Melee_02_5c5bd50b-…`, `…_Ranged_01_38d1ce2f-…`, `…_Ranged_02_df44fa65-…`.
-- Cross-level template instantiation is still untested — second suspect for E1/E7 nulls; the SE
-  template dump settles it.
+- Cross-level template instantiation ✅ works for **global** root templates (E8b wolf). The imp
+  rule's silence points at level-placed **instance** ids (`S_FirstFight_Imp_*`, vanilla casts them
+  `(CHARACTER)`) not resolving as `CHARACTERROOT_` literals → use global templates for spawns;
+  the SE template dump enumerates them.
+- `GetHostCharacter` = the network host's PLAYER — spawning "on" it drops mobs on the party.
+  For reinforcements, anchor elsewhere and use the vanilla join pattern: `PROC_Appear` +
+  `PROC_GLO_NarrativeCombat_JoinCombat` (`Gustav/.../TUT_Helm.txt:896-1010`).
 - Save files (`HonourMode.lsv`, LSOF + one zstd frame) carry no `DB_` fact strings → useless for
   reading story state. No precompiled story cache anywhere (`Data/Generated/` = Public/Engine/Assets
   only). Game logs `bin/gold.*.log` / `bin/network.*.log` show no story-compile output.
 
 ## 8. Ranked next moves
 
-1. **E8b — re-armed (3 hosts) with grammar fixed; needs the in-game run only.**
-   `SharedDev/GLO_HonorMode.txt` + `GustavDev/GLO_BackgroundGoals.txt` +
-   `GustavX/Act1b_PaladinMoments_Crown.txt` carry the rules (`tools/e8b_inject.py --status`).
-   Owner: full game restart, new Honour game — it must **start** now — fight ONE combat, count
-   bodies. Imps/wolves = story channel fully live from `Data/Mods` (build reinforcements on it);
-   starts but nothing spawns = templates/rules dead; refuses again = run
-   `python3 tools/e8b_inject.py --restore` to unbreak, then re-diagnose. Details:
-   `docs/spawn-chains.md` §3.1.2.
-2. **Pak CLI** (§4) — tiny C# console app over LSLib `Package`/`PackageWriterFactory`; prove by
-   round-tripping `ModFixer.pak`, then pack `mods/more-mobs/` (internal paths `Mods/MARTIN_MoreMobs/…`,
-   `Public/MARTIN_MoreMobs/…`) into `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, enable
-   in-game, read `bin/bg3-print.log` + `MARTIN_root_templates.txt`.
-3. Optional big win: lslib **`StoryCompiler`** to compile `MARTIN_*.txt` offline (needs
-   `story_header.div`/`story_definitions.div` + gplex/gppg) so goal grammar errors stop being silent.
-4. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
+1. **E8 — armed, needs one in-game read.** The ONLY probe in any compile path is the new-name
+   copy `Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (E8b hosts are restored
+   pristine). Owner: restart, load any game, one combat. Wolf ⇒ invented goal file names compile
+   from the live mount ⇒ features ship as our own `MARTIN_*.txt` in `Data/Mods` (pak = pure
+   packaging later). No wolf ⇒ only vanilla-named appends work in text ⇒ ship via the
+   e8b_inject append mechanism or pak. To undo: delete that one file.
+2. **Pak CLI + SE template dump** (§4, §5) — unblocked once E8's read is done. Tiny C# console
+   app over LSLib `Package`/`PackageWriterFactory`; prove by round-tripping `ModFixer.pak`, then
+   pack `mods/more-mobs/`, enable, read `bin/bg3-print.log` + `MARTIN_root_templates.txt`. The
+   template dump answers the imp-instance question and enumerates the **global root templates**
+   that the reinforcement feature will draw on (cross-level global spawns are proven to work).
+3. **Design the real feature** now that the channel is proven: honour-gated rules
+   (`DB_HonorMode_Enabled(1)`), per-level triggers, multiple global templates, placement that is
+   NOT `GetHostCharacter` (that is the host player — wolf landed on the party), and the vanilla
+   join pattern `PROC_Appear` + `PROC_GLO_NarrativeCombat_JoinCombat` (TUT_Helm:896-1010).
+4. Optional big win: lslib **`StoryCompiler`** to compile `MARTIN_*.txt` offline (needs
+   `story_header.div`/`story_definitions.div` + gplex/gppg) — whole-file errors already refuse new
+   games (detectable), and the *silent per-rule drops* (imp-rule class) are exactly what an
+   offline compile catches.
+5. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
    `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`.
-5. Do **not** install/enable any mod pak while the user is running the E7/E8/E8b new-game tests —
-   an enabled mod changes the story-compile inputs and ruins the reading. Park pak *building* too if
-   there is any chance of it getting enabled mid-test.
+6. Confound rule: while E8's read is pending, do **not** enable any *additional* mod pak —
+   story-compile inputs must match the pre-E8 state. After the read, SE/pak work is free: Lua sees
+   everything and the text channel can be validated from inside SE afterwards.
 
 ## 9. Git state
 
 Commits this session: `2ddd041` (E7 probe + E1 forensics), `aeadb2d` (SE/Lua docs + skeleton +
 deploy script), `d09c810` (this handover + AGENTS.md pointer), plus a follow-up commit adding
-`spawn-chains.md` sec.3.1.2 (E7 result, E8 plan). `bg3-vanilla-data/` is gitignored and
-**absent/empty** on this checkout — re-unpack before using it as a baseline.
+`spawn-chains.md` sec.3.1.2 (E7 result, E8 plan). Same-day follow-ups: `6ed3c6a` (E8b armed,
+e8b_inject.py), `5bb1ea0` (new-game-refusal diagnosis: query-in-AND fix, check_goal.py
+query/call placement, GustavX host, live-modsettings correction), and the E8b-positive + E8-armed
+docs commit. `bg3-vanilla-data/` is gitignored and **absent/empty** on this checkout — re-unpack
+before using it as a baseline.
 
 ## 10. Session hygiene note
 

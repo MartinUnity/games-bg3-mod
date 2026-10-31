@@ -197,6 +197,38 @@ fully live from `Data/Mods`; new game fine but nothing spawns = rules compile ye
 (template instantiation dead); new game refuses again = grammar problem, run
 `python3 tools/e8b_inject.py --restore` to unbreak the game, then re-diagnose.
 
+**E8b FINAL RESULT (2026-10-31): POSITIVE — the story channel is live.** Fresh Honour game,
+Nautiloid room 3: vanilla 5 imps as usual, then **our wolf spawned on top of the party and
+attacked** — one extra mob added to an existing encounter, exactly the mechanism the project
+needs. Facts learned, all ✅ in-game:
+- Loose goal text in `Data/Mods/<Module>/Story/RawFiles/Goals/` (vanilla file identity) compiles
+  and fires. Mount question of §3.1: **settled** — Public/Story dead, Mods/Story alive.
+- Cross-level template instantiation **works** for global templates: `Wolf_41da0eff-…` (a
+  template cited only by `Gustav/…/Test.txt`) spawned fine in `TUT_Avernus_C`. The old
+  "cross-level" suspect for E1/E7 is cleared.
+- `GetHostCharacter` = the **host player**, so `CreateAtObject(_, _Host, …)` drops the new mob
+  on top of the party. Real features should anchor elsewhere (`FindValidPosition`, an existing
+  enemy, or the encounter's trigger) and join the fight properly (vanilla pattern:
+  `PROC_Appear` + `PROC_GLO_NarrativeCombat_JoinCombat`, `Gustav/…/TUT_Helm.txt:896-1010`).
+- **Rule A (imp) never spawned anything** while rule B (wolf) fired in the same file, same
+  shape, same events. Leading explanation: `S_FirstFight_Imp_Melee_01_07f1512b-…` is a
+  *level-placed instance* (vanilla casts it `(CHARACTER)` in `TUT_LowerDeck.txt:15`), and a
+  `CHARACTERROOT_` literal for it may not resolve — i.e. that rule was dropped at compile time,
+  silently, while sibling rules survived ("per-rule silent drop" now confirmed positive/negative
+  alongside the whole-file new-game refusal). For reinforcements this is fine: use **global root
+  templates**, which provably work; enumerate them via the SE template dump (HANDOVER §4/§5).
+- Once-guard `NOT DB_MARTIN_ProbeX(_CombatGuid)` + `DB_…` assert: fired exactly once per combat
+  (one wolf, not three, despite three injected hosts).
+Hosts were `--restore`d immediately after the test (state: pristine, backups kept).
+
+**E8 armed (new-file-name test in the live mount).** E8b never varied file *name* inside the
+*right* mount. Now the sole probe in any compile path is
+`Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (new name, copied verbatim from
+`docs/goals/`, validator ok; hosts pristine). Test: restart, load any game, one combat.
+Wolf again ⇒ invented goal file names compile from the `Data/Mods` mount and we ship features as
+own files (+ the pak just packages them). No wolf ⇒ only vanilla-named appends work in text;
+shipping shape = append-into-vanilla (the e8b_inject mechanism) or the pak.
+
 Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
 `mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature
 template name in the loaded game. Achievements are not a concern for this user, so the Lua probe

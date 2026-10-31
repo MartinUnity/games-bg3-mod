@@ -23,14 +23,20 @@ Where things live:
 - Story/goal text: our own files go in `<Layer>/Story/RawFiles/Goals/MARTIN_*.txt`
   (CRLF, in git). The vanilla goal text still lives outside the repo at
   `Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt` —
-  944 files, all still stock vanilla (install mtime 2025-09-06). Whether the engine
-  compiles loose goal text at all, and from which mount, is **unverified** — see
-  `docs/spawn-chains.md` §3. `Data/Mods` is on a read-only mount; only `Data/Public` is
-  writable, and vanilla has **no** `Story/` dir under `Data/Public` at all. ⚠️ First in-game
-  test (E1, repo copy only) spawned nothing — mount is the prime suspect; current test is
-  `SharedDev/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (E7, §3.1.1). This is the Windows
+  944 files, all still stock vanilla (install mtime 2025-09-06). **Resolved 2026-10-31:** the
+  live story channel IS that `Data/Mods` mount — rules appended into a vanilla-named goal file
+  there compiled and spawned a wolf in-game (E8b ✅, `docs/spawn-chains.md` §3.1.2), while the
+  `Data/Public/<Module>/Story/` mount never fires (E1/E7 nulls). A whole-file grammar error
+  *refuses new-game creation* ("likely due to mods"); a bad name in one rule can also drop just
+  that rule silently (our imp rule died, wolf rule fired — instance-vs-root templates, §3.1.2).
+  E8 armed: new-name copy at `Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt`
+  tests whether invented file names work in the live mount; repo masters are parked in
+  `docs/goals/`, inject/restore via `tools/e8b_inject.py`. `Data/Mods` is writable (ro bind fixed).
+  This is the Windows
   build under Proton: prefix `compatdata/1086940`, logs `bin/gold.*.log`, profile
-  `…/AppData/Local/Larian Studios/Baldur's Gate 3/`. Vanilla keeps its helper library in
+  `…/AppData/Local/Larian Studios/Baldur's Gate 3/` — live load order is
+  `PlayerProfiles/Public/modsettings.lsx` (base module **GustavX**, mods enabled), NOT the stale
+  2024 root-level file. Vanilla keeps its helper library in
   `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
   declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
   so our own files declare everything they use. No loca files anywhere in the repo.
