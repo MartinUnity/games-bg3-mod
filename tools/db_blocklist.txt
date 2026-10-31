@@ -1,0 +1,29 @@
+#
+BASE_BOOK_GEN_Book_B
+# before the GUID in a DB id, e.g. the name in "BASE_Monstrosity_Harpy_0b090636-...");
+Beholder_Spectator
+Boo_A
+Cat_Wildmagic
+CheeseWheel
+CHICKEN_A
+DEC_MF_Nautiloid_Canon_Turret
+Dog
+Dog_Courier_A
+Dog_Courier_B
+Dog_Courier_C
+Dog_Wildmagic
+# eyeballed and rejected from the chaos pools. One TEMPLATE NAME per line (the part
+# Hand-maintained blocklist for tools/build_creature_db.py - creatures the owner has
+# lines you dislike, tell the agent - the diff gets folded in here and the DB rebuilt, so
+# match is exact, case-insensitive. Lines starting with # are comments; blank lines OK.
+Phase_Spider_Queen
+Pig_A
+PUZ_SHA_TrapJunction_Thief
+RAT_A
+RAT_B
+# regeneration never resurrects a rejected creature.
+Sheep_A
+SPEC_A
+SPEC_B
+TollCollector
+# Workflow: eyeball tools/CreatureDB.review.lua (a copy of the generated DB), delete the

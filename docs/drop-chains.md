@@ -118,4 +118,4 @@ Probability per goblin corpse (level 7–13): 1/66 × 4/9 × 1/30 ≈ 0.00028 pe
 
 Caveats:
 - Adding items to a shared subtable **dilutes** every existing item in it (1/24 → 1/30). If that matters, use a separate subtable/parent slot instead.
-- New *encounter* wiring (a new mob or chest that drops our items) is **not possible in text**; it requires the binary story data we don't edit.
+- New *encounter* wiring (a new mob or chest that drops our items) is **not possible in text**; it requires the binary story data we don't edit. (Refined in `spawn-chains.md` §2: the *mob itself* can be created by story-goal text; it is only the loot wiring that stays binary.)

@@ -2275,9 +2275,6 @@ data "Boosts" "RollBonus(SavingThrow, 8, Wisdom);Skill(Athletics, 8);RollBonus(S
 
 //data "Boosts" "RollBonus(SavingThrow, 10, Wisdom);Skill(Athletics, 10);RollBonus(SavingThrow, 10, Constitution);ProficiencyBonus(SavingThrow,Wisdom)"
 
-// Stay - Tim Foust (spotify)
-
-
 new entry "ARM_Underwear_Dwarves_Green"
 type "Armor"
 using "ARM_Underwear"

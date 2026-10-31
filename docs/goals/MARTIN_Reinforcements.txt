@@ -1,0 +1,240 @@
+Version 1
+SubGoalCombiner SGC_AND
+INITSECTION
+// MARTIN_Reinforcements - experiment E1+E6 from docs/spawn-chains.md:
+// one extra hostile body per combat (E1), plus one-shot probes (E6) so a new
+// Honour-mode game can prove the channel room by room on the Nautiloid
+// (TUT_Avernus_C): room 1 on LevelLoaded, room 2 on the transform-chamber /
+// rubble-room triggers, room 3 on the imp-room triggers. A generic any-level
+// probe (LevelLoaded(_Level), Honour-gated) gives the same signal on any
+// existing Honour save, which is the fastest iteration loop.
+//
+// Probe spawns use _Temporary=0: the prologue applies TUT_SUMMON_BLOCK to players
+// (TUT_LowerDeck.txt:36-38) and whether that also blocks script-made temporary
+// bodies is unverified, so the probes use the plain non-temporary CreateAtObject
+// path. The combat rule keeps _Temporary=1 (bodies vanish with the fight).
+//
+// Master copy: this repo, Data/Public/SharedDev/Story/RawFiles/Goals/ (git-tracked).
+// If an in-game test shows goals are not compiled out of Data/Public, run
+// tools/deploy_story.sh --copy to also drop it in Data/Mods/SharedDev/Story/RawFiles/Goals/
+// (needs: sudo mount -o remount,rw /home/martin/.local  -- that mount is read-only).
+// Keep CRLF line endings (every vanilla goal file is CRLF).
+//
+// Kill switch: dev-console command "martin_off", or delete/rename this file.
+// Check the grammar before deploying: python3 tools/check_goal.py
+//
+// Every primitive used here is declared in Story/RawFiles/story_header.div, and the
+// action shape is taken from vanilla call sites (citations in docs/spawn-chains.md):
+//   CreateAtObject              header:589      (vanilla CreateAt: GLO_HagDoubles.txt:205)
+//   TriggerRegisterForPlayers   header:1305     (vanilla wraps it: PROC_TriggerRegisterForPlayers,
+//                                                Shared/.../__AAA_FirstGoal.txt:3044)
+//   SetFaction + Evil faction   header:1014     Gustav/.../Goals/Test.txt:345-356
+//   SetHostileAndEnterCombat    header:1002     15 vanilla call sites, e.g. Act3b_LOW_Guildhall
+//   DB_HonorMode_Enabled        GLO_HonorMode.txt:66-70 (the PROC that sets it)
+//   EnteredTrigger              header:347      TUT_Laboratory.txt:515, TUT_LowerDeck.txt:41
+// No Shared-module helper PROC/QRY is used: those live in Shared/.../Goals/__PROC.txt and
+// _Greevers_Little_Helpers.txt, and cross-module visibility is not verified on this install
+// (docs/spawn-chains.md sec.4), so every name in this file is engine-declared or ours.
+// Deliberately no GetPosition/FindValidPosition: anchoring on an existing object needs no
+// coordinate maths, and every extra condition in a rule is another way for it to silently
+// not fire.
+
+DB_MARTIN_AutoEnabled(1);
+
+// Levels where we do NOT add bodies: endgame / cutscene-driven. The prologue
+// (TUT_Avernus_C) is deliberately NOT blacklisted, so the Nautiloid is the test bed.
+DB_MARTIN_LevelBlacklist("CRE_Main_A");
+DB_MARTIN_LevelBlacklist("INT_Main_A");
+DB_MARTIN_LevelBlacklist("BGO_Main_A");
+DB_MARTIN_LevelBlacklist("IRN_Main_A");
+DB_MARTIN_LevelBlacklist("END_Main");
+DB_MARTIN_LevelBlacklist("EPI_Main_A");
+
+// What we add: a CHARACTERROOT template. Wolf_41da0eff-... is the one Larian's own
+// spawn test uses (Gustav/.../Goals/Test.txt:353) - the only template in that test file,
+// and a cheap level-1 body. Add more DB_MARTIN_ReinforcementTemplate rows to diversify
+// (each row spawns one body per rule that consumes the PROC).
+DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)Wolf_41da0eff-b533-43cc-a014-218f7d23fa11);
+
+// Nautiloid room triggers we listen on, registered with the engine call directly
+// (header:1305). The trigger GUIDs are copied out of vanilla goals that already name
+// them (docs/spawn-chains.md sec.6: a marker is only usable if some goal names it):
+//   room 2: S_TUT_TransformChamber_EnterChamber  TUT_TransformChamber.txt:153
+//           S_TUT_Misc_RubbleRoom_001            TUT_Laboratory.txt:515
+//   room 3: S_TUT_ImpRoom_ShakeTrigger           TUT_LowerDeck.txt:9,396
+//           S_TUT_LowerDeck_CombatEvent          TUT_LowerDeck.txt:4 (registered there too)
+//           S_TUT_LowerDeck_RoomTrigger          TUT_LowerDeck.txt:418
+TriggerRegisterForPlayers((TRIGGER)S_TUT_TransformChamber_EnterChamber_096ae849-5888-4f9a-99bb-71ccc461713e);
+TriggerRegisterForPlayers((TRIGGER)S_TUT_Misc_RubbleRoom_001_5873b16d-43e6-48c8-970b-bde226c6b515);
+TriggerRegisterForPlayers((TRIGGER)S_TUT_ImpRoom_ShakeTrigger_711cd164-5c53-490d-aada-5614b278e957);
+TriggerRegisterForPlayers((TRIGGER)S_TUT_LowerDeck_CombatEvent_5eb34cda-5b4e-4667-895f-c7683f228cc9);
+TriggerRegisterForPlayers((TRIGGER)S_TUT_LowerDeck_RoomTrigger_ebbf3bb5-d79a-49f0-b085-eae705c8fc66);
+
+KBSECTION
+// On/off toggle, same dev-console idiom as SharedDev/.../GLO_HonorMode.txt:17-27.
+IF
+TextEvent("martin_on")
+AND
+NOT DB_MARTIN_AutoEnabled(1)
+THEN
+DB_MARTIN_AutoEnabled(1);
+
+IF
+TextEvent("martin_off")
+AND
+DB_MARTIN_AutoEnabled(1)
+THEN
+NOT DB_MARTIN_AutoEnabled(1);
+
+// Proof-of-life probe: if this prints, the story engine compiled this file from this
+// mount. DebugText is declared at story_header.div:668; GLO_HonorMode.txt:12-16 uses it.
+// (Note: in a release build DebugText may show nothing - the spawned wolf is the
+// reliable signal.)
+IF
+TextEvent("martin_hello")
+AND
+GetHostCharacter(_Host)
+THEN
+DebugText(_Host,"MARTIN_Reinforcements loaded");
+
+// Room 1 probe, no console needed: fires once when the prologue level loads.
+// Seeing the print/wolf means the channel and the mount are both live. Once-guard is
+// our own DB_ fact, in the shape of vanilla's QRY_OnlyOnce body
+// (Shared/.../Goals/_Greevers_Little_Helpers.txt:892-899), so this rule uses no helper
+// declared in another module and its result stays interpretable.
+IF
+LevelLoaded("TUT_Avernus_C")
+AND
+NOT DB_MARTIN_ProbeDone("TUT_Avernus_C")
+THEN
+DB_MARTIN_ProbeDone("TUT_Avernus_C");
+DebugText(NULL_00000000-0000-0000-0000-000000000000,"MARTIN_Reinforcements loaded");
+PROC_MARTIN_SpawnAtHost(0);
+
+// Generic any-level probe: same proof on any level, so loading an existing Honour
+// save is a valid test (faster than a new game). Honour-gated, once per level.
+IF
+LevelLoaded(_Level)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_AnyLevelProbe(_Level)
+THEN
+DB_MARTIN_AnyLevelProbe(_Level);
+DebugText(NULL_00000000-0000-0000-0000-000000000000,"MARTIN probe: level loaded");
+PROC_MARTIN_SpawnAtHost(0);
+
+// Room 2 probe (transform chamber, where Shadowheart's pod is). Honour-gated, once.
+IF
+EnteredTrigger((CHARACTER)_Char, (TRIGGER)S_TUT_TransformChamber_EnterChamber_096ae849-5888-4f9a-99bb-71ccc461713e)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_RoomDone("TransformChamber")
+THEN
+DB_MARTIN_RoomDone("TransformChamber");
+DebugText(_Char,"MARTIN probe: room 2 transform chamber");
+PROC_MARTIN_SpawnAt(_Char,0);
+
+// Room 2b probe (lab rubble room, where the devourer victim callout happens).
+IF
+EnteredTrigger((CHARACTER)_Char, (TRIGGER)S_TUT_Misc_RubbleRoom_001_5873b16d-43e6-48c8-970b-bde226c6b515)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_RoomDone("RubbleRoom_001")
+THEN
+DB_MARTIN_RoomDone("RubbleRoom_001");
+DebugText(_Char,"MARTIN probe: room 2b rubble room");
+PROC_MARTIN_SpawnAt(_Char,0);
+
+// Room 3 probe (entering the imp room, before the first combat starts).
+IF
+EnteredTrigger((CHARACTER)_Char, (TRIGGER)S_TUT_ImpRoom_ShakeTrigger_711cd164-5c53-490d-aada-5614b278e957)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_RoomDone("ImpRoom")
+THEN
+DB_MARTIN_RoomDone("ImpRoom");
+DebugText(_Char,"MARTIN probe: room 3 imp room");
+PROC_MARTIN_SpawnAt(_Char,0);
+
+// Room 3b probe (the imp combat region itself).
+IF
+EnteredTrigger((CHARACTER)_Char, (TRIGGER)S_TUT_LowerDeck_CombatEvent_5eb34cda-5b4e-4667-895f-c7683f228cc9)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_RoomDone("LowerDeckCombatEvent")
+THEN
+DB_MARTIN_RoomDone("LowerDeckCombatEvent");
+DebugText(_Char,"MARTIN probe: room 3 combat region");
+PROC_MARTIN_SpawnAt(_Char,0);
+
+// THE RULE: one extra body per combat that is already running.
+IF
+CombatStarted(_CombatGuid)
+AND
+DB_HonorMode_Enabled(1)
+AND
+DB_MARTIN_AutoEnabled(1)
+AND
+NOT DB_MARTIN_CombatDone(_CombatGuid)
+AND
+DB_CurrentLevel(_LevelName)
+AND
+NOT DB_MARTIN_LevelBlacklist(_LevelName)
+THEN
+DB_MARTIN_CombatDone(_CombatGuid);
+PROC_MARTIN_SpawnAtHost(1);
+
+// Manual single spawn from the dev console: tests CreateAt/position/faction without a fight.
+IF
+TextEvent("martin_spawn")
+THEN
+PROC_MARTIN_SpawnAtHost(1);
+
+// The spawn itself, shared by the console command, the LevelLoaded probes and the room
+// probes. CreateAtObject anchors on any object, so no coordinate maths is needed;
+// _MatchOrientation=1 faces the copy the same way as the anchor (header:589).
+PROC
+PROC_MARTIN_SpawnAtHost((INTEGER)_Temp)
+AND
+GetHostCharacter(_Host)
+THEN
+PROC_MARTIN_SpawnAt(_Host,_Temp);
+
+PROC
+PROC_MARTIN_SpawnAt((CHARACTER)_Anchor,(INTEGER)_Temp)
+AND
+DB_MARTIN_ReinforcementTemplate((CHARACTERROOT)_Template)
+AND
+CreateAtObject((CHARACTERROOT)_Template, _Anchor, _Temp, 1, "", 1, _Spawn)
+THEN
+DB_MARTIN_Spawned((CHARACTER)_Spawn);
+SetFaction(_Spawn,(FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17);
+SetHostileAndEnterCombat((FACTION)Evil_4be9261a-e481-8d9d-3528-f36956a19b17,(FACTION)Hero_a1542c81-6895-929e-4522-10ce218bb360,_Spawn,_Anchor);
+
+// Bookkeeping: forget bodies that died.
+IF
+DB_MARTIN_Spawned((CHARACTER)_Spawn)
+AND
+DB_Defeated((CHARACTER)_Spawn)
+THEN
+NOT DB_MARTIN_Spawned((CHARACTER)_Spawn);
+
+EXITSECTION
+// Nothing to clean up: the bodies we create are owned by the level (temporary ones
+// vanish with the combat, non-temporary probe bodies persist until killed).
+ENDEXITSECTION
