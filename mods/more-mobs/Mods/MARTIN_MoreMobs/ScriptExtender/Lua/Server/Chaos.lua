@@ -164,27 +164,56 @@ end
 
 -- equipment: roll loot tables + consumables into the mob's inventory. The TemplateAddedTo
 -- listener below auto-equips whatever gear lands there; potions stay in inventory (mob AI
--- drinks them on its own).
+-- drinks them on its own). Weapon/armor tables follow the creature's OWN Proficiency Group
+-- (Merregon = martial+heavy -> glaive-class + plate; innate attackers have no prof group and
+-- get nothing); the tier roll keeps the chaos: consumable counts and jackpot-tier magic gear.
 local function healPotionFor(base)
     if base >= 11 then return POTION_HEAL[3] end
     if base >= 6 then return POTION_HEAL[2] end
     return POTION_HEAL[1]
 end
 
-local function equipMob(created, base)
+local function equipmentFor(entry, base, tier)
+    local prof = entry.prof or ""
+    local finesse = (entry.dex or 10) > (entry.str or 10)
+    local weaponTable
+    if entry.unarmed and prof == "" then
+        weaponTable = nil                                   -- designed innate attacker
+    elseif prof:find("MartialWeapons", 1, true) then
+        weaponTable = finesse and "ST_Finesse_MeleeWeapons" or "ST_MartialMeleeWeapons"
+    else
+        weaponTable = finesse and "ST_Finesse_MeleeWeapons" or "ST_SimpleMeleeWeapons"
+    end
+    -- jackpot tier upgrades to the magic/level-scaled variants (weapon "cost x2" proxy)
+    if tier == 4 and base >= 4 and weaponTable then
+        if finesse then weaponTable = "ST_Finesse_MeleeWeapons_Magic"
+        elseif weaponTable == "ST_MartialMeleeWeapons" then weaponTable = "ST_MartialMeleeWeapons_1"
+        else weaponTable = "ST_SimpleMeleeWeapons_1" end
+    end
+    local armorTable
+    if prof:find("HeavyArmor", 1, true) then armorTable = "ST_HeavyArmor"
+    elseif prof:find("MediumArmor", 1, true) then armorTable = "ST_MediumArmor"
+    elseif prof:find("LightArmor", 1, true) then armorTable = "ST_LightArmor"
+    else armorTable = nil end                              -- no armor prof: native AC it is
+    -- early game: light armor only; heavy armor needs HEAVY_LEVEL even if proficient
+    if armorTable == "ST_HeavyArmor" and base < HEAVY_LEVEL then armorTable = "ST_MediumArmor" end
+    if base <= SOFT_CAP_LEVEL and armorTable then armorTable = "ST_LightArmor" end
+    return weaponTable, armorTable
+end
+
+local function equipMob(created, base, entry)
     if not EQUIP_MOBS then return end
     equipPending[created] = true
-    -- owner's bands: <=80% basic, <=95% weapon up, <=98% weapon+armor up, else jackpot
+    -- owner's bands: <=80% basic, <=95% more, <=98% even more, else jackpot
     local roll = rand(1, 100)
     local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
     if base <= SOFT_CAP_LEVEL then tier = 1 end           -- early game: cheap gear only
-    local weaponTable = tier == 1 and "ST_SimpleMeleeWeapons" or "ST_MartialMeleeWeapons"
-    local armorTable = "ST_LightArmor"
-    if tier == 3 then armorTable = "ST_MediumArmor" end
-    if tier == 4 then armorTable = base >= HEAVY_LEVEL and "ST_HeavyArmor" or "ST_MediumArmor" end
-    log("equip: tier", tier, "(roll", roll .. ")", weaponTable, "+", armorTable)
-    pcall(Osi.GenerateTreasure, created, weaponTable, base, created)
-    pcall(Osi.GenerateTreasure, created, armorTable, base, created)
+    local weaponTable, armorTable = equipmentFor(entry, base, tier)
+    log("equip: tier", tier, "(roll", roll .. ")",
+        weaponTable or "innate", "+", armorTable or "native-armor",
+        "prof", entry.prof or entry.unarmed and "innate" or "-")
+    if weaponTable then pcall(Osi.GenerateTreasure, created, weaponTable, base, created) end
+    if armorTable then pcall(Osi.GenerateTreasure, created, armorTable, base, created) end
     -- consumables
     local potions = {}
     if tier == 1 then
@@ -234,7 +263,7 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 "str", entry.str or entry.dex or "?",
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
-            if doEquip then equipMob(created, base or 1) end
+            if doEquip then equipMob(created, base or 1, entry) end
         else
             log("spawn FAILED", entry.id)
         end
