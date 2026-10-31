@@ -98,6 +98,12 @@ pcall(function ()
         grant(char)
     end)
 
+    -- a save can load STRAIGHT INTO combat (owner's test save does), where AddSpell
+    -- may be refused; retry whenever a fight anywhere ends (granted-table no-ops it)
+    Ext.Osiris.RegisterListener("CombatEnded", 1, "after", function (combatGuid)
+        grantAll(nil)
+    end)
+
     Ext.Events.SessionLoaded:Subscribe(function ()
         restore()
         log("Toggle.lua loaded (shouts:", TOGGLE_SPELL_WILDS .. ",", TOGGLE_SPELL_REINFORCE .. ")")
