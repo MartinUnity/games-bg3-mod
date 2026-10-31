@@ -71,13 +71,10 @@ local function flip(key, caster)
     persist()
     describeSpell(key)
     local what = key == "wilds" and "Wild groups" or "Reinforcements"
-    local msg = what .. ": " .. (CHAOS_STATE[key] and "ON" or "OFF")
-    if caster and caster ~= "" then
-        local okD, resD = pcall(Osi.DebugText, caster, msg)
-        log("toggle:", msg, "- tell(DebugText):", okD and "shown" or ("threw: " .. tostring(resD)))
-    else
-        log("toggle:", msg, "(console)")
-    end
+    log("toggle:", what .. ":", CHAOS_STATE[key] and "ON" or "OFF",
+        caster and ("(cast by " .. tostring(caster) .. ")") or "(console)")
+    -- player feedback: the tooltip (state-swapped Description, verified in-game
+    -- 2026-10-31) + the shout's own combat-log entry. No DebugText: confirmed no-op.
 end
 
 local granted = {}   -- per-character, so late joiners don't re-toast every heartbeat

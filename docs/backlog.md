@@ -51,21 +51,15 @@ client-side Lua:
 - if the combat log widget is writable this also unlocks: toasts, custom leader
   banners, colored status text — the whole "inform the player" toolbox.
 
-## Toggle feedback fallback (2026-10-31)
+## Toggle feedback: RESOLVED (2026-10-31)
 
-The toggle shouts now swap their Description stat handle per state (tooltip shows
-"Currently ENABLED/DISABLED"); UNVERIFIED assumption: the client tooltip re-reads the
-Sync()ed stat. If it turns out the hotbar caches the description at load, next option is
-the ToggleGroup passive route (like vanilla "Toggle Non-Lethal Attacks" / other mods'
-passive-bar buttons - owner referenced this).
-
-CORRECTION same day (owner recall): Osiris DebugText has probably NEVER rendered visibly
-in this game - the lone "leader joined" confirmation happened in a cinematic -> combat
-sequence where it was indistinguishable from nothing, and toggle casts show no floating
-text either. The CALL succeeds (logs "shown"), so it's likely a DOS2 leftover no-op in the
-BG3 release build. flip() now logs the pcall result; if it says "shown" while nothing
-appears, retire DebugText as a player-feedback channel for good (keep the call or drop
-it) and rely on tooltips/log.
+The toggle spell tooltips now carry the live state and the owner VERIFIED in-game that
+the description swaps correctly on cast (Ext.Stats Description swap + Sync() works - the
+hotbar does NOT cache it). Casting the shout also leaves its own entry in the combat log
+(from the shout invocation itself), which doubles as confirmation feedback. DebugText is
+CONFIRMED DEAD: the call logs "shown" while nothing renders (owner saw no floating text
+on any toggle cast) - removed from Toggle.lua and Flavor.lua; do not re-enable. A
+leader-join combat-log/banner line remains an Ext.UI (client Lua) experiment, below.
 
 ## Leader visual distinction (owner idea, earlier)
 

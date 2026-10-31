@@ -15,9 +15,9 @@
 
 local LEADER_RENAME = true       -- rename the leader to a villain name
 local LEADER_BUFFS = true        -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
-local TELL_MODE = "debugtext"   -- "debugtext": floating Osiris DebugText over player AND leader
-                                -- "bark": voice bark; "off" (the v3.10/v3.11 display-name swap
-                                -- mode was REMOVED at owner request - risky for save weirdness)
+-- (no TELL_* config anymore: every tell channel is dead - Osiris DebugText confirmed a
+-- silent no-op in-game 2026-10-31, voice barks fire party-wide, display-name swap removed
+-- at owner request. A leader-join combat-log/banner line needs SE client Lua, backlog.)
 
 -- procedural villain names: FIRST x EPITHET = ~1600 combinations, no external DB needed
 local FIRST = {
@@ -40,19 +40,8 @@ local EPITHET = {
     "the Banished", "of the Whispering Depths", "the Corpse-Marshal", "the Unburied",
 }
 
--- overhead tell texts (%s = villain name); shown as the player's display name for TELL_SECONDS
-local TELLS = {
-    "Reinforcements! %s joins the battle!",
-    "%s arrives to turn the tide!",
-    "Fresh enemies - led by %s!",
-    "%s strides onto the battlefield!",
-    "The fight escalates - %s has come!",
-}
-
--- fallback tell (bark) - vanilla voice bark, Name_GUID resource (plays party-wide + audio)
-local BARKS = {
-    "HAV_VB_ShadowSiege_PlayerEntersCombat_9d551bbc-2a39-aecf-cc1f-25cb27f2fe8f",
-}
+-- overhead tell texts REMOVED 2026-10-31: DebugText is a confirmed silent no-op (the call
+-- logs "shown", nothing renders) and barks fire party-wide - no live tell channel exists.
 
 -- leader buff tiers (CHAOS_Boosts.txt in the pak; rolled per leader):
 -- vitality +20/35/50% (owner spec: +20-50%), abilities +1/+2/+3 (owner spec: round(+10-20%,1))
@@ -101,32 +90,6 @@ local function displayNameText(char)
     return nil
 end
 
-local function tellViaBark(player)
-    local okB, eB = pcall(Osi.StartVoiceBark, pick(BARKS), player)
-    log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
-end
-
--- "debugtext" tell: Osiris DebugText(object, text) - CLAIMED floating raw text over the
--- character, fades on its own (story_header.div:648). ⚠️ VISIBLE EFFECT NEVER VERIFIED:
--- the only "confirmation" was during a cinematic -> combat sequence where it could not be
--- distinguished from nothing; owner recall (2026-10-31): it has probably NEVER worked.
--- The call itself succeeds (log shows "shown") - likely a DOS2 leftover no-op in BG3.
--- Keep it as best-effort (costs nothing), but do NOT rely on it: player-facing state
--- feedback lives in the toggle spell tooltips (Toggle.lua) and the log.
--- NOTE: there is NO combat-log Osiris call in BG3: CombatLogText/DisplayText/
--- CharacterStatusText/CharacterDisplayTextWithParam are DOS2-family only (verified absent
--- from story_header.div). A combat-log entry would need SE client-side Lua (Ext.UI) - open
--- experiment.
-local function tellViaDebugText(player, leader, name)
-    local msg = pick(TELLS):format(name)
-    local okD, eD = pcall(Osi.DebugText, player, msg)
-    log("tell(DebugText player):", okD and "shown" or ("threw: " .. tostring(eD)), msg)
-    if leader then
-        local okL, eL = pcall(Osi.DebugText, leader, "Reinforcements!")
-        log("tell(DebugText leader):", okL and "shown" or ("threw: " .. tostring(eL)))
-    end
-end
-
 -- public: name + buff a leader (no tell). isBoss prefixes "BOSS " (placeholder until real
 -- boss mechanics exist - owner decision 2026-10-31). Returns the name used.
 function FlavorLeaderCommon(created, isBoss)
@@ -144,16 +107,15 @@ function FlavorLeaderCommon(created, isBoss)
     return name
 end
 
--- public: call right after a reinforcement leader spawned (name + buffs + tell)
+-- public: call right after a reinforcement leader spawned (name + buffs)
+-- NOTE: no player-facing tell channel exists anymore: Osiris DebugText is CONFIRMED a
+-- silent no-op in BG3 (logs "shown", renders nothing - in-game 2026-10-31) and voice
+-- barks fire for every char (owner rejected). Leader-join visibility is: villain name
+-- + buffs + gold in the log file; a combat-log/banner line needs SE client Lua
+-- (Ext.UI, backlog). Do not re-enable DebugText - it is confirmed dead.
 function FlavorLeader(created, host)
     local name = FlavorLeaderCommon(created, false)
-    if host then
-        if TELL_MODE == "debugtext" then
-            tellViaDebugText(host, created, name)
-        elseif TELL_MODE == "bark" then
-            tellViaBark(host)
-        end
-    end
+    return name
 end
 
 -- bark outcome diagnostics (logged, not announced)
@@ -200,4 +162,4 @@ Ext.RegisterConsoleCommand("chaos_rename", function (...)
     end
 end)
 
-log("Flavor.lua loaded (tell mode:", TELL_MODE .. ")")
+log("Flavor.lua loaded (leader flavor: rename + buffs; no tell channel)")
