@@ -93,3 +93,13 @@ approximate it. Also queued:
 - Custom bark/bark-like text needs a loca file in the pak (if we ever want custom
   tell lines instead of DebugText).
 - Version bump + workshop-ready description in meta.lsx.
+
+## DECISION: all spawns stay Temporary=1 (owner confirmed 2026-10-31)
+
+Everything the mod spawns (wild groups + wave reinforcements) uses CreateAtObject
+Temporary=1 and is therefore excluded from savegames; group state (TTLs, registry,
+backoff) lives in Lua memory only and resets with the session. Owner explicitly
+rejected the persistent alternative (Temporary=0 + Ext.IO.SaveFile state +
+re-adopting groups at SessionLoaded) as "way too potentially troublesome".
+Do not revisit without a new owner request. (Side effect: save-scumming removes
+a wave mid-fight - accepted as a feature.)
