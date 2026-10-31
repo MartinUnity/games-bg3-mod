@@ -122,6 +122,16 @@ function EquipMob(created, base, entry)
         pcall(Osi.TemplateAddTo, p, created, 1, 0)
     end
     if #potions > 0 then log("equip: potions", #potions) end
+    -- deferred ground-truth probe: did the weapon actually reach the slot?
+    -- (works even if the TemplateAddedTo route is dead - in-game logs showed gear
+    -- rolls but no visible weapons/armor on the mobs)
+    if weapon then
+        pcall(Ext.Timer.WaitFor, 1500, function ()
+            local okW, w = pcall(Osi.GetEquippedWeapon, created)
+            log("arm check:", (okW and w and w ~= "") and tostring(w) or "NO WEAPON EQUIPPED",
+                "on", created)
+        end)
+    end
 end
 
 -- level-appropriate pocket gold for leaders (owner spec 2026-10-31): leader gets a
@@ -137,13 +147,23 @@ function GiveLeaderGold(mob, isBoss)
     if okG then log("gold:", table, "lvl", level, "on", mob) end
 end
 
--- auto-equip gear that GenerateTreasure rolls into our spawned humanoids
+-- auto-equip gear that GenerateTreasure rolls into our spawned mobs.
+-- DIAGNOSTIC HISTORY: matched on the `pending` table keyed by CreateAtObject's
+-- "Name_<guid>" string, but no "equipped" line EVER appeared in playtest logs -
+-- either TemplateAddedTo's holder guid uses the raw shape, or Equip fails silently
+-- inside the pcall (old code only logged success). Now matches via the shared
+-- SPAWNED registry (normalized guids, works for Chaos AND Wild mobs) and logs
+-- failures too, so the next log pinpoints the real cause.
+-- weapons/armor equip into their slot; potions/gold fail into inventory (param 3).
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
-        if pending[holder] then
-            -- weapons/armor equip into their slot; potions fail into inventory (param 3)
+        if isSpawned(holder) then
             local okE, eE = pcall(Osi.Equip, holder, object, 1, 0, 1)
-            if okE then log("equipped", object, "on", holder) end
+            if okE then
+                log("equipped", object, "on", holder)
+            else
+                log("equip FAILED:", object, "on", holder, "-", tostring(eE))
+            end
         end
     end)
 end)

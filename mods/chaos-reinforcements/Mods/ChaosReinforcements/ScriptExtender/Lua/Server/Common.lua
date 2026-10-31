@@ -32,11 +32,23 @@ LEVEL_JITTER = 2     -- SetLevel target = hostLevel + rand(-J, +J) above the sof
 -- and skip stacking a second wave on top of it (owner request 2026-10-31, in-game:
 -- leftovers of an earlier wave became a patrol and triggered a fresh wave)
 local SPAWNED = {}
+-- Osiris GUIDSTRINGs come in two shapes ("Name_<guid>" vs raw "<guid>"), and events
+-- may use either; normalize to the raw 36-char guid so matches never silently fail
+local function rawGuid(g)
+    return tostring(g):match("([0-9a-fA-F][0-9a-fA-F%-]+)$")
+end
 function markSpawned(guid)
-    if guid and guid ~= "" then SPAWNED[guid] = true end
+    local raw = rawGuid(guid)
+    if raw then
+        SPAWNED[guid] = true
+        SPAWNED[raw] = true
+    end
 end
 function isSpawned(guid)
-    return guid ~= nil and SPAWNED[guid] == true
+    if guid == nil then return false end
+    if SPAWNED[guid] then return true end
+    local raw = rawGuid(guid)
+    return raw ~= nil and SPAWNED[raw] == true
 end
 
 -- over-level tolerance: SetLevel is refused by some templates (in-game: a native
