@@ -262,6 +262,19 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   native AC; jackpot tier (lvl ≥4) upgrades to magic/scaled tables (`ST_*_1`,
   `ST_Finesse_MeleeWeapons_Magic`). Useful extra vanilla tables found: `ST_RandomPotion`,
   `ST_RandomConsumable`, `ST_Throwable` (chaos fodder for later).
+- **v3.7: module split + lvl-1 cheapest-gear rule** (owner request): Lua is now
+  `Server/Common.lua` (log + shared constants: EVIL/HERO pair, SOFT_CAP_LEVEL, HEAVY_LEVEL,
+  HEAVY_TYPES) → `Server/CreatureDB.lua` → `Server/Equip.lua` (all equipment logic:
+  `EquipMob`, `EquipPlanFor` exposed for offline tests, auto-equip listener) →
+  `Server/Chaos.lua` (engine only). BootstrapServer requires them in that order. Equipment
+  rules now: host lvl 1 = ALWAYS cheapest (simple/finesse weapon + light armor, innate
+  attackers still get nothing) regardless of prof or tier; lvl 2+ tiers roll again and
+  martial weapons unlock at tier ≥ 2 if proficient; armor tier 1-3 = light (if any armor
+  prof), tier 4 = medium if prof (heavy only at HEAVY_LEVEL, prof required); jackpot magic
+  weapon tables only at lvl ≥ 4. Offline-verified via lupa (Merregon plan table in git
+  history). **New doc: `docs/encounters.md`** — cookbook of all encounter-adding routes
+  (SE Lua, story goals, .lsf pre-placement, treasure tables, custom stats/templates, ruled
+  out) for future features.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load

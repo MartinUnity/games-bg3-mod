@@ -130,6 +130,11 @@ rules into vanilla-named goal files in `Data/Mods` and restores them from gitign
 - `item-chains.md` — vendor-side chain (trader → treasure tables) and Boosts
   grammar. Mostly current, but its §5 "orphaned wrapper" bug and §6 necklace
   plan were superseded by drop-chains §5/§6 — trust drop-chains there.
+- `encounters.md` — cookbook of EVERY route to add mobs/encounters/encounter pressure on
+  this install: SE Lua runtime spawns (the product route), story goal files (E8b-proven),
+  pre-placed `.lsf` level instances, treasure-table loot re-wiring, planned custom stat
+  blocks + custom root templates in the pak, and what is ruled out. Ranked, with the
+  proven primitives and their limits. Read before designing new encounter features.
 - `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
   goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
   combat-group joining, spawn-position solving), what stays binary (level layout),

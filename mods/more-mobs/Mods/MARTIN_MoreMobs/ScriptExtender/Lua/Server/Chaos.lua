@@ -1,48 +1,21 @@
--- MARTIN_MoreMobs chaos/reinforcement engine v3.3 (server-side Lua).
--- Uses the generated CreatureDB (Ext.Require'd first): every GENERIC spawnable creature in the
--- game, grouped by creature type, with NATIVE stat blocks (hp, cost=hp/10, ac, str, dex, con,
--- ea=ExtraAttack). Sources: tools/build_creature_db.py.
+-- MARTIN_MoreMobs chaos/reinforcement engine (server side). Ext.Require'd AFTER
+-- Common.lua (log + constants), CreatureDB.lua (CHAOS_DB) and Equip.lua (EquipMob).
 --
 -- Owner spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=100% while testing);
 -- budget = hostLevel x rand(2-4) x party knob; reinforcements match the ENCOUNTER's creature
--- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via the
--- AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs never
--- exceed the player's level.
+-- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via
+-- the AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs
+-- never exceed the player's level.
 --
--- v3.3 playtest learnings (2026-10-31, game #2: solo lvl-1 Merregon nearly TPK'd the party):
---   - Osi.SetLevel changes the LEVEL NUMBER but does NOT rescale fixed monster stat blocks
---     (Merregon: "lvl 1", still 45hp/str18/AC16/ExtraAttack). So difficulty control happens at
---     PICK time: GATES below cap native hp/AC/ability scores at levels 1-2 and ban ExtraAttack;
---     HEAVY_TYPES (Dragon/Giant/Celestial) need host level >= 5.
---   - factGuids arity bug fixed: appending nils to a table does not grow it, so Get got zero
---     args and SE looked up e.g. 'DB_Players(0)'. Use table.unpack({}, 1, ncols).
---   - companions (faction 'Companion...') are friendly, not enemies (Laezel was classified
---     enemy in game #2); party size via CombatGetInvolvedPartyMembersCount when in combat.
---   - the GustavDev Status_BOOST HP override (HEALTHBOOST_HARDCORE) is commented out in the
---     .txt for calibration; Lua-side MOB_HP_BOOST placeholder stays off.
---
--- Proven spawn sequence unchanged (probe v3): CreateAtObject(Name_GUID, anchor, dx, dy, "", 1)
--- -> SetFaction(EVIL) -> SetHostileAndEnterCombat(EVIL, HERO, created, anchor), E8b pair verbatim.
--- math.random only; no math.randomseed; no Ext.RandomInteger.
-
-local TAG = "CHAOS"
-local LINES = {}
-
-local function flush()
-    pcall(function () Ext.IO.SaveFile("MARTIN_chaos.log", table.concat(LINES, "\n")) end)
-end
-
-local function log(...)
-    local parts = {}
-    for i = 1, select("#", ...) do
-        parts[#parts + 1] = tostring(select(i, ...))
-    end
-    LINES[#LINES + 1] = "[" .. TAG .. "] " .. table.concat(parts, " ")
-    flush()
-end
-
-local EVIL = "Evil_4be9261a-e481-8d9d-3528-f36956a19b17"
-local HERO = "Hero_a1542c81-6895-929e-4522-10ce218bb360"
+-- Learnings baked in (see docs/HANDOVER.md):
+--   - Osi.SetLevel sets the level NUMBER but does NOT rescale fixed monster stat blocks;
+--     difficulty control happens at PICK time (CreatureDB native stats + GATES below).
+--   - SE databases are keyed by ARITY: DB_Is_InCombat has 2 columns -> Get(nil, nil) via
+--     table.unpack({}, 1, ncols). Appending nils to a table does not grow it.
+--   - Companions ("Companion..." factions) are friendly; party size via
+--     CombatGetInvolvedPartyMembersCount when in a combat.
+--   - Anchors: spawn next to the fight's own enemies ("near their allies"); the host char is
+--     only a fallback when the fight could not be classified.
 
 -- Tunables ------------------------------------------------------------------
 local TEST_MODE = true              -- 100% trigger while testing
@@ -52,7 +25,6 @@ local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs a
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included
 local LEVEL_JITTER = 2              -- SetLevel target = hostLevel + rand(-J, +J) above the soft cap
-local SOFT_CAP_LEVEL = 2            -- host level <= this: mobs never exceed the player's level
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
 local LEADER_TEST = true            -- 100% leader while testing (still needs pack >= 2)
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
@@ -64,31 +36,13 @@ local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification
 -- "" = off. Do not enable while calibrating native mob stats.
 local MOB_HP_BOOST = ""
 
--- native-stat gates: SetLevel does NOT rescale fixed monster stat blocks (playtest: Merregon
--- kept 45hp/str18/AC16 at "lvl 1"), so at low levels we pick creatures that are NATIVELY
--- harmless instead: hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's
--- 2x hits were the actual killer). From level 3 anything goes except heavy types.
+-- native-stat gates: at low levels pick creatures that are NATIVELY harmless:
+-- hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's 2x hits were
+-- the actual killer). From level 3 anything goes except heavy types (HEAVY_TYPES/HEAVY_LEVEL).
 local GATES = {
     [1] = { stat = 12, ac = 14, hp = 20 },
     [2] = { stat = 14, ac = 15, hp = 35 },
 }
-local HEAVY_TYPES = { Dragon = true, Giant = true, Celestial = true }
-local HEAVY_LEVEL = 5
-
--- Equipment (phase 1: Larian random tables via GenerateTreasure; own item-cost DB later).
--- Only HUMANOID spawns get gear - other types have innate attacks an equipped weapon would
--- replace (and imps do not hold swords). Tiers follow the owner's band spec; "cost x1.5/x2"
--- maps to the next-better vanilla random table. Loot tables are level-segmented internally
--- (ST_LightArmor switches contents at level 5), so we pass the player level.
-local EQUIP_MOBS = true
-local POTION_HEAL = {
-    "CONS_Potion_Healing_A_d47006e9-8a51-453d-b200-9e0d42e9bbab",
-    "CONS_Potion_Healing_A_Greater_e3b95c96-dc26-40fe-bfc0-baa05e1abd20",
-    "CONS_Potion_Healing_A_Superior_df4f3495-abaf-4732-b82f-55bcccd561db",
-    "CONS_Potion_Healing_A_Supreme_7d78f227-e8d4-486d-8121-25cf0bee751d",
-}
-local POTION_SPEED = "CONS_Potion_Speed_ad9f3f24-d755-48b6-aa7b-c34da068209f"
-local equipPending = {}   -- guid of freshly spawned humanoid -> true (auto-equip guard)
 
 -- race string (Osiris GetRace) -> creature type; grow from discovery logs
 local RACE_TO_TYPE = {
@@ -127,8 +81,8 @@ local DEFAULT_TYPES = { "Beast", "Monstrosity", "Humanoid", "Undead", "Fiend" }
 
 local misses = 0
 local seen = {}
-local combatRoster = {}   -- combatGuid -> { enemy-ish participant guids, via EnteredCombat }
-local rosterPlayers = {}  -- guid -> true while in DB_Players (skip list), refreshed per wave
+local combatRoster = {}   -- combatGuid -> { participant guids, via EnteredCombat }
+local rosterPlayers = {}  -- guid -> true (skip list), refreshed per wave
 local raceDumped = false
 
 local function rand(lo, hi) return math.random(lo, hi) end
@@ -145,8 +99,7 @@ local function rowGuid(row)
     return nil
 end
 
--- ncols MUST match the database's column count (SE names DBs by arity:
--- DB_Is_InCombat(1) vs DB_Is_InCombat(2) are different keys)
+-- ncols MUST match the database's column count (SE names DBs by arity)
 local function factGuids(dbName, ncols)
     local db = Osi[dbName]
     if not db then return {} end
@@ -160,77 +113,6 @@ local function factGuids(dbName, ncols)
         end
     end
     return out
-end
-
--- equipment: roll loot tables + consumables into the mob's inventory. The TemplateAddedTo
--- listener below auto-equips whatever gear lands there; potions stay in inventory (mob AI
--- drinks them on its own). Weapon/armor tables follow the creature's OWN Proficiency Group
--- (Merregon = martial+heavy -> glaive-class + plate; innate attackers have no prof group and
--- get nothing); the tier roll keeps the chaos: consumable counts and jackpot-tier magic gear.
-local function healPotionFor(base)
-    if base >= 11 then return POTION_HEAL[3] end
-    if base >= 6 then return POTION_HEAL[2] end
-    return POTION_HEAL[1]
-end
-
-local function equipmentFor(entry, base, tier)
-    local prof = entry.prof or ""
-    local finesse = (entry.dex or 10) > (entry.str or 10)
-    local weaponTable
-    if entry.unarmed and prof == "" then
-        weaponTable = nil                                   -- designed innate attacker
-    elseif prof:find("MartialWeapons", 1, true) then
-        weaponTable = finesse and "ST_Finesse_MeleeWeapons" or "ST_MartialMeleeWeapons"
-    else
-        weaponTable = finesse and "ST_Finesse_MeleeWeapons" or "ST_SimpleMeleeWeapons"
-    end
-    -- jackpot tier upgrades to the magic/level-scaled variants (weapon "cost x2" proxy)
-    if tier == 4 and base >= 4 and weaponTable then
-        if finesse then weaponTable = "ST_Finesse_MeleeWeapons_Magic"
-        elseif weaponTable == "ST_MartialMeleeWeapons" then weaponTable = "ST_MartialMeleeWeapons_1"
-        else weaponTable = "ST_SimpleMeleeWeapons_1" end
-    end
-    local armorTable
-    if prof:find("HeavyArmor", 1, true) then armorTable = "ST_HeavyArmor"
-    elseif prof:find("MediumArmor", 1, true) then armorTable = "ST_MediumArmor"
-    elseif prof:find("LightArmor", 1, true) then armorTable = "ST_LightArmor"
-    else armorTable = nil end                              -- no armor prof: native AC it is
-    -- early game: light armor only; heavy armor needs HEAVY_LEVEL even if proficient
-    if armorTable == "ST_HeavyArmor" and base < HEAVY_LEVEL then armorTable = "ST_MediumArmor" end
-    if base <= SOFT_CAP_LEVEL and armorTable then armorTable = "ST_LightArmor" end
-    return weaponTable, armorTable
-end
-
-local function equipMob(created, base, entry)
-    if not EQUIP_MOBS then return end
-    equipPending[created] = true
-    -- owner's bands: <=80% basic, <=95% more, <=98% even more, else jackpot
-    local roll = rand(1, 100)
-    local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
-    if base <= SOFT_CAP_LEVEL then tier = 1 end           -- early game: cheap gear only
-    local weaponTable, armorTable = equipmentFor(entry, base, tier)
-    log("equip: tier", tier, "(roll", roll .. ")",
-        weaponTable or "innate", "+", armorTable or "native-armor",
-        "prof", entry.prof or entry.unarmed and "innate" or "-")
-    if weaponTable then pcall(Osi.GenerateTreasure, created, weaponTable, base, created) end
-    if armorTable then pcall(Osi.GenerateTreasure, created, armorTable, base, created) end
-    -- consumables
-    local potions = {}
-    if tier == 1 then
-        if rand(1, 100) <= 10 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 2 then
-        if rand(1, 100) <= 25 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 3 then
-        potions[#potions + 1] = healPotionFor(base)
-    else
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = POTION_SPEED   -- "extra random thing", not overpowered
-    end
-    for _, p in ipairs(potions) do
-        pcall(Osi.TemplateAddTo, p, created, 1, 0)
-    end
-    if #potions > 0 then log("equip: potions", #potions) end
 end
 
 -- spawn ----------------------------------------------------------------------
@@ -263,7 +145,7 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 "str", entry.str or entry.dex or "?",
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
-            if doEquip then equipMob(created, base or 1, entry) end
+            if doEquip then EquipMob(created, base or 1, entry) end
         else
             log("spawn FAILED", entry.id)
         end
@@ -415,7 +297,7 @@ local function reinforce(host, enemies, combatId)
 
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
-    equipPending = {}
+    EquipResetPending()
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
         local e = pickFrom(etype, budget - spent, base)
         if not e then
@@ -472,15 +354,6 @@ local ok, err = pcall(function ()
         roster[#roster + 1] = object
     end)
 
-    -- auto-equip gear that GenerateTreasure rolls into our spawned humanoids
-    Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
-        if equipPending[holder] then
-            -- weapons/armor equip into their slot; potions fail into inventory (param 3)
-            local okE, eE = pcall(Osi.Equip, holder, object, 1, 0, 1)
-            if okE then log("equipped", object, "on", holder) end
-        end
-    end)
-
     Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
         if seen[combatId] then return end
         seen[combatId] = true
@@ -507,7 +380,7 @@ local ok, err = pcall(function ()
         end)
     end)
 end)
-if ok then log("Chaos.lua v3.1 loaded; DB types:", CHAOS_DB and "ok" or "MISSING") else log("registration threw:", err) end
+if ok then log("Chaos.lua loaded; DB types:", CHAOS_DB and "ok" or "MISSING") else log("registration threw:", err) end
 
 -- console: !martin_chaos force wave, !martin_status, !martin_wolf
 Ext.RegisterConsoleCommand("martin_chaos", function ()
