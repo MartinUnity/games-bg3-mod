@@ -1,20 +1,25 @@
--- MARTIN_MoreMobs chaos/reinforcement engine v3.1 (server-side Lua).
+-- MARTIN_MoreMobs chaos/reinforcement engine v3.3 (server-side Lua).
 -- Uses the generated CreatureDB (Ext.Require'd first): every GENERIC spawnable creature in the
--- game, grouped by creature type, with hp + cost (hp/10 budget proxy). Sources: tools/build_creature_db.py.
+-- game, grouped by creature type, with NATIVE stat blocks (hp, cost=hp/10, ac, str, dex, con,
+-- ea=ExtraAttack). Sources: tools/build_creature_db.py.
 --
 -- Owner spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=100% while testing);
 -- budget = hostLevel x rand(2-4) x party knob; reinforcements match the ENCOUNTER's creature
 -- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via the
--- AFFINITY map; mob levels = host level +- jitter, but at host level <= 2 the upper bound is
--- the player level (a multiattack harpy at lvl 1 one-shots lvl-1 chars).
+-- AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs never
+-- exceed the player's level.
 --
--- v3.1 playtest fixes (2026-10-31 first combat log):
---   - DB_Is_InCombat has 2 columns -> Get(nil, nil) (arity-1 Get threw "No database named
---     'DB_Is_InCombat(1)'"); plus an EnteredCombat listener roster as fallback/union.
---   - Wave runs on a short Ext.Timer delay so enemies have actually entered combat when we
---     classify them (v3 saw "enemies: 0" -> random-type fallback -> harpy in an imp fight).
---   - SetLevel is verified again after a delay: the immediate read-back logged lvl 1 but the
---     game showed lvl 3, so the first read is not trustworthy.
+-- v3.3 playtest learnings (2026-10-31, game #2: solo lvl-1 Merregon nearly TPK'd the party):
+--   - Osi.SetLevel changes the LEVEL NUMBER but does NOT rescale fixed monster stat blocks
+--     (Merregon: "lvl 1", still 45hp/str18/AC16/ExtraAttack). So difficulty control happens at
+--     PICK time: GATES below cap native hp/AC/ability scores at levels 1-2 and ban ExtraAttack;
+--     HEAVY_TYPES (Dragon/Giant/Celestial) need host level >= 5.
+--   - factGuids arity bug fixed: appending nils to a table does not grow it, so Get got zero
+--     args and SE looked up e.g. 'DB_Players(0)'. Use table.unpack({}, 1, ncols).
+--   - companions (faction 'Companion...') are friendly, not enemies (Laezel was classified
+--     enemy in game #2); party size via CombatGetInvolvedPartyMembersCount when in combat.
+--   - the GustavDev Status_BOOST HP override (HEALTHBOOST_HARDCORE) is commented out in the
+--     .txt for calibration; Lua-side MOB_HP_BOOST placeholder stays off.
 --
 -- Proven spawn sequence unchanged (probe v3): CreateAtObject(Name_GUID, anchor, dx, dy, "", 1)
 -- -> SetFaction(EVIL) -> SetHostileAndEnterCombat(EVIL, HERO, created, anchor), E8b pair verbatim.
@@ -53,6 +58,22 @@ local LEADER_TEST = true            -- 100% leader while testing (still needs pa
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
 local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification
+
+-- HP boost formerly in GustavDev Status_BOOST.txt (HEALTHBOOST_HARDCORE, disabled there
+-- 2026-10-31 for calibration). Lua-side reimplementation will use a custom stats file;
+-- "" = off. Do not enable while calibrating native mob stats.
+local MOB_HP_BOOST = ""
+
+-- native-stat gates: SetLevel does NOT rescale fixed monster stat blocks (playtest: Merregon
+-- kept 45hp/str18/AC16 at "lvl 1"), so at low levels we pick creatures that are NATIVELY
+-- harmless instead: hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's
+-- 2x hits were the actual killer). From level 3 anything goes except heavy types.
+local GATES = {
+    [1] = { stat = 12, ac = 14, hp = 20 },
+    [2] = { stat = 14, ac = 15, hp = 35 },
+}
+local HEAVY_TYPES = { Dragon = true, Giant = true, Celestial = true }
+local HEAVY_LEVEL = 5
 
 -- race string (Osiris GetRace) -> creature type; grow from discovery logs
 local RACE_TO_TYPE = {
@@ -114,9 +135,7 @@ end
 local function factGuids(dbName, ncols)
     local db = Osi[dbName]
     if not db then return {} end
-    local args = {}
-    for _ = 1, (ncols or 1) do args[#args + 1] = nil end
-    local ok, rows = pcall(function () return db:Get(table.unpack(args)) end)
+    local ok, rows = pcall(function () return db:Get(table.unpack({}, 1, ncols or 1)) end)
     if not ok then log(dbName .. ":Get threw:", rows); return {} end
     local out = {}
     if type(rows) == "table" then
@@ -154,7 +173,9 @@ local function spawnCreature(anchor, entry, targetLevel)
             end
             pcall(Osi.SetFaction, created, EVIL)
             local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
-            log("spawn", entry.id, "hp", entry.hp, "lvl", newLvl,
+            log("spawn", entry.id, "hp", entry.hp, "ac", entry.ac or "?",
+                "str", entry.str or entry.dex or "?",
+                (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
         else
             log("spawn FAILED", entry.id)
@@ -167,7 +188,10 @@ end
 local function isFriendly(guid)
     if rosterPlayers[guid] then return true end
     local okF, fac = pcall(Osi.GetFaction, guid)
-    if okF and type(fac) == "string" and fac:sub(1, 4) == "Hero" then return true end
+    if okF and type(fac) == "string" then
+        return fac:sub(1, 4) == "Hero"          -- player chars: "Hero Player1_<guid>"
+            or fac:sub(1, 9) == "Companion"    -- NPC-keeper/hired companions (Laezel etc.)
+    end
     return false
 end
 
@@ -219,8 +243,32 @@ local function dominantType(enemies)
     return best
 end
 
-local function pickFrom(typeName, maxCost)
+-- native-stat gate for the player's level: nil = entry is fine
+local function passesGate(e, base)
+    local g = GATES[base]
+    if g then
+        if e.hp > g.hp then return false end
+        if e.ac and e.ac > g.ac then return false end
+        local best = math.max(e.str or 0, e.dex or 0)
+        if best > g.stat then return false end
+        if e.ea then return false end  -- ExtraAttack at lvl 1-2 = TPK fuel
+    end
+    return true
+end
+
+local function gatedPool(typeName, base)
     local pool = CHAOS_DB and CHAOS_DB[typeName]
+    if not pool or #pool == 0 then return nil end
+    if HEAVY_TYPES[typeName] and base < HEAVY_LEVEL then return nil end
+    local out = {}
+    for _, e in ipairs(pool) do
+        if passesGate(e, base) then out[#out + 1] = e end
+    end
+    return out
+end
+
+local function pickFrom(typeName, maxCost, base)
+    local pool = gatedPool(typeName, base)
     if not pool or #pool == 0 then return nil end
     -- try 20 random picks for one within budget; fall back to cheapest entry
     for _ = 1, 20 do
@@ -233,9 +281,9 @@ local function pickFrom(typeName, maxCost)
 end
 
 -- leaders are deliberately OUTSIDE the budget: the ~10% roll is meant to occasionally
--- escalate a fight hard. Pick from the beefier half of the pool.
-local function pickLeaderFrom(typeName)
-    local pool = CHAOS_DB and CHAOS_DB[typeName]
+-- escalate a fight hard. Pick from the beefier half of the gated pool.
+local function pickLeaderFrom(typeName, base)
+    local pool = gatedPool(typeName, base)
     if not pool or #pool == 0 then return nil end
     local sorted = {}
     for _, e in ipairs(pool) do sorted[#sorted + 1] = e end
@@ -253,28 +301,39 @@ local function targetLevelFor(base)
 end
 
 -- main wave -------------------------------------------------------------------
-local function reinforce(host, enemies)
+local function reinforce(host, enemies, combatId)
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
+    -- party size: count the members actually involved in this combat when we can
     local party = #factGuids("DB_Players", 1)
+    local okN, n = pcall(Osi.CombatGetInvolvedPartyMembersCount, combatId)
+    if combatId and okN and tonumber(n) then party = tonumber(n) end
     local budget = math.floor(base * rand(BUDGET_LO, BUDGET_HI) * (1 + PARTY_KNOB * math.max(0, party - 4)))
     local anchors = { host }
     for _, e in ipairs(enemies) do anchors[#anchors + 1] = e.guid end
 
-    local etype = dominantType(enemies) or DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)]
-    if not CHAOS_DB[etype] then etype = DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)] end
+    local etype = dominantType(enemies)
+    -- no heavy types (dragons, giants...) below HEAVY_LEVEL even if the encounter is one
+    if not etype or (HEAVY_TYPES[etype] and base < HEAVY_LEVEL) then
+        etype = DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)]
+    end
+    if not gatedPool(etype, base) then etype = DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)] end
     local targetLevel = targetLevelFor(base)
     log("wave: type", etype, "budget", budget, "(base", base, "x2-4, party", party .. ")",
-        "spawnlevel", targetLevel, "anchors", #anchors)
+        "spawnlevel", targetLevel, "anchors", #anchors,
+        base <= SOFT_CAP_LEVEL and "gate " .. base or "")
 
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
-        local e = pickFrom(etype, budget - spent)
+        local e = pickFrom(etype, budget - spent, base)
         if not e then
-            e = pickFrom(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], budget - spent)
+            e = pickFrom(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], budget - spent, base)
         end
-        if not e then break end
+        if not e then
+            log("pack: nothing fits budget", budget - spent, "at level", base)
+            break
+        end
         spawnCreature(anchors[rand(1, #anchors)], e, targetLevel)
         spawned, spent = spawned + 1, spent + e.cost
     end
@@ -293,7 +352,7 @@ local function reinforce(host, enemies)
                 end
                 if #opts > 0 then ltype = opts[rand(1, #opts)] end
             end
-            local leader = pickLeaderFrom(ltype)
+            local leader = pickLeaderFrom(ltype, base)
             if leader then
                 local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
                 log("leader: type", ltype, "(pack", etype .. ")", leader.id,
@@ -344,7 +403,7 @@ local ok, err = pcall(function ()
             local players = factGuids("DB_Players", 1)
             local enemies = discover(combatId, players)
             log("party:", #players, "enemies:", #enemies)
-            reinforce(host, enemies)
+            reinforce(host, enemies, combatId)
         end)
     end)
 end)

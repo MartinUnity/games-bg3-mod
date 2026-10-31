@@ -208,17 +208,40 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
   to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
-- **Waiting on owner (v3.1 playtest):** restart → play a few real combats (TEST_MODE = 100%
-  trigger, LEADER_TEST = 100% for packs ≥ 2, both while testing). Then read profile
-  `Script Extender/MARTIN_chaos.log`:
-  1. `enemy:` lines — did enemy discovery work now (`enemies: 5` for the imp fight)? Each logs
-     lvl/race/type/faction; send unknown `type ?` races back to extend RACE_TO_TYPE.
-  2. `verify <id> lvl <n> wanted <t>` lines — does SetLevel actually stick? If lvl stays at
-     the template's native level, next step is a custom-stats CHAOS buff (the deferred
-     `Public/MARTIN_MoreMobs/Stats/...` route) instead of Osi.SetLevel.
-  3. `wave: type X` — does the type now match the encounter (Fiend pool for imps)?
-  4. `leader: type ... (pack ...)` — sanity of same-type/cross-type rolls; at low levels the
-     leader must not exceed the player's level.
+- **v3.3 playtest results (owner, 2026-10-31, game #2: solo lvl-1 Merregon nearly TPK'd a
+  2-char party) → fixes in v3.3 (all read from `MARTIN_chaos.log`):**
+  1. **Discovery + affinity WORK** (5 imps → `wave: type Fiend`), via the `EnteredCombat`
+     roster fallback — but my arity "fix" had a Lua bug: `args[#args+1] = nil` never grows a
+     table, so `Get` received ZERO args → `DB_Is_InCombat(0)` / `DB_Players(0)` throws. Fixed
+     with `db:Get(table.unpack({}, 1, ncols))`.
+  2. **Laezel was classified enemy** (faction `Companion1_…`, party fact empty in tutorial) →
+     `isFriendly` now treats `Hero…`/`Companion…` faction prefixes as friendly; party size
+     prefers `Osi.CombatGetInvolvedPartyMembersCount(combatId)` (story_header.div:746).
+  3. **`verify lvl 1 wanted 1` — yet the Merregon kept 45hp/AC16/str18/ExtraAttack:**
+     **`Osi.SetLevel` sets the level NUMBER but does NOT rescale fixed monster stat blocks.**
+     Pivot: difficulty control happens at PICK time, using NATIVE stats now stored in
+     CreatureDB (`ac` from stats `data "Armor"`, `str`/`dex`/`con`, `ea` = ExtraAttack passive
+     — resolved through the `using` chain by `resolve_field`). `build_creature_db.py` emits
+     `{id, hp, cost, ac, str, dex, con, ea}`; 623 entries.
+  4. **Native-stat gates** (owner-suggested values): level 1 → hp ≤ 20, AC ≤ 14, best ability
+     ≤ 12, no ExtraAttack; level 2 → hp ≤ 35, AC ≤ 15, ability ≤ 14 (still no ExtraAttack);
+     level 3+ ungated except `HEAVY_TYPES` (Dragon/Giant/Celestial) which need host level ≥ 5
+     (a dragon at lvl 3 = doom). Offline pool check: lvl-1 Fiend pool = 3 (imps/butler),
+     lvl-1 Monstrosity = 0 (the harpy TPK is now impossible), lvl-2 Monstrosity = 3.
+  5. **Honour HP boost DISABLED for calibration** (owner request): the live
+     `IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)` line in
+     `GustavDev/Stats/Generated/Data/Status_BOOST.txt` (`HEALTHBOOST_HARDCORE`) is commented
+     out (entry still defined, now inert); Lua-side `MOB_HP_BOOST = ""` placeholder in
+     Chaos.lua stays off until native mob stats are gauged — reimplementation needs the
+     custom-stats-file route (Lua cannot define stat boosts directly).
+  6. **Equipment: spawned mobs are NAKED** (no armor/weapons, Merregon + "Raphael" alike).
+     Investigation: character root templates carry NO equipment attributes (checked merged.lsx
+     attr census) and vanilla stats have no EquipmentSet entries — gear lives on
+     level-placed instances. Candidate fixes (NOT implemented): `Osi.CopyCharacterEquipment(
+     target, source)` from a live same-kind enemy in the fight (we have enemy guids!),
+     `Osi.CharacterGiveEquipmentSet(target, setname)` (needs set names — none found yet), or
+     spawn item root templates + `Osi.Equip(character, item, …)` (story_header.div:160).
+     Owner is thinking about direction.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load

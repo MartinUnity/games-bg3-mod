@@ -73,9 +73,14 @@ Where things live:
   no cross-type while the low-level ceiling is active, +0-2 lvls), `Osi.SetLevel(created, target)` with immediate + 2 s
   delayed GetLevel verification, anchors near existing enemies, wave delayed 1.5 s after
   CombatStarted (Timer.WaitFor) so enemies are classifiable, E8b faction
-  pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE;
-  ⚠️ SE databases are keyed by ARITY: `DB_Is_InCombat` has 2 columns → `Get(nil, nil)`
-  (arity-1 Get throws "No database named 'DB_Is_InCombat(1)' exists"); RNG =
+  pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE.
+  **v3.3: `Osi.SetLevel` does NOT rescale fixed monster stat blocks (sets the level number
+  only) → difficulty is controlled at PICK time: CreatureDB entries now carry NATIVE stats
+  `{ac, str, dex, con, ea (ExtraAttack)}`, gated at host lvl 1 (hp≤20/ac≤14/ability≤12/no
+  EA) and 2 (hp≤35/ac≤15/ability≤14/no EA), `HEAVY_TYPES` (Dragon/Giant/Celestial) need lvl≥5;
+  Honour HP boost commented out of `GustavDev Status_BOOST.txt` for calibration (Lua-side
+  MOB_HP_BOOST placeholder off); ⚠️ SE databases are keyed by ARITY: `DB_Is_InCombat` has 2
+  columns → `Get(nil, nil)` via `table.unpack({}, 1, ncols)`; RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/MARTIN_chaos.log`; console `!martin_chaos`/`!martin_status`/`!martin_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
