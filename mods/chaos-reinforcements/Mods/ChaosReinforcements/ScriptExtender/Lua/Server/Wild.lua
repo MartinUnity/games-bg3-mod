@@ -10,10 +10,23 @@
 -- safe havens/towns are deferred until we know it works in TUT.
 
 -- Tunables ------------------------------------------------------------------
--- tutorial + act-1 overworld (WLD_Main/Forest/GoblinCamp/Hag/Crashsite...);
--- interiors (CRE grove, GOB goblin camp, UND underdark, CMP) stay exempt = no wilds in towns/dungeons.
--- Lua patterns have NO alternation, hence a list.
-local WILD_LEVEL_PATTERNS = { "^TUT_", "^WLD_" }
+-- Level gate (owner 2026-10-31): TUT_ EXEMPT (lvl-1 chars too squishy), CRE grove /
+-- CMP generic interiors stay exempt (no wilds in towns), WLD_ = anything (player lvl
+-- is the only limiter), GOB_ + UND_ enabled but THEMED below. Lua patterns have NO
+-- alternation, hence a list.
+local WILD_LEVEL_PATTERNS = { "^WLD_", "^GOB_", "^UND_" }
+
+-- Region themes: when the current level matches a pattern, groups draw from a
+-- themed pool instead of the default type mix (owner: GOB = wandering goblin
+-- warbands; UND = underdark natives - duergar/kuotoa/minotaur/spiders/bats plus
+-- the whole Monstrosity type, driders etc.)
+local WILD_THEMES = {
+    { pat = "^GOB_", name = "goblin warband",
+      terms = { "goblin" } },   -- matches Goblins_*/BASE_Goblins/Hobgoblins
+    { pat = "^UND_", name = "underdark",
+      terms = { "duergar", "kuotoa", "minotaur", "spider", "bat" },
+      types = { Monstrosity = true } },
+}
 local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (owner: 1-2 min)
 local WILD_CHANCE = 25               -- % per heartbeat
 local WILD_TEST = false              -- real odds: WILD_CHANCE per heartbeat
@@ -48,6 +61,40 @@ local groups = {}   -- { { members = { guid, ... }, type = "..." } }
 local backoffMs = 0 -- remaining encounter cooldown; ticked down by the monitor
 
 local function rand(lo, hi) return math.random(lo, hi) end
+
+-- region theme for the current level (nil = default mix)
+local function themeFor(level)
+    for _, th in ipairs(WILD_THEMES) do
+        if level:find(th.pat) then return th end
+    end
+    return nil
+end
+
+-- does a DB entry fit the theme? (terms = case-insensitive substrings of the id)
+local function themeMatch(th, e, typeName)
+    if th.types and th.types[typeName] then return true end
+    if th.terms then
+        local id = e.id:lower()
+        for _, term in ipairs(th.terms) do
+            if id:find(term, 1, true) then return true end
+        end
+    end
+    return false
+end
+
+-- combined, level-gated pool of every DB entry matching the theme
+local function themedPoolFor(th, base)
+    local out = {}
+    for t, _ in pairs(CHAOS_DB) do
+        local gated = gatedPool(t, base)
+        if gated then
+            for _, e in ipairs(gated) do
+                if themeMatch(th, e, t) then out[#out + 1] = e end
+            end
+        end
+    end
+    return out
+end
 
 -- pick a mob type that has entries for this level (no fight to classify - demographic
 -- targeting by region is deferred per owner; for now a random pool type)
@@ -145,7 +192,16 @@ local function aggroGroup(group, player)
 end
 
 local function spawnWildGroup(host, base)
-    local etype = wildType(base)
+    local theme = themeFor(currentLevel)
+    local themedPool = nil
+    if theme then
+        themedPool = themedPoolFor(theme, base)
+        if #themedPool == 0 then
+            log("wild: no themed pool for", theme.name, "at lvl", base, "- skipping")
+            return
+        end
+    end
+    local etype = theme and theme.name or wildType(base)
     if not etype then log("wild: no viable pool at level", base); return end
 
     -- tier roll (owner spec)
@@ -186,15 +242,23 @@ local function spawnWildGroup(host, base)
     local group = { id = nextGroupId, members = {}, type = etype,
                     faction = groupFaction, cx = x, cy = y, cz = z,
                     ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
-    local spawnedHumanoid = (etype == "Humanoid")
     for i = 1, count do
-        local pool = gatedPool(etype, base) or gatedPool(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], base)
-        if not pool then break end
-        local entry = pool[rand(1, #pool)]
+        local entry
+        if themedPool then
+            entry = themedPool[rand(1, #themedPool)]
+        else
+            local pool = gatedPool(etype, base) or gatedPool(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], base)
+            if not pool then break end
+            entry = pool[rand(1, #pool)]
+        end
         -- per-member jitter around the validated group center (WILD_CLUSTER/2 each way)
         local jitter = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
         local jitterZ = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
-        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, spawnedHumanoid, groupFaction)
+        -- equipment goes to anyone with a proficiency group (innate attackers get
+        -- nothing from EquipMob anyway); themed pools would have broken the old
+        -- etype == "Humanoid" check (goblin warband is not a type name)
+        local doEquip = (entry.prof ~= nil and entry.prof ~= "")
+        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip, groupFaction)
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then
