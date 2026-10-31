@@ -43,9 +43,16 @@ fi
 
 stage="$(mktemp -d /tmp/opencode/pakbuild.XXXX)"
 cp -r "$WORKSPACE/Mods" "$stage/"
+# mods can also ship game data (e.g. Public/<Module>/Stats/... for custom stat entries)
+if [ -d "$WORKSPACE/Public" ]; then
+    cp -r "$WORKSPACE/Public" "$stage/"
+    srccount="$(find "$stage/Mods" "$stage/Public" -type f | wc -l)"
+else
+    srccount="$(find "$stage/Mods" -type f | wc -l)"
+fi
 "$DIVINE" -g bg3 -a create-package -s "$stage" -d "$stage/$folder.pak" >/dev/null
 # guard: Divine can silently emit a header-only pak
-if [ "$(find "$stage/Mods" -type f | wc -l)" != "$("$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" | wc -l)" ]; then
+if [ "$srccount" != "$("$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" | wc -l)" ]; then
   echo "error: pak entry count does not match source file count" >&2
   "$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" >&2 || true
   rm -rf "$stage"; exit 1

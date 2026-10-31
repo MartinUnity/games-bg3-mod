@@ -1,8 +1,18 @@
 -- "Chaos Reinforcements" flavor module (server side). Ext.Require'd AFTER Common.lua.
--- Names + announcements for LEADER spawns (pack mobs keep their template names by design).
+-- Names, buffs and tells for LEADER spawns (pack mobs keep their template names by design).
+--
+-- v3.9 (owner playtest feedback): the OpenMessageBox announcement broke immersion and halted
+-- combat - replaced by a vanilla VOICE BARK on the player (subtitle lingers over the head a
+-- few seconds and disappears on its own; VoiceBarkStarted/Failed events are logged).
+-- Rename fix: Entity:Replicate() expects the COMPONENT OBJECT, not its name (v3.8 threw
+-- "Param 3: expected a light C++ object, got string"). Leader stat buffs (+vit / +ability
+-- tiers) come from the custom stats file shipped in the pak
+-- (Public/ChaosReinforcements/Stats/Generated/Data/CHAOS_Boosts.txt) and are applied as
+-- boost statuses at spawn.
 
-local LEADER_ANNOUNCE = true    -- OpenMessageBox to the host when a leader spawns (testing: on)
 local LEADER_RENAME = true      -- overwrite the leader's overhead display name
+local LEADER_BUFFS = true       -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
+local LEADER_BARK = true        -- player speaks a vanilla combat bark when a leader spawns
 
 -- procedural villain names: FIRST x EPITHET = ~1600 combinations, no external DB needed
 local FIRST = {
@@ -25,15 +35,17 @@ local EPITHET = {
     "the Banished", "of the Whispering Depths", "the Corpse-Marshal", "the Unburied",
 }
 
--- announcement texts (%s = villain name); picked at random
-local SHOUTS = {
-    "Reinforcements! %s has joined the battle!",
-    "A war horn echoes - %s arrives to turn the tide!",
-    "Fresh enemies pour in, led by %s!",
-    "%s strides onto the battlefield. This fight just got serious.",
-    "Blood in the water - %s brings reinforcements!",
-    "The clatter of armor... %s has come to collect your skulls!",
+-- vanilla voice barks that fit "fight escalates" (Name_GUID resource ids from vanilla goals;
+-- exact lines are in loca - pick by theme). The bark plays as a short subtitle over the
+-- speaker's head and disappears on its own.
+local BARKS = {
+    "HAV_VB_ShadowSiege_PlayerEntersCombat_9d551bbc-2a39-aecf-cc1f-25cb27f2fe8f",
 }
+
+-- leader buff tiers (CHAOS_Boosts.txt in the pak; rolled per leader):
+-- vitality +20/35/50% (owner spec: +20-50%), abilities +1/+2/+3 (owner spec: round(+10-20%,1))
+local VIT_TIERS = { "CHAOS_VIT_1", "CHAOS_VIT_2", "CHAOS_VIT_3" }
+local STAT_TIERS = { "CHAOS_STAT_1", "CHAOS_STAT_2", "CHAOS_STAT_3" }
 
 local function rand(lo, hi) return math.random(lo, hi) end
 local function pick(t) return t[rand(1, #t)] end
@@ -48,7 +60,7 @@ local function tryRename(created, name, attempt)
         local dn = entity.DisplayName
         if dn then
             dn.Name = name
-            entity:Replicate("DisplayName")
+            entity:Replicate(dn)   -- component OBJECT, not the name string
             log("leader renamed to:", name)
         else
             error("no DisplayName component (attempt " .. attempt .. ")")
@@ -63,18 +75,41 @@ local function tryRename(created, name, attempt)
     end
 end
 
--- public: call right after a leader spawned; host gets the popup
+local function applyLeaderBuffs(created)
+    local vit = pick(VIT_TIERS)
+    local stats = pick(STAT_TIERS)
+    local okV, eV = pcall(Osi.ApplyStatus, created, vit, -1, 1, created)
+    local okS, eS = pcall(Osi.ApplyStatus, created, stats, -1, 1, created)
+    log("leader buffs:", vit, okV and "ok" or tostring(eV), "|", stats, okS and "ok" or tostring(eS))
+end
+
+local function barkTell(player)
+    local okB, eB = pcall(Osi.StartVoiceBark, pick(BARKS), player)
+    log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
+end
+
+-- public: call right after a leader spawned
 function FlavorLeader(created, host)
     local name = villainName()
     if LEADER_RENAME and created then
         tryRename(created, name, 1)
     end
-    if LEADER_ANNOUNCE and host then
-        local msg = pick(SHOUTS):format(name)
-        local okM, eM = pcall(Osi.OpenMessageBox, host, msg)
-        if not okM then log("OpenMessageBox threw:", eM) end
-        log("leader announced:", name)
+    if LEADER_BUFFS and created then
+        applyLeaderBuffs(created)
+    end
+    if LEADER_BARK and host then
+        barkTell(host)
     end
 end
+
+-- bark outcome diagnostics (logged, not announced)
+pcall(function ()
+    Ext.Osiris.RegisterListener("VoiceBarkStarted", 2, "after", function (bark, instanceId)
+        log("bark started:", bark)
+    end)
+    Ext.Osiris.RegisterListener("VoiceBarkFailed", 1, "after", function (bark)
+        log("bark FAILED:", bark)
+    end)
+end)
 
 log("Flavor.lua loaded")

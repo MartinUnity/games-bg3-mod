@@ -262,6 +262,25 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   native AC; jackpot tier (lvl ≥4) upgrades to magic/scaled tables (`ST_*_1`,
   `ST_Finesse_MeleeWeapons_Magic`). Useful extra vanilla tables found: `ST_RandomPotion`,
   `ST_RandomConsumable`, `ST_Throwable` (chaos fodder for later).
+- **v3.9: leader flavor (owner playtest feedback round 2):** the v3.8 popup
+  (`OpenMessageBox`) broke immersion AND halted combat until clicked — REMOVED. Replaced
+  by a vanilla **voice bark** on the player: `Osi.StartVoiceBark(barkResource, source)`
+  (story_header.div:1308) — subtitle lingers over the head a few seconds and disappears on
+  its own; bark texts live in loca (unreadable offline), so barks are picked by NAME theme
+  (currently `HAV_VB_ShadowSiege_PlayerEntersCombat_…`); `VoiceBarkStarted`/`Failed`
+  listeners log the outcome. **Rename root cause found:** `Entity:Replicate()` expects the
+  component OBJECT, not its name string (v3.8: "Param 3: expected a light C++ object, got
+  string") — the `dn.Name = name` write itself succeeded. **Leader stat buffs landed (the
+  deferred custom-stats route, partially):** pak now ships
+  `Public/ChaosReinforcements/Stats/Generated/Data/CHAOS_Boosts.txt` (NEW file names count
+  inside a pak) with boost statuses `CHAOS_VIT_1/2/3` (`IncreaseMaxHP(20/35/50%)`) and
+  `CHAOS_STAT_1/2/3` (`Ability(Strength,N);Ability(Dexterity,N);Ability(Constitution,N)`;
+  the ability-increase functor is `Ability(<Ability>,<n>)`), applied per leader via
+  `Osi.ApplyStatus(created, tier, -1, 1, created)` with a random tier each — the tier
+  ladder approximates the owner's `+20-50% vit / round(+10-20%,1) stats` spec.
+  `tools/pack_mod.sh` now stages `Public/` next to `Mods/`. ⚠️ All three (rename,
+  bark, boost statuses) need the next playtest to verify — log lines: `leader renamed to:`,
+  `bark started:/FAILED:`, `leader buffs: … ok`.
 - **v3.7: module split + lvl-1 cheapest-gear rule** (owner request): Lua is now
   `Server/Common.lua` (log + shared constants: EVIL/HERO pair, SOFT_CAP_LEVEL, HEAVY_LEVEL,
   HEAVY_TYPES) → `Server/CreatureDB.lua` → `Server/Equip.lua` (all equipment logic:
