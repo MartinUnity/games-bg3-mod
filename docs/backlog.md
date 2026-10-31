@@ -51,6 +51,15 @@ client-side Lua:
 - if the combat log widget is writable this also unlocks: toasts, custom leader
   banners, colored status text — the whole "inform the player" toolbox.
 
+## Toggle feedback fallback (2026-10-31)
+
+The toggle shouts now swap their Description stat handle per state (tooltip shows
+"Currently ENABLED/DISABLED"); UNVERIFIED assumption: the client tooltip re-reads the
+Sync()ed stat. If it turns out the hotbar caches the description at load, next option is
+the ToggleGroup passive route (like vanilla "Toggle Non-Lethal Attacks" / other mods'
+passive-bar buttons - owner referenced this). Also pending: why DebugText over the caster
+showed nothing at toggle time (result now logged in flip()).
+
 ## Leader visual distinction (owner idea, earlier)
 
 Beyond the villain name + buffs: tint/color or VFX the leader. Candidate primitives:
