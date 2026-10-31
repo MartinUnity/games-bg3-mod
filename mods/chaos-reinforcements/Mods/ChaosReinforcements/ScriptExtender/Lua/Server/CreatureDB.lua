@@ -621,9 +621,5 @@ CHAOS_DB = {
     { id = "Vampire_Spawn_A_c8bdda43-03ed-4e01-a596-bf67d0b8f6d0", hp = 82, cost = 8, ac = 15, str = 16, dex = 16, con = 16 },
     { id = "Vampire_Spawn_Human_Female_3335c504-3da5-4036-a483-d937bab16314", hp = 82, cost = 8, ac = 15, str = 16, dex = 16, con = 16 },
     { id = "Vampire_Spawn_Human_Male_c8a9b32c-999b-4e63-a07f-2683bc8c2bf6", hp = 82, cost = 8, ac = 15, str = 16, dex = 16, con = 16 },
-    { id = "WYR_Wyrmsway_Skeleton_Hero_d022e2f8-3154-43f9-a08d-698013dbbf12", hp = 79, cost = 8, ac = 10, str = 20, dex = 10, con = 17, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields" },
-    { id = "WYR_Wyrmsway_Skeleton_Mage_f8d34abe-68ce-4c45-961e-71a49fd64bcd", hp = 26, cost = 3, ac = 10, str = 10, dex = 8, con = 14, prof = "SimpleWeapons" },
-    { id = "WYR_Wyrmsway_Skeleton_Melee_64d6ff73-0287-42af-aefd-61d7f26366c0", hp = 36, cost = 4, ac = 10, str = 18, dex = 8, con = 16, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields" },
-    { id = "WYR_Wyrmsway_Skeleton_Ranged_d58daa19-9c44-4753-9442-1ccffe5efdfe", hp = 29, cost = 3, ac = 10, str = 10, dex = 18, con = 14, prof = "Longbows;Shortbows;LightArmor;SimpleWeapons" },
   },
 }

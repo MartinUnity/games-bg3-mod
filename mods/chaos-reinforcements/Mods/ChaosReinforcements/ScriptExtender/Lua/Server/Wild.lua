@@ -104,20 +104,26 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
             log("wild: AppearAtPosition errored for", mob, "- it stays near the host!")
         end
         if faction then
+            -- NOTE: GetFaction right after SetFaction returns the STALE template
+            -- default (verified in-game: spawn lines showed old factions while the
+            -- combat discovery later showed Evil NPC) - verified in the 500ms check
             pcall(Osi.SetFaction, mob, faction)
-            local okF, fac = pcall(Osi.GetFaction, mob)
-            log("wild: faction set,", fac)
         end
         pcall(Osi.SetLevel, mob, targetLevelFor(base))
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)
-        -- verify (deferred: appear resolves next frame)
+        -- verify (deferred: appear + faction change resolve next frame)
         pcall(Ext.Timer.WaitFor, 500, function ()
             local okP, mx, my, mz = pcall(Osi.GetPosition, mob)
             if okP and type(mx) == "number" then
                 local drift = math.sqrt((mx - x) ^ 2 + (mz - z) ^ 2)
-                log("wild: member placed, drift", string.format("%.1fm", drift))
+                local fac = "-"
+                if faction then
+                    local okF, f = pcall(Osi.GetFaction, mob)
+                    if okF then fac = tostring(f) end
+                end
+                log("wild: member placed, drift", string.format("%.1fm", drift), fac)
             end
         end)
         return mob

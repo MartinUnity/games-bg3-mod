@@ -34,6 +34,12 @@ DEFAULT_TYPES = { "Beast", "Monstrosity", "Humanoid", "Undead", "Fiend" }
 GATES = {
     [1] = { stat = 12, ac = 14, hp = 20 },
     [2] = { stat = 14, ac = 15, hp = 35 },
+    -- act-progression proxy (owner: act1 mobs in act1, act2+1 in act2, all in act3):
+    -- act info is NOT systematically encoded in template names, so we approximate by
+    -- native power - blocks act-3-flavored stat blocks (e.g. Wyrmsway str-20 skeletons)
+    -- until the party is act-2 strength; lvl5+ (act 3) stays fully open
+    [3] = { stat = 16, ac = 16, hp = 60 },
+    [4] = { stat = 20, ac = 18, hp = 100 },
 }
 
 function rowGuid(row)

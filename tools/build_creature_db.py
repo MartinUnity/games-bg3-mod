@@ -42,7 +42,7 @@ BAD_NAME = re.compile(
     r"|Gazer_.*Mylac|Gazemaster|Woe_|Mephit_Grease_Young|Crippled"
     r"|^\[WIP\]|(^|_)CINE_|(^|_)WIP_|TOBEDELETED"
     r"|^BHAAL_|HouseOfHope|Redcap_Pirate|Sharran_|DarkJusticiar|SteelWatcher|"
-    r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead)", re.I)
+    r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway)", re.I)
 
 # stats entries may also betray bossiness
 BAD_STATS = re.compile(r"(Boss|Commander|General|Prince|Pope)", re.I)
