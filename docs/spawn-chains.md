@@ -221,13 +221,18 @@ needs. Facts learned, all ✅ in-game:
   (one wolf, not three, despite three injected hosts).
 Hosts were `--restore`d immediately after the test (state: pristine, backups kept).
 
-**E8 armed (new-file-name test in the live mount).** E8b never varied file *name* inside the
-*right* mount. Now the sole probe in any compile path is
-`Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (new name, copied verbatim from
-`docs/goals/`, validator ok; hosts pristine). Test: restart, load any game, one combat.
-Wolf again ⇒ invented goal file names compile from the `Data/Mods` mount and we ship features as
-own files (+ the pak just packages them). No wolf ⇒ only vanilla-named appends work in text;
-shipping shape = append-into-vanilla (the e8b_inject mechanism) or the pak.
+**E8 FINAL RESULT (2026-10-31): POSITIVE.** With only the new-name copy present (hosts pristine),
+the wolf spawned again ⇒ **invented `MARTIN_*.txt` goal file names compile and fire from the
+`Data/Mods` story mount**. The full loading rule for story: same as stats, live mount is
+`Data/Mods/<Module>/`, and BOTH vanilla-name appends (E8b) and new files (E8) work there;
+`Data/Public/<Module>/Story/` is simply not scanned (E1/E7). Shipping shape settled: our own goal
+files in `Data/Mods` (+ `tools/deploy_story.sh --copy` to mirror from the repo); a pak later is
+just packaging/portability. The probe copy was deleted after the read — story mount is 100%
+vanilla again.
+Side observation, likely benign: user saw a dead imp body in the imp room post-combat. Vanilla has
+no dead-imp decor or spawn rule (only a `TUT_LowerDeck_State_ImpsDead` flag set *after* the imps
+die, `TUT_LowerDeck.txt:98`), rule A never compiled in any variant, and the probes are now removed —
+so it is the encounter's own corpse. Settled from a clean-state new game if ever doubted.
 
 Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
 `mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature

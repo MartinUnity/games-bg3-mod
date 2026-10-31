@@ -29,9 +29,11 @@ Where things live:
   `Data/Public/<Module>/Story/` mount never fires (E1/E7 nulls). A whole-file grammar error
   *refuses new-game creation* ("likely due to mods"); a bad name in one rule can also drop just
   that rule silently (our imp rule died, wolf rule fired — instance-vs-root templates, §3.1.2).
-  E8 armed: new-name copy at `Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt`
-  tests whether invented file names work in the live mount; repo masters are parked in
-  `docs/goals/`, inject/restore via `tools/e8b_inject.py`. `Data/Mods` is writable (ro bind fixed).
+  E8 (same day) **positive**: *invented* `MARTIN_*.txt` file names compile and fire in that mount
+  too — so features ship as our own goal files under
+  `Data/Mods/<Module>/Story/RawFiles/Goals/`, mirrored from repo masters in `docs/goals/` via
+  `tools/deploy_story.sh --copy` (probes since removed; mount vanilla again). `Data/Mods` is
+  writable (ro bind fixed).
   This is the Windows
   build under Proton: prefix `compatdata/1086940`, logs `bin/gold.*.log`, profile
   `…/AppData/Local/Larian Studios/Baldur's Gate 3/` — live load order is

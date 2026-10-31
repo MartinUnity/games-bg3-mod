@@ -66,10 +66,10 @@ goal text compiles into sessions and fires; cross-level **global** templates ins
 party — placement needs real anchoring later); per-rule compile drops are silent (the imp rule
 never fired — likely because `S_FirstFight_Imp_*` ids are level-placed *instances*, not root
 templates). Hosts `--restore`d after the test; `Data/Public/Story/` remains dead (E1/E7 explained).
-E8 is now armed as the sole live probe: new-name copy at
-`Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` — restart, any game, one combat;
-wolf ⇒ invented file names work in the live mount (cleanest shipping shape), no wolf ⇒
-vanilla-named appends (or pak) only. Full detail: `docs/spawn-chains.md` §3.1.2.
+E8 FINAL: POSITIVE (same day) — with the probe as a **new-named** file
+(`Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt`) the wolf spawned again, so
+invented `MARTIN_*.txt` names work in the live mount too; probe since deleted, mount vanilla.
+Full detail: `docs/spawn-chains.md` §3.1.2.
 
 ### E8 — cheap, no tooling (superseded by E8b above, but it costs one command)
 
@@ -179,12 +179,10 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 8. Ranked next moves
 
-1. **E8 — armed, needs one in-game read.** The ONLY probe in any compile path is the new-name
-   copy `Data/Mods/GustavX/Story/RawFiles/Goals/MARTIN_SpawnProbe.txt` (E8b hosts are restored
-   pristine). Owner: restart, load any game, one combat. Wolf ⇒ invented goal file names compile
-   from the live mount ⇒ features ship as our own `MARTIN_*.txt` in `Data/Mods` (pak = pure
-   packaging later). No wolf ⇒ only vanilla-named appends work in text ⇒ ship via the
-   e8b_inject append mechanism or pak. To undo: delete that one file.
+1. ~~**E8 — armed**~~ **DONE, POSITIVE (2026-10-31):** the new-name copy spawned the wolf, so
+   invented `MARTIN_*.txt` goal names compile+fire in the live mount. Probe deleted; story mount
+   100% vanilla. Shipping shape settled: own files in `Data/Mods/<Module>/Story/.../Goals/`
+   mirrored by `tools/deploy_story.sh --copy`; pak = pure packaging/portability later.
 2. **Pak CLI + SE template dump** (§4, §5) — unblocked once E8's read is done. Tiny C# console
    app over LSLib `Package`/`PackageWriterFactory`; prove by round-tripping `ModFixer.pak`, then
    pack `mods/more-mobs/`, enable, read `bin/bg3-print.log` + `MARTIN_root_templates.txt`. The
@@ -200,9 +198,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    offline compile catches.
 5. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
    `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`.
-6. Confound rule: while E8's read is pending, do **not** enable any *additional* mod pak —
-   story-compile inputs must match the pre-E8 state. After the read, SE/pak work is free: Lua sees
-   everything and the text channel can be validated from inside SE afterwards.
+6. Confound rule **lifted** (E8 read done): enabling the SE mod no longer risks a story signal;
+   SE Lua can now be used to *verify* the text channel (listeners on `CombatStarted`, DB fact
+   reads) and to observe spawns while building the feature.
 
 ## 9. Git state
 
