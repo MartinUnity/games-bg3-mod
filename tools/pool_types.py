@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tag MARTIN_MoreMobs pool templates with creature type + HP.
+"""Tag ChaosReinforcements pool templates with creature type + HP.
 
 Two-step offline resolution:
 1. Root templates (converted Shared.pak `Public/Shared/RootTemplates/_merged.lsf` ->

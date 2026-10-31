@@ -1,5 +1,5 @@
 {
     "RequiredVersion": 33,
-    "ModTable": "MARTIN_MoreMobs",
+    "ModTable": "ChaosReinforcements",
     "FeatureFlags": ["Lua"]
 }

@@ -8,13 +8,13 @@
                <node id="ModuleInfo">
                    <attribute id="Author" type="LSString" value="martin"/>
                    <attribute id="CharacterCreationLevelName" type="FixedString" value=""/>
-                   <attribute id="Description" type="LSString" value="Honour-mode reinforcement spawner (Script Extender Lua probe)"/>
-                   <attribute id="Folder" type="LSString" value="MARTIN_MoreMobs"/>
+                   <attribute id="Description" type="LSString" value="Random hostile reinforcements join every battle: chaotic count, type, gear and leaders (Script Extender Lua)"/>
+                   <attribute id="Folder" type="LSString" value="ChaosReinforcements"/>
                    <attribute id="LobbyLevelName" type="FixedString" value=""/>
                    <attribute id="MD5" type="LSString" value=""/>
                    <attribute id="MainMenuBackgroundVideo" type="FixedString" value=""/>
                    <attribute id="MenuLevelName" type="FixedString" value=""/>
-                   <attribute id="Name" type="LSString" value="MARTIN More Mobs"/>
+                   <attribute id="Name" type="LSString" value="Chaos Reinforcements"/>
                    <attribute id="NumPlayers" type="uint8" value="4"/>
                    <attribute id="PhotoBooth" type="FixedString" value=""/>
                    <attribute id="StartupLevelName" type="FixedString" value=""/>

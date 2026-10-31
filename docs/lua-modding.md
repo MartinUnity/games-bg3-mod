@@ -45,7 +45,7 @@ Logging on this SE v33 (verified against the DLL's strings, 2026-10-31): the set
 `CreateConsole:true` opens the SE Lua console but renders unreliably under Proton; the file
 route is the reliable one. `Ext.IO.SaveFile` writes into the profile's `Script Extender/`
 folder and was proven to work — probe v2 mirrors all its logging there too
-(`MARTIN_probe.log`) as a belt-and-braces channel. SE itself stages into
+(`Chaos_probe.log`) as a belt-and-braces channel. SE itself stages into
 `AppData/Local/BG3ScriptExtender/ScriptExtender/<version>_<hash>/BG3ScriptExtender.dll` (not
 `bin/`) — check there, not bin, for "is SE installed".
 
@@ -69,7 +69,7 @@ against — use 33 here), `ModTable` (unique global Lua table name, unrelated to
 `FeatureFlags` (`["Lua"]`).
 
 `meta.lsx` (bg3.wiki *Modding:Meta.lsx* template, vendored shape in
-`mods/more-mobs/Mods/MARTIN_MoreMobs/meta.lsx`): `ModuleInfo` with `UUID` (must be unique),
+`mods/chaos-reinforcements/Mods/ChaosReinforcements/meta.lsx`): `ModuleInfo` with `UUID` (must be unique),
 `Folder` (**must equal the `Mods/<Folder>` directory name or the mod breaks**), `Name`,
 `Author`, `Description`, `Version64` (int64; `36028797018963968` = 1.0.0.0), `PublishVersion`,
 `TargetModes/Object = Story`. Two gotchas from the wiki: no `meta.lsx` is needed only for
@@ -103,7 +103,7 @@ randomness is engine-seeded `math.random(lo, hi)`, and `math.randomseed` is a st
 offline without the game: python venv + `lupa` (`rt.eval('load')(src)` compiles the file).
 
 So nothing about the SE install was broken; the mod was never registered and the script was
-hallucinated. Both fixable, and `mods/more-mobs/` is the corrected skeleton.
+hallucinated. Both fixable, and `mods/chaos-reinforcements/` is the corrected skeleton.
 
 ## 4. Getting the game to load it
 
@@ -142,7 +142,7 @@ hallucinated. Both fixable, and `mods/more-mobs/` is the corrected skeleton.
   stale). Hash column 0 in `list-package` is normal.
 - **Deploy helper:** `tools/pack_mod.sh [workspace] [--install|--remove]` stages the workspace
   to /tmp, packs via divine.sh, verifies entry count, and installs
-  `MARTIN_MoreMobs.pak` into the profile `Mods/` dir. Then enable in-game.
+  `ChaosReinforcements.pak` into the profile `Mods/` dir. Then enable in-game.
 - **Native alternative (⚠️ unexplored):** `lenonk/bg3le` is a Script Extender for the *native
   Linux* build ("SE mods load straight out of their .paks or from loose directories via
   `BG3LE_MOD_PATH`"). Our install is the Windows build under Proton, so it does not apply
@@ -172,10 +172,10 @@ don't stash an `Ext.Entity`/component in a closure and use it on a later tick (A
 
 ## 6. Skeleton in this repo
 
-`mods/more-mobs/Mods/MARTIN_MoreMobs/` = `meta.lsx` + `Config.json` + `BootstrapServer.lua` +
+`mods/chaos-reinforcements/Mods/ChaosReinforcements/` = `meta.lsx` + `Config.json` + `BootstrapServer.lua` +
 `Server/Probe.lua`. The probe logs on `SessionLoaded`, dumps every root template to
-`MARTIN_root_templates.txt`, spawns one imp (level-native template) and one wolf (foreign
-template) at the host on every `CombatStarted`, and registers `!martin_spawn` for the console.
+`Chaos_root_templates.txt`, spawns one imp (level-native template) and one wolf (foreign
+template) at the host on every `CombatStarted`, and registers `!chaos_spawn` for the console.
 Expected first-run reading: if the boot line appears, the channel is live and the log tells us
 which of the two templates fails; if nothing appears, it is a loading/registration problem
 (§4), not a Lua problem.

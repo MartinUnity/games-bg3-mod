@@ -1,10 +1,10 @@
--- MARTIN_MoreMobs probe v2 (server-side Lua).
+-- ChaosReinforcements probe v2 (server-side Lua).
 -- v1 lesson (2026-10-31): the mod DOES load (template dump was written on SessionLoaded) but the
 -- spawn attempts were silent: SE v33 has no "LogEnabled" key and no bg3-print.log -- runtime logs
 -- go to profile "Script Extender Logs/Extender Runtime*.log" and need "LogRuntime": true in
 -- bin/ScriptExtenderSettings.json (verified against the v33 DLL strings).
 -- v2 still file-logs through Ext.IO.SaveFile (proven on this install) so diagnostics are
--- inspectable offline: profile "Script Extender/MARTIN_probe.log".
+-- inspectable offline: profile "Script Extender/Chaos_probe.log".
 --
 -- v1 template-dump facts: keys are bare GUIDs (32016 of them); the E8b wolf GUID
 -- 41da0eff-b533-... IS present; prologue imp-instance GUID is NOT (matches story findings).
@@ -13,7 +13,7 @@ local TAG = "MARTIN"
 local LINES = {}
 
 local function flush()
-    pcall(function () Ext.IO.SaveFile("MARTIN_probe.log", table.concat(LINES, "\n")) end)
+    pcall(function () Ext.IO.SaveFile("Chaos_probe.log", table.concat(LINES, "\n")) end)
 end
 
 local function log(...)
@@ -89,7 +89,7 @@ local function dumpTemplates()
             rows[#rows + 1] = tostring(key) .. "\t" .. tostring(nm)
         end
         table.sort(rows)
-        Ext.IO.SaveFile("MARTIN_root_templates.txt", table.concat(rows, "\n"))
+        Ext.IO.SaveFile("Chaos_root_templates.txt", table.concat(rows, "\n"))
         log("template dump written:", #rows, "entries (GUID<TAB>Name)")
     end)
     if not ok3 then log("template dump failed:", err3) end
@@ -102,8 +102,8 @@ Ext.Events.SessionLoaded:Subscribe(function ()
     -- restricted context" for Osi.DB_CurrentLevel:Get(nil) at SessionLoaded time.
 end)
 
--- Console command for manual tests: !martin_spawn
-Ext.RegisterConsoleCommand("martin_spawn", function ()
+-- Console command for manual tests: !chaos_spawn
+Ext.RegisterConsoleCommand("chaos_spawn", function ()
     local host = Osi.GetHostCharacter()
     for _, templateId in ipairs(TEMPLATES) do
         local ok3, res = pcall(function ()

@@ -19,7 +19,7 @@
 #   tools/deploy_lua_mod.sh --remove     delete the deployed copy
 set -euo pipefail
 
-WORKSPACE="${1:-mods/more-mobs}"
+WORKSPACE="${1:-mods/chaos-reinforcements}"
 case "$WORKSPACE" in /*) ;; *) WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/$WORKSPACE" ;; esac
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"   # Data/Public
 DATA="$(cd "$REPO/.." && pwd)"                            # Data

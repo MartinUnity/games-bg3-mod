@@ -10,7 +10,7 @@ forensics + E1–E8b), `lua-modding.md` (SE fundamentals), `drop-chains.md` (loo
 
 ## Route 1 — SE Lua runtime spawning (chaos engine) — ✅ PROVEN, THE PRODUCT ROUTE
 
-The engine in `mods/more-mobs/.../Server/*.lua` does this today. Fully random at runtime,
+The engine in `mods/chaos-reinforcements/.../Server/*.lua` does this today. Fully random at runtime,
 no level-editing needed.
 
 **Proven primitive chain** (probe v3 + E8b pair, verbatim):
@@ -22,7 +22,7 @@ Osi.SetHostileAndEnterCombat("Evil_4be9261a-...", "Hero_a1542c81-...", created, 
 ```
 
 - Template ids = **global root templates** (`Name_GUID` from the live dump; the
-  32017-entry `MARTIN_root_templates.txt`). Level-placed *instance* ids (`S_*`) do NOT
+  32017-entry `Chaos_root_templates.txt`). Level-placed *instance* ids (`S_*`) do NOT
   resolve as roots.
 - Hostility only works with the E8b faction pair verbatim; `GetFaction(host)` returns
   per-player factions (`Hero Player1_<guid>`) and is useless for this; `Evil_fb046e51-…`
@@ -91,7 +91,7 @@ extra characters **pre-placed in the level `.lsf` files** + anubis `.anc` data. 
 
 ## Route 5 — Custom stat blocks in the pak (own creature variants) — 🔜 PLANNED (phase 2+)
 
-A pak can carry `Public/MARTIN_MoreMobs/Stats/Generated/Data/*.txt` with NEW stat
+A pak can carry `Public/ChaosReinforcements/Stats/Generated/Data/*.txt` with NEW stat
 entries (unlike loose `Data/Public` files, pak stats files load). Use cases:
 
 - bespoke `CHAOS_*` boost statuses (HP/stat scaling to replace the disabled

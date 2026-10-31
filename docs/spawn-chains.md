@@ -235,7 +235,7 @@ die, `TUT_LowerDeck.txt:98`), rule A never compiled in any variant, and the prob
 so it is the encounter's own corpse. Settled from a clean-state new game if ever doubted.
 
 Where not to iterate blind: the Script Extender Lua channel (`docs/lua-modding.md`, skeleton
-`mods/more-mobs/`) runs after the story compiler, logs every step, and can dump every creature
+`mods/chaos-reinforcements/`) runs after the story compiler, logs every step, and can dump every creature
 template name in the loaded game. Achievements are not a concern for this user, so the Lua probe
 is now the main instrument rather than just the lab; the pak is the packaging route
 (`docs/HANDOVER.md` sec.4).

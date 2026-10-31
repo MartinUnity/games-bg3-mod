@@ -1,4 +1,4 @@
--- MARTIN_MoreMobs chaos/reinforcement engine (server side). Ext.Require'd AFTER
+-- ChaosReinforcements chaos/reinforcement engine (server side). Ext.Require'd AFTER
 -- Common.lua (log + constants), CreatureDB.lua (CHAOS_DB) and Equip.lua (EquipMob).
 --
 -- Owner spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=100% while testing);
@@ -382,21 +382,21 @@ local ok, err = pcall(function ()
 end)
 if ok then log("Chaos.lua loaded; DB types:", CHAOS_DB and "ok" or "MISSING") else log("registration threw:", err) end
 
--- console: !martin_chaos force wave, !martin_status, !martin_wolf
-Ext.RegisterConsoleCommand("martin_chaos", function ()
+-- console: !chaos force wave, !chaos_status, !chaos_wolf
+Ext.RegisterConsoleCommand("chaos", function ()
     local host = Osi.GetHostCharacter()
     if host and host ~= "" then
         local players = factGuids("DB_Players", 1)
         reinforce(host, discover(nil, players))
     end
 end)
-Ext.RegisterConsoleCommand("martin_status", function ()
+Ext.RegisterConsoleCommand("chaos_status", function ()
     local n = 0
     for _ in pairs(seen) do n = n + 1 end
     log("status: misses", misses, "TEST_MODE", tostring(TEST_MODE),
         "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n)
 end)
-Ext.RegisterConsoleCommand("martin_wolf", function ()
+Ext.RegisterConsoleCommand("chaos_wolf", function ()
     local host = Osi.GetHostCharacter()
     if host and host ~= "" then
         spawnCreature(host, { id = "Wolf_41da0eff-b533-43cc-a014-218f7d23fa11", hp = 11, cost = 1 }, 1)

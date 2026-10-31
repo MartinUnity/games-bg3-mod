@@ -1,10 +1,10 @@
--- MARTIN_MoreMobs shared utilities + project-wide constants (server side).
+-- ChaosReinforcements shared utilities + project-wide constants (server side).
 -- MUST be Ext.Require'd FIRST: every other Server/*.lua uses log()/constants from here.
--- Log lands in the profile: Script Extender/MARTIN_chaos.log
+-- Log lands in the profile: Script Extender/ChaosReinforcements.log
 
 local LINES = {}
 local function flush()
-    pcall(function () Ext.IO.SaveFile("MARTIN_chaos.log", table.concat(LINES, "\n")) end)
+    pcall(function () Ext.IO.SaveFile("ChaosReinforcements.log", table.concat(LINES, "\n")) end)
 end
 
 function log(...)

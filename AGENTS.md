@@ -49,11 +49,11 @@ Where things live:
 - Lua / Script Extender route (⚠️ parallel channel, not the override workflow; **user wants this
   for the real feature: randomised spawn pools need Lua logic**): fundamentals in
   `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, mod workspace
-  `mods/more-mobs/`. **SE v33 loads and our Lua runs** (probe v1 wrote its template dump on
+  `mods/chaos-reinforcements/`. **SE v33 loads and our Lua runs** (probe v1 wrote its template dump on
   SessionLoaded, 2026-10-31) — the historical problem was invisible errors: v33 logging needs
   `"LogRuntime": true` in `bin/ScriptExtenderSettings.json` (`LogEnabled`/`bg3-print.log` are
   obsolete); logs land in the prefix at `drive_c/users/steamuser/Script Extender Logs/Extender
-  Runtime.log`, and probes also file-log to profile `Script Extender/MARTIN_probe.log` via
+  Runtime.log`, and probes also file-log to profile `Script Extender/Chaos_probe.log` via
   `Ext.IO.SaveFile`. `bin/DWrite.dll` = official Oct-12 v33 updater (old kept `.bak-2024`;
   `WINEDLLOVERRIDES="DWrite.dll=n,b"` still required — launch options have it). SE itself stages
   under AppData `BG3ScriptExtender/`, not `bin/`. **Spawn-on-combat PROVEN (probe v3: hostile
@@ -87,7 +87,7 @@ Where things live:
   `TemplateAddedTo` listener + `Osi.Equip` (gear lives on level instances, NOT root templates;
   non-humanoids keep innate attacks — equipping would replace them); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
-  profile `Script Extender/MARTIN_chaos.log`; console `!martin_chaos`/`!martin_status`/`!martin_wolf`;
+  profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
   `tools/divine.sh` + `tools/pack_mod.sh` (proven; unpack verb: `-a extract-package -g bg3`).
   A loaded mod flags the save as modded (achievements off — user doesn't care).

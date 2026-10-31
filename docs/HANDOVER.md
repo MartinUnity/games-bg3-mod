@@ -126,7 +126,7 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 - Logging FIXED 2026-10-31 (the earlier `LogEnabled` key is fake in v33 — no log was ever
   written). Correct keys: `{"LogRuntime": true}` in `bin/ScriptExtenderSettings.json` →
   `…/compatdata/1086940/pfx/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log`.
-  Probe v2 also file-logs via `Ext.IO.SaveFile` → profile `Script Extender/MARTIN_probe.log`
+  Probe v2 also file-logs via `Ext.IO.SaveFile` → profile `Script Extender/Chaos_probe.log`
   (channel already proven working). **Not yet verified producing output** (needs one game start
   with the new settings).
 - Probe v1 result (2026-10-31, partial ✅): mod enabled + loaded server-side — template dump
@@ -152,7 +152,7 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   ⚠️ Regeneration needs those paths; `/tmp` may be wiped. `BootstrapServer.lua` now
   `Ext.Require`s `Server/CreatureDB.lua` BEFORE `Server/Chaos.lua`.
   **Type affinity:** `RACE_TO_TYPE` (Osiris `GetRace` string → D&D type) + dominant enemy type
-  decides the pool; unknown races log `type ?` so the map grows from `MARTIN_chaos.log`.
+  decides the pool; unknown races log `type ?` so the map grows from `ChaosReinforcements.log`.
   **Low-level ceiling:** at host level ≤ 2, mob levels never exceed the player's level
   (level-3 harpy multiattack one-shots a level-1 party). **Leader:** rolls only when a pack of
   ≥ 2 spawned; ~10% chance (LEADER_TEST=true forces 100% while testing); ~90% same type,
@@ -193,7 +193,7 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   stub that throws). Lua syntax can be compile-checked offline: `pip` venv + `lupa`,
   `rt.eval('load')(src)` (no interpreter on this box otherwise).
 - Probe v2 result (2026-10-31): **wolf spawns via Lua** (CreateAtObject + host anchor work) but
-  stays neutral/yellow. Log (`MARTIN_probe.log`) showed SetFaction/SetHostileAndEnterCombat
+  stays neutral/yellow. Log (`Chaos_probe.log`) showed SetFaction/SetHostileAndEnterCombat
   "ok"-without-effect: v2 used `Evil_fb046e51…` + the host's real **per-player faction**
   (`GetFaction(host)` = `Hero Player1_<guid>`). Lesson: replicate the E8b-proven pair verbatim
   (`Evil_4be9261a-e481-8d9d-3528-f36956a19b17` vs `Hero_a1542c81-6895-929e-4522-10ce218bb360`)
@@ -201,15 +201,15 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   logs live in profile `Script Extender Logs/`; template dump = GUID<TAB>Name (wolf = name
   "Wolf"), and GetAllRootTemplates includes props/items — filter creature templates for pools.
 - Probe mod **packed + installed** (pak toolchain proven, `tools/pack_mod.sh --install`):
-  `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. Source `mods/more-mobs/` =
-  `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`, `Folder=MARTIN_MoreMobs`,
+  `…/Baldur's Gate 3/Mods/ChaosReinforcements.pak`. Source `mods/chaos-reinforcements/` =
+  `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`, `Folder=ChaosReinforcements`,
   Type int32=1 — fixed from stale wiki format), `ScriptExtender/Config.json`
-  (`RequiredVersion: 33`, `ModTable: MARTIN_MoreMobs`, `FeatureFlags:["Lua"]`),
+  (`RequiredVersion: 33`, `ModTable: ChaosReinforcements`, `FeatureFlags:["Lua"]`),
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
-  to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
-  registers `!martin_spawn`).
+  to `Chaos_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
+  registers `!chaos_spawn`).
 - **v3.3 playtest results (owner, 2026-10-31, game #2: solo lvl-1 Merregon nearly TPK'd a
-  2-char party) → fixes in v3.3 (all read from `MARTIN_chaos.log`):**
+  2-char party) → fixes in v3.3 (all read from `ChaosReinforcements.log`):**
   1. **Discovery + affinity WORK** (5 imps → `wave: type Fiend`), via the `EnteredCombat`
      roster fallback — but my arity "fix" had a Lua bug: `args[#args+1] = nil` never grows a
      table, so `Get` received ZERO args → `DB_Is_InCombat(0)` / `DB_Players(0)` throws. Fixed
@@ -328,17 +328,17 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    mirrored by `tools/deploy_story.sh --copy`; pak = pure packaging/portability later.
 2. **Pak CLI ✅ DONE (2026-10-31):** native Linux Divine build (`tools/divine.sh`), ModFixer.pak
    round-tripped, probe mod packed+installed via `tools/pack_mod.sh --install` →
-   `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. SE v33 updater installed to `bin/DWrite.dll`.
-   **Owner run pending:** start game → enable "MARTIN More Mobs" → load → read
+   `…/Baldur's Gate 3/Mods/ChaosReinforcements.pak`. SE v33 updater installed to `bin/DWrite.dll`.
+   **Owner run pending:** start game → enable "Chaos Reinforcements" → load → read
    `bin/bg3-print.log` (`[MARTIN] ... bootstrap loaded`, SessionLoaded, template dump) + profile
-   `Script Extender/MARTIN_root_templates.txt` (via `Ext.IO.SaveFile`). That dump settles the
+   `Script Extender/Chaos_root_templates.txt` (via `Ext.IO.SaveFile`). That dump settles the
    imp-instance question and enumerates the **global root template pool** the chaos engine draws on.
 3. ~~**Chaos engine in Lua**~~ **DONE — v3.1 packed+installed (2026-10-31), awaiting playtest:**
    stacking trigger, typed 622-creature DB, type affinity, budget with party knob, SetLevel
    scaling + delayed verify, leader system (pack ≥ 2, ~90/10 same/cross-type via AFFINITY),
    low-level ceiling (see §5). **Next iteration after playtest:** if SetLevel doesn't stick,
    switch to custom stats file in
-   the pak (`Public/MARTIN_MoreMobs/Stats/Generated/Data/`) with CHAOS buff statuses for
+   the pak (`Public/ChaosReinforcements/Stats/Generated/Data/`) with CHAOS buff statuses for
    HP/stat scaling on spawned mobs (fold into single artifact, keeps high-level play
    interesting); tune budget formula with observed party size; grow RACE_TO_TYPE from the
    discovery log.

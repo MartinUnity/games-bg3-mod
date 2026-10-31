@@ -1,4 +1,4 @@
--- MARTIN_MoreMobs equipment module (server side). Ext.Require'd AFTER Common.lua.
+-- ChaosReinforcements equipment module (server side). Ext.Require'd AFTER Common.lua.
 -- Random gear + consumables for spawned humanoid mobs, driven by the creature's OWN stat
 -- sheet (CreatureDB `prof` = Proficiency Group, `unarmed` = UnarmedAttackAbility) and the
 -- player level, so low-level fights never roll expensive loot:

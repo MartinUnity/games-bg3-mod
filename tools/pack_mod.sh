@@ -17,7 +17,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"   # Data/Public
 DIVINE="$REPO/tools/divine.sh"
-WORKSPACE="${1:-mods/more-mobs}"
+WORKSPACE="${1:-mods/chaos-reinforcements}"
 case "$WORKSPACE" in /*) ;; *) WORKSPACE="$REPO/$WORKSPACE" ;; esac
 
 mode=pack
