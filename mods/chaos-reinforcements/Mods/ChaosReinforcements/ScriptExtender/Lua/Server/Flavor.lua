@@ -1,18 +1,21 @@
 -- "Chaos Reinforcements" flavor module (server side). Ext.Require'd AFTER Common.lua.
 -- Names, buffs and tells for LEADER spawns (pack mobs keep their template names by design).
 --
--- v3.9 (owner playtest feedback): the OpenMessageBox announcement broke immersion and halted
--- combat - replaced by a vanilla VOICE BARK on the player (subtitle lingers over the head a
--- few seconds and disappears on its own; VoiceBarkStarted/Failed events are logged).
--- Rename fix: Entity:Replicate() expects the COMPONENT OBJECT, not its name (v3.8 threw
--- "Param 3: expected a light C++ object, got string"). Leader stat buffs (+vit / +ability
--- tiers) come from the custom stats file shipped in the pak
--- (Public/ChaosReinforcements/Stats/Generated/Data/CHAOS_Boosts.txt) and are applied as
--- boost statuses at spawn.
+-- v3.10: playtest round 3 - buffs WORK (leader got +stats/+hp from CHAOS_Boosts.txt), bark
+-- works but broadcast to every party member (owner wants a single, silent, text-only tell),
+-- and the entity-Replicate rename path is a dead end in v33 ("Param 3" error for string AND
+-- component args). New strategy: the STORY call SetStoryDisplayName(target, key) applied with
+-- a RAW STRING (vanilla type is LocalizedTextKey, but engines usually display unknown keys
+-- verbatim - the next playtest log + overhead names will confirm). It powers both:
+--   - leader rename (permanent, no restore needed)
+--   - the tell: the PLAYER's overhead name becomes the message for ~4 s, then the saved
+--     GetDisplayName key is written back. No sound, single character, disappears on its own.
+-- Every attempt is logged separately; TELL_MODE switches tells: "name" | "bark" | "off".
 
-local LEADER_RENAME = true      -- overwrite the leader's overhead display name
-local LEADER_BUFFS = true       -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
-local LEADER_BARK = true        -- player speaks a vanilla combat bark when a leader spawns
+local LEADER_RENAME = true       -- rename the leader to a villain name
+local LEADER_BUFFS = true        -- +vit% / +ability boost statuses (CHAOS_VIT_x / CHAOS_STAT_x)
+local TELL_MODE = "name"         -- "name": 4 s overhead text on the player; "bark": voice bark; "off"
+local TELL_SECONDS = 4          -- how long the tell text stays over the player's head
 
 -- procedural villain names: FIRST x EPITHET = ~1600 combinations, no external DB needed
 local FIRST = {
@@ -35,9 +38,16 @@ local EPITHET = {
     "the Banished", "of the Whispering Depths", "the Corpse-Marshal", "the Unburied",
 }
 
--- vanilla voice barks that fit "fight escalates" (Name_GUID resource ids from vanilla goals;
--- exact lines are in loca - pick by theme). The bark plays as a short subtitle over the
--- speaker's head and disappears on its own.
+-- overhead tell texts (%s = villain name); shown as the player's display name for TELL_SECONDS
+local TELLS = {
+    "Reinforcements! %s joins the battle!",
+    "%s arrives to turn the tide!",
+    "Fresh enemies - led by %s!",
+    "%s strides onto the battlefield!",
+    "The fight escalates - %s has come!",
+}
+
+-- fallback tell (bark) - vanilla voice bark, Name_GUID resource (plays party-wide + audio)
 local BARKS = {
     "HAV_VB_ShadowSiege_PlayerEntersCombat_9d551bbc-2a39-aecf-cc1f-25cb27f2fe8f",
 }
@@ -47,6 +57,8 @@ local BARKS = {
 local VIT_TIERS = { "CHAOS_VIT_1", "CHAOS_VIT_2", "CHAOS_VIT_3" }
 local STAT_TIERS = { "CHAOS_STAT_1", "CHAOS_STAT_2", "CHAOS_STAT_3" }
 
+local dnDumped = false
+
 local function rand(lo, hi) return math.random(lo, hi) end
 local function pick(t) return t[rand(1, #t)] end
 
@@ -54,25 +66,19 @@ local function villainName()
     return pick(FIRST) .. " " .. pick(EPITHET)
 end
 
-local function tryRename(created, name, attempt)
-    local ok, err = pcall(function ()
-        local entity = Ext.Entity.Get(created)
-        local dn = entity.DisplayName
-        if dn then
-            dn.Name = name
-            entity:Replicate(dn)   -- component OBJECT, not the name string
-            log("leader renamed to:", name)
-        else
-            error("no DisplayName component (attempt " .. attempt .. ")")
-        end
-    end)
-    if not ok then
-        log("rename failed:", err)
-        if attempt == 1 then
-            -- entity may not be fully created yet; retry once after a delay
-            pcall(Ext.Timer.WaitFor, 1000, function () tryRename(created, name, 2) end)
-        end
+-- rename via the story call, with a raw string as the "localized key"
+local function renameViaStory(created, name)
+    local ok, err = pcall(Osi.SetStoryDisplayName, created, name)
+    log("rename(SetStoryDisplayName):", ok and "called" or ("threw: " .. tostring(err)))
+    -- once per session: dump the DisplayName component to learn its real fields
+    if ok and not dnDumped then
+        dnDumped = true
+        pcall(function ()
+            local dn = Ext.Entity.Get(created).DisplayName
+            log("DisplayName component dump:", Ext.DumpExport(dn))
+        end)
     end
+    return ok
 end
 
 local function applyLeaderBuffs(created)
@@ -83,7 +89,27 @@ local function applyLeaderBuffs(created)
     log("leader buffs:", vit, okV and "ok" or tostring(eV), "|", stats, okS and "ok" or tostring(eS))
 end
 
-local function barkTell(player)
+-- "name" tell: temporarily replace the player's overhead display name with the message
+local function tellViaName(player, name)
+    local okG, oldKey = pcall(Osi.GetDisplayName, player)
+    if not okG then
+        log("tell: GetDisplayName threw:", oldKey)
+        return
+    end
+    local msg = pick(TELLS):format(name)
+    local okS, eS = pcall(Osi.SetStoryDisplayName, player, msg)
+    if not okS then
+        log("tell: SetStoryDisplayName threw:", eS)
+        return
+    end
+    log("tell: showing", msg, "(old key", oldKey .. ")")
+    pcall(Ext.Timer.WaitFor, TELL_SECONDS * 1000, function ()
+        local okR, eR = pcall(Osi.SetStoryDisplayName, player, oldKey)
+        log("tell: restore", okR and "ok" or ("threw: " .. tostring(eR)))
+    end)
+end
+
+local function tellViaBark(player)
     local okB, eB = pcall(Osi.StartVoiceBark, pick(BARKS), player)
     log("leader bark:", okB and "requested" or ("threw: " .. tostring(eB)))
 end
@@ -92,13 +118,17 @@ end
 function FlavorLeader(created, host)
     local name = villainName()
     if LEADER_RENAME and created then
-        tryRename(created, name, 1)
+        renameViaStory(created, name)
     end
     if LEADER_BUFFS and created then
         applyLeaderBuffs(created)
     end
-    if LEADER_BARK and host then
-        barkTell(host)
+    if host then
+        if TELL_MODE == "name" then
+            tellViaName(host, name)
+        elseif TELL_MODE == "bark" then
+            tellViaBark(host)
+        end
     end
 end
 
@@ -112,4 +142,4 @@ pcall(function ()
     end)
 end)
 
-log("Flavor.lua loaded")
+log("Flavor.lua loaded (tell mode:", TELL_MODE .. ")")
