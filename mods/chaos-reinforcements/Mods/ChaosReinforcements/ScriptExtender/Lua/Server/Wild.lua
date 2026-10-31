@@ -158,7 +158,7 @@ local function spawnWildGroup(host, base)
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then
-                log("wild: BOSS", FlavorLeaderCommon(guid, true))
+                log("wild: boss spawned:", FlavorLeaderCommon(guid, true))
             elseif slotMap[i] then
                 log("wild: leader", FlavorLeaderCommon(guid, false))
             end
