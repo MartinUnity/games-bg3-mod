@@ -18,6 +18,18 @@ local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups aft
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
 local WILD_FORCE_TIER = 3            -- TESTING: force the NEXT group's tier (nil = off)
+local WILD_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
+-- ^ faction override applied at spawn. Base factions (vanilla Factions.lsx):
+--   Evil NPC is a CHILD of Evil 4be9261a (our proven hostile pair), so attacking
+--   them should be crime/approval-free like any enemy, without inheriting a story
+--   settlement faction from the template (observed: humanoid templates default to
+--   generic "Neutral NPC" = yellow + companion-approval hit when attacked; some
+--   template could in principle carry a real story faction - override kills that
+--   risk). If testing shows Evil NPC mobs auto-attack on sight, set to nil to
+--   fall back to template default.
+local WILD_COUNTDOWN_EVERY = 60       -- monitor ticks between "time to despawn" logs (60 x 2s = 2min)
+
+local nextGroupId = 0
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
 local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
 local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
@@ -82,6 +94,11 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip)
         if not okA then
             log("wild: AppearAtPosition errored for", mob, "- it stays near the host!")
         end
+        if WILD_FACTION then
+            pcall(Osi.SetFaction, mob, WILD_FACTION)
+            local okF, fac = pcall(Osi.GetFaction, mob)
+            log("wild: faction set,", fac)
+        end
         pcall(Osi.SetLevel, mob, targetLevelFor(base))
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
@@ -105,7 +122,7 @@ local function aggroGroup(group, player)
         pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, guid, player)
     end
     backoffMs = rand(WILD_BACKOFF_MIN, WILD_BACKOFF_MAX) * 60000
-    log("wild: group aggroed by", player, "(", #group.members, "mobs ); backoff",
+    log("wild: group", group.id, "aggroed by", player, "(", #group.members, "mobs ); backoff",
         math.floor(backoffMs / 60000) .. "min")
 end
 
@@ -144,7 +161,8 @@ local function spawnWildGroup(host, base)
         return
     end
 
-    local group = { members = {}, type = etype,
+    nextGroupId = nextGroupId + 1
+    local group = { id = nextGroupId, members = {}, type = etype,
                     ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
     local spawnedHumanoid = (etype == "Humanoid")
     for i = 1, count do
@@ -170,7 +188,7 @@ local function spawnWildGroup(host, base)
         return
     end
     groups[#groups + 1] = group
-    log("wild: spawned group tier", tier, "(roll", roll .. ")", #group.members, "mobs,",
+    log("wild: spawned group", nextGroupId, "tier", tier, "(roll", roll .. ")", #group.members, "mobs,",
         "type", etype, "at ~", radius .. "m")
 end
 
@@ -223,6 +241,11 @@ local function monitor()
         else
             -- expire quietly out of sight ("they wandered on"); never mid-combat
             group.ttlMs = group.ttlMs - WILD_MONITOR_MS
+            group.ticks = (group.ticks or 0) + 1
+            if group.ticks % WILD_COUNTDOWN_EVERY == 0 then
+                log("wild: group", group.id, "despawns in ~",
+                    math.max(1, math.ceil(group.ttlMs / 60000)), "min")
+            end
             local inCombat = false
             for _, guid in ipairs(group.members) do
                 local okI, ic = pcall(Osi.IsInCombat, guid)
@@ -232,7 +255,7 @@ local function monitor()
                 for _, guid in ipairs(group.members) do
                     pcall(Osi.RequestDeleteTemporary, guid)
                 end
-                log("wild: group expired (", #group.members, "mobs wandered on )")
+                log("wild: group", group.id, "expired (", #group.members, "mobs wandered on )")
             else
                 remaining[#remaining + 1] = group
             end
