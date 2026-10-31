@@ -136,13 +136,20 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Full pipeline proven: pak → SE v33 → mod → `Osi.CreateAtObject` (name+`_`+GUID root template,
   anchor=GetHostCharacter) → `SetFaction(EVIL)` → `SetHostileAndEnterCombat(EVIL, HERO, ...)`
   with the E8b pair verbatim → joins the fight as a red enemy.
-- **Chaos engine v1 installed (2026-10-31, awaiting playtest):** `Server/Chaos.lua` is now the
-  required product file (Probe.lua stays unrequired as reference). Per `CombatStarted`
-  (once-guard per combatId): roll → 10% silence / 30% weak swarm 2-5 / 35% normal 1-3 / 17%
-  elite 1-2 / 8% jackpot (1 elite + 2-4 weak); 52 curated templates in weak/normal/elite pools
-  mined from the root-template dump (formula `Name_GUID`, cross-checked vs vanilla goal
-  references); spawn offsets 1-3 tiles with 1,1 retry; hostility = proven pair. Log: profile
-  `Script Extender/MARTIN_chaos.log`. Console: `!martin_chaos`, `!martin_wolf`.
+- **Chaos engine v2 = reinforcement engine (2026-10-31, installed, awaiting playtest):** owner
+  spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=true forces 100%), spawn budget
+  = host GetLevel x rand(2,4), tier-proxy costs (1/2/4), max 8/combat, anchors = existing
+  ENEMIES when known (spawns next to the mobs you fight), hostility = proven EVIL/HERO pair.
+  **Discovery logging**: every CombatStarted logs each participant's `GetLevel`/`GetRace`/
+  `GetDisplayName`/`GetFaction` + one raw dump of `DB_Is_InCombat`/`DB_Players` fact-row shapes
+  → feeds race-affine pools + real level costs next iteration (owner wants: same-category mobs,
+  occasional leader types, party-size factored in; ~6-8 party chars via NPC-keeper mod).
+  Osiris discovery toolkit confirmed in `story_header.div`: queries `GetLevel`, `GetRace(c,0)`,
+  `GetDisplayName`, `GetPosition`, `IsInCombat`, `CombatGetInvolvedPartyMembersCount`; facts
+  `DB_Is_InCombat` (1272 uses in vanilla goals), `DB_Players`, `DB_PartyMembers`. Header has NO
+  Turn/participants facts; third-party "extra enemies honour" mod (unpacked to
+  /tmp/opencode/paks/eeh) does it with pre-placed level .lsf characters + anubis .anc — not
+  reusable by us, no Lua anywhere in it.
 - ⚠️ RNG gotchas (DLL strings + API forensics 2026-10-31): `Ext.RandomInteger` does NOT exist
   in v33 (older docs wrong); use `math.random(lo,hi)` — and NEVER `math.randomseed` (SE ships a
   stub that throws). Lua syntax can be compile-checked offline: `pip` venv + `lupa`,
@@ -163,10 +170,13 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
   to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
-- **Waiting on owner (chaos v1 playtest):** restart → mod stays enabled → play a few combats.
-  Expect: most fights get ambushers (sometimes nothing, sometimes a wolf pack, sometimes a
-  Githyanki gish or Steel Watcher pair). Read profile `Script Extender/MARTIN_chaos.log` after
-  — it records every roll ("silence"/tier x count) and every spawn result.
+- **Waiting on owner (reinforcement v2 playtest):** restart → mod stays enabled → play a few
+  real combats (TEST_MODE = 100% spawn right now). Then read profile
+  `Script Extender/MARTIN_chaos.log`: it shows party size, every participant's
+  level/race/name/faction (feeds race-affine pool design) and the spawn sequence. Watch for:
+  enemies identified count (if 0 at CombatStarted, `DB_Is_InCombat` is populated later → need
+  a tick-delayed retry), raw fact-row shape dump (field-name accessors), mob placement next to
+  existing enemies.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load

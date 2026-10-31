@@ -1,18 +1,18 @@
--- MARTIN_MoreMobs chaos engine v1 (server-side Lua).
--- On every CombatStarted: roll whether reinforcements appear, from which power tier, and how
--- many -- then spawn hostile mobs via the pipeline proven by Probe v3 (2026-10-31):
---   Osi.CreateAtObject(templateId, host, 1, 1, "", 1)
---   Osi.SetFaction(created, EVIL)
---   Osi.SetHostileAndEnterCombat(EVIL, HERO, created, host)
--- with the E8b-proven faction pair VERBATIM (any other pair is silently inert, probe v2 lesson).
+-- MARTIN_MoreMobs chaos/reinforcement engine v2 (server-side Lua).
+-- Spec (owner, 2026-10-31): stacking chance of reinforcements per encounter (base 20%, +5..25%
+-- per non-triggering encounter, resets on trigger; TEST MODE = 100%). Spawn budget driven by
+-- player level x random factor (and party size later) so we never dump 8 mobs 3 levels above
+-- the party. Reinforcements hostile to the party, joining the live fight.
 --
--- Template ids below were mined from the live GetAllRootTemplates dump (probe v2/v3 wrote it to
--- profile "Script Extender/MARTIN_root_templates.txt"); id formula = Name + "_" + GUID key,
--- double-checked against vanilla goal references (SteelWatcher) and the proven wolf.
--- Filtered: no Wildshape/Summon/Companion/Civilian/Portrait/Player/Hallucination junk.
+-- v2 adds DISCOVERY: per combat it logs every participant's Osiris GetLevel/GetRace/
+-- GetDisplayName + faction, and dumps the raw DB_Is_InCombat/DB_Players fact row shapes once.
+-- That data (profile "Script Extender/MARTIN_chaos.log") feeds the next iteration: race-affine
+-- pools ("fiend fight => fiends") and real level costs instead of tier proxies.
 --
--- All diagnostics go to profile "Script Extender/MARTIN_chaos.log" (Ext.IO.SaveFile channel,
--- proven on this install).
+-- Proven pieces kept verbatim from probe v3: CreateAtObject(Name_GUID template, anchor, dx, dy,
+-- "", 1) -> SetFaction(EVIL) -> SetHostileAndEnterCombat(EVIL, HERO, created, host) with the
+-- E8b faction pair (any other pair is silently inert). math.random only (no randomseed, no
+-- Ext.RandomInteger - neither exists in v33).
 
 local TAG = "CHAOS"
 local LINES = {}
@@ -33,11 +33,20 @@ end
 local EVIL = "Evil_4be9261a-e481-8d9d-3528-f36956a19b17"
 local HERO = "Hero_a1542c81-6895-929e-4522-10ce218bb360"
 
--- Tunable knobs ------------------------------------------------------------
-local SILENT_CHANCE = 10   -- out of 100: combats that get NO reinforcements
-local OFFSET_MIN, OFFSET_MAX = 1, 3  -- spawn offset tiles around the anchor
+-- Tunables ------------------------------------------------------------------
+local TEST_MODE = true          -- true => spawn chance forced to 100% while testing
+local BASE_CHANCE = 20          -- % base chance of reinforcements
+local STACK_MIN, STACK_MAX = 5, 25  -- +% stacking per encounter that didn't trigger
+local BUDGET_LO, BUDGET_HI = 2, 4   -- total spawn budget = avgPlayerLevel * rand(LO,HI)
+local MAX_SPAWNS = 8            -- hard cap per combat
+local OFFSET_MIN, OFFSET_MAX = 1, 3 -- spawn offset tiles around anchor
 
+-- Tier-proxy cost: 1 weak / 2 normal / 4 elite. Replace with real mob levels once the
+-- discovery log has told us what GetLevel/GetRace return for encounter mobs.
 local POOLS = {
+    weak = 1, normal = 2, elite = 4,
+}
+local POOL_IDS = {
     weak = {
         "Imp_feb1d610-4644-4dd0-8432-6e6a7be130d5",
         "Imp_Weak_836eb759-4663-4aad-b02b-f46513e31e97",
@@ -98,79 +107,167 @@ local POOLS = {
     },
 }
 
--- SE v33: math.random exists but math.randomseed is a stub that throws (DLL strings, 2026-10-31);
--- there is no Ext.RandomInteger. Engine-seeded math.random only.
 local function rand(lo, hi)
     return math.random(lo, hi)
 end
 
-local function pick(pool)
-    return pool[rand(1, #pool)]
-end
+-- state ---------------------------------------------------------------------
+local misses = 0     -- encounters since last trigger (stacking chance)
+local seen = {}     -- combatId guard
+local dumpedShapes = false
 
-local function spawnOne(host, templateId)
-    local ok, res = pcall(function ()
+local function spawnOne(anchor, templateId)
+    local ok = pcall(function ()
         local dx, dy = rand(OFFSET_MIN, OFFSET_MAX), rand(OFFSET_MIN, OFFSET_MAX)
-        local created = Osi.CreateAtObject(templateId, host, dx, dy, "", 1)
+        local created = Osi.CreateAtObject(templateId, anchor, dx, dy, "", 1)
         if (not created or created == "") and (dx ~= 1 or dy ~= 1) then
-            -- offset placement can fail on tight tiles; retry at the proven 1,1 spot
-            created = Osi.CreateAtObject(templateId, host, 1, 1, "", 1)
+            created = Osi.CreateAtObject(templateId, anchor, 1, 1, "", 1)
         end
-        log("spawn", templateId, "->", created)
+        log("spawn", templateId, "at", anchor, "->", created)
         if created and created ~= "" then
             pcall(Osi.SetFaction, created, EVIL)
-            local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, host)
+            local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
             if not okX then log("hostility threw:", eX) end
         end
     end)
-    if not ok then log("spawn threw for", templateId, ":", res) end
+    if not ok then log("spawn threw for", templateId) end
+    return ok
 end
 
--- The chaos roll: nothing / weak swarm / normal pack / elite strike / jackpot mix.
-local function rollPlan()
-    local r = rand(1, 100)
-    if r <= SILENT_CHANCE then return nil end
-    if r <= 40 then return { tier = "weak", n = rand(2, 5) } end
-    if r <= 75 then return { tier = "normal", n = rand(1, 3) } end
-    if r <= 92 then return { tier = "elite", n = rand(1, 2) } end
-    return { tier = "jackpot", elite = 1, weak = rand(2, 4) }
-end
-
-local function runPlan(host, plan)
-    if not plan then log("roll: silence"); return end
-    if plan.tier == "jackpot" then
-        log("roll: JACKPOT", plan.elite, "elite +", plan.weak, "weak")
-        for _ = 1, plan.elite do spawnOne(host, pick(POOLS.elite)) end
-        for _ = 1, plan.weak do spawnOne(host, pick(POOLS.weak)) end
-    else
-        log("roll:", plan.tier, "x", plan.n)
-        for _ = 1, plan.n do spawnOne(host, pick(POOLS[plan.tier])) end
+-- Fact row helper: SE rows are tables; field access shape learned from the v2 discovery dump.
+local function rowGuid(row)
+    if type(row) ~= "table" then return row end
+    for _, k in ipairs({ "Object", "Character", "Player", "PartyMember", "Target" }) do
+        if row[k] ~= nil and row[k] ~= "" then return row[k] end
     end
+    for _, v in ipairs(row) do
+        if type(v) == "string" and v ~= "" then return v end
+    end
+    return nil
 end
 
-local seen = {}  -- combatId -> true (one chaos roll per combat)
+local function factGuids(dbName)
+    local db = Osi[dbName]
+    if not db then log("no fact", dbName); return {} end
+    local ok, rows = pcall(function () return db:Get(nil) end)
+    if not ok then log(dbName .. ":Get threw:", rows); return {} end
+    local out = {}
+    if type(rows) == "table" then
+        for _, row in pairs(rows) do
+            local g = rowGuid(row)
+            if g then out[#out + 1] = g end
+        end
+    end
+    return out
+end
+
+-- Discovery: log combat roster intel (levels/races/names/factions) + raw fact shapes once.
+local function discover(players, host)
+    if not dumpedShapes then
+        dumpedShapes = true
+        pcall(function ()
+            log("DB_Is_InCombat rows dump:", Ext.DumpExport(Osi.DB_Is_InCombat:Get(nil)))
+            log("DB_Players rows dump:", Ext.DumpExport(Osi.DB_Players:Get(nil)))
+        end)
+    end
+    local hostFac = select(2, pcall(Osi.GetFaction, host))
+    log("host faction:", hostFac)
+    local enemyList = {}
+    local seenG = {}
+    for _, g in ipairs(players) do seenG[g] = true end
+    for _, g in ipairs(factGuids("DB_Is_InCombat")) do
+        if g and not seenG[g] then
+            seenG[g] = true
+            local lvl = select(2, pcall(Osi.GetLevel, g))
+            local race = select(2, pcall(Osi.GetRace, g, 0))
+            local nm = select(2, pcall(Osi.GetDisplayName, g))
+            local fac = select(2, pcall(Osi.GetFaction, g))
+            local hostile = (fac and fac ~= hostFac and fac ~= "") and true or false
+            log("in-combat:", g, "lvl", lvl, "race", race, "name", nm, "faction", fac, hostile and "ENEMY" or "")
+            if hostile then enemyList[#enemyList + 1] = { guid = g, level = tonumber(lvl), race = race } end
+        end
+    end
+    return enemyList
+end
+
+local function weightedTier()
+    local r = rand(1, 100)
+    if r <= 50 then return "weak" end
+    if r <= 85 then return "normal" end
+    return "elite"
+end
+
+local function reinforce(host, enemyList)
+    -- player level baseline: host level (average over party later if needed)
+    local okL, hostLevel = pcall(Osi.GetLevel, host)
+    local base = (okL and tonumber(hostLevel)) or 3
+    local budget = base * rand(BUDGET_LO, BUDGET_HI)
+    -- anchors: prefer spawning next to existing enemies (fallback: host)
+    local anchors = { host }
+    for _, e in ipairs(enemyList) do anchors[#anchors + 1] = e.guid end
+
+    log("budget:", budget, "(base lvl", base, "x rand", BUDGET_LO .. "-" .. BUDGET_HI, ")", "anchors:", #anchors - 1 + 1)
+    local spawned, spent = 0, 0
+    while spawned < MAX_SPAWNS do
+        local tier = weightedTier()
+        local cost = POOLS[tier]
+        if budget - spent < cost then
+            -- try cheaper tiers before giving up
+            if budget - spent >= POOLS.weak then tier = "weak"; cost = POOLS.weak
+            else break end
+        end
+        local ids = POOL_IDS[tier]
+        local templateId = ids[rand(1, #ids)]
+        local anchor = anchors[rand(1, #anchors)]
+        spawnOne(anchor, templateId)
+        spawned = spawned + 1
+        spent = spent + cost
+    end
+    log("done:", spawned, "spawned,", spent, "of", budget, "budget spent")
+end
 
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
         if seen[combatId] then return end
         seen[combatId] = true
+
+        local chance = TEST_MODE and 100 or math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
+        local roll = rand(1, 100)
+        if roll > chance then
+            misses = misses + 1
+            log("CombatStarted", combatId, "no reinforcements (roll", roll, ">", chance, "stack", misses .. ")")
+            return
+        end
+        misses = 0
+        log("CombatStarted", combatId, "TRIGGERED (chance", chance .. "%)")
+
         local okH, host = pcall(Osi.GetHostCharacter)
         if not okH then log("GetHostCharacter threw:", host); return end
-        if not host or host == "" then
-            local okP, players = pcall(Osi.GetPlayers)
-            if okP and players and players[1] then host = players[1] end
-        end
-        if not host or host == "" then log("no anchor, giving up"); return end
-        log("CombatStarted", combatId, "anchor", host)
-        runPlan(host, rollPlan())
+        if not host or host == "" then log("no host anchor, giving up"); return end
+
+        local players = factGuids("DB_Players")
+        log("party size (DB_Players):", #players)
+
+        local enemyList = {}
+        local okP, pc = pcall(Osi.CombatGetInvolvedPartyMembersCount, combatId)
+        if okP then log("combat party count:", pc) end
+        enemyList = discover(players, host)
+        log("enemies identified:", #enemyList)
+        reinforce(host, enemyList)
     end)
 end)
-if ok then log("Chaos.lua loaded, CombatStarted listener registered") else log("registration threw:", err) end
+if ok then log("Chaos.lua v2 loaded, CombatStarted listener registered") else log("registration threw:", err) end
 
--- Dev-console commands: !martin_chaos (one plan at host), !martin_wolf (single sanity wolf)
+-- Dev console: !martin_chaos (force one reinforcement wave at host), !martin_status, !martin_wolf
 Ext.RegisterConsoleCommand("martin_chaos", function ()
     local host = Osi.GetHostCharacter()
-    if host and host ~= "" then runPlan(host, rollPlan()) else log("console: no host") end
+    if host and host ~= "" then
+        local players = factGuids("DB_Players")
+        reinforce(host, discover(players, host))
+    end
+end)
+Ext.RegisterConsoleCommand("martin_status", function ()
+    log("status: misses", misses, "TEST_MODE", tostring(TEST_MODE))
 end)
 Ext.RegisterConsoleCommand("martin_wolf", function ()
     local host = Osi.GetHostCharacter()
