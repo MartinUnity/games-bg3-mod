@@ -164,6 +164,7 @@ local function spawnWildGroup(host, base)
 
     nextGroupId = nextGroupId + 1
     local group = { id = nextGroupId, members = {}, type = etype,
+                    faction = groupFaction,
                     ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
     local spawnedHumanoid = (etype == "Humanoid")
     for i = 1, count do
@@ -236,8 +237,8 @@ local function monitor()
                 end
             end
         end
-        if nearDist <= WILD_AGGRO_RANGE * WILD_AGGRO_RANGE then
-            aggroGroup(group, nearest)
+        if nearDist <= WILD_AGGRO_RANGE * WILD_AGGRO_RANGE and group.faction then
+            aggroGroup(group, nearest)   -- neutral travelers never auto-aggro
         elseif nearDist <= WILD_WATCHED_M * WILD_WATCHED_M then
             remaining[#remaining + 1] = group   -- watched: expiry clock holds
         else
