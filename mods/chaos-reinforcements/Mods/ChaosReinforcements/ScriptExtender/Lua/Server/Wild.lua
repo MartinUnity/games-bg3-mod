@@ -17,6 +17,7 @@ local WILD_TEST = true               -- 100% per heartbeat while testing
 local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups after an encounter
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
+local WILD_FORCE_TIER = 3            -- TESTING: force the NEXT group's tier (nil = off)
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
 local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
 local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
@@ -113,7 +114,14 @@ local function spawnWildGroup(host, base)
     if not etype then log("wild: no viable pool at level", base); return end
 
     -- tier roll (owner spec)
-    local roll = rand(1, 100)
+    local roll
+    if WILD_FORCE_TIER then
+        roll = 99   -- consumes the one-shot test override
+        log("wild: forced tier", WILD_FORCE_TIER, "(test knob consumed)")
+        WILD_FORCE_TIER = nil
+    else
+        roll = rand(1, 100)
+    end
     local tier = roll <= 80 and 1 or (roll <= 98 and 2 or 3)
     local count = rand(2, 6)
     local leaderSlots = {}
