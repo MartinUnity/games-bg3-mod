@@ -117,7 +117,7 @@ end
 
 -- spawn ----------------------------------------------------------------------
 local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
-    local ok = pcall(function ()
+    local ok, created = pcall(function ()
         local dx, dy = rand(1, 3), rand(1, 3)
         local created = Osi.CreateAtObject(entry.id, anchor, dx, dy, "", 1)
         if (not created or created == "") and (dx ~= 1 or dy ~= 1) then
@@ -146,11 +146,14 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
             if doEquip then EquipMob(created, base or 1, entry) end
+            return created
         else
             log("spawn FAILED", entry.id)
+            return nil
         end
     end)
     if not ok then log("spawn threw for", entry.id) end
+    return ok and created or nil
 end
 
 -- discovery: enemy intel + types ----------------------------------------------
@@ -330,8 +333,11 @@ local function reinforce(host, enemies, combatId)
                 local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
                 log("leader: type", ltype, "(pack", etype .. ")", leader.id,
                     "hp", leader.hp, "cost", leader.cost, "lvl", lvl, "(outside budget)")
-                spawnCreature(anchors[rand(1, #anchors)], leader, lvl, ltype == "Humanoid", base)
-                spawned = spawned + 1
+                local created = spawnCreature(anchors[rand(1, #anchors)], leader, lvl, ltype == "Humanoid", base)
+                if created then
+                    spawned = spawned + 1
+                    pcall(FlavorLeader, created, host)   -- villain name + popup announcement
+                end
             else
                 log("leader: no", ltype, "entries in DB")
             end

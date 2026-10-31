@@ -9,7 +9,7 @@
 -- v1 template-dump facts: keys are bare GUIDs (32016 of them); the E8b wolf GUID
 -- 41da0eff-b533-... IS present; prologue imp-instance GUID is NOT (matches story findings).
 
-local TAG = "MARTIN"
+local TAG = "CHAOS_PROBE"
 local LINES = {}
 
 local function flush()
