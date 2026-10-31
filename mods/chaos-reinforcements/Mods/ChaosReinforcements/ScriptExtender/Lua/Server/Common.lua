@@ -27,6 +27,23 @@ HEAVY_LEVEL = 5      -- heavy types (below) and heavy armor need this player lev
 HEAVY_TYPES = { Dragon = true, Giant = true, Celestial = true }
 LEVEL_JITTER = 2     -- SetLevel target = hostLevel + rand(-J, +J) above the soft cap
 
+-- registry of every character THIS MOD spawned (wave reinforcements + wild groups):
+-- lets the reinforcement engine recognize "this fight is against our own patrol"
+-- and skip stacking a second wave on top of it (owner request 2026-10-31, in-game:
+-- leftovers of an earlier wave became a patrol and triggered a fresh wave)
+local SPAWNED = {}
+function markSpawned(guid)
+    if guid and guid ~= "" then SPAWNED[guid] = true end
+end
+function isSpawned(guid)
+    return guid ~= nil and SPAWNED[guid] == true
+end
+
+-- over-level tolerance: SetLevel is refused by some templates (in-game: a native
+-- lvl-10 Flaming Fist caster kept its lvl-10 spell list while "hp 7" passed every
+-- pick gate); after spawning we read the real level and despawn above this line
+OVERLEVEL_TOLERANCE = 1   -- despawn if native lvl > base + LEVEL_JITTER + this
+
 -- Shared engine helpers (used by Chaos.lua AND Wild.lua):
 DEFAULT_TYPES = { "Beast", "Monstrosity", "Humanoid", "Undead", "Fiend" }
 

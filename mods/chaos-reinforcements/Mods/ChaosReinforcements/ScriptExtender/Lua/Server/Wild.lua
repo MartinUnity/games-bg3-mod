@@ -160,6 +160,16 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
             pcall(Osi.SetFaction, mob, faction)
         end
         pcall(Osi.SetLevel, mob, targetLevelFor(base))
+        -- self-correction: SetLevel is refused by some templates; a native lvl-10
+        -- caster with "hp 7" passes every pick gate, so verify and despawn
+        local okLv, lvlNow = pcall(Osi.GetLevel, mob)
+        local n = okLv and tonumber(lvlNow) or nil
+        if n and n > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
+            log("wild: over-level despawn:", entry.id, "lvl", n, "> base", base)
+            pcall(Osi.RequestDeleteTemporary, mob)
+            return nil
+        end
+        markSpawned(mob)
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)

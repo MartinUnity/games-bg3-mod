@@ -105,11 +105,21 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 end
             end
             pcall(Osi.SetFaction, created, EVIL)
+            -- self-correction: SetLevel is silently refused by some templates -
+            -- a native lvl-10 caster among lvl-3s is a TPK, despawn and re-pick
+            local lvlNow = tonumber(newLvl)
+            if lvlNow and base and lvlNow > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
+                log("over-level despawn:", entry.id, "lvl", lvlNow,
+                    "> base", base, "+ tolerance - re-picking")
+                pcall(Osi.RequestDeleteTemporary, created)
+                return nil
+            end
             local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
             log("spawn", entry.id, "hp", entry.hp, "ac", entry.ac or "?",
                 "str", entry.str or entry.dex or "?",
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
+            markSpawned(created)
             if doEquip then EquipMob(created, base or 1, entry) end
             return created
         else
@@ -182,6 +192,14 @@ end
 
 -- main wave -------------------------------------------------------------------
 local function reinforce(host, enemies, combatId)
+    -- never stack reinforcements on top of our own patrols/leftovers (owner request:
+    -- wave survivors became a roving pack, and the engine waved again onto them)
+    for _, e in ipairs(enemies) do
+        if isSpawned(e.guid) then
+            log("fight vs our own patrol - no reinforcements")
+            return
+        end
+    end
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
     -- party size: count the members actually involved in this combat when we can
@@ -209,6 +227,7 @@ local function reinforce(host, enemies, combatId)
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
     EquipResetPending()
+    local fails = 0
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
         local e = pickFrom(etype, budget - spent, base)
         if not e then
@@ -218,8 +237,13 @@ local function reinforce(host, enemies, combatId)
             log("pack: nothing fits budget", budget - spent, "at level", base)
             break
         end
-        spawnCreature(anchors[rand(1, #anchors)], e, targetLevel, etype == "Humanoid", base)
-        spawned, spent = spawned + 1, spent + e.cost
+        local created = spawnCreature(anchors[rand(1, #anchors)], e, targetLevel, etype == "Humanoid", base)
+        if created then
+            spawned, spent = spawned + 1, spent + e.cost
+        else
+            fails = fails + 1   -- over-level despawn or spawn failure: re-pick
+            if fails >= 3 then log("pack: giving up after 3 failed spawns"); break end
+        end
     end
 
     -- leader: roll once per pack (>= 2 mobs); same type ~90%, cross-type from the AFFINITY map.
