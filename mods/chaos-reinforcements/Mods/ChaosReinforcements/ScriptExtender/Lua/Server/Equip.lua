@@ -124,6 +124,19 @@ function EquipMob(created, base, entry)
     if #potions > 0 then log("equip: potions", #potions) end
 end
 
+-- level-appropriate pocket gold for leaders (owner spec 2026-10-31): leader gets a
+-- small gold drop, boss the next tier. Vanilla pocket tables scale with the level
+-- param of GenerateTreasure (subtable counts: Poor = 1-2x meager, Modest = 2x gold).
+local LEADER_GOLD_TABLE = "Gold_Pocket_Poor"
+local BOSS_GOLD_TABLE = "Gold_Pocket_Modest"
+function GiveLeaderGold(mob, isBoss)
+    local okL, lvl = pcall(Osi.GetLevel, mob)
+    local level = (okL and tonumber(lvl)) or 1
+    local table = isBoss and BOSS_GOLD_TABLE or LEADER_GOLD_TABLE
+    local okG = pcall(Osi.GenerateTreasure, mob, table, level, mob)
+    if okG then log("gold:", table, "lvl", level, "on", mob) end
+end
+
 -- auto-equip gear that GenerateTreasure rolls into our spawned humanoids
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)

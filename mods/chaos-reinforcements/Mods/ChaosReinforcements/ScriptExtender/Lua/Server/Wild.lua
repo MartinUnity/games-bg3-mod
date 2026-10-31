@@ -11,9 +11,10 @@
 
 -- Tunables ------------------------------------------------------------------
 local WILD_LEVEL_PATTERN = "^TUT_"    -- level-name gate (testing: tutorial only)
-local WILD_HEARTBEAT_MS = 45000      -- spawn roll interval while exploring
+local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (owner: 1-2 min)
 local WILD_CHANCE = 25               -- % per heartbeat
 local WILD_TEST = true               -- 100% per heartbeat while testing
+local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups after an encounter
 local WILD_MAX_GROUPS = 3            -- concurrent wild groups
 local WILD_SPAWN_MIN, WILD_SPAWN_MAX = 18, 28   -- meters from the player
 local WILD_SPOT_SLACK = 5        -- FindValidPosition correction allowance around the target
@@ -24,6 +25,7 @@ local WILD_MONITOR_MS = 2000        -- proximity check interval
 
 local currentLevel = ""
 local groups = {}   -- { { members = { guid, ... }, type = "..." } }
+local backoffMs = 0 -- remaining encounter cooldown; ticked down by the monitor
 
 local function rand(lo, hi) return math.random(lo, hi) end
 
@@ -99,7 +101,9 @@ local function aggroGroup(group, player)
         pcall(Osi.SetFaction, guid, EVIL)
         pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, guid, player)
     end
-    log("wild: group aggroed by", player, "(", #group.members, "mobs )")
+    backoffMs = rand(WILD_BACKOFF_MIN, WILD_BACKOFF_MAX) * 60000
+    log("wild: group aggroed by", player, "(", #group.members, "mobs ); backoff",
+        math.floor(backoffMs / 60000) .. "min")
 end
 
 local function spawnWildGroup(host, base)
@@ -166,6 +170,7 @@ local function heartbeat()
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
     if #groups >= WILD_MAX_GROUPS then return end
+    if backoffMs > 0 then return end   -- encounter cooldown (owner: no back-to-back combat)
     local okC, inCombat = pcall(Osi.IsInCombat, host)
     if okC and inCombat == 1 then return end
     local chance = WILD_TEST and 100 or WILD_CHANCE
@@ -178,6 +183,7 @@ end
 -- proximity monitor: the group turns hostile only when the player gets close
 local function monitor()
     pcall(Ext.Timer.WaitFor, WILD_MONITOR_MS, monitor)
+    if backoffMs > 0 then backoffMs = backoffMs - WILD_MONITOR_MS end
     if #groups == 0 then return end
     local players = factGuids("DB_Players", 1)
     local host = Osi.GetHostCharacter()

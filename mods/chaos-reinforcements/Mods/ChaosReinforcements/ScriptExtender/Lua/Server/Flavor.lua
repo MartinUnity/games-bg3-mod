@@ -130,6 +130,9 @@ function FlavorLeaderCommon(created, isBoss)
     if LEADER_BUFFS and created then
         applyLeaderBuffs(created)
     end
+    if created then
+        pcall(GiveLeaderGold, created, isBoss)   -- defined in Equip.lua (loaded first)
+    end
     return name
 end
 
