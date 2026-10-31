@@ -136,13 +136,29 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Full pipeline proven: pak → SE v33 → mod → `Osi.CreateAtObject` (name+`_`+GUID root template,
   anchor=GetHostCharacter) → `SetFaction(EVIL)` → `SetHostileAndEnterCombat(EVIL, HERO, ...)`
   with the E8b pair verbatim → joins the fight as a red enemy.
-- **Chaos engine v2 = reinforcement engine (2026-10-31, installed, awaiting playtest):** owner
+- **Chaos engine v3 = data-driven reinforcement engine (2026-10-31, written+packed, awaiting
+  playtest):** owner
   spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=true forces 100%), spawn budget
-  = host GetLevel x rand(2,4), tier-proxy costs (1/2/4), max 8/combat, anchors = existing
+  = host GetLevel x rand(2,4) x (1 + 0.15 x max(0, party-4)), max 8/combat, anchors = existing
   ENEMIES when known (spawns next to the mobs you fight), hostility = proven EVIL/HERO pair.
-  **Discovery logging**: every CombatStarted logs each participant's `GetLevel`/`GetRace`/
-  `GetDisplayName`/`GetFaction` + one raw dump of `DB_Is_InCombat`/`DB_Players` fact-row shapes
-  → feeds race-affine pools + real level costs next iteration (owner wants: same-category mobs,
+  **New in v3 (vs v2):** (a) `Server/CreatureDB.lua` — generated offline by
+  `tools/build_creature_db.py` (`tools/pool_types.py` is its template→stats→type resolver):
+  674 generic spawnable creatures in 14 D&D type groups (Humanoid 417, Undead 61, Beast 50,
+  Aberration 39, Elemental 20, Fiend 18, Monstrosity 18 …), each `{id = Name_GUID, hp, cost =
+  hp/10}`; sources = `/tmp/opencode/rt/*.lsx` (converted merged root-template tables), the
+  16G vanilla unpack at `/home/martin/Documents/mods/bg3-new/bg3-vanilla-data` (stats `using`
+  chain → `_Type` + Vitality), and the live 32017-entry dump as instantiation ground truth.
+  ⚠️ Regeneration needs those paths; `/tmp` may be wiped. `BootstrapServer.lua` now
+  `Ext.Require`s `Server/CreatureDB.lua` BEFORE `Server/Chaos.lua`. CINE_/WIP/TOBEDELETED
+  placeholder templates are filtered (they ARE in the live dump and would spawn garbage).
+  (b) Type affinity: `RACE_TO_TYPE` (Osiris `GetRace` string → D&D type) + dominant enemy type
+  decides the pool; unknown races log `type ?` so the map grows from `MARTIN_chaos.log`.
+  (c) Level scaling: `Osi.SetLevel(created, hostLevel + rand(-2,2))` with GetLevel verify
+  (owner runs levelmax 20/50 — fodder must not stay level 1). (d) 20% leader wildcard
+  (Monstrosity/Humanoid, +0-2 extra levels, ≤ half budget). (e) Sample dump of
+  `Ext.StaticData.GetAll("Race")` resource fields (candidate runtime race→type upgrade).
+  **Discovery logging**: every CombatStarted logs each enemy's `GetLevel`/`GetRace`/type
+  (feeds RACE_TO_TYPE growth; owner wants: same-category mobs,
   occasional leader types, party-size factored in; ~6-8 party chars via NPC-keeper mod).
   Osiris discovery toolkit confirmed in `story_header.div`: queries `GetLevel`, `GetRace(c,0)`,
   `GetDisplayName`, `GetPosition`, `IsInCombat`, `CombatGetInvolvedPartyMembersCount`; facts
@@ -170,13 +186,17 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
   to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
-- **Waiting on owner (reinforcement v2 playtest):** restart → mod stays enabled → play a few
+- **Waiting on owner (reinforcement v3 playtest):** restart → mod stays enabled → play a few
   real combats (TEST_MODE = 100% spawn right now). Then read profile
-  `Script Extender/MARTIN_chaos.log`: it shows party size, every participant's
-  level/race/name/faction (feeds race-affine pool design) and the spawn sequence. Watch for:
+  `Script Extender/MARTIN_chaos.log`: it shows party size, every enemy's
+  level/race/type (feeds RACE_TO_TYPE growth) and the spawn sequence. Watch for:
   enemies identified count (if 0 at CombatStarted, `DB_Is_InCombat` is populated later → need
-  a tick-delayed retry), raw fact-row shape dump (field-name accessors), mob placement next to
-  existing enemies.
+  a tick-delayed retry), whether `SetLevel` stuck (spawn lines show `lvl <verified>`; if it
+  shows the target instead of the read-back level or `SetLevel threw:`, `SetLevel` on a
+  freshly created template instance needs a tick delay), type affinity sanity (fiend fight →
+  Fiend pool), mob placement next to existing enemies, and the Race static-resource dump line
+  (first combat only) — if its fields include a usable race→type walk, replace the seeded
+  RACE_TO_TYPE map with a runtime resolver next iteration.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load
@@ -235,13 +255,13 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    `bin/bg3-print.log` (`[MARTIN] ... bootstrap loaded`, SessionLoaded, template dump) + profile
    `Script Extender/MARTIN_root_templates.txt` (via `Ext.IO.SaveFile`). That dump settles the
    imp-instance question and enumerates the **global root template pool** the chaos engine draws on.
-3. **Chaos engine in Lua (user's stated goal: never know *if* extra mobs spawn or how strong).**
-   On `CombatStarted` (SE listener, proven arity-1): independent rolls — spawn-chance, count,
-   power tier; per-level (or tier) template pools from the dump; anchor at an enemy/valid
-   position, not `GetHostCharacter`; join the fight via SE calls equivalent to
-   `SetHostileAndEnterCombat` / vanilla join pattern. Ship entirely inside `MARTIN_MoreMobs` pak
-   (`Server/*.lua`); text goals only if something needs story state. Fold the HP-boost stats in
-   `Public/MARTIN_MoreMobs/Stats/...` later for a single artifact.
+3. ~~**Chaos engine in Lua**~~ **DONE — v3 packed+installed (2026-10-31), awaiting playtest:**
+   stacking trigger, typed 674-creature DB, type affinity, budget with party knob, SetLevel
+   scaling, leader wildcard (see §5). **Next iteration after playtest:** custom stats file in
+   the pak (`Public/MARTIN_MoreMobs/Stats/Generated/Data/`) with CHAOS buff statuses for
+   HP/stat scaling on spawned mobs (fold into single artifact, keeps high-level play
+   interesting); tune budget formula with observed party size; grow RACE_TO_TYPE from the
+   discovery log (or runtime StaticData Race walk if the sample dump shows usable fields).
 4. Optional big win: lslib **`StoryCompiler`** to compile `MARTIN_*.txt` offline — now much
    closer: gplex/gppg work on this box (Springcomp dotnet tools + QUT.Gppg swap, see
    lua-modding.md §4), and `story_header.div`/`story_definitions.div` exist under
@@ -260,8 +280,12 @@ deploy script), `d09c810` (this handover + AGENTS.md pointer), plus a follow-up 
 `spawn-chains.md` sec.3.1.2 (E7 result, E8 plan). Same-day follow-ups: `6ed3c6a` (E8b armed,
 e8b_inject.py), `5bb1ea0` (new-game-refusal diagnosis: query-in-AND fix, check_goal.py
 query/call placement, GustavX host, live-modsettings correction), and the E8b-positive + E8-armed
-docs commit. `bg3-vanilla-data/` is gitignored and **absent/empty** on this checkout — re-unpack
-before using it as a baseline.
+docs commit. Then `c79e339` (toolchain), `2032746`/`da9e266` (SE probe v2/v3), `8e3eed9`
+(chaos v1), `46e1ed9` (chaos v2). Latest: **v3 commit** (Chaos.lua v3 DB-driven rewrite,
+CreatureDB.lua 674 creatures, build_creature_db.py + pool_types.py, BootstrapServer require
+order, this handover update). `bg3-vanilla-data/` is gitignored and **absent/empty** on this
+checkout — the 16G unpack the tools use lives at `/home/martin/Documents/mods/bg3-new/
+bg3-vanilla-data` (external, also outside git).
 
 ## 10. Session hygiene note
 

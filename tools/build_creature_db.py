@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+"""Build Server/CreatureDB.lua: every generic, spawnable creature root template in the game,
+tagged with creature type (Aberration..Undead) and base HP, for the MARTIN_MoreMobs chaos engine.
+
+Sources (all local, offline):
+1. Root-template tables: _merged.lsf from Shared/SharedDev/Gustav/GustavDev/Honour/GustavX paks,
+   converted to lsx XML via tools/divine.sh (extract-single-file + convert-resource -i lsf -o lsx)
+   into /tmp/opencode/rt/*.lsx. Node attrs used: Name, MapKey (own guid), Stats, Type=="character".
+2. Vanilla stats (bg3-vanilla-data unpack): stats entry -> `using` chain -> `_Type` parent + Vitality.
+3. In-game root-template dump (profile Script Extender/MARTIN_root_templates.txt): the ground truth
+   for what GetAllRootTemplates actually contains (guid -> name). A DB entry must appear there,
+   otherwise CreateAtObject cannot instantiate it.
+
+Filters: only Type=="character", resolvable type, non-story/novelty names (S_*, bosses, named
+NPCs, summons, wildshapes, civilians, hallucinations...).
+
+Output: mods/more-mobs/Mods/MARTIN_MoreMobs/ScriptExtender/Lua/Server/CreatureDB.lua
+Usage:  python3 tools/build_creature_db.py
+"""
+import re
+import pathlib
+import sys
+
+RT = pathlib.Path("/tmp/opencode/rt")
+LSX_FILES = ["merged.lsx", "shareddev.lsx", "gustav.lsx", "gustavdev.lsx", "honour.lsx", "gustavx.lsx"]
+VANILLA = pathlib.Path("/home/martin/Documents/mods/bg3-new/bg3-vanilla-data")
+DUMP = pathlib.Path("/home/martin/.local/share/Steam/steamapps/compatdata/1086940/pfx/drive_c/"
+                    "users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/Script Extender/"
+                    "MARTIN_root_templates.txt")
+OUT = pathlib.Path("mods/more-mobs/Mods/MARTIN_MoreMobs/ScriptExtender/Lua/Server/CreatureDB.lua")
+
+TYPESET = {"Aberration", "Beast", "Celestial", "Construct", "Dragon", "Elemental", "Fey",
+           "Fiend", "Giant", "Humanoid", "Monstrosity", "Ooze", "Plant", "Undead"}
+
+# name patterns that mark story/unique/novelty creatures we never want as generic chaos mobs
+BAD_NAME = re.compile(
+    r"(^S_|_S_|^UNI_|^SCL_|^TUT_|^ACT\d|^MO_|^DEN_|^LOW_|^UPP_|^CMP_|^WLD_|^GLO_|^QRY_|^DRD_|^MS_"
+    r"|Boss|Raphael|Vlaakith|Gortash|Orin|Yugot|Endbringer|Absolute|Cazador|Kasster|Thaniel"
+    r"|Companion|Summon|Wildshape|Portrait|Civilian|PlayerWildshape|Hallucination|Duplicity"
+    r"|Mannequin|_Act\d|DrinkingBuddy|Cub\b|Dad\b|Pregnant|Tutorial|Children|Baby|Hunt|Dialog|Double"
+    r"|Gazer_.*Mylac|Gazemaster|Woe_|Mephit_Grease_Young|Crippled"
+    r"|^\[WIP\]|(^|_)CINE_|(^|_)WIP_|TOBEDELETED)", re.I)
+
+# stats entries may also betray bossiness
+BAD_STATS = re.compile(r"(Boss|Commander|General|Prince|Pope)", re.I)
+
+
+def load_stats():
+    entries = {}
+    entry_re = re.compile(r'^new entry "([^"]+)"')
+    using_re = re.compile(r'^using "([^"]+)"')
+    vit_re = re.compile(r'^data "Vitality" "(\d+)"')
+    for f in sorted(VANILLA.rglob("Stats/Generated/Data/Character*.txt")):
+        cur = None
+        for line in f.read_text(errors="replace").splitlines():
+            m = entry_re.match(line)
+            if m:
+                cur = m.group(1)
+                entries.setdefault(cur, {})
+                continue
+            if cur is None:
+                continue
+            if line.startswith("new "):
+                cur = None
+                continue
+            m = using_re.match(line)
+            if m and "using" not in entries[cur]:
+                entries[cur]["using"] = m.group(1)
+                continue
+            m = vit_re.match(line)
+            if m and "hp" not in entries[cur]:
+                entries[cur]["hp"] = int(m.group(1))
+    return entries
+
+
+def resolve_type(stats, entries, depth=0):
+    e = entries.get(stats)
+    if e is None or depth > 10:
+        return None, None
+    parent = e.get("using")
+    if parent is None or parent == "_Base":
+        return None, e.get("hp")
+    t = parent.lstrip("_")
+    if t in TYPESET:
+        return t, e.get("hp")
+    t2, hp2 = resolve_type(parent, entries, depth + 1)
+    return t2, (e.get("hp") or hp2)
+
+
+def load_dump_keys():
+    keys, names = set(), {}
+    if not DUMP.is_file():
+        print(f"WARN: no in-game dump at {DUMP}; skipping instantiation check")
+        return keys, names
+    for line in DUMP.read_text(errors="replace").splitlines():
+        parts = line.split("\t")
+        if parts:
+            keys.add(parts[0].strip())
+            if len(parts) > 1:
+                names[parts[0].strip()] = parts[1].strip()
+    return keys, names
+
+
+def scan_templates():
+    """name -> (guid, statsname); attributes are alphabetical, so per node the order is
+    MapKey (own guid) -> Name -> Stats -> Type; each MapKey opens a record."""
+    out = {}
+    name_re = re.compile(r'<attribute id="Name" type="LSString" value="([^"]+)"')
+    mapkey_re = re.compile(r'<attribute id="MapKey" type="FixedString" value="([^"]+)"')
+    stats_re = re.compile(r'<attribute id="Stats" type="FixedString" value="([^"]*)"')
+    type_re = re.compile(r'<attribute id="Type" type="FixedString" value="([^"]+)"')
+
+    def flush(cur):
+        if cur.get("name") and cur.get("guid") and cur.get("type") == "character":
+            out[cur["name"]] = (cur["guid"], cur.get("stats", ""))
+
+    for fn in LSX_FILES:
+        p = RT / fn
+        if not p.is_file():
+            print(f"WARN: missing {p}")
+            continue
+        cur = {}
+        for line in p.read_text(errors="replace").splitlines():
+            m = mapkey_re.search(line)
+            if m:
+                flush(cur)
+                cur = {"guid": m.group(1)}
+                continue
+            m = name_re.search(line)
+            if m and cur.get("guid"):
+                cur["name"] = m.group(1)
+                continue
+            m = stats_re.search(line)
+            if m and cur.get("guid"):
+                cur["stats"] = m.group(1)
+                continue
+            m = type_re.search(line)
+            if m and cur.get("guid"):
+                cur["type"] = m.group(1)
+        flush(cur)
+    return out
+
+
+def main():
+    stats = load_stats()
+    dump_keys, dump_names = load_dump_keys()
+    templates = scan_templates()
+    print(f"stats entries: {len(stats)}; root templates (character): {len(templates)}; dump keys: {len(dump_keys)}")
+
+    rows = {}
+    for name, (guid, statsname) in templates.items():
+        if BAD_NAME.search(name) or BAD_STATS.search(statsname):
+            continue
+        if statsname not in stats:
+            continue
+        t, hp = resolve_type(statsname, stats)
+        if not t or hp is None:
+            continue
+        # must be instantiable per the live dump
+        if dump_keys and guid not in dump_keys:
+            continue
+        cost = max(1, round(hp / 10))
+        rows[name] = (guid, t, hp, cost, statsname)
+
+    print(f"generic spawnable creatures: {len(rows)}")
+    bytype = {}
+    for name, (guid, t, hp, cost, sn) in rows.items():
+        bytype.setdefault(t, []).append((name, guid, hp, cost))
+    for t in sorted(bytype):
+        print(f"  {t}: {len(bytype[t])}")
+
+    lines = ["-- Auto-generated by tools/build_creature_db.py - do not edit by hand.",
+             "-- MARTIN_MoreMobs creature DB: generic spawnable root templates,",
+             "-- grouped by creature type. {id, hp (base), cost (hp/10 budget proxy)}",
+             "CHAOS_DB = {"]
+    for t in sorted(bytype):
+        lines.append(f"  {t} = {{")
+        for name, guid, hp, cost in sorted(bytype[t]):
+            lines.append(f'    {{ id = "{name}_{guid}", hp = {hp}, cost = {cost} }},')
+        lines.append("  },")
+    lines.append("}")
+    OUT.write_text("\n".join(lines) + "\n")
+    print(f"wrote {OUT} ({OUT.stat().st_size} bytes)")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
