@@ -4,6 +4,25 @@ Small parking lot for observations and half-ideas that are NOT worth fixing righ
 so they don't get lost. Move items to HANDOVER "ranked next moves" (or resolve them)
 when they graduate. Date each entry; delete when done or rejected.
 
+## Wild ambushes: random fights WITHOUT an existing combat (owner question, 2026-10-31)
+
+Vanilla has NO engine-level random encounters: the Osiris header only offers
+`Random(modulo, out)` + trigger hooks (`EnteredTrigger`, `TriggerGetRandomPosition`),
+and triggers are level objects placed in binary level data — every vanilla "random"
+ambush is a designer-authored trigger + small authored candidate set rolled at runtime.
+BUT the chaos engine can do genuinely unprovoked random fights with proven primitives:
+- heartbeat `Ext.Timer` loop (30-60 s) while exploring + not-in-combat/not-in-dialog
+  checks (guard with `DB_Is_InCombat` / `IsInCombat` query);
+- spawn near but not on the player: `GetPosition(player)` then `CreateAt(template,
+  x, y, z, ...)` (raw coordinates — call exists, story_header.div:507) with offsets,
+  or `CreateAtObject` at larger distances;
+- `SetFaction` + `SetHostileAndEnterCombat` STARTS the combat (no existing fight
+  needed — the call's purpose is starting one);
+- same pools/budget/gates/leader logic as the reinforcement engine; maybe a lower
+  chance + the existing stacking trigger, and honour-gate at release.
+Candidate UX wrinkle: pick mob type by the region? (no cheap region->theme map yet;
+RACE_TO_TYPE-style discovery would be needed — or just roll the DEFAULT_TYPES pool).
+
 ## Spawn placement / combat edge (owner note, 2026-10-31)
 
 A leader spawned next to an enemy at the edge of the player's vision and stood OUT of
