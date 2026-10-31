@@ -252,6 +252,16 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
      Lua modules remain the DB medium. Phase 2 (when we want cost control): ItemDB.lua from
      Weapon.txt/Armor.txt/Object.txt (`RootTemplate` GUID → dump Name_GUID, `ValueScale`,
      `ValueLevel`, `Proficiency Group`).
+- **v3.6: proficiency-driven equipment** (owner insight: spawned humanoids fought barehanded;
+  real Merregons wield glaives). Vanilla stats expose the intent: weapon-users carry
+  `data "Proficiency Group"` (Merregon = `MartialWeapons;SimpleWeapons;HeavyArmor`), innate
+  attackers (Wolf) have NONE — only `UnarmedAttackAbility`. CreatureDB entries now carry
+  `prof` + `unarmed`; equipment rolls: martial→`ST_MartialMeleeWeapons` / simple table /
+  dex>str→`ST_Finesse_MeleeWeapons`; unarmed-without-prof = designed innate attacker → no
+  weapon (never replace innate attacks); armor = highest prof tier, no armor prof → keep
+  native AC; jackpot tier (lvl ≥4) upgrades to magic/scaled tables (`ST_*_1`,
+  `ST_Finesse_MeleeWeapons_Magic`). Useful extra vanilla tables found: `ST_RandomPotion`,
+  `ST_RandomConsumable`, `ST_Throwable` (chaos fodder for later).
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load
