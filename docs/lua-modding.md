@@ -143,6 +143,20 @@ hallucinated. Both fixable, and `mods/chaos-reinforcements/` is the corrected sk
 - **Deploy helper:** `tools/pack_mod.sh [workspace] [--install|--remove]` stages the workspace
   to /tmp, packs via divine.sh, verifies entry count, and installs
   `ChaosReinforcements.pak` into the profile `Mods/` dir. Then enable in-game.
+- **Localization (proven route, 2026-10-31):** custom display names for stat entries
+  (spells, statuses) need a loca file at the PAK ROOT: `Localization/English/<Name>.loca`
+  (exactly how the third-party paks on this install ship theirs). Recipe:
+  1. write the xml source (workspace `Localization/English/<Name>.xml`):
+     `<contentList><content contentuid="h<uuid-with-dashes-swapped-for-g>" version="1">Text</content>...</contentList>`
+     (handle encoding: `a19696e1-f837-...` becomes `ha19696e1gf837g...`);
+  2. `tools/divine.sh -g bg3 -a convert-loca -s <abs>.xml -d <abs>.loca` (paths must be
+     absolute; the `convert-resource` verb does NOT accept `xml` as input format - use the
+     dedicated `convert-loca` action; xml<->loca round-trip verified);
+  3. reference the handle in stats: `data "DisplayName" "h...;1"`;
+  4. `pack_mod.sh` stages a workspace `Localization/` dir automatically. Current file:
+     `Localization/English/ChaosReinforcements.xml/.loca` (toggle spell names).
+  Unverified-handle warning sign in-game: the name shows as `ResStr_<digits>` (seen with
+  a bad `SetStoryDisplayName` rename earlier).
 - **Native alternative (⚠️ unexplored):** `lenonk/bg3le` is a Script Extender for the *native
   Linux* build ("SE mods load straight out of their .paks or from loose directories via
   `BG3LE_MOD_PATH`"). Our install is the Windows build under Proton, so it does not apply

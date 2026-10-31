@@ -314,6 +314,7 @@ local function heartbeat()
         if currentLevel:find(p) then allowed = true break end
     end
     if not allowed then return end
+    if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
     if #groups >= WILD_MAX_GROUPS then return end

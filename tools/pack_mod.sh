@@ -44,11 +44,17 @@ fi
 stage="$(mktemp -d /tmp/opencode/pakbuild.XXXX)"
 cp -r "$WORKSPACE/Mods" "$stage/"
 # mods can also ship game data (e.g. Public/<Module>/Stats/... for custom stat entries)
+# and localization (top-level Localization/English/*.loca, built from the .xml source
+# via tools/divine.sh -a convert-loca - proven route: third-party paks on this install
+# ship exactly that layout)
+srccount="$(find "$stage/Mods" -type f | wc -l)"
 if [ -d "$WORKSPACE/Public" ]; then
     cp -r "$WORKSPACE/Public" "$stage/"
-    srccount="$(find "$stage/Mods" "$stage/Public" -type f | wc -l)"
-else
-    srccount="$(find "$stage/Mods" -type f | wc -l)"
+    srccount="$((srccount + $(find "$WORKSPACE/Public" -type f | wc -l)))"
+fi
+if [ -d "$WORKSPACE/Localization" ]; then
+    cp -r "$WORKSPACE/Localization" "$stage/"
+    srccount="$((srccount + $(find "$WORKSPACE/Localization" -type f | wc -l)))"
 fi
 "$DIVINE" -g bg3 -a create-package -s "$stage" -d "$stage/$folder.pak" >/dev/null
 # guard: Divine can silently emit a header-only pak

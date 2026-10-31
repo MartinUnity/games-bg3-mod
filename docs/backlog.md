@@ -90,8 +90,9 @@ approximate it. Also queued:
   difficulty check (currently the engine runs on every difficulty — intentional for
   testing).
 - TEST_MODE / LEADER_TEST / EQUIP test knobs -> config or remove.
-- Custom bark/bark-like text needs a loca file in the pak (if we ever want custom
-  tell lines instead of DebugText).
+- Custom bark/bark-like text: loca route now PROVEN and in the pak
+  (`Localization/English/ChaosReinforcements.loca`, recipe in docs/lua-modding.md) - if we
+  ever want custom tell lines instead of DebugText, just extend the xml and reconvert.
 - Version bump + workshop-ready description in meta.lsx.
 
 ## DECISION: all spawns stay Temporary=1 (owner confirmed 2026-10-31)

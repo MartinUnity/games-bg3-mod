@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentList>
+	<content contentuid="h5a1e8f2ag9c44g4d31gb7e0g2f6a8d3c91b7" version="1">Chaos: Toggle Wild Groups</content>
+	<content contentuid="h8f3d2b71g4e2ag4c9fg9d81g3b0c5e7a2d14" version="1">Toggles the chaos engine's random wild encounter groups (wandering patrols) on or off. No action cost - the reply floats above your head.</content>
+	<content contentuid="hc4b9f7e2g1d3ag4e8bg8f52g9a6d0c3b7e21" version="1">Chaos: Toggle Reinforcements</content>
+	<content contentuid="h2e7c5a19g6f8dg4b3eg9c41g7d5e0a2b8f63" version="1">Toggles the chaos engine's combat reinforcements (extra mobs joining fights) on or off. No action cost - the reply floats above your head.</content>
+</contentList>

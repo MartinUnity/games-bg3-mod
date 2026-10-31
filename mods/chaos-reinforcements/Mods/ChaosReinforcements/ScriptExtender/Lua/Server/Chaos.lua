@@ -302,6 +302,12 @@ local ok, err = pcall(function ()
         if seen[combatId] then return end
         seen[combatId] = true
 
+        -- in-game toggle (Toggle.lua shout): no rolls, stack untouched
+        if not CHAOS_STATE.reinforce then
+            log("CombatStarted", combatId, "skipped (reinforcements toggled OFF)")
+            return
+        end
+
         local chance = TEST_MODE and 100 or math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
         local roll = rand(1, 100)
         if roll > chance then
@@ -338,7 +344,9 @@ Ext.RegisterConsoleCommand("chaos_status", function ()
     local n = 0
     for _ in pairs(seen) do n = n + 1 end
     log("status: misses", misses, "TEST_MODE", tostring(TEST_MODE),
-        "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n)
+        "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n,
+        "| toggles: wilds", CHAOS_STATE.wilds and "ON" or "OFF",
+        "reinforce", CHAOS_STATE.reinforce and "ON" or "OFF")
 end)
 Ext.RegisterConsoleCommand("chaos_wolf", function ()
     local host = Osi.GetHostCharacter()
