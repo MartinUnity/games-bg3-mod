@@ -18,15 +18,13 @@ local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups aft
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
 local WILD_FORCE_TIER = 3            -- TESTING: force the NEXT group's tier (nil = off)
-local WILD_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
--- ^ faction override applied at spawn. Base factions (vanilla Factions.lsx):
---   Evil NPC is a CHILD of Evil 4be9261a (our proven hostile pair), so attacking
---   them should be crime/approval-free like any enemy, without inheriting a story
---   settlement faction from the template (observed: humanoid templates default to
---   generic "Neutral NPC" = yellow + companion-approval hit when attacked; some
---   template could in principle carry a real story faction - override kills that
---   risk). If testing shows Evil NPC mobs auto-attack on sight, set to nil to
---   fall back to template default.
+local WILD_EVIL_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
+local WILD_EVIL_CHANCE = 50         -- % of groups that spawn as (red) Evil NPC; the rest
+-- keep their template-default faction (observed: generic "Neutral NPC" = harmless
+-- yellow "resting mercenaries" the player can run through - owner likes the mix).
+-- Evil NPC is a CHILD of our proven Evil 4be9261a pair (vanilla Factions.lsx), so
+-- red groups are crime/approval-free to attack and no template can inherit a story
+-- settlement faction when the override applies. Evil groups may attack on sight.
 local WILD_COUNTDOWN_EVERY = 60       -- monitor ticks between "time to despawn" logs (60 x 2s = 2min)
 
 local nextGroupId = 0
@@ -83,7 +81,7 @@ end
 -- PreventTeleportOnFailure=0 the engine falls back to the nearest valid position on
 -- its own if the exact spot is bad. A delayed verify pass logs the final position so
 -- playtests can confirm the mob actually left the host's feet.
-local function spawnWildMob(entry, host, x, y, z, base, doEquip)
+local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
     local ok, created = pcall(function ()
         local mob = Osi.CreateAtObject(entry.id, host, 1, 0, "", 1)
         if not mob or mob == "" then
@@ -94,8 +92,8 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip)
         if not okA then
             log("wild: AppearAtPosition errored for", mob, "- it stays near the host!")
         end
-        if WILD_FACTION then
-            pcall(Osi.SetFaction, mob, WILD_FACTION)
+        if faction then
+            pcall(Osi.SetFaction, mob, faction)
             local okF, fac = pcall(Osi.GetFaction, mob)
             log("wild: faction set,", fac)
         end
@@ -140,6 +138,9 @@ local function spawnWildGroup(host, base)
         roll = rand(1, 100)
     end
     local tier = roll <= 80 and 1 or (roll <= 98 and 2 or 3)
+
+    -- per-group faction roll: red Evil NPC pack or harmless neutral "travelers"
+    local groupFaction = (rand(1, 100) <= WILD_EVIL_CHANCE) and WILD_EVIL_FACTION or nil
     local count = rand(2, 6)
     local leaderSlots = {}
     if tier == 2 then count = count + rand(1, 4); leaderSlots = { 2 } end
@@ -172,7 +173,7 @@ local function spawnWildGroup(host, base)
         -- per-member jitter around the validated group center (WILD_CLUSTER/2 each way)
         local jitter = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
         local jitterZ = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
-        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, spawnedHumanoid)
+        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, spawnedHumanoid, groupFaction)
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then
@@ -189,6 +190,7 @@ local function spawnWildGroup(host, base)
     end
     groups[#groups + 1] = group
     log("wild: spawned group", nextGroupId, "tier", tier, "(roll", roll .. ")", #group.members, "mobs,",
+        groupFaction and "(evil pack)" or "(neutral travelers)",
         "type", etype, "at ~", radius .. "m")
 end
 
