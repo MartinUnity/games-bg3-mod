@@ -55,17 +55,29 @@ local granted = {}   -- per-character, so late joiners don't re-toast every hear
 
 local function grant(char)
     if not char or char == "" or granted[char] then return end
+    local ok1 = pcall(Osi.AddSpell, char, TOGGLE_SPELL_WILDS, 1, 0)
+    local ok2 = pcall(Osi.AddSpell, char, TOGGLE_SPELL_REINFORCE, 1, 0)
+    if not (ok1 and ok2) then return end   -- stay unmarked so grantAll can retry later
     granted[char] = true
-    pcall(Osi.AddSpell, char, TOGGLE_SPELL_WILDS, 1, 0)
-    pcall(Osi.AddSpell, char, TOGGLE_SPELL_REINFORCE, 1, 0)
     log("toggle: shouts granted to", char)
 end
 
-local function grantAll()
-    local players = factGuids("DB_Players", 1)
-    local host = Osi.GetHostCharacter()
-    if host and host ~= "" and not granted[host] then players[#players + 1] = host end
-    for _, p in ipairs(players) do grant(p) end
+-- Grant the shouts to everyone in the player DB + the host. MUST NOT run inside the
+-- SessionLoaded handler: Osiris DB reads are restricted there (in-game 2026-10-31:
+-- "DB_Players:Get threw: ... restricted context", and the follow-up GetHostCharacter
+-- kill aborted the whole callback, so nothing was granted). Call this from a timer.
+local function grantAll(attempt)
+    local ok, err = pcall(function ()
+        local players = factGuids("DB_Players", 1)
+        local host = Osi.GetHostCharacter()
+        if host and host ~= "" and not granted[host] then players[#players + 1] = host end
+        for _, p in ipairs(players) do grant(p) end
+        -- DB still unreadable (early session)? try again in 2s, give up after ~20s
+        if #players == 0 and (attempt or 1) < 10 then
+            pcall(Ext.Timer.WaitFor, 2000, function () grantAll((attempt or 1) + 1) end)
+        end
+    end)
+    if not ok then log("toggle: grantAll failed:", tostring(err)) end
 end
 
 -- listeners --------------------------------------------------------------------
@@ -88,8 +100,9 @@ pcall(function ()
 
     Ext.Events.SessionLoaded:Subscribe(function ()
         restore()
-        grantAll()
         log("Toggle.lua loaded (shouts:", TOGGLE_SPELL_WILDS .. ",", TOGGLE_SPELL_REINFORCE .. ")")
+        -- deferred: DB reads are restricted until the story is actually running
+        pcall(Ext.Timer.WaitFor, 2000, function () grantAll(1) end)
     end)
 end)
 
