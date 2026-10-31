@@ -58,24 +58,37 @@ local function findGroupSpot(px, py, pz, host)
     return nil
 end
 
--- spawn one mob at a position; returns the created guid (or nil)
-local function spawnWildMob(entry, x, y, z, base, doEquip)
+-- spawn one mob at a position; returns the created guid (or nil).
+-- Raw CreateAt refuses even FindValidPosition-validated spots in cramped interiors
+-- (in-game v3.15: every member spawn failed on walkable ground), so instead we use
+-- the PROVEN anchor route (CreateAtObject: engine solves placement at the host) and
+-- then AppearAtPosition to move the mob out to the target spot - with
+-- PreventTeleportOnFailure=0 the engine falls back to the nearest valid position on
+-- its own if the exact spot is bad. A delayed verify pass logs the final position so
+-- playtests can confirm the mob actually left the host's feet.
+local function spawnWildMob(entry, host, x, y, z, base, doEquip)
     local ok, created = pcall(function ()
-        local jitter = WILD_CLUSTER
-        local mx = x + rand(-jitter, jitter) * 0.5
-        local mz = z + rand(-jitter, jitter) * 0.5
-        local mob = Osi.CreateAt(entry.id, mx, y, mz, 1, 1, "")
-        if (not mob or mob == "") then
-            mob = Osi.CreateAt(entry.id, x, y, z, 1, 1, "")  -- retry at the validated center
-        end
+        local mob = Osi.CreateAtObject(entry.id, host, 1, 0, "", 1)
         if not mob or mob == "" then
-            log("wild: CreateAt failed for", entry.id, "at", mx, ",", y, ",", mz, "and center", x, ",", y, ",", z)
+            log("wild: CreateAtObject failed for", entry.id)
             return nil
+        end
+        local okA = pcall(Osi.AppearAtPosition, mob, x, y, z, 0, "", "", 0)
+        if not okA then
+            log("wild: AppearAtPosition errored for", mob, "- it stays near the host!")
         end
         pcall(Osi.SetLevel, mob, targetLevelFor(base))
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)
+        -- verify (deferred: appear resolves next frame)
+        pcall(Ext.Timer.WaitFor, 500, function ()
+            local okP, mx, my, mz = pcall(Osi.GetPosition, mob)
+            if okP and type(mx) == "number" then
+                local drift = math.sqrt((mx - x) ^ 2 + (mz - z) ^ 2)
+                log("wild: member placed, drift", string.format("%.1fm", drift))
+            end
+        end)
         return mob
     end)
     return ok and created or nil
@@ -123,7 +136,10 @@ local function spawnWildGroup(host, base)
         local pool = gatedPool(etype, base) or gatedPool(DEFAULT_TYPES[rand(1, #DEFAULT_TYPES)], base)
         if not pool then break end
         local entry = pool[rand(1, #pool)]
-        local guid = spawnWildMob(entry, x, py, z, base, spawnedHumanoid)
+        -- per-member jitter around the validated group center (WILD_CLUSTER/2 each way)
+        local jitter = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
+        local jitterZ = rand(-WILD_CLUSTER, WILD_CLUSTER) * 0.5
+        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, spawnedHumanoid)
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then
