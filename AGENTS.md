@@ -42,12 +42,17 @@ Where things live:
   `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
   declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
   so our own files declare everything they use. No loca files anywhere in the repo.
-- Lua / Script Extender route (⚠️ parallel channel, not the override workflow): fundamentals in
-  `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, skeleton mod
-  `mods/more-mobs/`, deploy helper `tools/deploy_lua_mod.sh`. SE v33 is installed here
-  (`bin/DWrite.dll` = SE auto-updater, needs `WINEDLLOVERRIDES="DWrite.dll=n,b"`); logging is on
-  via `bin/ScriptExtenderSettings.json` → `bin/bg3-print.log`. Unlike the `Data/Public` overlay,
-  a loaded mod flags the save as modded (achievements off) — use it as the lab, not the product.
+- Lua / Script Extender route (⚠️ parallel channel, not the override workflow; **user wants this
+  for the real feature: randomised spawn pools need Lua logic**): fundamentals in
+  `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, mod workspace
+  `mods/more-mobs/`. **SE was never actually loading on this install** (Apr-2024 auto-updater
+  with dead channel — root cause of all past Lua failures); fixed 2026-10-31 by installing the
+  v33 updater to `bin/DWrite.dll` (old kept as `.bak-2024`; still needs
+  `WINEDLLOVERRIDES="DWrite.dll=n,b"`, which the launch options already set). Logging on via
+  `bin/ScriptExtenderSettings.json` → `bin/bg3-print.log` (log not yet seen — one game start
+  pending). Pak toolchain: native lslib Divine at `tools/divine.sh` + `tools/pack_mod.sh`
+  (proven); probe mod packed to `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`, awaiting in-game
+  enable. A loaded mod flags the save as modded (achievements off — user doesn't care).
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
   `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → live override at
   `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630`,

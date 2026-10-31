@@ -27,11 +27,12 @@ install; ⚠️ still needs an in-game test.
 | Windows build under Proton; prefix `steamapps/compatdata/1086940` | `C:/users/steamuser/...` paths in `bin/gold.*.log` |
 | `bin/DWrite.dll` is the **SE auto-updater**, not the game's DWrite | `strings -el` → "BG3 Script Extender Auto-Updater DLL", "(c) Norbyte" |
 | Loaded only because Steam launch options force it native: `WINEDLLOVERRIDES="DWrite.dll=n,b" %command%` | user-reported; required because Wine would otherwise satisfy DWrite itself |
-| SE is current — v33, "Script Extender (2026 Oct 12)" | `api.github.com/repos/Norbyte/bg3se/releases/latest` + the in-game version line |
-| SE settings live in `bin/ScriptExtenderSettings.json` (currently `LogEnabled:false`) | file on disk |
+| **Root cause of all past Lua failures (2026-10-31 forensics):** the DWrite.dll in `bin/` was the April-2024 auto-updater whose download channel is dead — no `BG3ScriptExtender.dll` ever landed, no `bg3-print.log` despite `LogEnabled:true`, profile `Script Extender/` frozen at Dec 2024. **SE was not loading.** | file mtime Apr 2024, `strings` shows old updater, missing log |
+| Fixed 2026-10-31: installed the v33 updater release (`Norbyte/bg3se` → `BG3SE-Updater-20261012.zip`, its `DWrite.dll` → `bin/DWrite.dll`; old one kept as `bin/DWrite.dll.bak-2024`). Next game start the updater should fetch SE v33 itself | GitHub release + deployed file |
+| SE settings live in `bin/ScriptExtenderSettings.json` (`LogEnabled:true` since 2026-10-31) | file on disk |
 | SE per-mod config/state under `…/AppData/Local/Larian Studios/Baldur's Gate 3/Script Extender/` | `5eSpells/`, `Expansion/` jsons from old SE mods |
 | Installed mod `.pak`s live in `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/` | 20 paks there (EncountersOverhaul, ManyMoreMonsters, `extra_enemies_honour`, …) |
-| Load order lives in `…/Baldur's Gate 3/modsettings.lsx` (mtime 2024-08-02, 6 modules, base = **GustavDev**) | file contents |
+| Load order lives in `…/Baldur's Gate 3/PlayerProfiles/Public/modsettings.lsx` (live; base module **GustavX**, several mods enabled). The root-level `…/Baldur's Gate 3/modsettings.lsx` (2024) is legacy | mtime forensics |
 | `Data/Mods/` and `Data/Public/` are both writable as of 2026-10-31 | `touch` probe |
 
 Turn logging on before debugging anything: `bin/ScriptExtenderSettings.json` →
@@ -101,10 +102,33 @@ hallucinated. Both fixable, and `mods/more-mobs/` is the corrected skeleton.
   into `Data/Mods/<Folder>/` (module mount) and `Data/Public/<Folder>/` (stats), then register
   the `meta.lsx` UUID in `modsettings.lsx`. This is the "basegame override"/loose-folder idea
   and may simply not be scanned; the test is whether the boot print shows in `bg3-print.log`.
-- **Packaging on this box (next thing to try):** `dotnet 8.0.424` is installed, so the lslib-based
-  C# pak CLIs (`lslib` `PakCreator`, `bg3-pak-utils`) should build and run natively — no Wine
-  needed for the pack step. `wine 10.0` is also present, so the Windows Multitool/Mod Manager
-  route is possible but heavier. ⚠️ nothing verified yet; no cargo, `go` present, `node` present.
+- **Pak CLI ✅ BUILT AND ROUND-TRIP-PROVEN 2026-10-31.** `tools/divine.sh` wraps a native Linux
+  build of lslib v1.20.4 `Divine` (source at `/tmp/opencode/pak/lslib` — rebuild there if lost):
+  `tools/divine.sh -g bg3 -a list-package|extract-package|create-package -s SRC -d DST`.
+  Build recipe on this box (dotnet 8.0.424), all deviations from stock lslib recorded:
+  1. `dotnet tool install --global Springcomp.GPLEX` + `Springcomp.GPPG` (tool IDs are *not*
+     `gplex`/`gppg`); generate `Goal.lex.cs`/`Goal.yy.cs` + `StoryHeader.lex.cs`/`StoryHeader.yy.cs`
+     (repo does not commit them; their PreBuildEvent binaries are Windows-only). Run with cwd =
+     repo root, then `sed` the relative `#line` paths in the .yy.cs to absolute, or C# errors.
+  2. Their generated code says `using StarodubOleg.GPPG.Runtime;` — swap to `using QUT.Gppg;`
+     (lslib vendors that runtime in `LSLib/LS/Stats/ShiftReduceParser.cs`; the NuGet fork's
+     generics constraints don't fit).
+  3. Drop the `LSLibNative.vcxproj` ProjectReference (C++/CLI, Windows-only, no P/Invoke in
+     C#); exclude `Granny/**/*.cs` from LSLib and `CLI/CommandLineGR2Processor.cs` from Divine
+     (only users of the native types); add `LSLib/NativeShims.cs` (K4os-based LZ4 frame
+     decompress; FastLZ stubs — VT-only, BG3 paks don't hit them).
+  4. Patched `TryToValidatePath` upstream bug: paths with spaces crashed (`uri.IsFile` on a
+     relative URI).
+  Build: `dotnet build Divine/Divine.csproj -c Release -p:PreBuildEvent=`.
+- **Divine CLI gotchas (all bit us):** `create-package` **silently produces an empty 48-byte pak
+  if the source path contains spaces** → always stage to a space-free temp dir first. The pak
+  root must be the workspace dir (containing `Mods/<Folder>/`); vanilla paks carry `meta.lsx`
+  only under `Mods/<Folder>/`, never at the pak root. `meta.lsx` must use vanilla types —
+  `Type` is `type="int32" value="1"` (the bg3.wiki template's `FixedString "Add-on"` form is
+  stale). Hash column 0 in `list-package` is normal.
+- **Deploy helper:** `tools/pack_mod.sh [workspace] [--install|--remove]` stages the workspace
+  to /tmp, packs via divine.sh, verifies entry count, and installs
+  `MARTIN_MoreMobs.pak` into the profile `Mods/` dir. Then enable in-game.
 - **Native alternative (⚠️ unexplored):** `lenonk/bg3le` is a Script Extender for the *native
   Linux* build ("SE mods load straight out of their .paks or from loose directories via
   `BG3LE_MOD_PATH`"). Our install is the Windows build under Proton, so it does not apply

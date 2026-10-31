@@ -116,22 +116,26 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   (Rust CLI mod manager, cross-platform — no cargo here but releases may have Linux binaries),
   BG3 Mod Manager under Proton (Nexus guide, Oct 2025), Vilsol/bg3.
 
-## 5. Script Extender state ✅
+## 5. Script Extender state (corrected 2026-10-31, see lua-modding.md §1)
 
-- SE installed and current: `bin/DWrite.dll` = "BG3 Script Extender Auto-Updater DLL (c) Norbyte";
-  needs the user's `WINEDLLOVERRIDES="DWrite.dll=n,b" %command%"`. v33 "Script Extender (2026 Oct 12)".
-  Game build `4.3.2.26` (also strings `4.1.1.7631656`, `4.1.311.3`).
-- Logging switched on this session: `bin/ScriptExtenderSettings.json` =
-  `{"CreateConsole": false,"LogEnabled": true}` (backup `ScriptExtenderSettings.json.bak`)
-  → log at `bin/bg3-print.log`. **Not yet verified producing output** (game not restarted since).
-- Skeleton mod built (⚠️ never loaded, because it is not packaged):
-  `mods/more-mobs/Mods/MARTIN_MoreMobs/` = `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`,
-  `Folder=MARTIN_MoreMobs`, Version64 `36028797018963968`, TargetModes Story),
-  `ScriptExtender/Config.json` (`RequiredVersion: 33`, `ModTable: MARTIN_MoreMobs`,
-  `FeatureFlags:["Lua"]`), `ScriptExtender/Lua/BootstrapServer.lua`,
-  `ScriptExtender/Lua/Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template to
-  `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
+- ⚠️ **SE was NOT loading** despite earlier notes: the `bin/DWrite.dll` auto-updater was the
+  April-2024 build with a dead update channel — no `BG3ScriptExtender.dll`, no `bg3-print.log`
+  ever, profile `Script Extender/` frozen Dec 2024. This explains every past Lua-mod failure.
+- **Fixed:** v33 updater (`BG3SE-Updater-20261012.zip`) installed to `bin/DWrite.dll`; old DLL
+  kept as `bin/DWrite.dll.bak-2024`. Launch options already correct. First game start after
+  this should let the updater fetch SE v33 itself.
+- Logging on: `bin/ScriptExtenderSettings.json` = `{"CreateConsole": false,"LogEnabled": true}`
+  → log at `bin/bg3-print.log`. **Still unverified** — needs one game start.
+- Probe mod **packed + installed** (pak toolchain proven, `tools/pack_mod.sh --install`):
+  `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. Source `mods/more-mobs/` =
+  `meta.lsx` (UUID `d5afd252-101b-449b-ae74-c792a73d64ff`, `Folder=MARTIN_MoreMobs`,
+  Type int32=1 — fixed from stale wiki format), `ScriptExtender/Config.json`
+  (`RequiredVersion: 33`, `ModTable: MARTIN_MoreMobs`, `FeatureFlags:["Lua"]`),
+  `BootstrapServer.lua`, `Server/Probe.lua` (logs on `SessionLoaded`, dumps every root template
+  to `MARTIN_root_templates.txt` via `Ext.IO.SaveFile`, spawns imp + wolf on `CombatStarted`,
   registers `!martin_spawn`).
+- **Waiting on owner:** start game → Mods screen → enable "MARTIN More Mobs" → load game →
+  check `bin/bg3-print.log` for `[MARTIN] MARTIN_MoreMobs bootstrap loaded` + template dump.
 - Deploy helper: `tools/deploy_lua_mod.sh` (dry-run verified; Route B only — kept as fallback).
 - Post-mortem of the user's dead Lua mods (`Data/Mods/HealthBoostLocal/`,
   `Data/Mods/HPChaos_…/`, also in game-root `Mods/`): no `meta.lsx` (they used `Mod.json`), not in load
@@ -183,19 +187,25 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    invented `MARTIN_*.txt` goal names compile+fire in the live mount. Probe deleted; story mount
    100% vanilla. Shipping shape settled: own files in `Data/Mods/<Module>/Story/.../Goals/`
    mirrored by `tools/deploy_story.sh --copy`; pak = pure packaging/portability later.
-2. **Pak CLI + SE template dump** (§4, §5) — unblocked once E8's read is done. Tiny C# console
-   app over LSLib `Package`/`PackageWriterFactory`; prove by round-tripping `ModFixer.pak`, then
-   pack `mods/more-mobs/`, enable, read `bin/bg3-print.log` + `MARTIN_root_templates.txt`. The
-   template dump answers the imp-instance question and enumerates the **global root templates**
-   that the reinforcement feature will draw on (cross-level global spawns are proven to work).
-3. **Design the real feature** now that the channel is proven: honour-gated rules
-   (`DB_HonorMode_Enabled(1)`), per-level triggers, multiple global templates, placement that is
-   NOT `GetHostCharacter` (that is the host player — wolf landed on the party), and the vanilla
-   join pattern `PROC_Appear` + `PROC_GLO_NarrativeCombat_JoinCombat` (TUT_Helm:896-1010).
-4. Optional big win: lslib **`StoryCompiler`** to compile `MARTIN_*.txt` offline (needs
-   `story_header.div`/`story_definitions.div` + gplex/gppg) — whole-file errors already refuse new
-   games (detectable), and the *silent per-rule drops* (imp-rule class) are exactly what an
-   offline compile catches.
+2. **Pak CLI ✅ DONE (2026-10-31):** native Linux Divine build (`tools/divine.sh`), ModFixer.pak
+   round-tripped, probe mod packed+installed via `tools/pack_mod.sh --install` →
+   `…/Baldur's Gate 3/Mods/MARTIN_MoreMobs.pak`. SE v33 updater installed to `bin/DWrite.dll`.
+   **Owner run pending:** start game → enable "MARTIN More Mobs" → load → read
+   `bin/bg3-print.log` (`[MARTIN] ... bootstrap loaded`, SessionLoaded, template dump) + profile
+   `Script Extender/MARTIN_root_templates.txt` (via `Ext.IO.SaveFile`). That dump settles the
+   imp-instance question and enumerates the **global root template pool** the chaos engine draws on.
+3. **Chaos engine in Lua (user's stated goal: never know *if* extra mobs spawn or how strong).**
+   On `CombatStarted` (SE listener, proven arity-1): independent rolls — spawn-chance, count,
+   power tier; per-level (or tier) template pools from the dump; anchor at an enemy/valid
+   position, not `GetHostCharacter`; join the fight via SE calls equivalent to
+   `SetHostileAndEnterCombat` / vanilla join pattern. Ship entirely inside `MARTIN_MoreMobs` pak
+   (`Server/*.lua`); text goals only if something needs story state. Fold the HP-boost stats in
+   `Public/MARTIN_MoreMobs/Stats/...` later for a single artifact.
+4. Optional big win: lslib **`StoryCompiler`** to compile `MARTIN_*.txt` offline — now much
+   closer: gplex/gppg work on this box (Springcomp dotnet tools + QUT.Gppg swap, see
+   lua-modding.md §4), and `story_header.div`/`story_definitions.div` exist under
+   `Data/Mods/*/Story/RawFiles/`. Whole-file errors already refuse new games (detectable), but
+   the *silent per-rule drops* (imp-rule class) are exactly what an offline compile catches.
 5. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
    `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`.
 6. Confound rule **lifted** (E8 read done): enabling the SE mod no longer risks a story signal;
