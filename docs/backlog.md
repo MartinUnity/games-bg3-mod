@@ -103,3 +103,12 @@ rejected the persistent alternative (Temporary=0 + Ext.IO.SaveFile state +
 re-adopting groups at SessionLoaded) as "way too potentially troublesome".
 Do not revisit without a new owner request. (Side effect: save-scumming removes
 a wave mid-fight - accepted as a feature.)
+
+CORRECTION (same day, in-game evidence): BG3 DOES save temporary characters -
+a wild imp pack survived save/load and attacked in a later session. Consequence:
+orphaned packs (no Lua state after reload) are now recognized by persistent
+signatures instead: every spawn gets the CHAOS_Spawn tag (SetTag; IsTagged
+survives saves) and evil wild packs carry our unique Evil NPC faction string;
+the reinforcement engine skips fights against anything matching either. The
+"wipe-on-exit" expectation above is wrong; the owner decision (keep Temporary=1)
+stands unchanged.

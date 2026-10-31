@@ -34,7 +34,6 @@ local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups aft
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
 local WILD_FORCE_TIER = nil          -- one-shot test knob consumed (v3.19 playtest OK)
-local WILD_EVIL_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
 local WILD_EVIL_CHANCE = 50         -- % of groups that spawn as (red) Evil NPC; the rest
 -- keep their template-default faction (observed: generic "Neutral NPC" = harmless
 -- yellow "resting mercenaries" the player can run through - owner likes the mix).
@@ -170,6 +169,7 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
             return nil
         end
         markSpawned(mob)
+        tagAsOurs(mob)
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)

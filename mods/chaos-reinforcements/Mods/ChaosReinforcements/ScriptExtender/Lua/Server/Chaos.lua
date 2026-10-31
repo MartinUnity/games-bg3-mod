@@ -120,6 +120,7 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
             markSpawned(created)
+            tagAsOurs(created)
             if doEquip then EquipMob(created, base or 1, entry) end
             return created
         else
@@ -174,7 +175,8 @@ local function discover(combatId, players)
             local fac = select(2, pcall(Osi.GetFaction, g))
             local t = RACE_TO_TYPE[tostring(race)] or "?"
             log("enemy:", g, "lvl", lvl, "race", race, "type", t, "faction", fac)
-            enemies[#enemies + 1] = { guid = g, level = tonumber(lvl), race = tostring(race), type = t }
+            enemies[#enemies + 1] = { guid = g, level = tonumber(lvl), race = tostring(race),
+                                       type = t, fac = tostring(fac) }
         end
     end
     return enemies
@@ -193,9 +195,13 @@ end
 -- main wave -------------------------------------------------------------------
 local function reinforce(host, enemies, combatId)
     -- never stack reinforcements on top of our own patrols/leftovers (owner request:
-    -- wave survivors became a roving pack, and the engine waved again onto them)
+    -- wave survivors became a roving pack, and the engine waved again onto them).
+    -- Covers ORPHANS too: BG3 saves temporary chars, so packs from a previous
+    -- session (no registry entries) are recognized by tag or by our wild
+    -- evil-pack faction - both persist in the savegame.
     for _, e in ipairs(enemies) do
-        if isSpawned(e.guid) then
+        if isOurs(e.guid) or e.fac == WILD_EVIL_FACTION then
+            markSpawned(e.guid)
             log("fight vs our own patrol - no reinforcements")
             return
         end

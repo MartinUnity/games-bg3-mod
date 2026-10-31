@@ -51,6 +51,34 @@ function isSpawned(guid)
     return raw ~= nil and SPAWNED[raw] == true
 end
 
+-- Persistent "this is ours" signature. BG3 SAVES temporary characters (in-game
+-- 2026-10-31: a wild pack survived a save/load and became an orphan - not in any
+-- Lua table, so it had no TTL/monitoring and the reinforcement engine waved onto
+-- it). Tags persist in saves, so every spawn gets tagged and discovery checks the
+-- tag; the wild evil-pack faction is a second, proven channel.
+CHAOS_TAG = "CHAOS_Spawn"
+WILD_EVIL_FACTION = "Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6"
+
+function tagAsOurs(guid)
+    if guid and guid ~= "" then
+        local ok, err = pcall(Osi.SetTag, guid, CHAOS_TAG)
+        if not ok then log("SetTag threw for", guid, "-", tostring(err)) end
+    end
+end
+
+-- "is this ours?", session-independent: registry first (cheap), then the
+-- persistent tag query; a tag hit re-registers the guid so later checks are cheap
+function isOurs(guid)
+    if guid == nil then return false end
+    if isSpawned(guid) then return true end
+    local ok, tagged = pcall(Osi.IsTagged, guid, CHAOS_TAG)
+    if ok and tonumber(tagged) == 1 then
+        markSpawned(guid)
+        return true
+    end
+    return false
+end
+
 -- over-level tolerance: SetLevel is refused by some templates (in-game: a native
 -- lvl-10 Flaming Fist caster kept its lvl-10 spell list while "hp 7" passed every
 -- pick gate); after spawning we read the real level and despawn above this line
