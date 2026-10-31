@@ -62,6 +62,21 @@ BAD_PASSIVE = re.compile(
     r"EternalDebtors|BlushingMermaid|HouseOfGrief|Houndmaster|VisionOfShar|"
     r"ConsumeTheFaithful|NecroticAttacks_DeathKnight|SelfDestruct_SteelWatcher", re.I)
 
+# hand-maintained owner blocklist (tools/db_blocklist.txt): exact template names,
+# one per line, # comments - survives regeneration (unlike editing CreatureDB.lua)
+BLOCKLIST_FILE = pathlib.Path(__file__).parent / "db_blocklist.txt"
+
+def load_blocklist():
+    if not BLOCKLIST_FILE.exists():
+        return set()
+    out = set()
+    for line in BLOCKLIST_FILE.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            out.add(line.lower())
+    return out
+
+
 
 def load_stats():
     entries = {}
@@ -206,10 +221,15 @@ def main():
     stats = load_stats()
     dump_keys, dump_names = load_dump_keys()
     templates = scan_templates()
+    blocklist = load_blocklist()
+    if blocklist:
+        print(f"owner blocklist: {len(blocklist)} names")
     print(f"stats entries: {len(stats)}; root templates (character): {len(templates)}; dump keys: {len(dump_keys)}")
 
     rows = {}
     for name, (guid, statsname) in templates.items():
+        if name.lower() in blocklist:
+            continue
         if BAD_NAME.search(name) or BAD_STATS.search(statsname):
             continue
         if statsname not in stats:

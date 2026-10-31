@@ -3,6 +3,7 @@
 -- Require order matters: Common (log + shared helpers) -> CreatureDB (CHAOS_DB) -> Equip
 -- -> Flavor -> Toggle (CHAOS_STATE, before the engines read it) -> Chaos (reinforcement
 -- engine) -> Wild (standing world encounters).
+Ext.Require("Shared/Channels.lua")
 Ext.Require("Server/Common.lua")
 Ext.Require("Server/CreatureDB.lua")
 Ext.Require("Server/Equip.lua")

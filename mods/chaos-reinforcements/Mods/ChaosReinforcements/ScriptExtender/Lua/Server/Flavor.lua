@@ -104,6 +104,10 @@ function FlavorLeaderCommon(created, isBoss)
     if created then
         pcall(GiveLeaderGold, created, isBoss)   -- defined in Equip.lua (loaded first)
     end
+    if created then
+        Announce(isBoss and (name .. " looms over the battlefield!")
+                     or (name .. " joins the battle with reinforcements!"))
+    end
     return name
 end
 

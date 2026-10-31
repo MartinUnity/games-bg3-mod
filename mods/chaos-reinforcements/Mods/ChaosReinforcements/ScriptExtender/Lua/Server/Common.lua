@@ -16,6 +16,16 @@ function log(...)
     flush()
 end
 
+-- Push an announcement to every client (client side shows an IMGUI toast, Client/
+-- AnnounceClient.lua). Safe no-op if the channel is missing. Always mirrors to the log.
+function Announce(text)
+    if Channels and Channels.Announce then
+        local ok, err = pcall(function () Channels.Announce:Broadcast(tostring(text)) end)
+        if not ok then log("announce broadcast failed:", tostring(err)) end
+    end
+    log("announce:", text)
+end
+
 -- The E8b-proven hostile faction pair (verbatim; GetFaction(host) returns per-player
 -- factions and the Evil_fb046e51 pair is inert - see docs/spawn-chains.md sec.3.1.2).
 EVIL = "Evil_4be9261a-e481-8d9d-3528-f36956a19b17"

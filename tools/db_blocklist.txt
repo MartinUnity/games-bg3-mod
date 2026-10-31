@@ -1,0 +1,8 @@
+# Hand-maintained blocklist for tools/build_creature_db.py - creatures the owner has
+# eyeballed and rejected from the chaos pools. One TEMPLATE NAME per line (the part
+# before the GUID in a DB id, e.g. the name in "BASE_Monstrosity_Harpy_0b090636-...");
+# match is exact, case-insensitive. Lines starting with # are comments; blank lines OK.
+#
+# Workflow: eyeball tools/CreatureDB.review.lua (a copy of the generated DB), delete the
+# lines you dislike, tell the agent - the diff gets folded in here and the DB rebuilt, so
+# regeneration never resurrects a rejected creature.

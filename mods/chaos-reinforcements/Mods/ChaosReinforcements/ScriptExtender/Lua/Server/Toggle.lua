@@ -71,10 +71,12 @@ local function flip(key, caster)
     persist()
     describeSpell(key)
     local what = key == "wilds" and "Wild groups" or "Reinforcements"
-    log("toggle:", what .. ":", CHAOS_STATE[key] and "ON" or "OFF",
-        caster and ("(cast by " .. tostring(caster) .. ")") or "(console)")
-    -- player feedback: the tooltip (state-swapped Description, verified in-game
-    -- 2026-10-31) + the shout's own combat-log entry. No DebugText: confirmed no-op.
+    local msg = what .. ": " .. (CHAOS_STATE[key] and "ON" or "OFF")
+    log("toggle:", msg, caster and ("(cast by " .. tostring(caster) .. ")") or "(console)")
+    -- player feedback: in-game toast (IMGUI, Client/AnnounceClient.lua) + the tooltip
+    -- (state-swapped Description, verified in-game 2026-10-31) + the shout's own
+    -- combat-log entry. No DebugText: confirmed no-op.
+    Announce("Chaos: " .. msg)
 end
 
 local granted = {}   -- per-character, so late joiners don't re-toast every heartbeat

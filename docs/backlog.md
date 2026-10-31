@@ -37,19 +37,23 @@ Possible fix directions if it becomes annoying:
 - `CreateAtObject` offsets (`dx, dy` 1-3) could try larger radii so mobs path INTO
   the fight rather than standing at the rim.
 
-## Combat-log entries + custom UI via SE client-side Lua (2026-10-31)
+## In-game announcements: IMGUI toast MVP shipped (2026-10-31), verdict pending
 
-Owner would love a persistent colored line in the combat log ("Reinforcements!"). There
-is NO Osiris combat-log call in BG3 (`CombatLogText`/`DisplayText`/`CharacterStatusText`
-are DOS2-family; verified absent from `story_header.div`). The remaining route is SE
-client-side Lua:
-- ship `ScriptExtender/Lua/BootstrapClient.lua` in the pak (mod currently has no
-  client VM);
-- experiment with `Ext.UI` (find the combat log widget path, write entries, maybe
-  color/format); the vendored v30 API doc does not cover it — pure probe territory
-  (dump `Ext.UI` structures at client SessionLoaded, log, iterate);
-- if the combat log widget is writable this also unlocks: toasts, custom leader
-  banners, colored status text — the whole "inform the player" toolbox.
+Osiris DebugText is dead (silent no-op, see Toggle feedback entry), and BG3 has NO Osiris
+combat-log call (CombatLogText/DisplayText are DOS2-family, absent from story_header.div).
+MVP now in the pak, replacing the old experiment plan below:
+- server pushes `Channels.Announce:Broadcast(text)` (Shared/Channels.lua, `Ext.Net.CreateChannel`
+  - the doc pattern + proven live by ManyMoreMonsters on this install; SAME channel object
+  required by BOTH bootstraps);
+- client (new BootstrapClient.lua) shows a Dear-ImGui toast: `Ext.IMGUI.NewWindow`,
+  `win:AddText`, `obj:SetColor("Text", {r,g,b,a})`, `Ext.IMGUI.GetViewportSize()` - all
+  cribbed from MMM's working code; auto-destroys after 5s (client Ext.Timer assumed, pcall'd);
+  logs to profile `ChaosReinforcements_client.log`.
+- wired to: leader/boss join (Flavor), wild group spawn (Wild), toggle flips (Toggle).
+UNVERIFIED until next playtest: Ext.Net CreateChannel/SetHandler/Broadcast on our mod,
+client Ext.Timer.WaitFor, IMGUI flag fields (NoTitleBar etc.) + win.Position. Watch the
+client log for "toast FAILED/flag refused" lines. The Noesis route (Ext.UI.GetRoot, crash
+risk, needs Ext.UI.Defer in v33) stays parked unless IMGUI proves insufficient.
 
 ## Toggle feedback: RESOLVED (2026-10-31)
 

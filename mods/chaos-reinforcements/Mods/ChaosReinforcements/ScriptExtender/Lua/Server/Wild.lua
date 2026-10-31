@@ -304,6 +304,14 @@ local function spawnWildGroup(host, base)
     log("wild: spawned group", nextGroupId, "tier", tier, "(roll", roll .. ")", #group.members, "mobs,",
         groupFaction and "(evil pack)" or "(neutral travelers)",
         "type", etype, "at ~", radius .. "m")
+    -- subtle world-flavor announcement (client toast); tier 3 earns the scary wording
+    if tier == 3 then
+        Announce("The wilds stir - a dangerous horde gathers nearby...")
+    elseif groupFaction then
+        Announce("A hostile warband prowls nearby...")
+    else
+        Announce("Travelers pass through the area...")
+    end
 end
 
 -- heartbeat: try to spawn a wild group while exploring
