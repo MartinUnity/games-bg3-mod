@@ -205,12 +205,15 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupT
             -- combat discovery later showed Evil NPC) - verified in the 500ms check
             pcall(Osi.SetFaction, mob, faction)
         end
-        -- team templates carry their kit at a FIXED level (LevelOverride): SetLevel
-        -- could break/despawn them (see over-level guard below), so never touch them
+        -- NO Osi.SetLevel here (game hard-crash 2026-11-01: pcall(Osi.SetLevel) faulted
+        -- inside OsirisWrappers::CallWrapper -> bg3.exe from THIS line; pcall cannot
+        -- survive engine faults - and per v3.3 SetLevel only sets the level NUMBER, it
+        -- does NOT rescale fixed monster stat blocks; difficulty is controlled at PICK
+        -- time via gatedPool's native-stat gates, so the call was decorative).
+        -- self-correction on the template's NATIVE level: a native lvl-10 caster with
+        -- "hp 7" passes every pick gate, so verify and despawn (team templates keep
+        -- their baked LevelOverride and are exempt, as before)
         if not entry.fixedLevel then
-            pcall(Osi.SetLevel, mob, targetLevelFor(base))
-            -- self-correction: SetLevel is refused by some templates; a native lvl-10
-            -- caster with "hp 7" passes every pick gate, so verify and despawn
             local okLv, lvlNow = pcall(Osi.GetLevel, mob)
             local n = okLv and tonumber(lvlNow) or nil
             if n and n > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then

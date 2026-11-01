@@ -8,7 +8,9 @@
 -- never exceed the player's level.
 --
 -- Learnings baked in (see docs/HANDOVER.md):
---   - Osi.SetLevel sets the level NUMBER but does NOT rescale fixed monster stat blocks;
+--   - NO Osi.SetLevel calls anywhere (game hard-crash 2026-11-01: it faults inside
+--     OsirisWrappers::CallWrapper -> bg3.exe; pcall cannot survive native crashes -
+--     and it only sets the level NUMBER, never rescales fixed monster stat blocks);
 --     difficulty control happens at PICK time (CreatureDB native stats + GATES below).
 --   - SE databases are keyed by ARITY: DB_Is_InCombat has 2 columns -> Get(nil, nil) via
 --     table.unpack({}, 1, ncols). Appending nils to a table does not grow it.
@@ -28,7 +30,6 @@ local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
 local LEADER_TEST = false           -- real odds: 10% leader for packs >= 2
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
-local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification
 
 -- HP boost formerly in GustavDev Status_BOOST.txt (HEALTHBOOST_HARDCORE, disabled there
 -- 2026-10-31 for calibration). Lua-side reimplementation will use a custom stats file;
@@ -89,25 +90,15 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
             created = Osi.CreateAtObject(entry.id, anchor, 1, 1, "", 1)
         end
         if created and created ~= "" then
-            local newLvl = "?"
-            if targetLevel then
-                local okL, eL = pcall(Osi.SetLevel, created, targetLevel)
-                if okL then
-                    newLvl = targetLevel
-                    local okG, lvl = pcall(Osi.GetLevel, created)  -- immediate read-back
-                    if okG then newLvl = tostring(lvl) end
-                    pcall(Ext.Timer.WaitFor, VERIFY_DELAY_MS, function ()
-                        local okV, vLvl = pcall(Osi.GetLevel, created)
-                        if okV then log("verify", entry.id, "lvl", vLvl, "wanted", targetLevel) end
-                    end)
-                else
-                    log("SetLevel threw:", eL)
-                end
-            end
+            -- NO Osi.SetLevel here (game hard-crash 2026-11-01: SetLevel faulted inside
+            -- bg3se OsirisWrappers::CallWrapper -> bg3.exe; pcall cannot survive engine
+            -- crashes - and v3.3 proved SetLevel only sets the level NUMBER, it never
+            -- rescales fixed monster stat blocks, i.e. cosmetic next to the crash risk).
             pcall(Osi.SetFaction, created, EVIL)
-            -- self-correction: SetLevel is silently refused by some templates -
+            -- self-correction on the template's NATIVE level (nothing re-levels anymore):
             -- a native lvl-10 caster among lvl-3s is a TPK, despawn and re-pick
-            local lvlNow = tonumber(newLvl)
+            local okG, lvlNow2 = pcall(Osi.GetLevel, created)
+            local lvlNow = tonumber(okG and lvlNow2 or nil)
             if lvlNow and base and lvlNow > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("over-level despawn:", entry.id, "lvl", lvlNow,
                     "> base", base, "+ tolerance - re-picking")

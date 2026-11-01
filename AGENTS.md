@@ -70,8 +70,10 @@ Where things live:
   via RACE_TO_TYPE + dominant enemy type,
   leader system (pack ≥2 → ~10% roll, ~90% same type / ~10% cross-type via AFFINITY map,
   spawned OUTSIDE the budget — jackpot escalation, biased to the beefier half of the pool,
-  no cross-type while the low-level ceiling is active, +0-2 lvls), `Osi.SetLevel(created, target)` with immediate + 2 s
-  delayed GetLevel verification, anchors near existing enemies, wave delayed 1.5 s after
+  no cross-type while the low-level ceiling is active, +0-2 lvls), **`Osi.SetLevel` calls
+  REMOVED 2026-11-01 (hard crash: OsirisWrappers::CallWrapper fault -> bg3.exe from
+  `spawnWildMob`; pcall can't survive native faults; it only set the level number anyway,
+  v3.3 lesson — over-level gate now reads the template's native GetLevel)**, anchors near existing enemies, wave delayed 1.5 s after
   CombatStarted (Timer.WaitFor) so enemies are classifiable, E8b faction
   pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE.
   **v3.3: `Osi.SetLevel` does NOT rescale fixed monster stat blocks (sets the level number

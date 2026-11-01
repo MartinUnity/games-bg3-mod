@@ -278,6 +278,20 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.24: `Osi.SetLevel` REMOVED from both spawn engines (first hard game crash,
+  2026-11-01):** crash-handler backtrace = `bg3.exe ← bg3se::OsirisWrappers::CallWrapper
+  ← OsiCall`, Lua frames `Wild.lua:211` inside `spawnWildMob`'s pcall — that line was
+  `pcall(Osi.SetLevel, mob, targetLevelFor(base))` in the installed v3.22/23 build
+  (owner thought it was the old pak, but the line numbers match current numbering).
+  **pcall cannot survive native engine faults**, and the v3.3 lesson already showed
+  SetLevel only sets the level NUMBER (never rescales fixed stat blocks) — purely
+  cosmetic next to a crash. Removed from `spawnWildMob` (Wild.lua) and `spawnCreature`
+  (Chaos.lua, incl. the 2 s verify timer; `VERIFY_DELAY_MS` const dropped). Over-level
+  self-correction guard now reads the template's NATIVE `GetLevel` in both engines
+  (Wild keeps the `fixedLevel` team-template exemption). Difficulty stays controlled at
+  PICK time via gatedPool's native-stat gates. `spawnCreature` still takes the unused
+  `targetLevel` param and `targetLevelFor()` is still computed at Chaos.lua — deliberate
+  dead weight for now. ⚠️ playtest: crash must not recur; mobs show their native levels.
 - **v3.23: log timestamps + self-diagnosing heartbeat (owner 2026-11-01, "10-min dry
   spell" report):** every `log()` line now carries `[CHAOS HH:MM:SS]` (fail-soft
   `os.date`), and every heartbeat gate that blocks a spawn states its reason via
