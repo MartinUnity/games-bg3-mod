@@ -38,6 +38,7 @@ BAD_NAME = re.compile(
     r"|^QUEST_|^Footstep_|Elder_Brain|NetherBrain|Doppelganger|Shapechanger"
     r"|Boss|Raphael|Vlaakith|Gortash|Orin|Yugot|Endbringer|Absolute|Cazador|Kasster|Thaniel"
     r"|Companion|Summon|Wildshape|Portrait|Civilian|PlayerWildshape|Hallucination|Duplicity"
+    r"|CreateUndead|Conjure"   # spell-products (summon lifecycle; the CreateUndead mummy
     r"|Mannequin|_Act\d|DrinkingBuddy|Cub\b|Dad\b|Pregnant|Tutorial|Children|Baby|Hunt|Dialog|Double"
     r"|Gazer_.*Mylac|Gazemaster|Woe_|Mephit_Grease_Young|Crippled"
     r"|^\[WIP\]|(^|_)CINE_|(^|_)WIP_|TOBEDELETED"

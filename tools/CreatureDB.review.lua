@@ -536,7 +536,6 @@ CHAOS_DB = {
     { id = "BLIGHT_NeedleBlight_Dark_A_eccd3da9-5ca0-4403-806a-439d12978dcb", hp = 22, cost = 2, ac = 13, str = 12, dex = 14, con = 13, wis = 8, cha = 3, unarmed = true },
     { id = "BLIGHT_VineBlight_A_b2c4a7c7-41c3-4171-8f77-30e16f551ca4", hp = 39, cost = 4, ac = 13, str = 15, dex = 8, con = 14, wis = 10, cha = 3 },
     { id = "BLIGHT_VineBlight_Dark_A_e9cd3bf8-6e97-47c4-9bac-106f46123141", hp = 56, cost = 6, ac = 13, str = 18, dex = 8, con = 14, wis = 10, cha = 3 },
-    { id = "Bipedal_Fey_Dryad_ConjureWoodlandBeings_42da1663-b150-4e9b-abc8-8cdc7240fd56", hp = 22, cost = 2, ac = 11, dex = 14, con = 11, wis = 15, cha = 18, unarmed = true, prof = "Quarterstaffs" },
     { id = "DarkVine_Tentacle_1ec072e4-9e76-4a3c-8fe5-7f26bf5ec974", hp = 8, cost = 1, imm = 2, ac = 10, str = 16, dex = 16, wis = 2, cha = 2 },
     { id = "DarkVine_Tentacle_Giant_3e575c11-5300-4c9a-a54c-752220f0c88a", hp = 48, cost = 5, imm = 2, ac = 11, str = 22, dex = 16, con = 20, wis = 4, cha = 2 },
     { id = "ShamblingMound_Dark_A_ecfc157f-b689-47ac-8dcb-22fdb6861c01", hp = 156, cost = 16, imm = 1, ac = 16, str = 20, dex = 12, con = 16, wis = 12, cha = 5, unarmed = true },
@@ -546,7 +545,6 @@ CHAOS_DB = {
     { id = "VINE_Tentacle_Dark_Giant_D_19ad4979-4329-4892-b4f3-cc959b4aad6d", hp = 48, cost = 5, imm = 2, ac = 11, str = 22, dex = 16, con = 20, wis = 4, cha = 2 },
     { id = "VINE_Tentacle_Dark_Giant_E_26595352-ff0a-45d5-958b-0f1a2b5b1732", hp = 48, cost = 5, imm = 2, ac = 11, str = 22, dex = 16, con = 20, wis = 4, cha = 2 },
     { id = "WoodWoad_8cbfdc24-e73c-4083-a746-d23c8901c458", hp = 42, cost = 4, ac = 15, str = 18, dex = 12, con = 16, wis = 13, cha = 8, prof = "SimpleWeapons;Shields" },
-    { id = "WoodWoad_Dryad_ConjureWoodlandBeings_9ed52ea6-0f17-4c94-b3b2-157ff1551dfc", hp = 42, cost = 4, ac = 15, str = 18, dex = 12, con = 16, wis = 13, cha = 8, prof = "SimpleWeapons;Shields" },
   },
   Undead = {
     { id = "BASE_Undead_Ghoul_62dea8a9-f623-4ca8-867a-cefe27f741ac", hp = 22, cost = 2, imm = 1, str = 13, dex = 15, con = 10, wis = 10, cha = 6 },
@@ -569,7 +567,6 @@ CHAOS_DB = {
     { id = "Undead_Ghoul_Flying_04c73996-d79f-45a3-bdf0-58d14830f17f", hp = 32, cost = 3, imm = 1, str = 16, dex = 16, con = 10, wis = 10, cha = 6 },
     { id = "Undead_Hound_A_1d7a1689-9707-4358-bc2b-075e8520cef8", hp = 47, cost = 5, imm = 1, ac = 15, str = 16, dex = 13, con = 12, wis = 6, cha = 5, ea = true, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields" },
     { id = "Undead_Mummy_ca08113f-5ed5-42b3-9a50-adf2c1fe6bac", hp = 85, cost = 8, imm = 2, ac = 12, str = 16, dex = 10, con = 15, cha = 12 },
-    { id = "Undead_Mummy_CreateUndead_f424693b-13f4-4cce-987b-7d75748c87e0", hp = 93, cost = 9, imm = 2, ac = 16, str = 16, dex = 14, con = 15, cha = 12 },
     { id = "Undead_Skeleton_Blood_46056850-5aa7-461b-a49e-6599b9c286f9", hp = 25, cost = 2, imm = 1, ac = 11, str = 14, dex = 10, con = 16, wis = 8, cha = 5, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields" },
     { id = "Undead_Skeleton_Giant_Myrkul_f05367f6-78f2-4631-996e-7e21912bbb78", hp = 42, cost = 4, imm = 1, ac = 10, str = 14, dex = 12, con = 14, wis = 14, cha = 5, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields;Greatclubs" },
     { id = "Undead_Skeleton_Necromite_460c48a7-cea5-44d5-9e01-b27c0c751a24", hp = 18, cost = 2, imm = 1, ac = 11, str = 10, dex = 11, con = 15, wis = 7, cha = 6, prof = "SimpleWeapons;MartialWeapons;MediumArmor;HeavyArmor;Shields" },

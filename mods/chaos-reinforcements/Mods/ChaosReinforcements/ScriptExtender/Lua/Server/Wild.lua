@@ -195,7 +195,19 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
             local n = okLv and tonumber(lvlNow) or nil
             if n and n > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("wild: over-level despawn:", entry.id, "lvl", n, "> base", base)
-                pcall(Osi.RequestDeleteTemporary, mob)
+                -- DEFERRED delete (owner crash 2026-11-02, CreateUndead mummy):
+                -- RequestDeleteTemporary milliseconds after creation - while the
+                -- engine is still initializing the character - is the prime crash
+                -- suspect. Give it 3s to settle first. The mob is NOT marked as
+                -- ours, so nothing tracks or aggros it in the meantime.
+                pcall(Ext.Timer.WaitFor, 3000, function ()
+                    local okI, ic = pcall(Osi.IsInCombat, mob)
+                    if okI and ic == 1 then
+                        log("wild: over-level despawn skipped (in combat):", entry.id)
+                    else
+                        pcall(Osi.RequestDeleteTemporary, mob)
+                    end
+                end)
                 return nil
             end
         end

@@ -111,7 +111,18 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
             if lvlNow and base and lvlNow > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("over-level despawn:", entry.id, "lvl", lvlNow,
                     "> base", base, "+ tolerance - re-picking")
-                pcall(Osi.RequestDeleteTemporary, created)
+                -- DEFERRED delete (crash suspect 2026-11-02): deleting a character
+                -- milliseconds after creation crashed the game once (summon-lifecycle
+                -- template). 3s settle time; if it managed to enter combat meanwhile,
+                -- leave it (deleting a combatant mid-fight is worse than one hot mob).
+                pcall(Ext.Timer.WaitFor, 3000, function ()
+                    local okI, ic = pcall(Osi.IsInCombat, created)
+                    if okI and ic == 1 then
+                        log("over-level despawn skipped (in combat):", entry.id)
+                    else
+                        pcall(Osi.RequestDeleteTemporary, created)
+                    end
+                end)
                 return nil
             end
             local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
