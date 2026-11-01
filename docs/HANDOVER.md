@@ -278,6 +278,20 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.23: log timestamps + self-diagnosing heartbeat (owner 2026-11-01, "10-min dry
+  spell" report):** every `log()` line now carries `[CHAOS HH:MM:SS]` (fail-soft
+  `os.date`), and every heartbeat gate that blocks a spawn states its reason via
+  `wildIdle()` — camp latch?, no host, safe haven (crime/level), max groups,
+  **encounter backoff ~Nmin left**, host in combat, chance roll N (need <=25) — logged
+  on reason change, re-stated every 8 ticks (~12 min). Diagnosis of the dry spell was
+  pure math, NOT a bug: `aggroGroup` arms an 8-10 min backoff (WILD_BACKOFF_MIN/MAX)
+  on ANY aggro — even the fizzled camp fight — and it keeps ticking down after the
+  group expires; after that it's 25% per 90s heartbeat (~6 min expected per attempt).
+  The post-camp `crime-region` lines proved the heartbeat was alive and the v3.22 camp
+  guard NOT latched. ⚠️ still open: `wild: at CAMP` never appeared in that log — either
+  no camp inside the 10-min window or `TeleportedToCamp/FromCamp` don't fire for the
+  camp UI; next camp MUST show it (if not: fallback = camp crime-region value, which
+  is now visible via the heartbeat's crime probe + timestamps).
 - **v3.22: camp guard (owner incident 2026-11-01: warband spawned AT the campfire):**
   making camp does NOT swap the Osiris level — no `LevelLoaded` fires, the wild gate
   stayed OPEN on `WLD_Main_A` while camped, and the heartbeat anchored 4 skeletons at

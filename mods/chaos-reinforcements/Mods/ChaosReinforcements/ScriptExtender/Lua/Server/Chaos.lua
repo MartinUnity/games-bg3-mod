@@ -359,6 +359,7 @@ Ext.RegisterConsoleCommand("chaos_status", function ()
         "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n,
         "| toggles: wilds", CHAOS_STATE.wilds and "ON" or "OFF",
         "reinforce", CHAOS_STATE.reinforce and "ON" or "OFF")
+    if WILD_STATUS then log(WILD_STATUS()) end   -- wild pipeline snapshot (Wild.lua)
 end)
 Ext.RegisterConsoleCommand("chaos_wolf", function ()
     local host = Osi.GetHostCharacter()

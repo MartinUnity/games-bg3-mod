@@ -435,6 +435,21 @@ end
 
 -- heartbeat: try to spawn a wild group while exploring
 local lastCrimeRegion = ""
+-- heartbeat self-diagnosis (owner 2026-11-01: a 10-min dry spell was unreadable -
+-- every gate was a silent return). Reason lines on gate-reason changes, re-stated
+-- every 8 ticks (~12 min) if still blocked by the same gate.
+local idleReason, idleTicks = "", 0
+local function wildIdle(reason)
+    if reason ~= idleReason then
+        idleReason, idleTicks = reason, 1
+        log("wild: no spawn -", reason)
+    else
+        idleTicks = idleTicks + 1
+        if idleTicks % 8 == 0 then
+            log("wild: still blocked -", idleReason, "(~" .. math.floor(idleTicks * WILD_HEARTBEAT_MS / 60000) .. "min)")
+        end
+    end
+end
 local function heartbeat()
     pcall(Ext.Timer.WaitFor, WILD_HEARTBEAT_MS, heartbeat)
     local allowed = false
@@ -443,9 +458,12 @@ local function heartbeat()
     end
     if not allowed then return end
     if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
-    if hostAtCamp() then return end            -- camp guard: never spawn around the campfire
+    if hostAtCamp() then
+        wildIdle("host CAMPED (TeleportedToCamp latched - check camp events fire)")
+        return
+    end
     local host = Osi.GetHostCharacter()
-    if not host or host == "" then return end
+    if not host or host == "" then wildIdle("no host character") return end
     -- crime-region sub-gate (owner 2026-11-02): the grove ENTRANCE courtyard (Wyll,
     -- tieflings) is ON WLD_Main_A - the level gate cannot exempt it, but vanilla
     -- gives it its own crime region (WLD_Main_A_DEN, "DEN" = the tiefling den in
@@ -460,23 +478,28 @@ local function heartbeat()
     end
     for _, p in ipairs(WILD_SAFE_CRIME_PATTERNS) do
         if crime:find(p) then
-            log("wild: safe haven (crime region", crime .. ") - no spawns")
+            wildIdle("safe haven (crime region " .. crime .. ")")
             return
         end
     end
     -- safe havens first (grove/camp/cinematics beat the ^WLD_ allowance)
     for _, p in ipairs(WILD_SAFE_PATTERNS) do
         if currentLevel:find(p) then
-            log("wild: safe haven,", currentLevel, "- no spawns")
+            wildIdle("safe haven (level " .. currentLevel .. ")")
             return
         end
     end
-    if #groups >= WILD_MAX_GROUPS then return end
-    if backoffMs > 0 then return end   -- encounter cooldown (owner: no back-to-back combat)
+    if #groups >= WILD_MAX_GROUPS then wildIdle("max groups (" .. #groups .. ")") return end
+    if backoffMs > 0 then                       -- encounter cooldown (owner: no back-to-back combat)
+        wildIdle("encounter backoff ~" .. math.ceil(backoffMs / 60000) .. "min left")
+        return
+    end
     local okC, inCombat = pcall(Osi.IsInCombat, host)
-    if okC and inCombat == 1 then return end
+    if okC and inCombat == 1 then wildIdle("host in combat") return end
     local chance = WILD_TEST and 100 or WILD_CHANCE
-    if rand(1, 100) > chance then return end
+    local r = rand(1, 100)
+    if r > chance then wildIdle("chance roll " .. r .. " (need <=" .. chance .. ")") return end
+    idleReason = ""   -- passed every gate: this heartbeat rolls for real
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
     spawnWildGroup(host, base)
@@ -538,6 +561,18 @@ local function monitor()
         end
     end
     groups = remaining
+end
+
+-- one-line wild-pipeline snapshot for the !chaos_status console command (Chaos.lua):
+-- gate verdict without waiting for the next heartbeat, backoff/campers live values.
+WILD_STATUS = function ()
+    local n = 0
+    for _ in pairs(campers) do n = n + 1 end
+    return string.format(
+        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | gate %s",
+        currentLevel, #groups, WILD_MAX_GROUPS, math.ceil(backoffMs / 60000), n,
+        lastCrimeRegion ~= "" and lastCrimeRegion or "-",
+        idleReason ~= "" and ("blocked: " .. idleReason) or "clear")
 end
 
 -- listeners -------------------------------------------------------------------

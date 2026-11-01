@@ -7,12 +7,20 @@ local function flush()
     pcall(function () Ext.IO.SaveFile("ChaosReinforcements.log", table.concat(LINES, "\n")) end)
 end
 
+-- timestamps (owner 2026-11-01): dry-spells/backoffs are only diagnosable against
+-- wall-clock time; os.date is plain Lua and expected in the SE runtime, but log()
+-- is everywhere so degrade gracefully instead of throwing if it ever isn't.
+local function clockStr()
+    local ok, t = pcall(os.date, "%H:%M:%S")
+    return ok and t or ""
+end
+
 function log(...)
     local parts = {}
     for i = 1, select("#", ...) do
         parts[#parts + 1] = tostring(select(i, ...))
     end
-    LINES[#LINES + 1] = "[CHAOS] " .. table.concat(parts, " ")
+    LINES[#LINES + 1] = "[CHAOS " .. clockStr() .. "] " .. table.concat(parts, " ")
     flush()
 end
 
