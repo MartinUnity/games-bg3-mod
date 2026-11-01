@@ -72,7 +72,7 @@ local POTION_POOLS = {
     },
     top = {   -- lvl 9-12 - speed last: highest tier, weight = crown-jewel share
         { "CONS_Potion_Heroism_A_bb27cc17-5af9-4d53-818b-3e620f3f59f2", 20 },
-        { "CONS_Potion_Regeneration_A_f768dbf5-d829-4f15-be1c-ee1f0d71f775", 20 },
+        { "CONS_Potion_Hill_Giant_Strength_c69fb092-2f4f-4688-82b6-7d92405626b1", 20 },
         { "CONS_Potion_Invisible_A_809d5026-4896-4b3a-986e-95da58da77e2", 18 },
         { "CONS_Poison_Wyvern_eca393b0-3f8e-4862-814b-9e236a0d4129", 15 },
         { "CONS_Poison_Purple_Worm_56e531e9-78e4-430b-bc98-611c1b1ccd08", 12 },
