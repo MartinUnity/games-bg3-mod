@@ -211,6 +211,38 @@ function gatedPool(typeName, base)
     return out
 end
 
+-- deferred delete with RETRY LADDER for over-level spawns (v3.30, owner log 2026-11-01:
+-- two lvl-10 Orthons survived into a lvl-5 fight because the single deferred delete
+-- found them already in combat (SetFaction(EVIL) had dragged them in) and skipped
+-- forever - they also rendered nameless, the name-fix path never ran for them).
+-- Deleting a fresh char can crash (2026-11-02 lesson), and deleting a combatant is
+-- worse, so retry OUTSIDE combat at 3s / +10s / +30s / +90s; log a STUCK survivor.
+function ScheduleOverlevelDelete(guid, id, tag)
+    tag = tag or ""
+    local ladder = { 3000, 10000, 30000, 90000 }
+    local n = 0
+    local attempt
+    attempt = function ()
+        n = n + 1
+        local wait = ladder[n]
+        pcall(Ext.Timer.WaitFor, wait, function ()
+            local okI, ic = pcall(Osi.IsInCombat, guid)
+            if okI and ic == 1 then
+                if n >= #ladder then
+                    log(tag, "over-level despawn STUCK (still in combat):", id)
+                else
+                    log(tag, "over-level despawn deferred (in combat):", id)
+                    attempt()
+                end
+            else
+                pcall(Osi.RequestDeleteTemporary, guid)
+                log(tag, "over-level despawn done:", id)
+            end
+        end)
+    end
+    attempt()
+end
+
 function pickFrom(typeName, maxCost, base)
     local pool = gatedPool(typeName, base)
     if not pool or #pool == 0 then return nil end

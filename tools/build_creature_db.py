@@ -187,8 +187,8 @@ def load_dump_keys():
 
 
 def scan_templates():
-    """name -> (guid, statsname); attributes are alphabetical, so per node the order is
-    MapKey (own guid) -> Name -> Stats -> Type; each MapKey opens a record.
+    """name -> (guid, statsname, levelOverride); attributes are alphabetical, so per node
+    LevelOverride? -> MapKey (own guid) -> Name -> Stats -> Type; each MapKey opens a record.
     INDENTATION FIX (2026-11-02): template nodes carry CHILD nodes (visual body parts,
     footstep info...) whose own Name attributes (e.g. "Hand_r", "Hand_Right" inside
     the ettercap/hook-horror templates) used to bleed into the parent record and
@@ -199,10 +199,14 @@ def scan_templates():
     mapkey_re = re.compile(r'<attribute id="MapKey" type="FixedString" value="([^"]+)"')
     stats_re = re.compile(r'<attribute id="Stats" type="FixedString" value="([^"]*)"')
     type_re = re.compile(r'<attribute id="Type" type="FixedString" value="([^"]+)"')
+    # root-template LevelOverride: the REAL native level of most monsters. The stats
+    # block rarely carries `Level` (only 2 entries in the whole DB), which is why the
+    # lvl gate missed the lvl-10 Orthon that reached a lvl-5 fight 2026-11-01.
+    lvl_re = re.compile(r'<attribute id="LevelOverride" type="int32" value="(-?\d+)"')
 
     def flush(cur):
         if cur.get("name") and cur.get("guid") and cur.get("type") == "character":
-            out[cur["name"]] = (cur["guid"], cur.get("stats", ""))
+            out[cur["name"]] = (cur["guid"], cur.get("stats", ""), cur.get("lvl"))
 
     for fn in LSX_FILES:
         p = RT / fn
@@ -211,16 +215,22 @@ def scan_templates():
             continue
         cur = {}
         cur_depth = None
+        pending_lvl = None   # LevelOverride sorts BEFORE MapKey (attrs are alphabetical)
         for line in p.read_text(errors="replace").splitlines():
             indent = len(line) - len(line.lstrip("\t"))
             m = mapkey_re.search(line)
             if m:
                 flush(cur)
-                cur = {"guid": m.group(1)}
+                cur = {"guid": m.group(1), "lvl": pending_lvl}
+                pending_lvl = None
                 cur_depth = indent
                 continue
             if cur_depth is None or indent != cur_depth:
                 continue   # child-node attribute - never part of this template
+            m = lvl_re.search(line)
+            if m:
+                pending_lvl = int(m.group(1))
+                continue
             m = name_re.search(line)
             if m and cur.get("guid"):
                 cur["name"] = m.group(1)
@@ -246,7 +256,7 @@ def main():
     print(f"stats entries: {len(stats)}; root templates (character): {len(templates)}; dump keys: {len(dump_keys)}")
 
     rows = {}
-    for name, (guid, statsname) in templates.items():
+    for name, (guid, statsname, tpl_lvl) in templates.items():
         if name.lower() in blocklist:
             continue
         if BAD_NAME.search(name) or BAD_STATS.search(statsname):
@@ -286,6 +296,8 @@ def main():
             level = int(level) if level else 1
         except ValueError:
             level = 1
+        if tpl_lvl and tpl_lvl > level:
+            level = tpl_lvl   # template LevelOverride (Orthon_A lvl 10 lives ONLY here)
         pr = bool(PLAYER_RACE.match(name))
         rows[name] = (guid, t, hp, cost, statsname, level, len(immunes),
                       ac, strength, dex, con, wis, cha, ea, prof, unarmed != "", pr)
@@ -314,7 +326,8 @@ def main():
              "-- ChaosReinforcements creature DB: generic spawnable root templates,",
              "-- grouped by creature type. {id, hp, cost = hp/10, ac (Armor), str, dex, con,",
              "-- ea = ExtraAttack passive, prof = Proficiency Group, unarmed = UnarmedAttackAbility,",
-             "-- lvl = native stat Level (rarely > 1; gated at pick time vs player level),",
+             "-- lvl = native level: stats Level OR root-template LevelOverride (v3.30 -",
+             "--     the real one for most monsters; gated at pick time vs player level),",
              "-- nm = pretty stats name, the fallback display name for blank-named mobs",
              "-- (neither template nor stats carries DisplayName; the race resource usually",
              "-- does, but some (ettercap, hook horror, hobgoblin) render BLANK - Flavor.lua",

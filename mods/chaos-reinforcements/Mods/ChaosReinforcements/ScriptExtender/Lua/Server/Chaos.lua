@@ -110,35 +110,28 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
             -- bg3se OsirisWrappers::CallWrapper -> bg3.exe; pcall cannot survive engine
             -- crashes - and v3.3 proved SetLevel only sets the level NUMBER, it never
             -- rescales fixed monster stat blocks, i.e. cosmetic next to the crash risk).
-            pcall(Osi.SetFaction, created, EVIL)
-            -- self-correction on the template's NATIVE level (nothing re-levels anymore):
-            -- a native lvl-10 caster among lvl-3s is a TPK, despawn and re-pick
+            -- v3.30 ORDER FIX (owner Orthon log 2026-11-01): check the NATIVE level
+            -- BEFORE SetFaction(EVIL)/hostility. Flipping the faction of an over-level
+            -- mob dragged it into combat, and the deferred delete then refused to
+            -- delete a combatant - lvl-10 devils survived in a lvl-5 fight (nameless,
+            -- because the name-fix path never ran for despawned mobs). While neutral,
+            -- the mob never engages and the ladder-delete outside combat succeeds.
             local okG, lvlNow2 = pcall(Osi.GetLevel, created)
             local lvlNow = tonumber(okG and lvlNow2 or nil)
+            if entry.nm then FlavorNameFix(created, entry.nm) end   -- blank-name fallback (Flavor.lua); before the despawn branch so even STUCK survivors get named
             if lvlNow and base and lvlNow > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("over-level despawn:", entry.id, "lvl", lvlNow,
                     "> base", base, "+ tolerance - re-picking")
-                -- DEFERRED delete (crash suspect 2026-11-02): deleting a character
-                -- milliseconds after creation crashed the game once (summon-lifecycle
-                -- template). 3s settle time; if it managed to enter combat meanwhile,
-                -- leave it (deleting a combatant mid-fight is worse than one hot mob).
-                pcall(Ext.Timer.WaitFor, 3000, function ()
-                    local okI, ic = pcall(Osi.IsInCombat, created)
-                    if okI and ic == 1 then
-                        log("over-level despawn skipped (in combat):", entry.id)
-                    else
-                        pcall(Osi.RequestDeleteTemporary, created)
-                    end
-                end)
+                ScheduleOverlevelDelete(created, entry.id, "")
                 return nil
             end
+            pcall(Osi.SetFaction, created, EVIL)
             local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
             log("spawn", entry.id, "hp", entry.hp, "ac", entry.ac or "?",
                 "str", entry.str or entry.dex or "?",
-                (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
+                (entry.ea and "ExtraAttack " or ""), "lvl", entry.lvl or lvlNow or "?",
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
             markSpawned(created)
-            if entry.nm then FlavorNameFix(created, entry.nm) end   -- blank-name fallback (Flavor.lua)
             tagAsOurs(created)
             if doEquip then EquipMob(created, base or 1, entry) end
             return created
@@ -227,10 +220,13 @@ local function reinforce(host, enemies, combatId)
     end
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
-    -- party size: count the members actually involved in this combat when we can
+    -- party size: count the members actually involved in this combat when we can.
+    -- v3.30: never below the DB_Players count - the involved-count read at wave time
+    -- can lag (owner log: party 6 seen, involved said 1 -> budget knob used party 1;
+    -- players were still trickling into the fight 1.5 s after CombatStarted).
     local party = #factGuids("DB_Players", 1)
     local okN, n = pcall(Osi.CombatGetInvolvedPartyMembersCount, combatId)
-    if combatId and okN and tonumber(n) then party = tonumber(n) end
+    if combatId and okN and tonumber(n) and tonumber(n) > party then party = tonumber(n) end
     local budget = math.floor(base * rand(BUDGET_LO, BUDGET_HI) * (1 + PARTY_KNOB * math.max(0, party - 4)))
     -- anchor at the fight's own enemies when we know them ("reinforcements arrive near their
     -- allies"); the host is only a fallback for fights we could not classify

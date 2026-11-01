@@ -224,30 +224,21 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupT
         -- self-correction on the template's NATIVE level: a native lvl-10 caster with
         -- "hp 7" passes every pick gate, so verify and despawn (team templates keep
         -- their baked LevelOverride and are exempt, as before)
+        if entry.nm then FlavorNameFix(mob, entry.nm) end   -- blank-name fallback (Flavor.lua); moved BEFORE the despawn branch (v3.30) so even STUCK survivors get named
         if not entry.fixedLevel then
             local okLv, lvlNow = pcall(Osi.GetLevel, mob)
             local n = okLv and tonumber(lvlNow) or nil
             if n and n > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("wild: over-level despawn:", entry.id, "lvl", n, "> base", base)
-                -- DEFERRED delete (owner crash 2026-11-02, CreateUndead mummy):
-                -- RequestDeleteTemporary milliseconds after creation - while the
-                -- engine is still initializing the character - is the prime crash
-                -- suspect. Give it 3s to settle first. The mob is NOT marked as
-                -- ours, so nothing tracks or aggros it in the meantime.
-                pcall(Ext.Timer.WaitFor, 3000, function ()
-                    local okI, ic = pcall(Osi.IsInCombat, mob)
-                    if okI and ic == 1 then
-                        log("wild: over-level despawn skipped (in combat):", entry.id)
-                    else
-                        pcall(Osi.RequestDeleteTemporary, mob)
-                    end
-                end)
+                -- v3.30: retry-ladder delete (Common.lua) - 3s settle, then retry at
+                -- +10/30/90s if the mob somehow got into combat (a single skip used to
+                -- leave the mob alive forever, nameless, in the fight - owner report).
+                ScheduleOverlevelDelete(mob, entry.id, "wild:")
                 return nil
             end
         end
         markSpawned(mob)
         tagAsOurs(mob)
-        if entry.nm then FlavorNameFix(mob, entry.nm) end   -- blank-name fallback (Flavor.lua)
         if doEquip then EquipMob(mob, base, entry, groupTier, isBoss) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)

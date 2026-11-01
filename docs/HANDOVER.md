@@ -359,6 +359,35 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   sane (base 5 → 2-6 mobs). ⚠️ in-game: first race-coherent reinforcement waves
   + `!chaos_root` now expects **792 REGISTERED**; wild log gained a `race <key>`
   field.)
+- **v3.30 over-level leak fix + nameless-mob mystery solved (owner Orthon log
+  2026-11-01):** a lvl-5 Fiend wave picked `Orthon_A` (hp105 → cost 10 fits budget);
+  the native-lvl self-check saw lvl 10 and deferred the delete — but `SetFaction(EVIL)`
+  ran BEFORE the check, dragging the devil into combat, and the deferred delete then
+  *refused* ("skipped (in combat)") **permanently** → two lvl-10 devils fought in the
+  lvl-5 fight. Owner's clue: they showed only "lvl 10" with NO name — that's the
+  whole nameless-mob pattern: despawn-path mobs return before `FlavorNameFix` (the
+  blank-name fallback, which exists because templates like Orthon_A render BLANK
+  names), so every over-level despawn survivor = a nameless beefy mob. Fixes:
+  (a) **pick-time lvl gate made real** — `passesGate` already rejected `e.lvl >
+  base+2` but the DB only read stats `data "Level"` (2 entries game-wide!); levels
+  actually live as **root-template `LevelOverride`** (Orthon_A node = 10).
+  build_creature_db.py now parses it (note: attrs alphabetical, LevelOverride comes
+  BEFORE MapKey which opens the record → pending-buffer) → 132/560 entries lvl-aware,
+  Orthon lvl=10 → never picked under lvl 8. ⚠️ this also prunes other hidden lvl-
+  bombs from low-level pools (Floating_Head etc. now actually gated);
+  (b) spawnCreature (both engines) checks level BEFORE any faction/hostility call —
+  an over-level spawn stays neutral (never engages, delete succeeds outside combat);
+  (c) single 3s-delete-skip replaced by `ScheduleOverlevelDelete` ladder (Common.lua):
+  3s/+10s/+30s/+90s retries, STUCK log if never deletable; (d) `FlavorNameFix` moved
+  before the despawn branch so even a STUCK survivor renders a proper name;
+  (e) spawn log now prints the DB `lvl` (the old `lvl nil` was a dead-variable
+  artifact from the removed SetLevel code); (f) party-knob undercount fix: involved-
+  count read lagged (party 6 seen in log, budget used party 1 because the API
+  returned 1 at +1.5 s while players trickled in) → party = max(DB_Players, involved).
+  Offline sim (/tmp/opencode/luachk/sim_v330.py): Orthon OUT at base≤7 / IN at 8+,
+  0 lvl-gate violations across all pools, ladder deletes at 3rd attempt, stuck case
+  logs. ⚠️ in-game: expect `over-level despawn done:` (or no over-level line at all
+  for lvl-aware entries) and NO nameless mobs.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed
