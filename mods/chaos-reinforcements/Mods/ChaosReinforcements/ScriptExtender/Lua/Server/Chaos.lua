@@ -1,7 +1,7 @@
 -- ChaosReinforcements chaos/reinforcement engine (server side). Ext.Require'd AFTER
 -- Common.lua (log + constants), CreatureDB.lua (CHAOS_DB) and Equip.lua (EquipMob).
 --
--- Owner spec: stacking trigger (base 20%, +5..25% per miss; TEST_MODE=100% while testing);
+-- Owner spec: stacking trigger (base 30%, +10..30% per miss; TEST_MODE=100% while testing);
 -- budget = hostLevel x rand(2-4) x party knob; reinforcements match the ENCOUNTER's creature
 -- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via
 -- the AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs
@@ -18,9 +18,9 @@
 --     only a fallback when the fight could not be classified.
 
 -- Tunables ------------------------------------------------------------------
-local TEST_MODE = false             -- real odds: base 20% + 5..25% per miss
-local BASE_CHANCE = 20
-local STACK_MIN, STACK_MAX = 5, 25  -- +% per encounter that didn't trigger
+local TEST_MODE = false             -- real odds: base 30% + 10..30% per miss
+local BASE_CHANCE = 30
+local STACK_MIN, STACK_MAX = 10, 30 -- +% per encounter that didn't trigger
 local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs are hp/10
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included

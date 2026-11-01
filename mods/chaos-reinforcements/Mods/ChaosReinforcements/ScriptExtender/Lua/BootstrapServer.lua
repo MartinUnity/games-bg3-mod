@@ -6,6 +6,7 @@
 Ext.Require("Shared/Channels.lua")
 Ext.Require("Server/Common.lua")
 Ext.Require("Server/CreatureDB.lua")
+Ext.Require("Server/TeamTemplates.lua")
 Ext.Require("Server/Equip.lua")
 Ext.Require("Server/Flavor.lua")
 Ext.Require("Server/Toggle.lua")

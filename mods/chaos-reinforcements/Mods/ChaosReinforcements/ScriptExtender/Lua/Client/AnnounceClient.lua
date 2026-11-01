@@ -32,12 +32,25 @@ local function toast(text)
         end
         local t = win:AddText(text)
         t:SetColor("Text", { 1.0, 0.82, 0.36, 1.0 })   -- warm gold, like combat log highlights
-        -- top-center placement (approximate: ImGui can't auto-center)
+        -- top-center placement (approximate: ImGui can't auto-center).
+        -- win.Position = {x,y} is REFUSED by this IMGUI build (logged for weeks);
+        -- the supported call is win:SetPos(vec2) per ExtIdeHelpers ExtuiWindowBase.
         local okV, vp = pcall(Ext.IMGUI.GetViewportSize)
         if okV and type(vp) == "table" and vp[1] then
-            local w = math.min(600, #text * 12)   -- crude width estimate, capped
-            local okP = pcall(function () win.Position = { vp[1] / 2 - w / 2, vp[2] * 0.10 } end)
-            if not okP then clog("toast: Position refused") end
+            local w = math.min(600, #text * 9)   -- crude width estimate, capped
+            local okP = pcall(function () win:SetPos({ vp[1] / 2 - w / 2, vp[2] * 0.10 }) end)
+            if not okP then
+                clog("toast: SetPos refused")
+            else
+                -- after one rendered frame the window knows its real size; re-center
+                pcall(Ext.Timer.WaitFor, 100, function ()
+                    local okS, size = pcall(function () return win.Size end)
+                    if okS and type(size) == "table" and size[1] and size[1] > 0 then
+                        pcall(function () win:SetPos({ vp[1] / 2 - size[1] / 2, vp[2] * 0.10 }) end)
+                        clog("toast recentered, real width", tostring(size[1]))
+                    end
+                end)
+            end
         end
     end)
     if not ok then
