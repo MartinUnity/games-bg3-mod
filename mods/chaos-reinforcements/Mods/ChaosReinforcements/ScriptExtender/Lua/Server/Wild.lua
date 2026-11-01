@@ -14,18 +14,33 @@
 -- CMP generic interiors stay exempt (no wilds in towns), WLD_ = anything (player lvl
 -- is the only limiter), GOB_ + UND_ enabled but THEMED below. Lua patterns have NO
 -- alternation, hence a list.
-local WILD_LEVEL_PATTERNS = { "^WLD_", "^GOB_", "^UND_" }
+local WILD_LEVEL_PATTERNS = { "^WLD_" }
+-- ^GOB_ and ^UND_ REMOVED 2026-11-02: the real level names (enumerated from Gustav.pak,
+-- docs/levels.md) have no such prefixes - goblin camp is WLD_GoblinCamp_D and the
+-- underdark levels are WLD_Underdark_*; the old theme gates never fired. Themes below
+-- now pattern-match the real names (plain substring find, patterns are NOT anchors).
+
+-- Safe havens (owner 2026-11-02, "no wilds in the Druid Grove / towns"): checked
+-- BEFORE WILD_LEVEL_PATTERNS. Grove interior = WLD_DruidSubs_B, grove gate =
+-- WLD_BlockerDruidGrove_A, camp = WLD_Campfire_E / WLD_CAMP_*, cinematics = _CIN_,
+-- vistas = Vista. NOTE: the grove ENTRANCE courtyard (tieflings, Zevlor) is on
+-- WLD_Main_A itself and cannot be carved out by level name - the region discovery
+-- logging in the LevelLoaded listener exists to fix that by crime-region next.
+local WILD_SAFE_PATTERNS = { "DruidGrove", "DruidSubs", "Campfire", "_CIN_", "^WLD_CAMP_", "Vista" }
 
 -- Region themes: when the current level matches a pattern, groups draw from a
 -- themed pool instead of the default type mix (owner: GOB = wandering goblin
 -- warbands; UND = underdark natives - duergar/kuotoa/minotaur/spiders/bats plus
 -- the whole Monstrosity type, driders etc.)
 local WILD_THEMES = {
-    { pat = "^GOB_", name = "goblin warband",
+    { pat = "GoblinCamp", name = "goblin warband",
       terms = { "goblin" } },   -- matches Goblins_*/BASE_Goblins/Hobgoblins
-    { pat = "^UND_", name = "underdark",
+    { pat = "Underdark", name = "underdark",
       terms = { "duergar", "kuotoa", "minotaur", "spider", "bat" },
       types = { Monstrosity = true } },
+    { pat = "SharTemple", name = "underdark",
+      terms = { "duergar", "kuotoa", "minotaur", "spider", "bat", "shar", "justiciar" },
+      types = { Monstrosity = true, Humanoid = true } },
 }
 local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (owner: 1-2 min)
 local WILD_CHANCE = 25               -- % per heartbeat
@@ -393,6 +408,13 @@ local function heartbeat()
     if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
+    -- safe havens first (grove/camp/cinematics beat the ^WLD_ allowance)
+    for _, p in ipairs(WILD_SAFE_PATTERNS) do
+        if currentLevel:find(p) then
+            log("wild: safe haven,", currentLevel, "- no spawns")
+            return
+        end
+    end
     if #groups >= WILD_MAX_GROUPS then return end
     if backoffMs > 0 then return end   -- encounter cooldown (owner: no back-to-back combat)
     local okC, inCombat = pcall(Osi.IsInCombat, host)
@@ -467,6 +489,20 @@ pcall(function ()
         currentLevel = tostring(level)
         groups = {}   -- old level's wilds are gone after a level swap
         log("wild: level", currentLevel)
+        -- region discovery (owner 2026-11-02): the grove entrance courtyard is on
+        -- WLD_Main_A and can't be exempted by level name; log the Osiris region and
+        -- crime-region strings per level so safe havens can be carved out next.
+        local host = Osi.GetHostCharacter()
+        if host and host ~= "" then
+            local okR, region = pcall(Osi.GetRegion, host)
+            if okR and region and region ~= "" then
+                log("wild: region", currentLevel, "=", tostring(region))
+            end
+            local okCR, crime = pcall(Osi.CharacterGetCrimeRegion, host)
+            if okCR and crime and crime ~= "" then
+                log("wild: crime-region", currentLevel, "=", tostring(crime))
+            end
+        end
     end)
     Ext.Events.SessionLoaded:Subscribe(function ()
         log("Wild.lua loaded (level gate:", table.concat(WILD_LEVEL_PATTERNS, " / "), ")")
