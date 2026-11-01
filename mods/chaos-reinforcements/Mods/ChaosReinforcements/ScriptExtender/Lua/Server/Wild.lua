@@ -488,7 +488,27 @@ pcall(function ()
     Ext.Osiris.RegisterListener("LevelLoaded", 1, "after", function (level)
         currentLevel = tostring(level)
         groups = {}   -- old level's wilds are gone after a level swap
-        log("wild: level", currentLevel)
+        -- explicit gate verdict on EVERY level entry (owner 2026-11-02): definite
+        -- proof the safe/theme patterns matched - a silently-missed pattern (like the
+        -- old GOB_/UND_ that never matched any real level) shows up here immediately.
+        local safeHit, openHit
+        for _, p in ipairs(WILD_SAFE_PATTERNS) do
+            if currentLevel:find(p) then safeHit = p break end
+        end
+        if safeHit then
+            log("wild: gate SAFE", currentLevel, "(matched", safeHit .. ")")
+        else
+            for _, p in ipairs(WILD_LEVEL_PATTERNS) do
+                if currentLevel:find(p) then openHit = p break end
+            end
+            if openHit then
+                local th = themeFor(currentLevel)
+                log("wild: gate OPEN", currentLevel,
+                    "(matched", openHit .. ", theme:", th and th.name or "default mix", ")")
+            else
+                log("wild: gate CLOSED", currentLevel, "(no pattern matched)")
+            end
+        end
         -- region discovery (owner 2026-11-02): the grove entrance courtyard is on
         -- WLD_Main_A and can't be exempted by level name; log the Osiris region and
         -- crime-region strings per level so safe havens can be carved out next.
