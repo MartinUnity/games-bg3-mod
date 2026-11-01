@@ -388,6 +388,18 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   0 lvl-gate violations across all pools, ladder deletes at 3rd attempt, stuck case
   logs. ⚠️ in-game: expect `over-level despawn done:` (or no over-level line at all
   for lvl-aware entries) and NO nameless mobs.
+- **v3.31 wild-roll stacking (owner 2026-11-01: "10+ rolls in a row without any
+  spawns - add 2-8% per miss; the wild chance is fixed at 25%"):** correct, the wild
+  heartbeat was memoryless (reinforcements already stack). `WILD_CHANCE=25` is now a
+  BASE; each heartbeat that produces NO group adds +rand(WILD_STACK_MIN=2,
+  WILD_STACK_MAX=8)% to the next roll (cap 100), reset on a successful group spawn.
+  A *triggered* heartbeat that fails to place a group (no pool / no valid spot /
+  empty group) counts as a miss too (spawnWildGroup now returns true/false);
+  skip-gates (camped/backoff/max-groups/combat/safe-haven) do NOT touch the stack,
+  mirroring the Chaos.lua quiet-window rule. Miss count shows in the roll log
+  (`chance roll 71 (need <=45, miss 4)`) and in `!chaos_status`
+  (`misses N (next lo-hi%)`). Sim: avg misses 3.0→2.0, worst-case streak 35→11,
+  P(≥10 misses) 5.7%→0.1% (the owner's exact complaint). Pak 228146 B.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed

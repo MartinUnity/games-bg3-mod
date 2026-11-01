@@ -47,7 +47,14 @@ local WILD_THEMES = {
       types = { Monstrosity = true, Humanoid = true } },
 }
 local WILD_HEARTBEAT_MS = 90000      -- spawn roll interval while exploring (owner: 1-2 min)
-local WILD_CHANCE = 25               -- % per heartbeat
+local WILD_CHANCE = 25               -- % per heartbeat, BASE (see stacking below)
+local WILD_STACK_MIN, WILD_STACK_MAX = 2, 8
+-- v3.31 stacking (owner 2026-11-01: "10+ rolls in a row without any spawns - add ~2-8%
+-- per miss"): the flat roll was memoryless, dry spells read as broken. Like the
+-- reinforcement stack: +rand(2-8)% per heartbeat that produces NO group (failed roll
+-- OR a trigger that could not spawn: no spot/no pool), reset when a group lands.
+-- Gates that merely skip the roll (camped, backoff, max groups, in combat) do NOT
+-- stack - same "not a real encounter, don't touch the stack" rule as Chaos.lua.
 local WILD_TEST = false              -- real odds: WILD_CHANCE per heartbeat
 -- humanoid evil packs become role-composed CLASS TEAMS (iteration 3): tank/dps/
 -- ranged/caster/healer/wildcard with real progression kits (CHAOST_* stat entries +
@@ -82,6 +89,8 @@ local WILD_MONITOR_MS = 2000        -- proximity check interval
 local currentLevel = ""
 local groups = {}   -- { { members = { guid, ... }, type = "..." } }
 local backoffMs = 0 -- remaining encounter cooldown; ticked down by the monitor
+local wildMisses = 0 -- v3.31 roll-streak: heartbeats since the last wild spawn,
+                     -- each adds +rand(2-8)% to the next roll (capped 100)
 -- Fizzle-aware backoff (owner 2026-11-01): aggroGroup used to arm the 8-10 min
 -- backoff INSTANTLY, but the fizzled camp brief-initiative cost ~10 min of spawn
 -- chances for a fight that never really happened - "anomaly, should not count".
@@ -429,6 +438,7 @@ local function spawnWildGroup(host, base)
     else
         Announce("Travelers pass through the area...")
     end
+    return true
 end
 
 -- heartbeat: try to spawn a wild group while exploring
@@ -494,13 +504,33 @@ local function heartbeat()
     end
     local okC, inCombat = pcall(Osi.IsInCombat, host)
     if okC and inCombat == 1 then wildIdle("host in combat") return end
-    local chance = WILD_TEST and 100 or WILD_CHANCE
+    local chance
+    if WILD_TEST then
+        chance = 100
+    else
+        chance = math.min(100, WILD_CHANCE + wildMisses * rand(WILD_STACK_MIN, WILD_STACK_MAX))
+    end
     local r = rand(1, 100)
-    if r > chance then wildIdle("chance roll " .. r .. " (need <=" .. chance .. ")") return end
+    if r > chance then
+        wildMisses = wildMisses + 1
+        wildIdle("chance roll " .. r .. " (need <=" .. chance .. ", miss " .. wildMisses .. ")")
+        return
+    end
     idleReason = ""   -- passed every gate: this heartbeat rolls for real
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
-    spawnWildGroup(host, base)
+    if spawnWildGroup(host, base) then
+        if wildMisses > 0 then
+            log("wild: stack reset (spawned after", wildMisses, "misses)")
+        end
+        wildMisses = 0
+    else
+        -- roll passed but NOTHING landed (no pool / no valid spot / empty group):
+        -- still a miss for the stack - the owner's complaint was dry spells with
+        -- zero groups, not zero rolls
+        wildMisses = wildMisses + 1
+        wildIdle("triggered but no group - stack +1 (miss " .. wildMisses .. ")")
+    end
 end
 
 -- proximity monitor: the group turns hostile only when the player gets close
@@ -599,13 +629,16 @@ end
 WILD_STATUS = function ()
     local n = 0
     for _ in pairs(campers) do n = n + 1 end
+    local lo = math.min(100, WILD_CHANCE + wildMisses * WILD_STACK_MIN)
+    local hi = math.min(100, WILD_CHANCE + wildMisses * WILD_STACK_MAX)
     return string.format(
-        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | fight %s | gate %s",
+        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | fight %s | misses %d (next %d-%d%%) | gate %s",
         currentLevel, #groups, WILD_MAX_GROUPS, math.ceil(backoffMs / 60000), n,
         lastCrimeRegion ~= "" and lastCrimeRegion or "-",
         pendingEngage and (pendingEngage.combatMs > 0
             and ("~" .. math.floor(pendingEngage.combatMs / 1000) .. "s, arming?")
             or "pending") or "-",
+        wildMisses, lo, hi,
         idleReason ~= "" and ("blocked: " .. idleReason) or "clear")
 end
 
