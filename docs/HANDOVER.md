@@ -278,6 +278,22 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.25: fizzle-aware wild backoff + camp guard confirmed (owner 2026-11-01):** owner
+  ruling on the dry-spell tuning question — a FIZZLED aggro (e.g. the camp brief-
+  initiative) "should count as an anomaly and not start the backoff counter".
+  `aggroGroup` no longer arms the 8-10 min backoff; instead the monitor adjudicates the
+  last aggroed group via `pendingEngage` (aggroed groups leave `groups`, so it needs
+  its own tracker, checked every 2 s tick BEFORE the empty/max-group returns):
+  `combatMs` accumulates while any member has `IsInCombat`=1; backoff arms once
+  `combatMs >= WILD_REAL_COMBAT_MS` (15 s — "real fight confirmed"); `goneMs >=
+  WILD_ENGAGE_GRACE_MS` (6 s out of combat) closes the verdict as "fight lasted ~Ns -
+  fizzle" or "never engaged", logging the anomaly with NO backoff. Grace also absorbs
+  mid-fight 2-4 s `IsInCombat` blips (sim-tested S4) and aggro-startup lag. Frozen
+  while camped (combat cannot happen there; verdict resolves after leaving camp).
+  `!chaos_status` gained a `fight` field (`-` / `pending` / `~Ns, arming?`). Offline
+  lupa sims: real fight arms, 4-s fizzle does not, never-engaged does not, blippy
+  fight arms. Camp guard ⚠️ resolved ✅ (see v3.22/v3.23 notes); backlog camp-confirm
+  item removed.
 - **v3.24: `Osi.SetLevel` REMOVED from both spawn engines (first hard game crash,
   2026-11-01):** crash-handler backtrace = `bg3.exe ← bg3se::OsirisWrappers::CallWrapper
   ← OsiCall`, Lua frames `Wild.lua:211` inside `spawnWildMob`'s pcall — that line was
@@ -306,6 +322,8 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   no camp inside the 10-min window or `TeleportedToCamp/FromCamp` don't fire for the
   camp UI; next camp MUST show it (if not: fallback = camp crime-region value, which
   is now visible via the heartbeat's crime probe + timestamps).
+  **RESOLVED 2026-11-01: owner confirmed in-game — camping logs `wild: at CAMP` and the
+  camp guard works; no crime-region fallback needed.**
 - **v3.22: camp guard (owner incident 2026-11-01: warband spawned AT the campfire):**
   making camp does NOT swap the Osiris level — no `LevelLoaded` fires, the wild gate
   stayed OPEN on `WLD_Main_A` while camped, and the heartbeat anchored 4 skeletons at
@@ -318,6 +336,8 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resets `campers` (fast-travel may lack a FromCamp event). ⚠️ playtest: camping must log
   `wild: at CAMP (...)` — if it never appears, the events don't fire for the camp UI and
   the fallback is the camp crime-region value (heartbeat already logs region changes).
+  **✅ CONFIRMED 2026-11-01 by owner playtest: camping logs `wild: at CAMP (...)`,
+  spawns pause, and the campsite stays clear.**
 - **v3.21: class-appropriate "support" slot (owner spec 2026-11-01, same day as v3.20):**
   role-keyed extra pocket in `EquipMob` — **casters** get 0-X `LOOT_SCROLL_*` (low: cantrips/
   1st-level like MagicMissile/Thunderwave; mid: Fireball/Web/ChainLightning/Confusion; top:

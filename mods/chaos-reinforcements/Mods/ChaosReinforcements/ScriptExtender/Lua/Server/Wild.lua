@@ -82,6 +82,17 @@ local WILD_MONITOR_MS = 2000        -- proximity check interval
 local currentLevel = ""
 local groups = {}   -- { { members = { guid, ... }, type = "..." } }
 local backoffMs = 0 -- remaining encounter cooldown; ticked down by the monitor
+-- Fizzle-aware backoff (owner 2026-11-01): aggroGroup used to arm the 8-10 min
+-- backoff INSTANTLY, but the fizzled camp brief-initiative cost ~10 min of spawn
+-- chances for a fight that never really happened - "anomaly, should not count".
+-- Backoff now arms only after the aggroed party has actually been in combat for
+-- WILD_REAL_COMBAT_MS. pendingEngage tracks that verdict after the group itself
+-- leaves `groups` (aggroed groups are dropped from proximity tracking).
+-- grace = how long we wait out-of-combat before declaring "never engaged" /
+-- "fight over" (SetHostileAndEnterCombat may take a tick or two to show).
+local WILD_REAL_COMBAT_MS = 15000
+local WILD_ENGAGE_GRACE_MS = 6000
+local pendingEngage = nil   -- { id, members, combatMs, goneMs }
 
 -- Camp guard (owner 2026-11-01, campsite spawn incident): making camp teleports the
 -- party to the campsite WITHOUT an Osiris level change (confirmed: entering camp
@@ -295,9 +306,11 @@ local function aggroGroup(group, player)
         pcall(Osi.SetFaction, guid, EVIL)
         pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, guid, player)
     end
-    backoffMs = rand(WILD_BACKOFF_MIN, WILD_BACKOFF_MAX) * 60000
-    log("wild: group", group.id, "aggroed by", player, "(", #group.members, "mobs ); backoff",
-        math.floor(backoffMs / 60000) .. "min")
+    -- no instant backoff (owner 2026-11-01): arm only if the monitor later
+    -- confirms a REAL fight (see pendingEngage note at the constants)
+    pendingEngage = { id = group.id, members = group.members, combatMs = 0, goneMs = 0 }
+    log("wild: group", group.id, "aggroed by", player, "(", #group.members,
+        "mobs ); backoff arms only after a real fight")
 end
 
 local function spawnWildGroup(host, base)
@@ -512,6 +525,39 @@ end
 local function monitor()
     pcall(Ext.Timer.WaitFor, WILD_MONITOR_MS, monitor)
     if backoffMs > 0 then backoffMs = backoffMs - WILD_MONITOR_MS end
+    -- pending verdict on the last aggroed group (it left `groups` when aggroed,
+    -- so this runs even with no tracked groups; frozen while camped - combat
+    -- cannot happen at camp, it resolves once the party is back in the world)
+    if pendingEngage then
+        local anyCombat = false
+        for _, guid in ipairs(pendingEngage.members) do
+            local okI, ic = pcall(Osi.IsInCombat, guid)
+            if okI and ic == 1 then anyCombat = true break end
+        end
+        if anyCombat then
+            pendingEngage.combatMs = pendingEngage.combatMs + WILD_MONITOR_MS
+            pendingEngage.goneMs = 0
+            if pendingEngage.combatMs >= WILD_REAL_COMBAT_MS then
+                backoffMs = rand(WILD_BACKOFF_MIN, WILD_BACKOFF_MAX) * 60000
+                log("wild: real fight confirmed (group", pendingEngage.id ..
+                    ") - backoff", math.floor(backoffMs / 60000) .. "min")
+                pendingEngage = nil
+            end
+        else
+            pendingEngage.goneMs = pendingEngage.goneMs + WILD_MONITOR_MS
+            if pendingEngage.goneMs >= WILD_ENGAGE_GRACE_MS then
+                if pendingEngage.combatMs > 0 then
+                    log("wild: group", pendingEngage.id, "fight lasted ~",
+                        math.floor(pendingEngage.combatMs / 1000) ..
+                        "s - fizzle (anomaly), no backoff")
+                else
+                    log("wild: group", pendingEngage.id, "never engaged (aggro fizzled)",
+                        "- anomaly, no backoff")
+                end
+                pendingEngage = nil
+            end
+        end
+    end
     if #groups == 0 then return end
     if hostAtCamp() then return end   -- camp guard: groups idle (no aggro, no expiry) while camped
     local players = factGuids("DB_Players", 1)
@@ -572,9 +618,12 @@ WILD_STATUS = function ()
     local n = 0
     for _ in pairs(campers) do n = n + 1 end
     return string.format(
-        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | gate %s",
+        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | fight %s | gate %s",
         currentLevel, #groups, WILD_MAX_GROUPS, math.ceil(backoffMs / 60000), n,
         lastCrimeRegion ~= "" and lastCrimeRegion or "-",
+        pendingEngage and (pendingEngage.combatMs > 0
+            and ("~" .. math.floor(pendingEngage.combatMs / 1000) .. "s, arming?")
+            or "pending") or "-",
         idleReason ~= "" and ("blocked: " .. idleReason) or "clear")
 end
 

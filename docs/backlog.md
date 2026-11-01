@@ -91,10 +91,11 @@ approximate it. Also queued:
   grenades/poisons (thrown/applied?) — and does the bow grant interfere with melee-role weapon
   rolls. Log lines `support: <role> band <n> ...` in `ChaosReinforcements.log` mark recipients;
   if AI ignores items, consider swapping to items kits natively use, or drop the dead pools.
-- **camp-guard confirm** (v3.22): camp and check `ChaosReinforcements.log` for
-  `wild: at CAMP (...)` then `wild: camp done`. If camping logs NOTHING, the Osiris
-  camp events don't fire for the camp UI → fallback: map the camp crime-region/region
-  values (heartbeat logs changes) or a stationary-host heuristic.
+- **fizzle-backoff watch** (v3.25): in playtests confirm the new verdict lines behave —
+  real fights log `wild: real fight confirmed ... - backoff Nmin`, brief ones log
+  `fight lasted ~Ns - fizzle (anomaly), no backoff`. If genuine short fights (fast
+  wipes) keep getting ruled fizzles and spawn pressure feels too high, raise
+  `WILD_REAL_COMBAT_MS` (15 s) or count kills as proof of a real fight.
 
 ## Balancing / tuning (from playtests)
 

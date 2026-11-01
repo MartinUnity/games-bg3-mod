@@ -103,8 +103,13 @@ Where things live:
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);
-  Wild tracks per-char, heartbeat+monitor gate while the HOST is camped; ⚠️ the events
-  firing for the camp UI needs one in-game confirm via the `wild: at CAMP` log line); RNG =
+  Wild tracks per-char, heartbeat+monitor gate while the HOST is camped; ✅ in-game
+  confirmed 2026-11-01 (`wild: at CAMP` fires on camping, guard works);
+  **fizzle-aware backoff** (v3.25, owner: a fizzled aggro is an anomaly, it must not
+  cost spawn chances): the 8-10 min wild backoff is NO LONGER armed by `aggroGroup` —
+  the monitor judges the last aggroed group via `pendingEngage` and arms backoff only
+  after ~15 s of sustained combat (2 s ticks; 6 s out-of-combat grace covers aggro
+  startup and mid-fight blips; fizzle/never-engaged logs the anomaly instead); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
