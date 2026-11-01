@@ -27,6 +27,10 @@ local WILD_LEVEL_PATTERNS = { "^WLD_" }
 -- WLD_Main_A itself and cannot be carved out by level name - the region discovery
 -- logging in the LevelLoaded listener exists to fix that by crime-region next.
 local WILD_SAFE_PATTERNS = { "DruidGrove", "DruidSubs", "Campfire", "_CIN_", "^WLD_CAMP_", "Vista" }
+-- Safe crime regions (Lua patterns, matched against the host's CharacterGetCrimeRegion):
+-- WLD_Main_A_DEN = the grove entrance courtyard on WLD_Main_A itself (tiefling den).
+-- More subregions can be added as the discovery log maps them.
+local WILD_SAFE_CRIME_PATTERNS = { "_DEN$" }
 
 -- Region themes: when the current level matches a pattern, groups draw from a
 -- themed pool instead of the default type mix (owner: GOB = wandering goblin
@@ -411,6 +415,7 @@ local function spawnWildGroup(host, base)
 end
 
 -- heartbeat: try to spawn a wild group while exploring
+local lastCrimeRegion = ""
 local function heartbeat()
     pcall(Ext.Timer.WaitFor, WILD_HEARTBEAT_MS, heartbeat)
     local allowed = false
@@ -421,6 +426,24 @@ local function heartbeat()
     if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
+    -- crime-region sub-gate (owner 2026-11-02): the grove ENTRANCE courtyard (Wyll,
+    -- tieflings) is ON WLD_Main_A - the level gate cannot exempt it, but vanilla
+    -- gives it its own crime region (WLD_Main_A_DEN, "DEN" = the tiefling den in
+    -- story naming). While the host's crime region matches a safe pattern, no
+    -- spawns. Transitions are logged to map more subregions (e.g. _SHED).
+    local crime = ""
+    local okCR, cr = pcall(Osi.CharacterGetCrimeRegion, host)
+    if okCR and cr then crime = tostring(cr) end
+    if crime ~= lastCrimeRegion then
+        log("wild: crime-region ->", crime ~= "" and crime or "(nil)")
+        lastCrimeRegion = crime
+    end
+    for _, p in ipairs(WILD_SAFE_CRIME_PATTERNS) do
+        if crime:find(p) then
+            log("wild: safe haven (crime region", crime .. ") - no spawns")
+            return
+        end
+    end
     -- safe havens first (grove/camp/cinematics beat the ^WLD_ allowance)
     for _, p in ipairs(WILD_SAFE_PATTERNS) do
         if currentLevel:find(p) then

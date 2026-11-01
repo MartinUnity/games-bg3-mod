@@ -51,7 +51,6 @@ CHAOS_DB = {
     { id = "Gremishka_a5fec355-d3cb-427a-9fb9-b1a2d9cffeb0", hp = 16, cost = 2, nm = "Gremishka", ac = 10, str = 8, dex = 16, con = 10, wis = 11, cha = 4, unarmed = true },
     { id = "Hyena_A_045f416c-7c67-413d-a06f-2c2fdbb282a8", hp = 12, cost = 1, nm = "Hyena", ac = 11, str = 11, dex = 13, con = 12, wis = 12, cha = 5, unarmed = true },
     { id = "Hyena_A_Black_d9ae21e7-edd4-4915-ad8d-ac904c4c2567", hp = 12, cost = 1, nm = "Hyena", ac = 11, str = 11, dex = 13, con = 12, wis = 12, cha = 5, unarmed = true },
-    { id = "OX_A_3f1dfd9b-fb57-49bd-81ee-6f9930eac709", hp = 15, cost = 2, nm = "Ox", ac = 10, str = 18, dex = 10, con = 14, wis = 10, cha = 4, unarmed = true },
     { id = "Panther_GremishkaWildhsape_b97ec450-a974-49ca-81c6-843219460272", hp = 42, cost = 4, nm = "Panther", ac = 12, str = 14, dex = 15, con = 10, wis = 14, cha = 7, unarmed = true },
     { id = "RAT_B_Narcoleptic_6f5ca094-996b-48e3-9e8f-63c50fd1bf31", hp = 2, cost = 1, nm = "Rat Narcoleptic", str = 10, dex = 12, con = 9, wis = 10, cha = 4, unarmed = true },
     { id = "RAT_B_Wounding_f5bffed7-f4dc-4bad-b33d-37897d2b52a8", hp = 4, cost = 1, nm = "Rat Wounding", str = 14, dex = 14, con = 9, wis = 10, cha = 4, unarmed = true },

@@ -49,6 +49,7 @@ BAD_NAME = re.compile(
     r"|^COL_|HitboxProxy|Crowd|Teaser|Combat_Test|Explosive|Tressym|FROG"
     r"|Dragon($|_)|^WYR_|(^|_)(Cat|Crab|Rabbit|Squirrel|Chicken)($|_)"
     r"|_TEMP($|_)|(^|_)(Brewer|Surgeon)($|_)"   # story NPC shells (Brewer_Jef_TEMP etc)
+    r"|(^|_)(OX|Cow|Goat|Sheep|Pig|Chicken|Horse|Donkey|Camel|Mule)($|_)"   # livestock (OX_A spawned as a "warband")
     r"|^BHAAL_|HouseOfHope|Redcap_Pirate|Sharran_|DarkJusticiar|SteelWatcher|"
     r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway"
     r"|Ketheric|^MOO_|baptismTrigger|Form_Player|FindFamiliar|ConjureElemental|"
