@@ -47,18 +47,26 @@ cp -r "$WORKSPACE/Mods" "$stage/"
 # and localization (top-level Localization/English/*.loca, built from the .xml source
 # via tools/divine.sh -a convert-loca - proven route: third-party paks on this install
 # ship exactly that layout)
-srccount="$(find "$stage/Mods" -type f | wc -l)"
 if [ -d "$WORKSPACE/Public" ]; then
     cp -r "$WORKSPACE/Public" "$stage/"
-    srccount="$((srccount + $(find "$WORKSPACE/Public" -type f | wc -l)))"
 fi
 if [ -d "$WORKSPACE/Localization" ]; then
     cp -r "$WORKSPACE/Localization" "$stage/"
-    srccount="$((srccount + $(find "$WORKSPACE/Localization" -type f | wc -l)))"
 fi
+# ⚠️ RootTemplates register from BINARY .lsf only (vanilla ships _merged.lsf;
+# ManyMoreMonsters/EncountersOverhaul/extra_enemies_honour all ship .lsf - our
+# lsx-only pak registered ZERO templates: every CHAOST CreateAtObject failed,
+# 2026-11-01). Regenerate .lsf from the .lsx masters at build time so they can
+# never go stale; both files ride along in the pak (EO precedent, works).
+if [ -d "$stage/Public" ]; then
+    while IFS= read -r x; do
+        "$DIVINE" -g bg3 -a convert-resource -i lsx -o lsf -s "$x" -d "${x%.lsx}.lsf" >/dev/null
+    done < <(find "$stage/Public" -path "*/RootTemplates/*.lsx" 2>/dev/null)
+fi
+expected="$(find "$stage" -type f | wc -l)"
 "$DIVINE" -g bg3 -a create-package -s "$stage" -d "$stage/$folder.pak" >/dev/null
 # guard: Divine can silently emit a header-only pak
-if [ "$srccount" != "$("$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" | wc -l)" ]; then
+if [ "$expected" != "$("$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" | wc -l)" ]; then
   echo "error: pak entry count does not match source file count" >&2
   "$DIVINE" -g bg3 -a list-package -s "$stage/$folder.pak" >&2 || true
   rm -rf "$stage"; exit 1

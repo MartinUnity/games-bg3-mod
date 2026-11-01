@@ -117,7 +117,14 @@ Where things live:
   server (client-only). log() now fully pcall-guarded, clock = feature-detect
   `Ext.IO.GetCurrentDateTime` -> `Ext.Timer.MonotonicTime`; offline compile-checks run
   under LuaJIT = no nested `...` in closures, pass varargs explicitly)**; log =
-  profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
+  profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`/
+  `!chaos_root` (registration probe: counts CHAOST_* in GetAllRootTemplates).
+  ⚠️ pak RootTemplates load as BINARY `.lsf` ONLY (lsx-only = silently ZERO templates;
+  working mod paks here ship .lsf, vanilla `_merged.lsf`) — pack_mod.sh auto-converts
+  staged `RootTemplates/*.lsx` via `divine -a convert-resource -i lsx -o lsf` (abs paths;
+  roundtrip-verified). CHAOST stats: `Progressions` refs UCL progression **TableUUID**s;
+  Fighter entry was a 1-char typo (fixed `1c4c6006-0b49...`); failed team slots now
+  fall back to pool mobs (group never empties).
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
   `tools/divine.sh` + `tools/pack_mod.sh` (proven; unpack verb: `-a extract-package -g bg3`).
   A loaded mod flags the save as modded (achievements off — user doesn't care).

@@ -138,3 +138,26 @@ survives saves) and evil wild packs carry our unique Evil NPC faction string;
 the reinforcement engine skips fights against anything matching either. The
 "wipe-on-exit" expectation above is wrong; the owner decision (keep Temporary=1)
 stands unchanged.
+
+## Reinforcements never got the team/group composition treatment (owner feedback, 2026-11-01)
+
+Owner playtest vs the ambush goblins: human reinforcements looked "kinda half-done":
+High-elf Harper_Caster (INT18/WIS) got rapier+cloak, no caster vibe (scrolls did land —
+support slot); gnome "tank" AC12, scale-mail look but no shield; goblin Sharp-Eye (DEX15,
+"Sharpsooter: Low ground") got a scimitar, only later a shortbow; Dragonborn Fighter =
+correct. Also: goblin joined the Humanoid pool mix (expected — Goblin maps to type
+Humanoid via RACE_TO_TYPE; it IS the type-affinity feature working).
+
+Answer at the time: yes, this was a deliberate deferral — combat reinforcements still use
+the LEGACY per-member equip rolls (no group tier, no roles), while wild groups got tiered
+composition (v3.14→v3.21). Options if the owner wants parity, ranked:
+1. **Cheap parity (Equip.lua only):** pick weapon tables by role guess + profs — casters:
+   staff/no weapon + more scrolls; Shield-profits get a shield (`ST_Shields`?); finesse
+   tables only when DEX is the higher attack stat. Fixes most "wrong vibe" cases, no new tech.
+2. **Full parity:** run combat reinforcements through the same CHAOST team composer
+   (templates now finally register — see HANDOVER v3.27 .lsf fix; ⚠️ verify `!chaos_root`
+   first). Bigger change: reinforce() has no group plan today; needs slotting + level math
+   per wave (budget already exists).
+3. **Naked/underwear look:** vanilla NPC root templates carry NO equipment (gear lives on
+   level instances), so spawns start visually bare before our equip lands; consider a
+   baseline clothing pass (cheap alch/loot clothing ids) or accept as "rough mercenary".

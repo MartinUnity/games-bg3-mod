@@ -421,6 +421,19 @@ local function spawnWildGroup(host, base)
         local doEquip = (entry.prof ~= nil and entry.prof ~= "")
         local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip,
                                   groupFaction, tier, boss and i == 1)
+        -- failed team slot (CHAOST template unregistered/broken) must never leave an
+        -- empty group (owner 2026-11-01: "group spawn FAILED (no members)" x5 after a
+        -- root-template registration failure) - retry the slot with a plain pool mob.
+        if not guid and teamMode and entry.fixedLevel then
+            local pool = gatedPool(etype, base)
+            if pool then
+                entry = pool[rand(1, #pool)]
+                doEquip = (entry.prof ~= nil and entry.prof ~= "")
+                log("wild: team slot failed - pool retry:", entry.id)
+                guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip,
+                                    groupFaction, tier, boss and i == 1)
+            end
+        end
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then

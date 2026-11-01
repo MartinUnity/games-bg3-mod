@@ -278,6 +278,27 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.27 CHAOST team spawns were dead — RootTemplates load as binary .lsf only
+  (owner 2026-11-01: first team-mode roll after load = `CreateAtObject failed for
+  CHAOST_*` x5, "group spawn FAILED (no members)"):** diagnosis chain — rosters↔lsx
+  fully consistent (420/420 ids, 504 templates), parents valid in live dump, pak
+  contained the files — BUT vanilla ships RootTemplates as `_merged.lsf`, and every
+  working third-party pak here (ManyMoreMonsters, EncountersOverhaul, extra_enemies
+  _honour, Goon's) ships binary `.lsf`; we shipped only `ChaosTeams.lsx` → the engine
+  registered ZERO CHAOST templates (encounters.md Route 6 verdict: lsx-only = dead).
+  Fix: `divine -a convert-resource -i lsx -o lsf` (roundtrip-verified byte-identical
+  semantics on EO's shipped pair + our 504-template file); `tools/pack_mod.sh` now
+  auto-converts every staged `RootTemplates/*.lsx` → `.lsf` at build time (never
+  stale; both formats ship, EO precedent); generated .lsf gitignored. Also fixed a
+  real stats bug: `CHAOST_*` Progressions "Fighter" table was `1c4c6006-BB49-...` —
+  UCL's actual TableUUID is `1c4c6006-0B49-...` (one char off; 12 stats entries +
+  gen_teams/team_composer corrected; the other 20 UCL GUIDs verified against the
+  installed UCL's Progressions.lsx — note Progressions reference TableUUID, NOT node
+  UUID). Robustness: failed team slot now retries with a pool mob (`teamFallback`,
+  group never empties on template trouble); new `!chaos_root` console probe counts
+  CHAOST_* among `Ext.Template.GetAllRootTemplates()` (⚠️ confirm 504 REGISTERED
+  in-game next boot). Owner's related load-save suspicion was wrong: template
+  registration is boot-time, unrelated to save loading.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed

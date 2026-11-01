@@ -31,7 +31,7 @@ XP_CURVE = "206b753f-bc3b-46af-98b9-0c711d98c678"   # vanilla goblin XP curve
 
 # UCL progression TABLE guids (verified against the installed UtutsCoreLibrary)
 UCL = {
-    "Fighter": "1c4c6006-bb49-4dac-954a-5a83b815a695",
+    "Fighter": "1c4c6006-0b49-4dac-954a-5a83b815a695",
     "Barbarian": "ae343448-6fce-40b2-8eb7-b5e4316dff58",
     "Ranger": "06762adc-24d9-4689-8d09-8dfa9182dd4b",
     "Wizard": "7eefd2dd-5aab-4349-9c22-7c38afe133c4",

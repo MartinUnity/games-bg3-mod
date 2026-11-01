@@ -358,3 +358,20 @@ Ext.RegisterConsoleCommand("chaos_wolf", function ()
         spawnCreature(host, { id = "Wolf_41da0eff-b533-43cc-a014-218f7d23fa11", hp = 11, cost = 1 }, 1)
     end
 end)
+-- !chaos_root: are our CHAOST_* root templates registered in the live game?
+-- (2026-11-01: every CreateAtObject for CHAOST_* failed - root templates only load
+-- as BINARY .lsf from paks; the lsx-only pak registered nothing.)
+Ext.RegisterConsoleCommand("chaos_root", function ()
+    local ok, all = pcall(Ext.Template.GetAllRootTemplates)
+    if not ok or type(all) ~= "table" then
+        log("chaos_root: GetAllRootTemplates failed:", tostring(all))
+        return
+    end
+    local total, found = 0, 0
+    for k in pairs(all) do
+        total = total + 1
+        if tostring(k):find("CHAOST") then found = found + 1 end
+    end
+    log("chaos_root:", found, "CHAOST templates among", total, "root templates",
+        found > 0 and "- REGISTERED" or "- NOT LOADED (check pak .lsf!)")
+end)
