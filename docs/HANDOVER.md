@@ -299,6 +299,35 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   CHAOST_* among `Ext.Template.GetAllRootTemplates()` (⚠️ confirm 504 REGISTERED
   in-game next boot). Owner's related load-save suspicion was wrong: template
   registration is boot-time, unrelated to save loading.
+- **v3.28 equip role-parity + save-load reinforcement guard (owner 2026-11-01):**
+  playtest confirmations: healing-potion AI ✅ ("they use healing potions to heal
+  each other"), camp guard ✅, 25%/90s pacing ✅. Owner feedback drove this release:
+  (a) the 5 combat-reinforcement mobs were "mostly naked" + a caster felt wrong —
+  (b) LOADING a save into an ongoing fight spawned a SECOND wave: log proved the
+  game re-fires `CombatStarted` on restore (+00:00:04 SessionLoaded toggle-restore,
+  +00:00:16 `CombatStarted … TRIGGERED (chance 30%)`, +00:00:18 wave). Fix:
+  `LOAD_QUIET_MS = 20000` — SessionLoaded sets `loadQuietUntil = MonotonicMs() + 20 s`
+  (helper `MonotonicMs()` added to Common.lua); CombatStarted listener skips rolls
+  inside the window WITHOUT touching the miss stack ("skipped: save-load quiet
+  window"). Cost: a genuinely fresh fight within 20 s of a load misses one roll.
+  Equip parity ("option 1, cheap route"): role read = team slot, else template-name
+  patterns over `nm`+id (`weaponRoleFor`: Ranger/Hunter/Archer/Scout/Sniper/Marksman/
+  Crossbow/Bowman → ranged; Caster/Cleric/Druid/Warlock/Wizard/Mage/Priest/Acolyte/
+  Shaman/Necro/Invoker/Conjurer/Sorcerer/Healer/Bard → caster). `equipmentFor` now
+  returns (weapon, armor, extras): caster = QUARTERSTAFF template (needs SimpleWeapons
+  or Quarterstaffs prof; `WPN_HUM_Quarterstaff_A_0` GUID 96e2abaf…, tier4 `A_1`
+  GUID 2fa18ee4…) instead of a rapier lottery (finesse gated to melee ONLY); ranged
+  = bow as PRIMARY weapon (ST_SimpleRangedWeapons, martial table at tier>=2+prof,
+  _1 variants at tier4; old duplicate support-bow removed); Shields-proficient melees
+  get shield templates (tank slot 100%, other melee 55%; B_0 24fa28d4/C_0 4491fcaf,
+  tier4 D_1 26b81847) — shields are off-hand WPN_* templates, the auto-equip listener
+  places them. supportRoleFor unified onto the same guess (pool mobs now get
+  scrolls/arrows too; team healers keep the melee consumable kit). Offline sim
+  (EquipPlanFor grid, seed 42) verified all paths incl. "Sahuagin Hunter"→bow.
+  Cosmetic note for owner: tooltips still show the template's native "Level 1"
+  (SetLevel removed; stat blocks are fixed anyway — HP/ExtraAttack don't derive
+  from that number). ⚠️ in-game: first CHAOST class-teams + parity + quiet-window
+  verdict all pending this boot (owner running the v3.28 pak).
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed

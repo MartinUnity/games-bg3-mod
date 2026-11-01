@@ -30,6 +30,11 @@ local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
 local LEADER_TEST = false           -- real odds: 10% leader for packs >= 2
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
+-- Save-load quiet window (owner 2026-11-01: loading a save into an ONGOING fight
+-- re-fires CombatStarted ~12 s after SessionLoaded -> a second reinforcement wave
+-- spawned around a restored goblin fight). Rolls are suppressed this long after
+-- every session load; live log showed CombatStarted at +16 s vs SessionLoaded +4 s.
+local LOAD_QUIET_MS = 20000
 
 -- HP boost formerly in GustavDev Status_BOOST.txt (HEALTHBOOST_HARDCORE, disabled there
 -- 2026-10-31 for calibration). Lua-side reimplementation will use a custom stats file;
@@ -75,6 +80,7 @@ local AFFINITY = {
 
 local misses = 0
 local seen = {}
+local loadQuietUntil = 0     -- MonotonicMs() deadline: no reinforcement rolls after a session load
 local combatRoster = {}   -- combatGuid -> { participant guids, via EnteredCombat }
 local rosterPlayers = {}  -- guid -> true (skip list), refreshed per wave
 local raceDumped = false
@@ -289,6 +295,21 @@ end
 
 -- listeners --------------------------------------------------------------------
 local ok, err = pcall(function ()
+    -- save-load quiet window: loading a save into an ONGOING fight makes the game
+    -- re-fire CombatStarted (live log 2026-11-01: SessionLoaded +04 s, CombatStarted
+    -- +16 s -> a second wave spawned around the restored fight). Suppress rolls for
+    -- LOAD_QUIET_MS after every session load; a fresh fight inside that window is
+    -- rare and only costs one roll.
+    Ext.Events.SessionLoaded:Subscribe(function ()
+        local now = MonotonicMs()
+        if now then
+            loadQuietUntil = now + LOAD_QUIET_MS
+            log("SessionLoaded: reinforcement rolls quiet for", LOAD_QUIET_MS / 1000, "s (save-load restore guard)")
+        else
+            loadQuietUntil = 0   -- clock unavailable: no window, behave like before
+        end
+    end)
+
     -- roster: track who actually entered each combat (backup for the DB read)
     Ext.Osiris.RegisterListener("EnteredCombat", 2, "after", function (object, combatGuid)
         local roster = combatRoster[combatGuid]
@@ -308,6 +329,15 @@ local ok, err = pcall(function ()
         -- in-game toggle (Toggle.lua shout): no rolls, stack untouched
         if not CHAOS_STATE.reinforce then
             log("CombatStarted", combatId, "skipped (reinforcements toggled OFF)")
+            return
+        end
+
+        -- save-load quiet window (see SessionLoaded subscription above): the game
+        -- re-fires CombatStarted when it restores an in-progress fight on load.
+        -- Don't roll AND don't touch the miss stack - this isn't a real encounter.
+        local nowMs = MonotonicMs()
+        if loadQuietUntil > 0 and nowMs and nowMs < loadQuietUntil then
+            log("CombatStarted", combatId, "skipped: save-load quiet window (restored combat?)")
             return
         end
 

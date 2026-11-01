@@ -80,10 +80,12 @@ Beyond the villain name + buffs: tint/color or VFX the leader. Candidate primiti
 (`RootTemplate` GUID -> dump Name_GUID, `ValueScale`, `ValueLevel`, `Proficiency
 Group`) for the owner's exact cost-multiplier tiers. Currently Larian tables
 approximate it. Also queued:
-- shields (no `ST_Shields` table -> `TemplateAddTo` a shield root template;
-  Merregon prof includes Shields);
-- ranged weapons for dex-based humanoids (tables exist: `ST_SimpleRangedWeapons`,
-  `ST_MartialRangedWeapons` — but melee AI may not use bows; needs a probe);
+- shields: ✅ shipped v3.28 — `ST_ArmorShield` unusable (StartLevel 6 gate), direct
+  `WPN_HUM_Shield_B_0/C_0/D_1` templates instead; shields are off-hand weapons, the
+  auto-equip listener places them (tank 100%, other Shields-prof melee ~55%);
+- ranged weapons for dex-based humanoids: ✅ shipped v3.28 as the ranged-ROLE primary
+  weapon (name-pattern role guess + ST_SimpleRangedWeapons/Martial + _1 at tier 4) —
+  ⚠️ whether mob AI actually fights with the bow is still unproven (see playtest item);
 - chaos fodder tables: `ST_RandomPotion`, `ST_RandomConsumable`, `ST_Throwable`.
 - **support-slot playtest** (v3.21 shipped the slot; ⚠️ needs in-game confirmation): does NPC
   AI actually **use** the new items — scrolls (`LOOT_SCROLL_*` cast without knowing the spell?),
@@ -91,6 +93,11 @@ approximate it. Also queued:
   grenades/poisons (thrown/applied?) — and does the bow grant interfere with melee-role weapon
   rolls. Log lines `support: <role> band <n> ...` in `ChaosReinforcements.log` mark recipients;
   if AI ignores items, consider swapping to items kits natively use, or drop the dead pools.
+  **Partial verdict (owner 2026-11-01): healing potions ✅** — "they use healing potions to heal
+  each other" (the item-use AI path works). Scroll still untested: the Chromatic-Orb caster died
+  before acting (owner keeping one alive next fight); arrows/grenades/poisons open. v3.28 moved
+  the bow into the ranged role's PRIMARY weapon slot, so the support-bow/melee-weapon
+  interference question is moot.
 - **fizzle-backoff watch** (v3.25): in playtests confirm the new verdict lines behave —
   real fights log `wild: real fight confirmed ... - backoff Nmin`, brief ones log
   `fight lasted ~Ns - fizzle (anomaly), no backoff`. If genuine short fights (fast
@@ -161,3 +168,14 @@ composition (v3.14→v3.21). Options if the owner wants parity, ranked:
 3. **Naked/underwear look:** vanilla NPC root templates carry NO equipment (gear lives on
    level instances), so spawns start visually bare before our equip lands; consider a
    baseline clothing pass (cheap alch/loot clothing ids) or accept as "rough mercenary".
+
+**STATUS v3.28 (2026-11-01): option 1 SHIPPED** (role parity in Equip.lua — see HANDOVER
+v3.28: staff for casters, bow-primary for ranged, Shields-prof shields, finesse gated to
+melee, unified role guess; offline grid-sim verified incl. the owner's exact complaint
+cases). ⚠️ in-game verdict pending next playtest. **Option 2 is the agreed next move** once
+the owner confirms parity + first CHAOST class-teams on v3.28: route `reinforce()` through
+the team composer (slots per wave budget; budget math already exists in Chaos.lua).
+Cosmetic side-note from the same playtest: tooltips show the template's native "Level 1"
+for reinforcements (SetLevel removed v3.3; the number is cosmetic — HP/ExtraAttack come
+from the fixed stat block). Not fixable via Lua; only stat-file edits would change it —
+do not chase this.

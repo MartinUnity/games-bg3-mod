@@ -18,6 +18,12 @@
 --     ranged = bow + 0-X special arrow stacks, melee = 0-X strong poisons/grenades;
 --     pool band (low/mid/top) follows encounter rank (group tier), count rides the
 --     equip tier - ⚠️ NPC scroll/arrow AI use needs in-game confirmation (logged)
+--   - role parity (v3.28, owner: reinforcements must LOOK class-appropriate): role =
+--     team slot, or template-name guess for pool mobs (Ranger/Hunter... -> ranged;
+--     Caster/Cleric/Wizard/Necro... -> caster). Casters get a QUARTERSTAFF (+scrolls),
+--     not a rapier lottery; ranged get bows as the PRIMARY weapon (martial tables at
+--     tier 2+, level-scaled at tier 4); Shields-proficient melees carry shields
+--     (tank slot 100%, other melee ~55%) - finesse/weirdness gated to melee only
 -- Gear rolls in via Osi.GenerateTreasure (vanilla random tables, level-segmented); the
 -- TemplateAddedTo listener auto-equips it; potions stay in inventory (mob AI drinks them).
 
@@ -33,6 +39,21 @@ local T_FINESSE_MAGIC = "ST_Finesse_MeleeWeapons_Magic"
 local T_LIGHT = "ST_LightArmor"
 local T_MEDIUM = "ST_MediumArmor"
 local T_HEAVY = "ST_HeavyArmor"
+local T_RANGED = "ST_SimpleRangedWeapons"           -- longbow/shortbow/light crossbow (all simple)
+local T_RANGED_1 = "ST_SimpleRangedWeapons_1"       -- level-scaled variant
+local T_RANGED_M = "ST_MartialRangedWeapons"        -- hand crossbow (martial)
+local T_RANGED_M1 = "ST_MartialRangedWeapons_1"
+-- v3.28 role-parity kit (owner: reinforcements must LOOK class-appropriate):
+-- casters get a quarterstaff, Shields-proficient melees get shields (shields are
+-- off-hand WPN_* templates; the TemplateAddedTo auto-equip listener places them).
+-- ids verified against the live root-template dump (no DONOTUSE/NOT_APPROVED).
+local STAFF_0 = "WPN_HUM_Quarterstaff_A_0_96e2abaf-78ff-4dcb-a6a3-a5f0c348bd9f"
+local STAFF_1 = "WPN_HUM_Quarterstaff_A_1_2fa18ee4-92df-486f-97d2-dd0a720b6fad"
+local SHIELD_BASIC = {
+    "WPN_HUM_Shield_B_0_24fa28d4-f679-44bf-865e-c7e70dcb9588",
+    "WPN_HUM_Shield_C_0_4491fcaf-03bf-4087-baf3-b638657080f6",
+}
+local SHIELD_1 = "WPN_HUM_Shield_D_1_26b81847-b0dd-4150-aef7-602fcbb72eca"
 -- cosmetic decency fallback (owner 2026-10-31: casters without armor prof spawned
 -- weaponless-looking AND naked); vanilla vanity tables, random common/rich garment,
 -- sells for nothing, no proficiency requirement, does not block spellcasting
@@ -84,6 +105,28 @@ local POTION_BANDS = { { 3, "low" }, { 8, "mid" }, { 99, "top" } }
 local pending = {}   -- guid of freshly spawned humanoid -> true (auto-equip guard)
 
 local function rand(lo, hi) return math.random(lo, hi) end
+
+-- v3.28 role guess (equip parity): team slots carry an explicit role; CreatureDB
+-- pool mobs get a name-pattern read (verified against the live DB's nm strings:
+-- "Goblin Ranger", "Elf Druid", "Human Cultist Bhaal Invoker", "Sahuagin Hunter"...).
+-- Order matters: "Ranger Stone Guard" -> ranged (frontline read is secondary).
+local RANGED_WORDS = { "Ranger", "Hunter", "Archer", "Scout", "Sniper", "Marksman", "Crossbow", "Bowman" }
+local CASTER_WORDS = { "Caster", "Cleric", "Druid", "Warlock", "Wizard", "Mage", "Priest", "Acolyte",
+                       "Shaman", "Necro", "Invoker", "Conjurer", "Sorcerer", "Healer", "Bard" }
+local function nameHas(hay, words)
+    for _, w in ipairs(words) do
+        if hay:find(w, 1, true) then return true end
+    end
+    return false
+end
+local function weaponRoleFor(entry)
+    if entry.role == "ranged" or entry.role == "caster" then return entry.role end
+    if entry.role then return "melee" end          -- tank / dps / healer / wildcard slots
+    local hay = (entry.nm or "") .. " " .. tostring(entry.id or "")
+    if nameHas(hay, RANGED_WORDS) then return "ranged" end
+    if nameHas(hay, CASTER_WORDS) then return "caster" end
+    return "melee"
+end
 
 local function healPotionFor(base)
     if base >= 11 then return POTION_HEAL[3] end
@@ -176,14 +219,11 @@ local SUPPORT_POOLS = {
 }
 
 local function supportRoleFor(entry)
-    if entry.role == "caster" then return "caster" end
-    if entry.role == "ranged" then return "ranged" end
-    if entry.role then return "melee" end          -- team roles: tank/dps/healer/wildcard
-    -- pool mobs (CreatureDB): no weapon/armor prof at all -> caster-ish guess
-    local prof = entry.prof or ""
-    if prof ~= "" and not prof:find("MartialWeapons", 1, true)
-       and not prof:find("Armor", 1, true) then return "caster" end
-    return "melee"
+    -- v3.28: same name/role read as the weapon side (pool mobs now get caster scrolls
+    -- and ranged arrow stacks too); team healers keep the melee kit (poisons/grenades,
+    -- they heal with potions - playtest-confirmed AI behaviour).
+    if entry.role == "healer" then return "melee" end
+    return weaponRoleFor(entry)
 end
 
 local function supportSlot(entry, groupTier, tier)
@@ -211,16 +251,32 @@ local function supportSlot(entry, groupTier, tier)
     return role, band, picked
 end
 
--- weapon + armor table for this creature/tier, or nil for "designed without"
+-- weapon + armor table for this creature/tier, or nil for "designed without".
+-- v3.28 role parity (owner: reinforcements must look class-appropriate):
+--   caster -> quarterstaff TEMPLATE (not a rapier lottery); needs weapon proficiency,
+--             tier 4 gets the level-scaled staff
+--   ranged -> bow/crossbow table as the PRIMARY weapon (was an ad-hoc bow in support)
+--   melee/tank -> shield when Shields-proficient: tank always, other melee ~55%
+-- third return = extra root templates (staff/shield) added directly; the
+-- TemplateAddedTo auto-equip listener places them (shields are off-hand weapons).
 local function equipmentFor(entry, base, tier)
     local prof = entry.prof or ""
     if entry.unarmed and prof == "" then return nil, nil end   -- innate attacker
-
-    local finesse = (entry.dex or 10) > (entry.str or 10)
+    local role = weaponRoleFor(entry)
     local martial = prof:find("MartialWeapons", 1, true) ~= nil
+    local staffed = role == "caster"
+        and (prof:find("SimpleWeapons", 1, true) or prof:find("Quarterstaffs", 1, true)) ~= nil
+    local finesse = (entry.dex or 10) > (entry.str or 10)
+                    and role ~= "caster" and role ~= "ranged"  -- high-dex casters/ranged keep their kit
     local weapon
-    if base <= 1 then
-        weapon = T_SIMPLE                                            -- lvl 1: cheapest, period
+    if staffed then
+        weapon = nil                                           -- the staff IS the weapon (extras below)
+    elseif role == "ranged" then
+        if base <= 1 then weapon = T_RANGED
+        elseif tier >= 2 and martial then weapon = T_RANGED_M
+        else weapon = T_RANGED end
+    elseif base <= 1 then
+        weapon = T_SIMPLE                                      -- lvl 1: cheapest, period
     elseif tier >= 2 and martial then
         weapon = T_MARTIAL
     else
@@ -233,7 +289,9 @@ local function equipmentFor(entry, base, tier)
     if tier == 4 and base >= 4 then
         if finesse then weapon = T_FINESSE_MAGIC
         elseif weapon == T_MARTIAL then weapon = T_MARTIAL_1
-        else weapon = T_SIMPLE_1 end
+        elseif weapon == T_RANGED then weapon = T_RANGED_1
+        elseif weapon == T_RANGED_M then weapon = T_RANGED_M1
+        elseif weapon == T_SIMPLE then weapon = T_SIMPLE_1 end
     end
 
     -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light;
@@ -251,7 +309,16 @@ local function equipmentFor(entry, base, tier)
     if not (prof:find("Armor", 1, true) or base <= 1) then
         armor = nil                                                  -- no armor prof: native AC
     end
-    return weapon, armor
+    -- class kit extras (v3.28): staff for casters, shields for Shields-proficient
+    -- melees (tank slot always, other melee ~55%; caster/ranged hands stay in kit).
+    local extras
+    if staffed then
+        extras = { (tier == 4 and base >= 4) and STAFF_1 or STAFF_0 }
+    elseif role == "melee" and prof:find("Shields", 1, true)
+           and rand(1, 100) <= (entry.role == "tank" and 100 or 55) then
+        extras = { (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)] }
+    end
+    return weapon, armor, extras
 end
 
 -- public ------------------------------------------------------------------------
@@ -270,7 +337,7 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     -- low 1-3 / mid 4-8 / top 9-12 (owner spec)
     local mlvl = entry.fixedLevel or base
     if base <= 1 then tier = 1 end                                  -- lvl 1: cheapest gear only
-    local weapon, armor = equipmentFor(entry, base, tier)
+    local weapon, armor, extras = equipmentFor(entry, base, tier)
     -- no armor (innate/native AC) -> still give a random garment so the mob isn't
     -- naked; jackpot tier gets the rich wardrobe (owner: "make it interesting")
     local clothes = nil
@@ -278,18 +345,23 @@ function EquipMob(created, base, entry, groupTier, isBoss)
         clothes = (tier == 4) and T_CLOTHES_RICH or T_CLOTHES_COMMON
     end
     local tag = groupTier and ("(group " .. groupTier .. (isBoss and " boss" or "") .. ")") or "(roll)"
-    log("equip: tier", tier, tag,
-        weapon or "innate", "+", armor or (clothes and "clothes" or "native-armor"),
+    log("equip: tier", tier, tag, "role", weaponRoleFor(entry),
+        weapon or (extras and "kit-only") or "innate",
+        "+", armor or (clothes and "clothes" or "native-armor"),
+        "+", extras and (#extras .. " extra") or "no extra",
         "prof", entry.prof or (entry.unarmed and "innate" or "-"))
     if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
     if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
     if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
-    -- class-appropriate support slot; ranged role also gets a simple bow so the
-    -- special arrows are actually usable (bow AI use = playtest item)
-    local role, band, support = supportSlot(entry, groupTier, tier)
-    if role == "ranged" then
-        pcall(Osi.GenerateTreasure, created, "ST_SimpleRangedWeapons", base, created)
+    if extras then
+        for _, t in ipairs(extras) do
+            pcall(Osi.TemplateAddTo, t, created, 1, 0)
+        end
+        log("equip: class kit", #extras, "template(s) on", created)
     end
+    -- class-appropriate support slot (v3.28: the ranged bow is now the PRIMARY weapon
+    -- via equipmentFor, no separate bow roll here - the special arrows need it)
+    local role, band, support = supportSlot(entry, groupTier, tier)
     if support then
         for _, s in ipairs(support) do
             pcall(Osi.TemplateAddTo, s[1], created, s[2], 0)
@@ -320,8 +392,9 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     if #potions > 0 then log("equip: potions", #potions) end
     -- deferred ground-truth probe: did the weapon actually reach the slot?
     -- (works even if the TemplateAddedTo route is dead - in-game logs showed gear
-    -- rolls but no visible weapons/armor on the mobs)
-    if weapon then
+    -- rolls but no visible weapons/armor on the mobs); staff counts as the weapon
+    local probe = weapon or (extras and (extras[1] == STAFF_0 or extras[1] == STAFF_1))
+    if probe then
         pcall(Ext.Timer.WaitFor, 1500, function ()
             local okW, w = pcall(Osi.GetEquippedWeapon, created)
             log("arm check:", (okW and w and w ~= "") and tostring(w) or "NO WEAPON EQUIPPED",

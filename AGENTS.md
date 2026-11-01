@@ -75,7 +75,7 @@ Where things live:
   `spawnWildMob`; pcall can't survive native faults; it only set the level number anyway,
   v3.3 lesson — over-level gate now reads the template's native GetLevel)**, anchors near existing enemies, wave delayed 1.5 s after
   CombatStarted (Timer.WaitFor) so enemies are classifiable, E8b faction
-  pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE.
+  pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE. **save-load quiet window (v3.28)**: LOADING a save into an ongoing fight re-fires `CombatStarted` (~12 s after SessionLoaded — live log: toggle-restore +04 s, wave +16 s) which used to roll a SECOND wave; SessionLoaded sets `loadQuietUntil = MonotonicMs() + 20 s` (`MonotonicMs()` in Common.lua) and the listener skips rolls in the window WITHOUT touching the miss stack. Cost: a genuinely new fight within 20 s of a load loses one roll.
   **v3.3: `Osi.SetLevel` does NOT rescale fixed monster stat blocks (sets the level number
   only) → difficulty is controlled at PICK time: CreatureDB entries now carry NATIVE stats
   `{ac, str, dex, con, ea (ExtraAttack)}`, gated at host lvl 1 (hp≤20/ac≤14/ability≤12/no
@@ -99,7 +99,7 @@ Where things live:
   (`ST_SimpleRangedWeapons`) + 0-X `ARR_Arrow_Of_*` stacks, melee = strong poisons +
   `ALCH_Solution_Grenade_*`; pool band = group tier (+1 if equip tier ≥3), count binomial
   cap min(groupTier+tier bonuses,4) at p 30/60/80/100% by equip tier; role from team entry
-  role / prof-guess for pool mobs; ⚠️ NPC AI use of scrolls/arrows/grenades unverified);
+  role / prof-guess for pool mobs; **healing-potion AI ✅ in-game 2026-11-01** ("they use healing potions to heal each other"); ⚠️ scrolls/arrows/grenades still unverified); **v3.28 role parity** (Equip.lua): role = team slot else template-name patterns (`weaponRoleFor` over nm+id: Ranger|Hunter|Archer...→ranged, Caster|Cleric|Wizard|Necro...→caster); casters get `WPN_HUM_Quarterstaff_A_0/_1` templates (need SimpleWeapons/Quarterstaffs prof) NOT the finesse lottery (finesse gated to melee), ranged get bow tables as PRIMARY (`ST_Simple/MartialRangedWeapons`, _1 at tier4; support-bow dup removed), Shields-prof melees get `WPN_HUM_Shield_*` off-hand templates (tank 100%, other melee 55%); `ST_ArmorShield` unusable (StartLevel 6); tooltips show template-native "Level 1" — cosmetic, don't chase);
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

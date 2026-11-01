@@ -16,6 +16,14 @@ end
 -- 1592), then to a bare stamp. Cannot throw.
 local monoBase = nil   -- first MonotonicTime reading; that clock counts from OS BOOT,
                       -- not session start (owner: +332:32:15 stamp = machine uptime)
+
+-- Monotonic milliseconds (guarded; nil if the call is missing/thrown). Shared for
+-- wall-of-time logic like the save-load quiet window (Chaos.lua).
+function MonotonicMs()
+    local ok, ms = pcall(function () return Ext.Timer.MonotonicTime() end)
+    return ok and tonumber(ms) or nil
+end
+
 local function clockStr()
     local ok, t = pcall(function ()
         if Ext.IO and Ext.IO.GetCurrentDateTime then
