@@ -131,6 +131,7 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
                 (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
             markSpawned(created)
+            if entry.nm then FlavorNameFix(created, entry.nm) end   -- blank-name fallback (Flavor.lua)
             tagAsOurs(created)
             if doEquip then EquipMob(created, base or 1, entry) end
             return created

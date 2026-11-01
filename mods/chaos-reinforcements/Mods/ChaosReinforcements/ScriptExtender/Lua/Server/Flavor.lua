@@ -90,6 +90,28 @@ local function displayNameText(char)
     return nil
 end
 
+-- public: fallback naming for BLANK-named spawn templates (owner 2026-11-02, in-game:
+-- ettercap + hobgoblin rendered as nameless "lvl 2" mouse-overs). Neither template nor
+-- stats carries a DisplayName; the race resource usually provides the name, but some
+-- races have none. Check the rendered name 500ms after spawn; if blank/"Not Found"/
+-- raw ResStr key, apply the DB's pretty stats name (entry.nm) via SetStoryDisplayName
+-- (the proven leader-rename call). Mobs that already render a name are untouched.
+function FlavorNameFix(mob, fallback)
+    if not fallback or fallback == "" then return end
+    pcall(Ext.Timer.WaitFor, 500, function ()
+        local okE, ent = pcall(Ext.Entity.Get, mob)
+        if not okE or not ent then return end
+        local okD, dn = pcall(function () return ent.DisplayName end)
+        if not okD or not dn then return end
+        local okT, txt = pcall(function () return tostring(dn.Name:Get()) end)
+        if not okT then return end
+        if txt == "" or txt == "Not Found" or txt:find("^ResStr_") then
+            pcall(Osi.SetStoryDisplayName, mob, fallback)
+            log("namefix:", mob, "blank (" .. txt .. ") ->", fallback)
+        end
+    end)
+end
+
 -- public: name + buff a leader (no tell). isBoss prefixes "BOSS " (placeholder until real
 -- boss mechanics exist - owner decision 2026-10-31). Returns the name used.
 function FlavorLeaderCommon(created, isBoss)

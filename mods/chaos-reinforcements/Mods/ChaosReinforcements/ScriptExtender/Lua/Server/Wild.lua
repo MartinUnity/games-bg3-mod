@@ -213,6 +213,7 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
         end
         markSpawned(mob)
         tagAsOurs(mob)
+        if entry.nm then FlavorNameFix(mob, entry.nm) end   -- blank-name fallback (Flavor.lua)
         if doEquip then EquipMob(mob, base, entry) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)
