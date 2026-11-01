@@ -82,10 +82,18 @@ Where things live:
   MOB_HP_BOOST placeholder off); ⚠️ SE databases are keyed by ARITY: `DB_Is_InCombat` has 2
   columns → `Get(nil, nil)` via `table.unpack({}, 1, ncols)`; **equipment phase 1**: humanoid
   spawns get random gear via `Osi.GenerateTreasure` (vanilla tables `ST_SimpleMeleeWeapons`/
-  `ST_MartialMeleeWeapons`/`ST_Light|Medium|HeavyArmor`) + potions via `TemplateAddTo`
-  (healing scales with player level, speed potion in the jackpot tier), auto-equipped by a
+  `ST_MartialMeleeWeapons`/`ST_Light|Medium|HeavyArmor`) + potions via `TemplateAddTo`,
+  auto-equipped by a
   `TemplateAddedTo` listener + `Osi.Equip` (gear lives on level instances, NOT root templates;
-  non-humanoids keep innate attacks — equipping would replace them); RNG =
+  non-humanoids keep innate attacks — equipping would replace them); **equip tiers follow the
+  wild group tier** (Wild passes core/squad/warband tier into `EquipMob`; 20% one-band bump,
+  boss +2; combat reinforcements keep the legacy per-member roll) — tier3 unlocks medium
+  armor, tier4 heavy+magic tables; healing potion is BASELINE from member lvl 3 (all tiers,
+  so dps can throw one); one "extra" consumable roll from the member-level-band pool
+  (low 1-3: Basic poison/antitoxin/resistances; mid 4-8: heroism/resistances/Drow+Malice
+  poison; top 9-12: regen/invisibility/Wyvern+PurpleWorm poison, Speed = crown jewel only
+  here; DONOTUSE variants skipped; ids in Equip.lua from profile `Chaos_root_templates.txt`
+  live dump); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at

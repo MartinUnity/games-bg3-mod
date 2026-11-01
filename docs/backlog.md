@@ -85,6 +85,13 @@ approximate it. Also queued:
 - ranged weapons for dex-based humanoids (tables exist: `ST_SimpleRangedWeapons`,
   `ST_MartialRangedWeapons` — but melee AI may not use bows; needs a probe);
 - chaos fodder tables: `ST_RandomPotion`, `ST_RandomConsumable`, `ST_Throwable`.
+- **class-appropriate "support" equipment slot** (owner 2026-11-01, after the v3.20 potion
+  ladder landed): role-keyed extra pocket depending on encounter rank + equip roll —
+  casters: 0-X spell **scrolls** (low/mid/top by group tier); ranged: 0-X **special arrows/bolts**
+  (explosive, ice, thunder...); melee: stronger **poisons** + alchemy **flask/vial** throws
+  (Acid/Alchemist's Fire). Needs: root-template ids from the live dump (`SCRL_*`, arrow/bolt
+  CONS_*, flask CONS_*), a role tag on the entry (team roles already exist; CreatureDB mobs
+  would need a rough class guess), and NPC AI verification for scroll/ammunition use.
 
 ## Balancing / tuning (from playtests)
 

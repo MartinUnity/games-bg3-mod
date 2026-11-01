@@ -4,9 +4,16 @@
 -- player level, so low-level fights never roll expensive loot:
 --   - innate attackers (unarmed, no prof) get NOTHING (never replace innate attacks)
 --   - host level 1: always cheapest (simple weapon + light armor), no matter the profile
---   - tier roll keeps the chaos: tier >= 2 unlocks martial weapons if proficient,
---     tier 4 (jackpot) unlocks medium armor if proficient (heavy at HEAVY_LEVEL+) and the
---     magic/level-scaled weapon tables ("weapon cost x2" proxy)
+--   - tier keeps the chaos: tier >= 2 unlocks martial weapons if proficient,
+--     tier 3 unlocks medium armor, tier 4 (jackpot) unlocks heavy armor (HEAVY_LEVEL+)
+--     and the magic/level-scaled weapon tables ("weapon cost x2" proxy)
+--   - WILD groups pass their GROUP tier (core/squad/warband) as the baseline instead of
+--     the old per-member re-roll: squad bumps to 2 (20% -> 3), warband to 3 (20% -> 4),
+--     boss slot +2; combat reinforcements keep the legacy self-roll (groupTier = nil)
+--   - consumables: healing potion is BASELINE (guaranteed from level 3 up, all tiers) so
+--     even dps can bail out a teammate with a throw; one extra roll per member from the
+--     member-level-band pool (owner spec: low=1-3, mid=4-8, top=9-12) - poisons are the
+--     lowest extras, speed the highest (top pool crown jewel, never mid/low)
 -- Gear rolls in via Osi.GenerateTreasure (vanilla random tables, level-segmented); the
 -- TemplateAddedTo listener auto-equips it; potions stay in inventory (mob AI drinks them).
 
@@ -37,6 +44,39 @@ local POTION_HEAL = {
 }
 local POTION_SPEED = "CONS_Potion_Speed_ad9f3f24-d755-48b6-aa7b-c34da068209f"
 
+-- "extra" consumable ladder (owner spec 2026-11-01): pool gated by the MEMBER's level
+-- band - low = lvl 1-3, mid = 4-8, top = 9-12 - most members sit in mid. Poisons are
+-- the lowest extras (applied with the free "use" action; NPC AI handles it), speed is
+-- the crown jewel and lives ONLY in the top pool. DONOTUSE variants excluded; ids from
+-- the live root-template dump (profile Script Extender/Chaos_root_templates.txt).
+-- entries: { template, weight }
+local POTION_POOLS = {
+    low = {   -- lvl 1-3
+        { "CONS_Poison_Basic_28645376-e6e8-436a-8e9a-c62877fae07d", 45 },
+        { "CONS_Potion_Antitoxin_f0c7d8bb-85e9-4937-96bb-49ba69d28631", 15 },
+        { "CONS_Potion_Fire_Resistance_2608c096-a0f5-4172-ad04-c1b170e10d95", 12 },
+        { "CONS_Potion_Lightning_Resistance_05257244-ab59-4eab-9745-d1fea7b8cd10", 12 },
+        { "CONS_Poison_Crawler_Mucus_5865caed-4a5d-45b7-b365-1113334a8e7b", 16 },
+    },
+    mid = {   -- lvl 4-8
+        { "CONS_Potion_Heroism_A_bb27cc17-5af9-4d53-818b-3e620f3f59f2", 30 },
+        { "CONS_Potion_Poison_Resistance_ae28b14c-0881-45fe-8237-9fcb1c951d3d", 15 },
+        { "CONS_Potion_Psychic_Resistance_164ac6f3-8f93-4d74-9f72-e7c49723dedb", 15 },
+        { "CONS_Potion_Necrotic_Resistance_f3c0aefb-a399-42c6-8d85-7fdceb6d18f5", 15 },
+        { "CONS_Poison_Drow_f528a334-bdb3-4cf1-b74c-0e08942daeb1", 15 },
+        { "CONS_Poison_Malice_d990fefe-e0f3-46ba-915e-35aebc6c6599", 10 },
+    },
+    top = {   -- lvl 9-12 - speed last: highest tier, weight = crown-jewel share
+        { "CONS_Potion_Heroism_A_bb27cc17-5af9-4d53-818b-3e620f3f59f2", 20 },
+        { "CONS_Potion_Regeneration_A_f768dbf5-d829-4f15-be1c-ee1f0d71f775", 20 },
+        { "CONS_Potion_Invisible_A_809d5026-4896-4b3a-986e-95da58da77e2", 18 },
+        { "CONS_Poison_Wyvern_eca393b0-3f8e-4862-814b-9e236a0d4129", 15 },
+        { "CONS_Poison_Purple_Worm_56e531e9-78e4-430b-bc98-611c1b1ccd08", 12 },
+        { POTION_SPEED, 15 },
+    },
+}
+local POTION_BANDS = { { 3, "low" }, { 8, "mid" }, { 99, "top" } }
+
 local pending = {}   -- guid of freshly spawned humanoid -> true (auto-equip guard)
 
 local function rand(lo, hi) return math.random(lo, hi) end
@@ -45,6 +85,38 @@ local function healPotionFor(base)
     if base >= 11 then return POTION_HEAL[3] end
     if base >= 6 then return POTION_HEAL[2] end
     return POTION_HEAL[1]
+end
+
+local function potionPoolFor(lvl)
+    for _, b in ipairs(POTION_BANDS) do
+        if lvl <= b[1] then return POTION_POOLS[b[2]] end
+    end
+    return POTION_POOLS.top
+end
+
+local function rollPotion(pool)
+    local total = 0
+    for _, e in ipairs(pool) do total = total + e[2] end
+    local r = rand(1, total)
+    for _, e in ipairs(pool) do
+        r = r - e[2]
+        if r <= 0 then return e[1] end
+    end
+    return pool[1][1]
+end
+
+-- equipment tier baseline: WILD groups pass their group tier (owner: gear richness
+-- follows the encounter rank, not an independent per-member lottery); a small bump
+-- keeps the chaos (80% baseline, 20% one band up; boss slot rides +2). Combat
+-- reinforcements (groupTier = nil) keep the legacy owner bands <=80/<=95/<=98/jackpot.
+local function tierBaseline(groupTier, isBoss)
+    if not groupTier then
+        local roll = rand(1, 100)
+        return roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
+    end
+    local t = groupTier + (isBoss and 2 or 0)
+    if rand(1, 100) <= 20 then t = t + 1 end
+    return math.min(t, 4)
 end
 
 -- weapon + armor table for this creature/tier, or nil for "designed without"
@@ -72,12 +144,13 @@ local function equipmentFor(entry, base, tier)
         else weapon = T_SIMPLE_1 end
     end
 
-    -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light
+    -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light;
+    -- tier 3 unlocks medium, heavy stays tier-4-only (HEAVY_LEVEL+)
     local armor
     if base <= 1 then
         armor = T_LIGHT
-    elseif tier == 4 then
-        if prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = T_HEAVY
+    elseif tier >= 3 then
+        if tier == 4 and prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = T_HEAVY
         elseif prof:find("MediumArmor", 1, true) then armor = T_MEDIUM
         else armor = T_LIGHT end
     else
@@ -97,12 +170,13 @@ function EquipResetPending()
     pending = {}
 end
 
-function EquipMob(created, base, entry)
+function EquipMob(created, base, entry, groupTier, isBoss)
     if not EQUIP_MOBS then return end
     pending[created] = true
-    -- owner's bands: <=80% basic, <=95% more, <=98% even more, else jackpot
-    local roll = rand(1, 100)
-    local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
+    local tier = tierBaseline(groupTier, isBoss)
+    -- member level (team templates bake their own) decides the potion band:
+    -- low 1-3 / mid 4-8 / top 9-12 (owner spec)
+    local mlvl = entry.fixedLevel or base
     if base <= 1 then tier = 1 end                                  -- lvl 1: cheapest gear only
     local weapon, armor = equipmentFor(entry, base, tier)
     -- no armor (innate/native AC) -> still give a random garment so the mob isn't
@@ -111,24 +185,30 @@ function EquipMob(created, base, entry)
     if not armor then
         clothes = (tier == 4) and T_CLOTHES_RICH or T_CLOTHES_COMMON
     end
-    log("equip: tier", tier, "(roll", roll .. ")",
+    local tag = groupTier and ("(group " .. groupTier .. (isBoss and " boss" or "") .. ")") or "(roll)"
+    log("equip: tier", tier, tag,
         weapon or "innate", "+", armor or (clothes and "clothes" or "native-armor"),
         "prof", entry.prof or (entry.unarmed and "innate" or "-"))
     if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
     if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
     if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
-    -- consumables
+    -- consumables: healing potion is the BASELINE from lvl 3 up, one per member at
+    -- every group tier (owner: even dps can bail a teammate out with a throw);
+    -- below lvl 3 the old rare-roll odds stay (10%/25%, tier 3+ = grown playtest odds).
+    -- Then ONE "extra" roll from the member's band pool (poisons low, speed top);
+    -- equip tier 4 doubles the healing and guarantees the extra.
     local potions = {}
-    if tier == 1 then
-        if rand(1, 100) <= 10 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 2 then
-        if rand(1, 100) <= 25 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 3 then
-        potions[#potions + 1] = healPotionFor(base)
-    else
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = POTION_SPEED   -- "extra random thing", not overpowered
+    local heal = healPotionFor(math.max(base, mlvl))
+    if mlvl >= 3 then
+        potions[#potions + 1] = heal
+    elseif tier >= 3 or rand(1, 100) <= (tier == 2 and 25 or 10) then
+        potions[#potions + 1] = heal
+    end
+    if tier == 4 then
+        potions[#potions + 1] = heal
+        potions[#potions + 1] = rollPotion(potionPoolFor(mlvl))
+    elseif rand(1, 100) <= (tier == 3 and 50 or (tier == 2 and 25 or 10)) then
+        potions[#potions + 1] = rollPotion(potionPoolFor(mlvl))
     end
     for _, p in ipairs(potions) do
         pcall(Osi.TemplateAddTo, p, created, 1, 0)

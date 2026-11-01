@@ -172,7 +172,7 @@ end
 -- PreventTeleportOnFailure=0 the engine falls back to the nearest valid position on
 -- its own if the exact spot is bad. A delayed verify pass logs the final position so
 -- playtests can confirm the mob actually left the host's feet.
-local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
+local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupTier, isBoss)
     local ok, created = pcall(function ()
         local mob = Osi.CreateAtObject(entry.id, host, 1, 0, "", 1)
         if not mob or mob == "" then
@@ -218,7 +218,7 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction)
         markSpawned(mob)
         tagAsOurs(mob)
         if entry.nm then FlavorNameFix(mob, entry.nm) end   -- blank-name fallback (Flavor.lua)
-        if doEquip then EquipMob(mob, base, entry) end
+        if doEquip then EquipMob(mob, base, entry, groupTier, isBoss) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)
         -- verify (deferred: appear + faction change resolve next frame)
@@ -324,6 +324,8 @@ local function spawnWildGroup(host, base)
     end
     local count = rand(2, 6)
     local leaderSlots = {}
+    local boss = false   -- ⚠️ must stay local + reset per group: a leaked global kept
+                         -- the "+3 lvl bump / BOSS prefix" alive for every later group
     if tier == 2 then count = count + rand(1, 4); leaderSlots = { 2 } end
     if tier == 3 then count = count + rand(2, 8); leaderSlots = { 2, 3 }; boss = true end
     count = math.min(count, 12)
@@ -385,7 +387,8 @@ local function spawnWildGroup(host, base)
         -- nothing from EquipMob anyway); themed pools would have broken the old
         -- etype == "Humanoid" check (goblin warband is not a type name)
         local doEquip = (entry.prof ~= nil and entry.prof ~= "")
-        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip, groupFaction)
+        local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip,
+                                  groupFaction, tier, boss and i == 1)
         if guid then
             group.members[#group.members + 1] = guid
             if boss and i == 1 then

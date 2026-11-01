@@ -278,6 +278,20 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.20: equip tier keyed to the wild GROUP tier + potion ladder (owner review 2026-11-01):**
+  `spawnWildGroup` now passes its group tier (and `isBoss` for the boss slot) through
+  `spawnWildMob` into `EquipMob` — no more independent per-member equip lottery for wild
+  packs: tier baseline = group tier, 20% chance one band up, boss +2 (combat reinforcements
+  keep the legacy self-roll). Equip tier 3 finally *does* something: unlocks medium armor
+  (heavy + magic/scaled weapon tables stay tier-4-only). Consumables became a baseline +
+  ladder: healing potion guaranteed for every member lvl ≥ 3 (old 10%/25% odds stay below
+  that — the dps-can-throw-a-potion intent), then ONE extra roll from the member-level-band
+  pool (owner bands: low 1-3 = Basic poison heavy + antitoxin/resistances, mid 4-8 = heroism/
+  resistances + Drow/Malice poison, top 9-12 = regen/invisibility/Wyvern/PurpleWorm poison
+  with **Speed as crown jewel, only in top**); DONOTUSE templates excluded, ids from the live
+  root-template dump. Also fixed: leaked `boss` global in `spawnWildGroup` (a tier-3 roll
+  used to make every later group's slot-1 a BOSS with +3 lvl) — `equip tier (group N)` now
+  visible in `ChaosReinforcements.log`. Offline sim sanity-checked via lupa (equipsim pattern).
 - **v3.9: leader flavor (owner playtest feedback round 2):** the v3.8 popup
   (`OpenMessageBox`) broke immersion AND halted combat until clicked — REMOVED. Replaced
   by a vanilla **voice bark** on the player: `Osi.StartVoiceBark(barkResource, source)`
