@@ -595,8 +595,5 @@ CHAOS_DB = {
     { id = "Undead_TadpoledSkeleton_Ranger_20be4f3e-4ff8-4d3e-9ebb-6ddbc9919396", hp = 14, cost = 1, nm = "SHA Skeleton Ranger", imm = 1, ac = 10, str = 10, dex = 14, con = 8, wis = 8, cha = 5, prof = "Longbows;Shortbows;LightArmor;SimpleWeapons" },
     { id = "Undead_Zombie_Melee_FungalInfestation_c7a75636-a101-4920-a603-58efb6558bcb", hp = 9, cost = 1, nm = "Zombie Fungal Infestation", imm = 1, str = 16, dex = 6, con = 16, wis = 6, cha = 5 },
     { id = "Undead_Zombie_Melee_Greater_A_d07a6db8-462f-48ac-8286-8aad8282ba02", hp = 74, cost = 7, nm = "Zombie Greater", imm = 1, ac = 15, str = 18, dex = 10, con = 17, wis = 6, cha = 5 },
-    { id = "Vampire_Spawn_A_c8bdda43-03ed-4e01-a596-bf67d0b8f6d0", hp = 82, cost = 8, nm = "Vampire Spawn", ac = 15, str = 16, dex = 16, con = 16, wis = 10, cha = 12 },
-    { id = "Vampire_Spawn_Human_Female_3335c504-3da5-4036-a483-d937bab16314", hp = 82, cost = 8, nm = "Vampire Spawn", ac = 15, str = 16, dex = 16, con = 16, wis = 10, cha = 12 },
-    { id = "Vampire_Spawn_Human_Male_c8a9b32c-999b-4e63-a07f-2683bc8c2bf6", hp = 82, cost = 8, nm = "Vampire Spawn", ac = 15, str = 16, dex = 16, con = 16, wis = 10, cha = 12 },
   },
 }
