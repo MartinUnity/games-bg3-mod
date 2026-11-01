@@ -14,6 +14,8 @@ end
 -- nil value (global 'os')" everywhere, zero game log lines). Feature-detect SE's
 -- wall clock, fall back to session-monotonic (Ext.Timer.MonotonicTime, vendored docs
 -- 1592), then to a bare stamp. Cannot throw.
+local monoBase = nil   -- first MonotonicTime reading; that clock counts from OS BOOT,
+                      -- not session start (owner: +332:32:15 stamp = machine uptime)
 local function clockStr()
     local ok, t = pcall(function ()
         if Ext.IO and Ext.IO.GetCurrentDateTime then
@@ -24,8 +26,9 @@ local function clockStr()
     if ok and type(t) == "string" and t ~= "" then return t end
     local ok2, ms = pcall(function () return Ext.Timer.MonotonicTime() end)
     local n = ok2 and tonumber(ms) or nil
-    if n then   -- seconds since SE started, "+HH:MM:SS" (session-relative)
-        local total = math.floor(n / 1000)
+    if n then   -- "+HH:MM:SS" since MOD LOAD (anchored on first reading)
+        if monoBase == nil then monoBase = n end
+        local total = math.floor((n - monoBase) / 1000)
         return string.format("+%02d:%02d:%02d", math.floor(total / 3600),
             math.floor(total / 60) % 60, total % 60)
     end

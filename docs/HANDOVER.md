@@ -290,7 +290,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   in-game; the timestampless tail lines in ChaosReinforcements.log were an OLD pak
   session still open until 15:00). Fixes: clockStr feature-detects
   `Ext.IO.GetCurrentDateTime` (wall HH:MM:SS), falls back to
-  `Ext.Timer.MonotonicTime` (+HH:MM:SS session-relative), then no stamp; log() body
+  `Ext.Timer.MonotonicTime` (+HH:MM:SS session-relative — v3.26.1: MonotonicTime is
+  OS-BOOT time, owner's `+332:32:15` stamp was machine uptime; the first reading is
+  now anchored as t=0), then to no stamp; log() body
   is fully pcall-guarded (must never throw at callers) with varargs passed EXPLICITLY
   into the inner fn (nested `...` is Lua 5.2+ syntax; lupa/LuaJIT compile-check
   caught that second bug); `Ext.Print` at BootstrapServer:15 removed (nil on server,
