@@ -269,37 +269,10 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupT
     return ok and created or nil
 end
 
--- role-composed teams (iteration 3) ------------------------------------------------
--- Proficiencies per role drive the gear pipeline (Equip.lua); levels are BAKED into
--- the templates (tools/gen_teams.py), so pick a level close to the party's.
-local TEAM_PROFS = {
-    tank = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
-    melee_dps = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
-    ranged = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
-    caster = "SimpleWeapons;LightArmor",
-    healer = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
-    wildcard = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
-}
-local TEAM_FILL = { "melee_dps", "ranged", "caster", "healer", "wildcard" }
-
-local function teamEntry(role, lvl)
-    local list = CHAOS_TEAMS and CHAOS_TEAMS[role] and CHAOS_TEAMS[role][lvl]
-    if not list or #list == 0 then return nil end
-    return { id = list[rand(1, #list)], fixedLevel = lvl, prof = TEAM_PROFS[role], role = role }
-end
-
-local function teamLevelFor(base, bump)
-    return math.max(1, math.min(12, base + (bump or rand(-1, 2))))
-end
-
--- slot layout per the owner spec: guaranteed frontliner + dps + ranged, healer from
--- size 4, then random fill (the chaos: bard/warlock wildcards included)
-local function teamSlots(count)
-    local slots = { "tank", "melee_dps", "ranged" }
-    if count >= 4 then slots[#slots + 1] = "healer" end
-    while #slots < count do slots[#slots + 1] = TEAM_FILL[rand(1, #TEAM_FILL)] end
-    return slots
-end
+-- role-composed teams (iteration 3; v3.29 composer pieces moved to Common.lua so
+-- Chaos.lua's reinforce() can run the same engine) --------------------------------
+-- TEAM_PROFS/TEAM_FILL/teamSlots/teamLevelFor/teamEntry are shared globals now.
+-- v3.29: one donor race per group (raceKey) so a squad LOOKS like a squad.
 
 local function aggroGroup(group, player)
     for _, guid in ipairs(group.members) do
@@ -386,9 +359,13 @@ local function spawnWildGroup(host, base)
                      and not themedPool and not neutralPool
                      and CHAOS_TEAMS ~= nil
     local teamSlotList
+    local teamRaceKey   -- v3.29 race coherence: ONE donor race for the whole squad
     if teamMode then
         teamSlotList = teamSlots(count)
-        log("wild: team mode -", table.concat(teamSlotList, "/"))
+        local races = donorRaces()
+        teamRaceKey = #races > 0 and races[rand(1, #races)] or nil
+        log("wild: team mode -", table.concat(teamSlotList, "/"),
+            "race", teamRaceKey or "?")
     end
     for i = 1, count do
         local entry
@@ -396,7 +373,7 @@ local function spawnWildGroup(host, base)
             local role = teamSlotList[i]
             -- leader/boss slots are rolled a couple of levels up (still baked templates)
             local bump = (boss and i == 1) and 3 or (slotMap[i] and 2 or nil)
-            entry = teamEntry(role, teamLevelFor(base, bump))
+            entry = teamEntry(role, teamLevelFor(base, bump), teamRaceKey)
             if not entry then
                 log("wild: team template missing for", role, "- falling back to pool")
             end
@@ -427,6 +404,7 @@ local function spawnWildGroup(host, base)
         if not guid and teamMode and entry.fixedLevel then
             local pool = gatedPool(etype, base)
             if pool then
+                pool = poolForRace(pool, teamRaceKey) or pool   -- keep the squad coherent
                 entry = pool[rand(1, #pool)]
                 doEquip = (entry.prof ~= nil and entry.prof ~= "")
                 log("wild: team slot failed - pool retry:", entry.id)

@@ -179,3 +179,13 @@ Cosmetic side-note from the same playtest: tooltips show the template's native "
 for reinforcements (SetLevel removed v3.3; the number is cosmetic — HP/ExtraAttack come
 from the fixed stat block). Not fixable via Lua; only stat-file edits would change it —
 do not chase this.
+
+**STATUS v3.29 (2026-11-01): option 2 SHIPPED** (trigger was the owner's "humans + 2
+goblins + 1 Meazel — too odd" wave): `reinforce()` runs the CHAOST composer for Humanoid
+fights at base ≥ 3; ONE donor race per wave from `dominantRaceKey(enemies)` (goblin fight
+→ goblin squad; 20% chaos override = random race); composer moved to Common.lua shared
+globals; goblin + half-orc donors added (504 → 792 templates). Wild squads race-coherent
+too. ⚠️ in-game: race-match verdict + `!chaos_root` 792 pending next boot. Remaining
+composition follow-ups: leader is still a pool mob even in team mode (jackpot intent,
+may want donor-race leaders later); non-Humanoid fights stay on the pool path (no
+creature-class content for them); Meazel-style oddities now only via the 20% override.

@@ -36,6 +36,16 @@ local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classif
 -- every session load; live log showed CombatStarted at +16 s vs SessionLoaded +4 s.
 local LOAD_QUIET_MS = 20000
 
+-- v3.29 team-mode reinforcements (option 2, owner: "humans among goblins is too odd" -
+-- combat reinforcements get the same CHAOST class-team composer as wild squads, with
+-- ONE donor race per wave matching the fight's dominant enemy race).
+local TEAM_MIN_LEVEL = 3        -- below this, CHAOST baked levels bypass the calibrated
+                                -- low-level pool GATES (a lvl-3 team vs a lvl-2 party is
+                                -- a TPK) -> legacy gated-pool path instead
+local TEAM_CHAOS_CHANCE = 20    -- % of waves that ignore the enemy race for a random one
+local TEAM_COST = 0.7           -- member cost ~= lvl * this (baked CHAOST hp ~ 11/lvl but
+                                -- class chars are squishier per HP than fixed monsters)
+
 -- HP boost formerly in GustavDev Status_BOOST.txt (HEALTHBOOST_HARDCORE, disabled there
 -- 2026-10-31 for calibration). Lua-side reimplementation will use a custom stats file;
 -- "" = off. Do not enable while calibrating native mob stats.
@@ -239,10 +249,62 @@ local function reinforce(host, enemies, combatId)
         "spawnlevel", targetLevel, "anchors", #anchors,
         base <= SOFT_CAP_LEVEL and "gate " .. base or "")
 
+    -- v3.29 TEAM MODE (option 2, owner spec): Humanoid fights with enough budget run
+    -- the CHAOST class-team composer (slots/roles/level like wild squads) instead of
+    -- the bag-of-pool-mobs pick, and ONE donor race for the whole wave matching the
+    -- fight's dominant enemy race (goblin fight -> goblin squad, not human mobs).
+    -- Gated to base >= TEAM_MIN_LEVEL: below that, baked CHAOST levels bypass the
+    -- calibrated low-level pool GATES. TEAM_CHAOS_CHANCE keeps a random race mix.
+    local teamMode, teamSlotList, teamRaceKey, teamLevel, teamCost = false, nil, nil, nil, 0
+    if etype == "Humanoid" and base >= TEAM_MIN_LEVEL and CHAOS_TEAMS ~= nil then
+        teamRaceKey = dominantRaceKey(enemies)
+        local races = donorRaces()
+        if #races > 0 and (not teamRaceKey or rand(1, 100) <= TEAM_CHAOS_CHANCE) then
+            teamRaceKey = races[rand(1, #races)]
+        end
+        teamLevel = teamLevelFor(base)
+        teamCost = math.max(2, math.ceil(teamLevel * TEAM_COST))
+        local size = math.min(MAX_SPAWNS - 1, math.floor(budget / teamCost))  -- leader slot free
+        if size >= 2 then
+            teamMode = true
+            teamSlotList = teamSlots(size)
+            log("wave: TEAM mode -", table.concat(teamSlotList, "/"),
+                "race", teamRaceKey or "?", "lvl", teamLevel, "cost", teamCost, "size", size)
+        end
+    end
+
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
     EquipResetPending()
     local fails = 0
+    if teamMode then
+        for i = 1, #teamSlotList do
+            local role = teamSlotList[i]
+            local entry = teamEntry(role, teamLevel, teamRaceKey)
+            if not entry then
+                log("team: no CHAOST template for", role, "- pool fallback")
+            end
+            local created = entry and spawnCreature(anchors[rand(1, #anchors)], entry,
+                                                    teamLevel, true, base)
+            if entry and not created then
+                log("team: slot", role, "spawn failed - pool retry")
+                entry = nil
+            end
+            if not entry then
+                local pool = gatedPool("Humanoid", base)
+                if pool then
+                    pool = poolForRace(pool, teamRaceKey) or pool   -- keep the squad coherent
+                    local e = pool[rand(1, #pool)]
+                    if e then
+                        created = spawnCreature(anchors[rand(1, #anchors)], e, targetLevel, true, base)
+                        if created then spent = spent + e.cost end
+                    end
+                end
+            end
+            if created then spawned = spawned + 1 end
+        end
+        if spent == 0 then spent = spawned * teamCost end   -- log bookkeeping only
+    else
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
         local e = pickFrom(etype, budget - spent, base)
         if not e then
@@ -260,6 +322,7 @@ local function reinforce(host, enemies, combatId)
             if fails >= 3 then log("pack: giving up after 3 failed spawns"); break end
         end
     end
+    end   -- if teamMode / else legacy pack
 
     -- leader: roll once per pack (>= 2 mobs); same type ~90%, cross-type from the AFFINITY map.
     -- Spawned OUTSIDE the budget - the 10% roll is the "fight just got serious" jackpot.

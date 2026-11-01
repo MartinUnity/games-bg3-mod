@@ -242,3 +242,121 @@ function targetLevelFor(base)
     end
     return math.max(1, base + math.random(-LEVEL_JITTER, LEVEL_JITTER))
 end
+
+-- team composer pieces (v3.29) -------------------------------------------------
+-- Shared between Wild (out-of-combat teams) and Chaos (reinforcement teams).
+-- CHAOS_TEAMS (TeamTemplates.lua, required AFTER this file) maps role -> level ->
+-- donor-race template ids, so it is only touched at call time here. TEAM_PROFS feeds
+-- the Equip.lua v3.28 parity logic (role + prof drive staff/bow/shield picks).
+TEAM_PROFS = {
+    tank = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
+    melee_dps = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
+    ranged = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
+    caster = "SimpleWeapons;LightArmor",
+    healer = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
+    wildcard = "SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields",
+}
+TEAM_FILL = { "melee_dps", "ranged", "caster", "healer", "wildcard" }
+
+-- slot layout per the owner spec: guaranteed frontliner + dps + ranged, healer from
+-- size 4, then random fill (the chaos: bard/warlock wildcards included)
+function teamSlots(count)
+    local slots = { "tank", "melee_dps", "ranged" }
+    if count >= 4 then slots[#slots + 1] = "healer" end
+    while #slots < count do slots[#slots + 1] = TEAM_FILL[math.random(1, #TEAM_FILL)] end
+    while #slots > count do table.remove(slots) end   -- tiny waves: drop ranged first
+    return slots
+end
+
+-- levels are BAKED into the CHAOST templates; pick close to the party's. Low-level
+-- ceiling (same principle as the pool GATES): host at/below SOFT_CAP_LEVEL never
+-- faces team members ABOVE their level, explicit bumps are clamped too.
+function teamLevelFor(base, bump)
+    if base <= SOFT_CAP_LEVEL then
+        return math.max(1, base + math.min(0, bump or math.random(-1, 0)))
+    end
+    return math.max(1, math.min(12, base + (bump or math.random(-1, 2))))
+end
+
+-- donor races: parsed once from the template names CHAOST_<role>_L<n>_<race>_<sex>
+TEAM_RACES = nil
+function donorRaces()
+    if TEAM_RACES then return TEAM_RACES end
+    local seen, out = {}, {}
+    for _, byLevel in pairs(CHAOS_TEAMS or {}) do
+        for _, ids in pairs(byLevel) do
+            for _, id in ipairs(ids) do
+                local race = id:match("^CHAOST_[%w_]+_L%d+_(%a+)_[mf]_")
+                if race and not seen[race] then seen[race] = true; out[#out + 1] = race end
+            end
+        end
+    end
+    TEAM_RACES = out
+    return out
+end
+
+RACE_LABEL = {
+    human = "Human", elf = "Elf", halfelf = "Half-Elf", halfling = "Halfling",
+    dwarf = "Dwarf", tiefling = "Tiefling", gith = "Githyanki",
+    goblin = "Goblin", halforc = "Half-Orc",
+}
+ROLE_LABEL = {
+    tank = "Vanguard", melee_dps = "Fighter", ranged = "Archer",
+    caster = "Mystic", healer = "Priest", wildcard = "Mercenary",
+}
+
+-- enemy race (Osiris GetRace, keys verified live in RACE_TO_TYPE) -> donor race key.
+-- Hobgoblin/Duergar/Goblinoid borrow the closest donor (goblin/dwarf) - owner accepts
+-- goblin-ish for goblinoid fights, the sin is the MIX, not the exact species.
+RACE_TO_DONOR = {
+    Human = "human", ElfHigh = "elf", DrowElf = "elf", HalfElf = "halfelf",
+    Halfling = "halfling", DwarfHill = "dwarf", Dwarf = "dwarf", Duergar = "dwarf",
+    Tiefling = "tiefling", Githyanki = "gith",
+    Goblin = "goblin", Goblinoid = "goblin", Hobgoblin = "goblin",
+    HalfOrc = "halforc",
+}
+
+function dominantRaceKey(enemies)
+    local counts = {}
+    for _, e in ipairs(enemies) do
+        local k = RACE_TO_DONOR[e.race]
+        if k then counts[k] = (counts[k] or 0) + 1 end
+    end
+    local best, n = nil, 0
+    for k, c in pairs(counts) do if c > n then best, n = k, c end end
+    return best
+end
+
+function teamEntry(role, lvl, raceKey)
+    local list = CHAOS_TEAMS and CHAOS_TEAMS[role] and CHAOS_TEAMS[role][lvl]
+    if not list or #list == 0 then return nil end
+    local picks = list
+    if raceKey then
+        local sub = {}
+        for _, id in ipairs(list) do
+            if id:find("_L" .. lvl .. "_" .. raceKey .. "_", 1, true) then sub[#sub + 1] = id end
+        end
+        if #sub > 0 then picks = sub end
+    end
+    local nm = (RACE_LABEL[raceKey] or "Chaos") .. " " .. (ROLE_LABEL[role] or "Mercenary")
+    return { id = picks[math.random(1, #picks)], fixedLevel = lvl,
+             prof = TEAM_PROFS[role], role = role, nm = nm }
+end
+
+-- race-coherent fallback: pool mobs whose stats name carries the squad's race word
+-- ("Goblin Ranger" for a goblin squad; "Half Orc Caster" matches Half-Orc)
+function poolForRace(pool, raceKey)
+    local word = RACE_LABEL[raceKey]
+    if not word or not pool then return nil end
+    local w1 = word:gsub("%-", " ")   -- "Half Orc Caster" nm style
+    local w2 = word:gsub("%-", "")    -- "HalfOrc" template-id style
+    local out = {}
+    for _, e in ipairs(pool) do
+        local nm, id = e.nm or "", e.id or ""
+        if nm:find(w1, 1, true) or nm:find(w2, 1, true)
+           or id:find(w1, 1, true) or id:find(w2, 1, true) then
+            out[#out + 1] = e
+        end
+    end
+    return #out > 0 and out or nil
+end

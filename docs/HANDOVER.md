@@ -328,6 +328,37 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   (SetLevel removed; stat blocks are fixed anyway — HP/ExtraAttack don't derive
   from that number). ⚠️ in-game: first CHAOST class-teams + parity + quiet-window
   verdict all pending this boot (owner running the v3.28 pak).
+- **v3.29 team-mode reinforcements (option 2, owner: "last wave had humans + 2
+  goblins + 1 Meazel — too odd; option 2 will largely fix this as bonus"):**
+  `reinforce()` now runs the CHAOST class-team composer for Humanoid fights instead
+  of the bag-of-pool-mobs pick. Composer pieces MOVED from Wild.lua to Common.lua
+  as shared globals (TEAM_PROFS/TEAM_FILL/teamSlots/teamLevelFor/teamEntry) + new:
+  `donorRaces()` (parsed from template ids), `RACE_TO_DONOR` (GetRace key -> donor:
+  Goblin/Hobgoblin/Goblinoid→goblin, Duergar→dwarf, DrowElf/ElfHigh→elf, HalfOrc→
+  halforc...), `dominantRaceKey(enemies)`, `teamEntry(role, lvl, raceKey)` (filters
+  CHAOS_TEAMS to one donor race + sets display `nm` = "Goblin Vanguard" style via
+  RACE_LABEL/ROLE_LABEL -> FlavorNameFix), `poolForRace(pool, raceKey)` (race-
+  coherent pool fallback). Donors expanded 7→9 in gen_teams.py: goblin_m/f
+  (BASE_Goblins_Male_fb1af356 / Female_9629600b), halforc_m/f
+  (BASE_HalfOrcs_Male_0350f048 / Female_Guard_01bb9053) — verified in the live
+  root-template dump; NO Hobgoblin/Bugbear/Gnoll/Meazel BASE_* donors exist.
+  792 templates now (was 504); TeamTemplates.lua + ChaosTeams.lsx regenerated.
+  Team-mode gate: etype==Humanoid AND base >= TEAM_MIN_LEVEL(3) (baked CHAOST
+  levels bypass the low-level GATES below 3 — legacy pool path there) AND wave
+  size >= 2 where size = min(MAX_SPAWNS-1, floor(budget/(max(2,ceil(lvl*TEAM_COST
+  0.7))))) — CHAOST hp ≈ 11/lvl but class chars are weaker per-HP than fixed
+  monsters, hence the 0.7 discount. Race = dominantRaceKey(enemies), 20%
+  TEAM_CHAOS_CHANCE rolls a random donor race anyway; unknown/nil race → random
+  donor. Leader roll UNCHANGED (pool mob, outside budget) in both modes. Wild
+  squads also got the one-race-per-group rule (random donor, logged `race <key>`;
+  team-slot pool retries go through poolForRace first). teamSlots(2) bug found by
+  offline sim: guaranteed trio didn't shrink for count<3 -> now trims (drops
+  ranged); Wild masked it (loop ran to count), Chaos would have over-spawned.
+  Offline sim (/tmp/opencode/luachk/sim_v329.py, seed 7): goblin squad 12lvls x
+  6roles x8 picks all race-correct, level ceilings hold, wave-size distribution
+  sane (base 5 → 2-6 mobs). ⚠️ in-game: first race-coherent reinforcement waves
+  + `!chaos_root` now expects **792 REGISTERED**; wild log gained a `race <key>`
+  field.)
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed

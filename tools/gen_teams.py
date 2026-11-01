@@ -100,6 +100,13 @@ DONORS = [
     ("dwarf_f", "Dwarves_Female_Duergar_Guard_Melee_94f7da13-e289-494b-9889-166614e3fc6f"),
     ("tiefling_m", "Tieflings_Male_Asmodeus_Guard_Caster_748a7bde-5a75-4d37-0aac-a8ad0f170903"),
     ("gith_m", "Githyanki_Male_Guard_Caster_8f31c26a-67c0-b0bf-8a7a-a08a627b1692"),
+    # v3.29 race-coherence donors (owner: goblin fights spawned HUMAN reinforcements -
+    # odd mix; CHAOST squads now pick a donor race matching the fight's dominant enemy
+    # race). ids verified against the live root-template dump 2026-11-01.
+    ("goblin_m", "BASE_Goblins_Male_fb1af356-55c0-4b63-8418-353170bfeb75"),
+    ("goblin_f", "BASE_Goblins_Female_9629600b-2e80-4862-9ddb-1ae8e2ee824c"),
+    ("halforc_m", "BASE_HalfOrcs_Male_0350f048-11f5-42fe-8399-228e419f4789"),
+    ("halforc_f", "BASE_HalfOrcs_Female_Guard_01bb9053-324a-41e9-8c44-7717f070d9f2"),
 ]
 
 MAX_LEVEL = 12
