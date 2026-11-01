@@ -203,10 +203,22 @@ def scan_templates():
     # block rarely carries `Level` (only 2 entries in the whole DB), which is why the
     # lvl gate missed the lvl-10 Orthon that reached a lvl-5 fight 2026-11-01.
     lvl_re = re.compile(r'<attribute id="LevelOverride" type="int32" value="(-?\d+)"')
+    # ART attrs (v3.32, invisible Phase Spider 2026-11-01): body art is inherited via
+    # ParentTemplateId UNLESS the node overrides it with an explicit EMPTY string.
+    # BASE_Quadruped_Beast_Spider_Phase does exactly that (VisualTemplate="") -> spawned
+    # invisible with a placeholder portrait (owner saw it 3x). Humanoid templates survive
+    # an empty VisualTemplate only if they carry their own CharacterVisualResourceID
+    # (race body art), so the drop rule is: VisualTemplate="" AND no own CVRID.
+    # CVRID sorts BEFORE MapKey (pending buffer), VisualTemplate AFTER it.
+    cvr_re = re.compile(r'<attribute id="CharacterVisualResourceID" type="FixedString" value="([^"]*)"')
+    vis_re = re.compile(r'<attribute id="VisualTemplate" type="FixedString" value="([^"]*)"')
 
     def flush(cur):
         if cur.get("name") and cur.get("guid") and cur.get("type") == "character":
-            out[cur["name"]] = (cur["guid"], cur.get("stats", ""), cur.get("lvl"))
+            vis_empty = cur.get("vis") == ""
+            has_cvr = cur.get("cvr") not in (None, "", "00000000-0000-0000-0000-000000000000")
+            out[cur["name"]] = (cur["guid"], cur.get("stats", ""), cur.get("lvl"),
+                                vis_empty, has_cvr)
 
     for fn in LSX_FILES:
         p = RT / fn
@@ -216,13 +228,15 @@ def scan_templates():
         cur = {}
         cur_depth = None
         pending_lvl = None   # LevelOverride sorts BEFORE MapKey (attrs are alphabetical)
+        pending_cvr = None   # CharacterVisualResourceID likewise (v3.32 art filter)
         for line in p.read_text(errors="replace").splitlines():
             indent = len(line) - len(line.lstrip("\t"))
             m = mapkey_re.search(line)
             if m:
                 flush(cur)
-                cur = {"guid": m.group(1), "lvl": pending_lvl}
+                cur = {"guid": m.group(1), "lvl": pending_lvl, "cvr": pending_cvr}
                 pending_lvl = None
+                pending_cvr = None
                 cur_depth = indent
                 continue
             if cur_depth is None or indent != cur_depth:
@@ -230,6 +244,14 @@ def scan_templates():
             m = lvl_re.search(line)
             if m:
                 pending_lvl = int(m.group(1))
+                continue
+            m = cvr_re.search(line)
+            if m:
+                pending_cvr = m.group(1)
+                continue
+            m = vis_re.search(line)
+            if m and cur.get("guid"):
+                cur["vis"] = m.group(1)
                 continue
             m = name_re.search(line)
             if m and cur.get("guid"):
@@ -256,7 +278,11 @@ def main():
     print(f"stats entries: {len(stats)}; root templates (character): {len(templates)}; dump keys: {len(dump_keys)}")
 
     rows = {}
-    for name, (guid, statsname, tpl_lvl) in templates.items():
+    artless = []
+    for name, (guid, statsname, tpl_lvl, vis_empty, has_cvr) in templates.items():
+        if vis_empty and not has_cvr:
+            artless.append(name)   # explicit empty VisualTemplate override, no race art
+            continue
         if name.lower() in blocklist:
             continue
         if BAD_NAME.search(name) or BAD_STATS.search(statsname):
@@ -302,6 +328,10 @@ def main():
         rows[name] = (guid, t, hp, cost, statsname, level, len(immunes),
                       ac, strength, dex, con, wis, cha, ea, prof, unarmed != "", pr)
 
+    if artless:
+        print(f"artless (empty VisualTemplate override, no own CVRID - invisible bodies): "
+              f"{len(artless)}")
+        print("  " + ", ".join(sorted(artless)))
     print(f"generic spawnable creatures: {len(rows)}")
     bytype = {}
     for name, (guid, t, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr) in rows.items():

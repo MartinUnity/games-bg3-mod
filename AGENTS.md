@@ -103,7 +103,14 @@ Where things live:
   heartbeat chance = min(100, WILD_CHANCE(25) + wildMisses*rand(2-8)), reset on group
   spawned; a triggered-but-unplaced heartbeat counts as a miss too (spawnWildGroup
   returns bool), skip-gates never touch the stack; miss count in roll log +
-  `!chaos_status` `misses N (next lo-hi%)` (sim: P(≥10 misses) 5.7%→0.1%););
+  `!chaos_status` `misses N (next lo-hi%)` (sim: P(≥10 misses) 5.7%→0.1%); **v3.32 invisible-template
+  filter** (owner: Phase Spider invisible body + placeholder portrait): root templates can override
+  inherited art with an explicit EMPTY `VisualTemplate=""`; if the node also lacks a own
+  `CharacterVisualResourceID` the spawn renders invisible (BASE_Quadruped_Beast_Spider_Phase = the
+  spider; concrete SPIDER_Phaser is the visible twin, same stats) → build_creature_db parses both
+  art attrs per node (CVRID pending-buffered before MapKey, VisualTemplate after) and drops
+  `vis=="" AND no own CVRID` (34 entries, 560→526; vis=="" WITH CVRID kept — tighten to vis==""
+  alone if a kept one turns out invisible););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

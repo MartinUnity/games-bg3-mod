@@ -400,6 +400,23 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   (`chance roll 71 (need <=45, miss 4)`) and in `!chaos_status`
   (`misses N (next lo-hi%)`). Sim: avg misses 3.0→2.0, worst-case streak 35→11,
   P(≥10 misses) 5.7%→0.1% (the owner's exact complaint). Pak 228146 B.
+- **v3.32 invisible-template fix (owner: "Phase Spider has no visible body, portrait
+  looks like a human with a shadow over its face; only this encounter"):** the spawn
+  was `BASE_Quadruped_Beast_Spider_Phase` — a root template whose node carries an
+  explicit EMPTY `VisualTemplate=""` (overriding inherited art) and NO own
+  `CharacterVisualResourceID` → engine has no body art (invisible) + placeholder
+  portrait. `tools/build_creature_db.py` now filters ALL such templates (parse
+  VisualTemplate/CharacterVisualResourceID per node — CVRID sorts BEFORE MapKey via
+  pending-buffer, VisualTemplate AFTER) and drops entries where `vis=="" AND no own
+  CVRID` → **34 artless entries removed** (560→526), including the spider, VINE
+  tentacles, and guild/Mephistopheles humanoid variants (all have visible alternatives).
+  ⚠️ 29 DB entries with `vis==""` were KEPT because they carry their own CVRID
+  (body-art anchor — the confirmed-invisible spider had neither; goblin/elf-female
+  soldier variants, Kuotoa, ScryingEye, Myconid_Sovereign, VINE tentacles A/B/D/E…)
+  — if one of THOSE shows up invisible in-game, tighten the rule to `vis==""` alone.
+  The Phase Spider pool slot is covered by the concrete `SPIDER_Phaser` (own full art,
+  identical stats). Offline sim: no artless spider leaks, gated-pool totals healthy
+  (base 1=104..base 12=526), Orthon still lvl=10. Pak 226738 B.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed
