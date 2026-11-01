@@ -14,6 +14,10 @@
 --     even dps can bail out a teammate with a throw; one extra roll per member from the
 --     member-level-band pool (owner spec: low=1-3, mid=4-8, top=9-12) - poisons are the
 --     lowest extras, speed the highest (top pool crown jewel, never mid/low)
+--   - support slot (class-appropriate, owner spec 2026-11-01): caster = 0-X scrolls,
+--     ranged = bow + 0-X special arrow stacks, melee = 0-X strong poisons/grenades;
+--     pool band (low/mid/top) follows encounter rank (group tier), count rides the
+--     equip tier - ⚠️ NPC scroll/arrow AI use needs in-game confirmation (logged)
 -- Gear rolls in via Osi.GenerateTreasure (vanilla random tables, level-segmented); the
 -- TemplateAddedTo listener auto-equips it; potions stay in inventory (mob AI drinks them).
 
@@ -119,6 +123,94 @@ local function tierBaseline(groupTier, isBoss)
     return math.min(t, 4)
 end
 
+-- class-appropriate "support" slot (owner spec 2026-11-01): casters get 0-X spell
+-- scrolls, ranged get 0-X special arrows (BG3 ammo is shared arrows/bolts) + a bow so
+-- the arrows are usable, melee gets stronger poisons + alchemist grenades. POOL BAND
+-- (low/mid/top) follows the encounter rank (group tier, equip tier 3+ pushes up one);
+-- COUNT is 0-X binomial on the equip tier (X = groupTier + equip bonuses, cap 4).
+-- ⚠️ playtest: scrolls may need the spell known by the caster kit, and NPC AI may
+-- ignore arrows/scrolls - the log lines mark who got what for that follow-up.
+-- ids = Name_<guid> from the live root-template dump.
+local SUPPORT_POOLS = {
+    caster = {
+        { "LOOT_SCROLL_MagicMissile_945cd4f0-991b-4663-b72e-790d49fee27e",
+          "LOOT_SCROLL_BurningHands_bc00df72-3c98-4bf2-9650-28e08f79b57c",
+          "LOOT_SCROLL_ChromaticOrb_c6aef37e-bc4d-46e7-a963-15b4cd8163bd",
+          "LOOT_SCROLL_WitchBolt_e69f52a4-3d86-4f08-a9b4-c70ba4cc3070",
+          "LOOT_SCROLL_Thunderwave_94caa680-50b8-46b1-b775-19150d783b2f" },
+        { "LOOT_SCROLL_Fireball_79d2bb95-53fc-4e41-a004-5e1b83db8de7",
+          "LOOT_SCROLL_Web_2eedb4ac-47fa-4039-9684-8b4bb0923a26",
+          "LOOT_SCROLL_Shatter_2ad118cb-b11f-45ca-a206-7575bbbaccc6",
+          "LOOT_SCROLL_ChainLightning_13105f7d-55fa-4292-abfe-b9d80054b48e",
+          "LOOT_SCROLL_Confusion_7634cc33-d16b-4640-ba7c-8c6a26653591" },
+        { "LOOT_SCROLL_Sunbeam_049d70c4-7ea3-4b6c-af6f-44dab7813a89",
+          "LOOT_SCROLL_WallOfFire_0f3c7369-d0bd-4b97-960d-1407f4c8eebf",
+          "LOOT_SCROLL_Cloudkill_0e793d2d-1cd7-4b90-a71b-821423e50969",
+          "LOOT_SCROLL_Disintegrate_3f737706-57ca-45e6-b0d1-45238da76329",
+          "LOOT_SCROLL_Fly_1df15994-c860-4930-beed-3135b74025fa" },
+    },
+    ranged = {
+        { "ARR_Arrow_Of_Fire_9a142fae-bcea-4e88-a407-16d3b27468b9",
+          "ARR_Arrow_Of_Ice_2e297d80-823b-4200-926e-6ca23f488090",
+          "ARR_Arrow_Of_Lightning_1b0f095b-cb22-4bf9-aecf-4e5a26504ec8",
+          "ARR_Arrow_Of_Acid_0bfb72d2-0e8e-4d16-aeae-3159b0d4b195" },
+        { "ARR_Arrow_Of_Ricochet_b11b3f7f-d8ec-41db-93b9-24474aea31e3",
+          "ARR_Arrow_Of_Piercing_eee2f284-1a42-462a-8b38-50bd2e3885c5",
+          "ARR_Arrow_Of_Smokepowder_0788a2bb-c732-4ebb-abf9-2ef150f509be",
+          "ARR_Arrow_Of_Fire_9a142fae-bcea-4e88-a407-16d3b27468b9" },
+        { "ARR_Arrow_Of_Detonation_a0985797-4ec7-475c-8e11-0361e387f39a",
+          "ARR_Arrow_Of_Lightning_1b0f095b-cb22-4bf9-aecf-4e5a26504ec8",
+          "ARR_Arrow_Of_Ice_2e297d80-823b-4200-926e-6ca23f488090" },
+    },
+    melee = {
+        { "CONS_Poison_Serpent_Venom_b0385b93-f525-4740-8126-471a76fa31a2",
+          "ALCH_Solution_Grenade_Light_c3236e6e-21e4-4e39-a5b4-fda105d8ce3f" },
+        { "CONS_Poison_Drow_f528a334-bdb3-4cf1-b74c-0e08942daeb1",
+          "CONS_Poison_Malice_d990fefe-e0f3-46ba-915e-35aebc6c6599",
+          "ALCH_Solution_Grenade_Web_a4d98266-948b-4467-96cd-6a316f37ceda",
+          "ALCH_Solution_Grenade_SporesConfusion_cbc47f2b-b88a-4bd8-99cd-aacc2dc2ea44" },
+        { "CONS_Poison_Wyvern_eca393b0-3f8e-4862-814b-9e236a0d4129",
+          "CONS_Poison_Purple_Worm_56e531e9-78e4-430b-bc98-611c1b1ccd08",
+          "ALCH_Solution_Grenade_SporesToxic_9320005f-18c6-4c2b-be7f-e168d3b15573" },
+    },
+}
+
+local function supportRoleFor(entry)
+    if entry.role == "caster" then return "caster" end
+    if entry.role == "ranged" then return "ranged" end
+    if entry.role then return "melee" end          -- team roles: tank/dps/healer/wildcard
+    -- pool mobs (CreatureDB): no weapon/armor prof at all -> caster-ish guess
+    local prof = entry.prof or ""
+    if prof ~= "" and not prof:find("MartialWeapons", 1, true)
+       and not prof:find("Armor", 1, true) then return "caster" end
+    return "melee"
+end
+
+local function supportSlot(entry, groupTier, tier)
+    local gt = groupTier or 1
+    local band = gt + (tier >= 3 and 1 or 0)
+    band = math.max(1, math.min(band, 3))
+    local cap = math.min(gt + (tier >= 3 and 1 or 0) + (tier == 4 and 1 or 0), 4)
+    local p = (tier == 1 and 30) or (tier == 2 and 60) or (tier == 3 and 80) or 100
+    local n = 0
+    for _ = 1, cap do
+        if rand(1, 100) <= p then n = n + 1 end
+    end
+    if n == 0 then return supportRoleFor(entry), band, nil end
+    local role = supportRoleFor(entry)
+    local pool = SUPPORT_POOLS[role][band]
+    local picked = {}
+    local qty = 1
+    for _ = 1, n do
+        local t = pool[rand(1, #pool)]
+        if role == "ranged" then
+            qty = rand(3, 5) + (tier >= 3 and 1 or 0)   -- arrows come in stacks
+        end
+        picked[#picked + 1] = { t, qty }
+    end
+    return role, band, picked
+end
+
 -- weapon + armor table for this creature/tier, or nil for "designed without"
 local function equipmentFor(entry, base, tier)
     local prof = entry.prof or ""
@@ -192,6 +284,18 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
     if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
     if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
+    -- class-appropriate support slot; ranged role also gets a simple bow so the
+    -- special arrows are actually usable (bow AI use = playtest item)
+    local role, band, support = supportSlot(entry, groupTier, tier)
+    if role == "ranged" then
+        pcall(Osi.GenerateTreasure, created, "ST_SimpleRangedWeapons", base, created)
+    end
+    if support then
+        for _, s in ipairs(support) do
+            pcall(Osi.TemplateAddTo, s[1], created, s[2], 0)
+        end
+        log("support:", role, "band", band, #support, "item rolls on", created)
+    end
     -- consumables: healing potion is the BASELINE from lvl 3 up, one per member at
     -- every group tier (owner: even dps can bail a teammate out with a throw);
     -- below lvl 3 the old rare-roll odds stay (10%/25%, tier 3+ = grown playtest odds).

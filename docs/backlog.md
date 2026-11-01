@@ -85,13 +85,12 @@ approximate it. Also queued:
 - ranged weapons for dex-based humanoids (tables exist: `ST_SimpleRangedWeapons`,
   `ST_MartialRangedWeapons` — but melee AI may not use bows; needs a probe);
 - chaos fodder tables: `ST_RandomPotion`, `ST_RandomConsumable`, `ST_Throwable`.
-- **class-appropriate "support" equipment slot** (owner 2026-11-01, after the v3.20 potion
-  ladder landed): role-keyed extra pocket depending on encounter rank + equip roll —
-  casters: 0-X spell **scrolls** (low/mid/top by group tier); ranged: 0-X **special arrows/bolts**
-  (explosive, ice, thunder...); melee: stronger **poisons** + alchemy **flask/vial** throws
-  (Acid/Alchemist's Fire). Needs: root-template ids from the live dump (`SCRL_*`, arrow/bolt
-  CONS_*, flask CONS_*), a role tag on the entry (team roles already exist; CreatureDB mobs
-  would need a rough class guess), and NPC AI verification for scroll/ammunition use.
+- **support-slot playtest** (v3.21 shipped the slot; ⚠️ needs in-game confirmation): does NPC
+  AI actually **use** the new items — scrolls (`LOOT_SCROLL_*` cast without knowing the spell?),
+  special arrows (ammo consumed? bow picked up from `ST_SimpleRangedWeapons` and fired?),
+  grenades/poisons (thrown/applied?) — and does the bow grant interfere with melee-role weapon
+  rolls. Log lines `support: <role> band <n> ...` in `ChaosReinforcements.log` mark recipients;
+  if AI ignores items, consider swapping to items kits natively use, or drop the dead pools.
 
 ## Balancing / tuning (from playtests)
 

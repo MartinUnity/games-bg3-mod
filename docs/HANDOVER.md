@@ -278,6 +278,22 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.21: class-appropriate "support" slot (owner spec 2026-11-01, same day as v3.20):**
+  role-keyed extra pocket in `EquipMob` — **casters** get 0-X `LOOT_SCROLL_*` (low: cantrips/
+  1st-level like MagicMissile/Thunderwave; mid: Fireball/Web/ChainLightning/Confusion; top:
+  Sunbeam/WallOfFire/Cloudkill/Disintegrate/Fly), **ranged** get a bow (`ST_SimpleRangedWeapons`
+  via GenerateTreasure, so ammo is usable) + 0-X `ARR_Arrow_Of_*` stacks of 3-5 (low: elemental
+  fire/ice/lightning/acid; mid: Ricochet/Piercing/Smokepowder; top: Detonation), **melee** get
+  0-X stronger poisons + `ALCH_Solution_Grenade_*` throws (low: Serpent venom/light grenade;
+  mid: Drow/Malice + Web/Confusion spores; top: Wyvern/PurpleWorm + toxic spores). Pool band =
+  group tier (+1 when equip tier ≥3, clamped 1-3); COUNT = binomial cap `min(groupTier + tier3
+  +1 + tier4 +1, 4)` at p = 30/60/80/100% per equip tier — offline sim: warband caster ~3.5
+  items/member, core caster ~0.4, ranged stacks avg 4.4, boss tank (tier 4) full 4-load. Role
+  from team `entry.role` (Wild's `teamEntry` now tags it); CreatureDB pool mobs get a caster
+  guess when they have no weapon/armor profs, else melee. ⚠️ NPC AI actually USING scrolls/
+  arrows/grenades is unverified (backlog playtest item); log line `support: <role> band <n>`.
+  Lua gotcha hit: `supportSlot` early-returning `0` (= truthy) made `ipairs(0)` throw — return
+  `nil` for the picked list.
 - **v3.20: equip tier keyed to the wild GROUP tier + potion ladder (owner review 2026-11-01):**
   `spawnWildGroup` now passes its group tier (and `isBoss` for the boss slot) through
   `spawnWildMob` into `EquipMob` — no more independent per-member equip lottery for wild

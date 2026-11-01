@@ -93,7 +93,11 @@ Where things live:
   (low 1-3: Basic poison/antitoxin/resistances; mid 4-8: heroism/resistances/Drow+Malice
   poison; top 9-12: regen/invisibility/Wyvern+PurpleWorm poison, Speed = crown jewel only
   here; DONOTUSE variants skipped; ids in Equip.lua from profile `Chaos_root_templates.txt`
-  live dump); RNG =
+  live dump); **support slot** (v3.21): caster = 0-X `LOOT_SCROLL_*`, ranged = bow
+  (`ST_SimpleRangedWeapons`) + 0-X `ARR_Arrow_Of_*` stacks, melee = strong poisons +
+  `ALCH_Solution_Grenade_*`; pool band = group tier (+1 if equip tier ≥3), count binomial
+  cap min(groupTier+tier bonuses,4) at p 30/60/80/100% by equip tier; role from team entry
+  role / prof-guess for pool mobs; ⚠️ NPC AI use of scrolls/arrows/grenades unverified); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at

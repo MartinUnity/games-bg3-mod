@@ -255,7 +255,7 @@ local TEAM_FILL = { "melee_dps", "ranged", "caster", "healer", "wildcard" }
 local function teamEntry(role, lvl)
     local list = CHAOS_TEAMS and CHAOS_TEAMS[role] and CHAOS_TEAMS[role][lvl]
     if not list or #list == 0 then return nil end
-    return { id = list[rand(1, #list)], fixedLevel = lvl, prof = TEAM_PROFS[role] }
+    return { id = list[rand(1, #list)], fixedLevel = lvl, prof = TEAM_PROFS[role], role = role }
 end
 
 local function teamLevelFor(base, bump)
