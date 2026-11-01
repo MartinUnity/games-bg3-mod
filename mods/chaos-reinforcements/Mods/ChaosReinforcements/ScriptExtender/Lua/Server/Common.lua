@@ -7,21 +7,50 @@ local function flush()
     pcall(function () Ext.IO.SaveFile("ChaosReinforcements.log", table.concat(LINES, "\n")) end)
 end
 
--- timestamps (owner 2026-11-01): dry-spells/backoffs are only diagnosable against
--- wall-clock time; os.date is plain Lua and expected in the SE runtime, but log()
--- is everywhere so degrade gracefully instead of throwing if it ever isn't.
+-- Timestamps (owner 2026-11-01). ⚠️ THE SE SERVER LUA HAS NO `os` GLOBAL: the v3.23
+-- pcall(os.date, ...) "guard" indexed os BEFORE pcall ran and threw - log() is called
+-- in module main chunks and event handlers, so the whole bootstrap + the wild
+-- heartbeat subscription died silently (runtime log 2026-11-01: "attempt to index a
+-- nil value (global 'os')" everywhere, zero game log lines). Feature-detect SE's
+-- wall clock, fall back to session-monotonic (Ext.Timer.MonotonicTime, vendored docs
+-- 1592), then to a bare stamp. Cannot throw.
 local function clockStr()
-    local ok, t = pcall(os.date, "%H:%M:%S")
-    return ok and t or ""
+    local ok, t = pcall(function ()
+        if Ext.IO and Ext.IO.GetCurrentDateTime then
+            return Ext.IO.GetCurrentDateTime("%H:%M:%S")
+        end
+        return nil
+    end)
+    if ok and type(t) == "string" and t ~= "" then return t end
+    local ok2, ms = pcall(function () return Ext.Timer.MonotonicTime() end)
+    local n = ok2 and tonumber(ms) or nil
+    if n then   -- seconds since SE started, "+HH:MM:SS" (session-relative)
+        local total = math.floor(n / 1000)
+        return string.format("+%02d:%02d:%02d", math.floor(total / 3600),
+            math.floor(total / 60) % 60, total % 60)
+    end
+    return nil
 end
 
 function log(...)
-    local parts = {}
-    for i = 1, select("#", ...) do
-        parts[#parts + 1] = tostring(select(i, ...))
+    -- fully pcall-guarded: log() must NEVER throw at its caller. It is called at
+    -- module load, in Osiris listeners and timers; one throwing log once killed
+    -- the entire mod (v3.23-25 incident). NB: the varargs are passed EXPLICITLY to
+    -- the inner function - nested `...` is Lua 5.2+ syntax, and the SE runtime is
+    -- not guaranteed to accept it (compile-checked offline under LuaJIT).
+    local ok, joined = pcall(function (...)
+        local parts = {}
+        for i = 1, select("#", ...) do
+            parts[#parts + 1] = tostring(select(i, ...))
+        end
+        local stamp = clockStr()
+        return "[CHAOS" .. (stamp and (" " .. stamp) or "") .. "] "
+            .. table.concat(parts, " ")
+    end, ...)
+    if ok and joined then
+        LINES[#LINES + 1] = joined
+        flush()
     end
-    LINES[#LINES + 1] = "[CHAOS " .. clockStr() .. "] " .. table.concat(parts, " ")
-    flush()
 end
 
 -- Push an announcement to every client (client side shows an IMGUI toast, Client/

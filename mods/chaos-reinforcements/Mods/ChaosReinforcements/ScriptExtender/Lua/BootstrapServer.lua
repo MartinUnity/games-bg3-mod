@@ -12,4 +12,6 @@ Ext.Require("Server/Flavor.lua")
 Ext.Require("Server/Toggle.lua")
 Ext.Require("Server/Chaos.lua")
 Ext.Require("Server/Wild.lua")
-Ext.Print("[CHAOS] Chaos Reinforcements bootstrap loaded")
+-- Ext.Print is nil on the SERVER runtime (this version) -> it threw "attempt to call
+-- a nil value (field 'Print')" every load. Use log() (Common.lua is already required).
+log("Chaos Reinforcements bootstrap loaded")

@@ -110,7 +110,13 @@ Where things live:
   the monitor judges the last aggroed group via `pendingEngage` and arms backoff only
   after ~15 s of sustained combat (2 s ticks; 6 s out-of-combat grace covers aggro
   startup and mid-fight blips; fizzle/never-engaged logs the anomaly instead); RNG =
-  `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
+  `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws);
+  **`os` IS NIL in server Lua (v3.26 incident: an `os.date` "guard" in log() threw at
+  bootstrap + SessionLoaded for 3 versions — heartbeat never scheduled, zero spawns,
+  zero game-log lines; only the Extender Runtime log showed it). `Ext.Print` nil on
+  server (client-only). log() now fully pcall-guarded, clock = feature-detect
+  `Ext.IO.GetCurrentDateTime` -> `Ext.Timer.MonotonicTime`; offline compile-checks run
+  under LuaJIT = no nested `...` in closures, pass varargs explicitly)**; log =
   profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
   `tools/divine.sh` + `tools/pack_mod.sh` (proven; unpack verb: `-a extract-package -g bg3`).

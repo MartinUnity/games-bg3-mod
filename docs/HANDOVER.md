@@ -278,6 +278,25 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
+  new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
+  per-session files — the prefix-home path in AGENTS.md is stale) showed
+  `Common.lua:14: attempt to index a nil value (global 'os')` at every log() call:
+  v3.23's "fail-soft" `pcall(os.date, ...)` evaluated `os.date` BEFORE pcall guarded
+  it. Since log() runs in module main chunks (Chaos.lua:336), the SessionLoaded
+  handler (Wild.lua:683, BEFORE the heartbeat/monitor timer lines) and Osiris
+  listeners, the whole wild engine silently never started: no spawns + no game-log
+  lines for every session running the v3.23+ pak (v3.23-25 were effectively untested
+  in-game; the timestampless tail lines in ChaosReinforcements.log were an OLD pak
+  session still open until 15:00). Fixes: clockStr feature-detects
+  `Ext.IO.GetCurrentDateTime` (wall HH:MM:SS), falls back to
+  `Ext.Timer.MonotonicTime` (+HH:MM:SS session-relative), then no stamp; log() body
+  is fully pcall-guarded (must never throw at callers) with varargs passed EXPLICITLY
+  into the inner fn (nested `...` is Lua 5.2+ syntax; lupa/LuaJIT compile-check
+  caught that second bug); `Ext.Print` at BootstrapServer:15 removed (nil on server,
+  threw every load — pre-existing noise), client one pcall-guarded. ⚠️ RESTART
+  REQUIRED to load the fixed pak; v3.24 (SetLevel crash fix), v3.25 (fizzle backoff)
+  and the owner's bc04df4 potion fix all ride along, still awaiting first real play.
 - **v3.25: fizzle-aware wild backoff + camp guard confirmed (owner 2026-11-01):** owner
   ruling on the dry-spell tuning question — a FIZZLED aggro (e.g. the camp brief-
   initiative) "should count as an anomaly and not start the backoff counter".
