@@ -97,7 +97,12 @@ Where things live:
   (`ST_SimpleRangedWeapons`) + 0-X `ARR_Arrow_Of_*` stacks, melee = strong poisons +
   `ALCH_Solution_Grenade_*`; pool band = group tier (+1 if equip tier ≥3), count binomial
   cap min(groupTier+tier bonuses,4) at p 30/60/80/100% by equip tier; role from team entry
-  role / prof-guess for pool mobs; ⚠️ NPC AI use of scrolls/arrows/grenades unverified); RNG =
+  role / prof-guess for pool mobs; ⚠️ NPC AI use of scrolls/arrows/grenades unverified);
+  **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
+  the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
+  campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);
+  Wild tracks per-char, heartbeat+monitor gate while the HOST is camped; ⚠️ the events
+  firing for the camp UI needs one in-game confirm via the `wild: at CAMP` log line); RNG =
   `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws); log =
   profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`;
   offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at

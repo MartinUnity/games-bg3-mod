@@ -83,6 +83,22 @@ local currentLevel = ""
 local groups = {}   -- { { members = { guid, ... }, type = "..." } }
 local backoffMs = 0 -- remaining encounter cooldown; ticked down by the monitor
 
+-- Camp guard (owner 2026-11-01, campsite spawn incident): making camp teleports the
+-- party to the campsite WITHOUT an Osiris level change (confirmed: entering camp
+-- fired no LevelLoaded, gate stayed OPEN on WLD_Main_A, and a warband spawned
+-- around the campfire -> brief interrupted combat + despawns). The only signal the
+-- engine emits is the Osiris camp-teleport event pair (story_header.div 1218-1219:
+-- TeleportedToCamp / TeleportedFromCamp, arity 1). Track per-character; gate on the
+-- HOST being camped (a single follower sent to camp via SendToCamp must not stop
+-- world spawns for the rest of the party). ⚠️ playtest: if "wild: at CAMP" never
+-- logs on camping, the events don't fire for the camp UI and we need the fallback
+-- (camp crime-region value is logged by the heartbeat's crime-region probe).
+local campers = {}
+local function hostAtCamp()
+    local host = Osi.GetHostCharacter()
+    return host ~= nil and host ~= "" and campers[tostring(host)] == true
+end
+
 local function rand(lo, hi) return math.random(lo, hi) end
 
 -- region theme for the current level (nil = default mix)
@@ -427,6 +443,7 @@ local function heartbeat()
     end
     if not allowed then return end
     if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
+    if hostAtCamp() then return end            -- camp guard: never spawn around the campfire
     local host = Osi.GetHostCharacter()
     if not host or host == "" then return end
     -- crime-region sub-gate (owner 2026-11-02): the grove ENTRANCE courtyard (Wyll,
@@ -470,6 +487,7 @@ local function monitor()
     pcall(Ext.Timer.WaitFor, WILD_MONITOR_MS, monitor)
     if backoffMs > 0 then backoffMs = backoffMs - WILD_MONITOR_MS end
     if #groups == 0 then return end
+    if hostAtCamp() then return end   -- camp guard: groups idle (no aggro, no expiry) while camped
     local players = factGuids("DB_Players", 1)
     local host = Osi.GetHostCharacter()
     if host and host ~= "" then players[#players + 1] = host end
@@ -527,6 +545,7 @@ pcall(function ()
     Ext.Osiris.RegisterListener("LevelLoaded", 1, "after", function (level)
         currentLevel = tostring(level)
         groups = {}   -- old level's wilds are gone after a level swap
+        campers = {}  -- fast-travel can swap levels without TeleportedFromCamp
         -- explicit gate verdict on EVERY level entry (owner 2026-11-02): definite
         -- proof the safe/theme patterns matched - a silently-missed pattern (like the
         -- old GOB_/UND_ that never matched any real level) shows up here immediately.
@@ -562,6 +581,16 @@ pcall(function ()
                 log("wild: crime-region", currentLevel, "=", tostring(crime))
             end
         end
+    end)
+    -- camp-teleport pair = the only "we are camping" signal (see campers note above);
+    -- the logs double as the playtest probe that these events fire for the camp UI
+    Ext.Osiris.RegisterListener("TeleportedToCamp", 1, "after", function (char)
+        campers[tostring(char)] = true
+        log("wild: at CAMP (", tostring(char) .. ") - spawns + aggro paused")
+    end)
+    Ext.Osiris.RegisterListener("TeleportedFromCamp", 1, "after", function (char)
+        campers[tostring(char)] = nil
+        if next(campers) == nil then log("wild: camp done - world active again") end
     end)
     Ext.Events.SessionLoaded:Subscribe(function ()
         log("Wild.lua loaded (level gate:", table.concat(WILD_LEVEL_PATTERNS, " / "), ")")

@@ -278,6 +278,18 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Shared engine helpers moved from Chaos.lua to Common.lua (DEFAULT_TYPES, GATES,
   factGuids/rowGuid, passesGate/gatedPool/pickFrom/pickLeaderFrom/targetLevelFor).
   Bootstrap order: Common → CreatureDB → Equip → Flavor → Chaos → Wild.
+- **v3.22: camp guard (owner incident 2026-11-01: warband spawned AT the campfire):**
+  making camp does NOT swap the Osiris level — no `LevelLoaded` fires, the wild gate
+  stayed OPEN on `WLD_Main_A` while camped, and the heartbeat anchored 4 skeletons at
+  the host's campsite (brief interrupted combat + despawns; log excerpt confirmed).
+  Wild.lua now tracks `campers{char}` from the `TeleportedToCamp`/`TeleportedFromCamp`
+  Osiris events (story_header.div 1218-1219, arity 1 — the engine teleports the party
+  to the campsite, that IS the camp signal); heartbeat skips while the HOST is camped,
+  monitor skips aggro+expiry too (groups idle at their spots). Per-char tracking so a
+  single companion sent to camp (`SendToCamp`) doesn't freeze world spawns; `LevelLoaded`
+  resets `campers` (fast-travel may lack a FromCamp event). ⚠️ playtest: camping must log
+  `wild: at CAMP (...)` — if it never appears, the events don't fire for the camp UI and
+  the fallback is the camp crime-region value (heartbeat already logs region changes).
 - **v3.21: class-appropriate "support" slot (owner spec 2026-11-01, same day as v3.20):**
   role-keyed extra pocket in `EquipMob` — **casters** get 0-X `LOOT_SCROLL_*` (low: cantrips/
   1st-level like MagicMissile/Thunderwave; mid: Fireball/Web/ChainLightning/Confusion; top:

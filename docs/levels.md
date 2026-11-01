@@ -27,6 +27,9 @@ underdark = `WLD_Underdark_*`. Theme gates must match those real names.
 - `WLD_CIN_UnderdarkSubs_TemplateWrap_D`
 - `WLD_CIN_UnderdarkSubs_TemplateWrap_E`
 - `WLD_Campfire_E` — SAFE HAVEN: camp. Exempted.
+- ⚠️ The CAMP SCREEN (long-rest UI) is NOT a level: entering camp fires no `LevelLoaded`
+  at all — the party teleports to the campsite inside the current level (v3.22 camp guard,
+  HANDOVER). Never assume "at camp" shows up in level names.
 - `WLD_Chapel_H` — Dank crypt / chapel.
 - `WLD_Chapel_Push`
 - `WLD_Crashsite_D` — Nautiloid crashsite area.
