@@ -88,6 +88,10 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 
 ## 4. Pak toolchain — where the investigation stopped
 
+> **SUPERSEDED same day (2026-10-31):** native Linux Divine build landed — `tools/divine.sh`
+> + `tools/pack_mod.sh` (see §8 item 2). The notes below are kept only for the lslib source
+> map (StoryCompiler/StoryDecompiler etc. still live there).
+
 - Cloned `https://github.com/Norbyte/lslib.git` → `/tmp/opencode/pak/lslib` (⚠️ `/tmp` may be wiped;
   re-clone with `git clone --depth 1`, or put it in a gitignored `tools/vendor/lslib`).
 - `LSTools.sln` projects: `LSLib`, `Divine`, `StatParser`, `StoryCompiler`, `StoryDecompiler`,
@@ -125,7 +129,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   Oct-12 v33 updater anyway (old kept as `bin/DWrite.dll.bak-2024`); launch options already correct.
 - Logging FIXED 2026-10-31 (the earlier `LogEnabled` key is fake in v33 — no log was ever
   written). Correct keys: `{"LogRuntime": true}` in `bin/ScriptExtenderSettings.json` →
-  `…/compatdata/1086940/pfx/drive_c/users/steamuser/Script Extender Logs/Extender Runtime.log`.
+  per-session logs in the Larian profile at `Script Extender Logs/Extender Runtime*.log`
+  (under AppData `Larian Studios/Baldur's Gate 3/`; an earlier note here said the drive_c
+  prefix home — stale).
   Probe v2 also file-logs via `Ext.IO.SaveFile` → profile `Script Extender/Chaos_probe.log`
   (channel already proven working). **Not yet verified producing output** (needs one game start
   with the new settings).
@@ -633,14 +639,17 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
 2. **Pak CLI ✅ DONE (2026-10-31):** native Linux Divine build (`tools/divine.sh`), ModFixer.pak
    round-tripped, probe mod packed+installed via `tools/pack_mod.sh --install` →
    `…/Baldur's Gate 3/Mods/ChaosReinforcements.pak`. SE v33 updater installed to `bin/DWrite.dll`.
-   **Owner run pending:** start game → enable "Chaos Reinforcements" → load → read
-   `bin/bg3-print.log` (`[MARTIN] ... bootstrap loaded`, SessionLoaded, template dump) + profile
-   `Script Extender/Chaos_root_templates.txt` (via `Ext.IO.SaveFile`). That dump settles the
+   **Owner run DONE (2026-10-31):** mod enabled, SE v33 loaded, Lua ran. Forget `bg3-print.log`
+   (obsolete) — signals are the profile `Script Extender Logs/` runtime log + profile
+   `Script Extender/ChaosReinforcements.log` + `Chaos_root_templates.txt` (32017-entry dump,
+   read via `Ext.IO.SaveFile`). That dump settled the
    imp-instance question and enumerates the **global root template pool** the chaos engine draws on.
 3. ~~**Chaos engine in Lua**~~ **DONE — v3.1 packed+installed (2026-10-31), awaiting playtest:**
    stacking trigger, typed 622-creature DB, type affinity, budget with party knob, SetLevel
    scaling + delayed verify, leader system (pack ≥ 2, ~90/10 same/cross-type via AFFINITY),
-   low-level ceiling (see §5). **Next iteration after playtest:** if SetLevel doesn't stick,
+   low-level ceiling (see §5). *(v3.1-era wording; SetLevel later proved number-only AND a
+   crash source — REMOVED v3.3, difficulty moved to pick-time gates. Current state: HANDOVER
+   v3.x entries.)* **Next iteration after playtest:** if SetLevel doesn't stick,
    switch to custom stats file in
    the pak (`Public/ChaosReinforcements/Stats/Generated/Data/`) with CHAOS buff statuses for
    HP/stat scaling on spawned mobs (fold into single artifact, keeps high-level play

@@ -16,6 +16,8 @@ no level-editing needed.
 **Proven primitive chain** (probe v3 + E8b pair, verbatim):
 
 ```
+-- NB args 3/4 are _Temporary/_PlaySpawn (NOT x/y offsets - legacy dx/dy naming in
+-- our call sites): CreateAtObject(_Template,_Anchor,_Temporary,_PlaySpawn,_SpawnFinishEvent,_MatchOrientation,out _Created)
 created = Osi.CreateAtObject(templateName_GUID, anchor, dx, dy, "", 1)
 Osi.SetFaction(created, "Evil_4be9261a-e481-8d9d-3528-f36956a19b17")
 Osi.SetHostileAndEnterCombat("Evil_4be9261a-...", "Hero_a1542c81-...", created, anchor)
@@ -33,6 +35,8 @@ Osi.SetHostileAndEnterCombat("Evil_4be9261a-...", "Hero_a1542c81-...", created, 
   throws (restricted context).
 - `Osi.SetLevel(created, n)` sets the level NUMBER but does NOT rescale fixed monster
   stat blocks — difficulty must be chosen at pick time (CreatureDB native stats).
+  ⚠️ The call is REMOVED from our Lua: it faulted inside the SE wrapper (OsirisWrappers::
+  CallWrapper → bg3.exe hard crash, 2026-11-01); pcall cannot survive native faults.
 - Equipment at runtime: `Osi.GenerateTreasure(char, "ST_SimpleMeleeWeapons", level, finder)`
   + `TemplateAddTo` for potions + `Osi.Equip`; auto-equip via the `TemplateAddedTo` event.
 - Delayed logic: `Ext.Timer.WaitFor(ms, fn)`.

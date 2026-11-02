@@ -8,9 +8,35 @@ player actually has — using only the text we already deploy? Companion to
 Legend: ✅ = read out of files on this install, quotes/line refs given. ⚠️ = plausible
 from the grammar/precedent but needs an in-game test before we rely on it.
 
+## STATUS UPDATE 2026-11-02 — headline verdicts below are superseded (READ FIRST)
+
+- **The channel question is RESOLVED (E8b/E8, 2026-10-31):** the live story goal channel is
+  the **`Data/Mods/<Module>/Story/RawFiles/Goals/`** mount — appended rules in a vanilla-named
+  goal file compiled + spawned a wolf (E8b ✅), and **invented `MARTIN_*.txt` names compile and
+  fire there too** (E8 ✅). The `Data/Public/<Module>/Story/` mount NEVER fires (E1/E7 nulls):
+  the repo file `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` is a dead-channel
+  artifact. Masters live in `docs/goals/`, deployed via `tools/deploy_story.sh --copy`.
+- `Data/Mods` is **writable** (the ro bind was fixed 2026-10-31) — no `sudo mount -o remount,rw`
+  needed anywhere below.
+- Failure modes refined: a **whole-file grammar error refuses new-game creation** ("likely due
+  to mods" — NOT silent); a **bad name in one rule can silently drop just that rule**
+  (imp-rule vs wolf-rule, §3.1.2). `tools/check_goal.py` before deploy.
+- Pak/level tooling EXISTS now: `tools/divine.sh` (native lslib Divine) reads/edits paks and
+  converts `.lsf`↔`.lsx`; the "no pak reader / E5 not available" lines are obsolete
+  (level `.lsf` editing route: `encounters.md` Route 3).
+- `Osi/Osiris SetLevel`: sets the level NUMBER only — never rescales fixed stat blocks
+  (v3.3 lesson; the SE-Lua call additionally hard-crashed, REMOVED v3.3). E3's "level up the
+  mobs" is cosmetic, not difficulty.
+- `DebugText` is a CONFIRMED no-op in release builds (do not expect prints; wolf spawn is the
+  signal). Announcements now run via SE Ext.Net + ImGui toasts (verified in-game 2026-11-02).
+- Runtime reinforcement feature itself SHIPPED far past E1: SE Lua chaos engine v3.33
+  (`mods/chaos-reinforcements/`) — see HANDOVER version entries.
+
 ## 1. Verdict
 
-**Yes in principle, unproven on this install.** An Osiris goal file can create brand-new
+**Yes in principle, unproven on this install.** *(SUPERSEDED — proven in the live `Data/Mods`
+mount, see STATUS UPDATE above; "unproven" referred to this doc's original 2026-10-30 state.)*
+An Osiris goal file can create brand-new
 characters at runtime, gate them on Honour mode, place them at a legal position, and drop
 them into a combat that is already running. ✅ Vanilla itself does exactly this (the Hag's
 "doubles", extra ones **only in Honour mode**) — see §9 for the call sites. ⚠️ What is *not*
@@ -48,9 +74,9 @@ for loot.
   `find Data/Mods -name '*.txt' -newermt 2025-11-20` returns nothing — **we have never edited a
   story file here.** The "level cap / 3 short rests / companion changes" in `overview.md` §6 are
   implemented in **stats**, not in these goal files (grepping the story tree for
-  `SHORT_REST_LIMIT`/`MaxShortRest`/`LevelCap` finds nothing). ⚠️ So there is currently **no
-  local evidence that loose goal text is read at runtime** — §1's verdict rests on the grammar
-  and on vanilla precedent, and the experiment in §12 is what settles it.
+  `SHORT_REST_LIMIT`/`MaxShortRest`/`LevelCap` finds nothing). ⚠️ *(SUPERSEDED 2026-10-31:
+  loose goal text IS read at runtime — from the `Data/Mods` mount only; see STATUS UPDATE and
+  §3.1.2; the §12 experiment resolved as E1/E7 null on the `Data/Public` mount.)*
 - ✅ The header file is machine-generated text listing the engine's installed calls and
   queries (`story_header.div`, "Story header automatically generated. Do not modify!") —
   558 `call`, 425 `query`, 320 `event` lines in the GustavDev copy (Shared: 541/407/311). It
@@ -68,13 +94,11 @@ for loot.
 
 | Location | Writable? | What it holds |
 |---|---|---|
-| `Data/Public/<Module>/Story/RawFiles/Goals/` | **yes** — this repo, a `rw` bind mount | our master copy; no vanilla goal ever lived here |
-| `Data/Mods/<Module>/Story/RawFiles/Goals/` | **no** — `/home/martin/.local` is mounted `ro` (`findmnt`: `errors=remount-ro`); only `Data/Public` is a separate `rw` mount | where the vanilla loose goals actually sit |
+| `Data/Public/<Module>/Story/RawFiles/Goals/` | **NO — dead channel** (E1/E7 nulls, 2026-10-31; this repo, a `rw` bind mount, but never compiled) | keep masters in `docs/goals/`, never here |
+| `Data/Mods/<Module>/Story/RawFiles/Goals/` | **yes — THE live channel, writable** (the old `ro` bind was fixed 2026-10-31; no sudo needed) | where vanilla loose goals sit AND where our files deploy |
 
-`tools/deploy_story.sh --copy` mirrors our `MARTIN_*.txt` goals into `Data/Mods/…`; it
-refuses to run if the target is not writable (needs `sudo mount -o remount,rw /home/martin/.local`
-first). The in-game test in §12 settles the question: if `martin_spawn` works with only the
-repo copy present, `Data/Public` is compiled and no fallback is needed.
+`tools/deploy_story.sh --copy` mirrors our `MARTIN_*.txt` goals into `Data/Mods/…` — settled
+shape after E8/E8b (invented names compile+fire in that mount).
 
 ### 3.1.1 E1 in-game result: **nothing spawned** (2026-10-30, fresh Honour game, imp room)
 
@@ -487,11 +511,11 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
 
 | # | Recipe | Layer | Confidence | Notes |
 |---|---|---|---|---|
-| E1 | **Global Honour-only reinforcements**: `CombatStarted(_CombatGuid) AND DB_HonorMode_Enabled(1) AND NOT DB_MARTIN_CombatDone(_CombatGuid)` + level blacklist → `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `CreateAtObject(template,_Host,1,1,"",1,_N)` → `SetFaction(_N,(FACTION)Evil_…)` + `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_N,_Host)` | story | **implemented**, in-game result pending | live at `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` + `LevelLoaded` probe + Nautiloid room probes (E6), §12 |
+| E1 | **Global Honour-only reinforcements**: `CombatStarted(_CombatGuid) AND DB_HonorMode_Enabled(1) AND NOT DB_MARTIN_CombatDone(_CombatGuid)` + level blacklist → `PROC_MARTIN_SpawnAtHost` = `GetHostCharacter` → `CreateAtObject(template,_Host,1,1,"",1,_N)` → `SetFaction(_N,(FACTION)Evil_…)` + `SetHostileAndEnterCombat((FACTION)Evil_…,(FACTION)Hero_…,_N,_Host)` | story | **NULL (2026-10-31)** — file sat in the dead `Data/Public` mount; the recipe itself is sound and now shipped far better via SE Lua (chaos engine v3.33) | repo file is a dead-channel artifact; masters in `docs/goals/` + `deploy_story.sh --copy` if the story route is ever revived, §12 |
 | E2 | **Per-encounter reinforcements** = E1 + `DB_CurrentLevel("<lvl>")` and `EnteredTrigger((CHARACTER)_C,(TRIGGER)S_…)` scoped rules, reusing the level's own spawn markers where a vanilla goal already names them | story | ⚠️ | Precise, avoids story fights. Level names: §12. Marker `S_…` GUIDs must be copied out of existing goals (§6) — they are not enumerable from text |
-| E3 | **Elite-ify what the level already placed**: `ApplyStatus(_M,"OUR_STATUS",-1.0)` on `CombatStarted`, `SetLevel(_M,_L+2)` (`GetLevel` first), `SetAmbushing(_M,1)` before the fight, `DB_CMB_LevelUpNpcInRegion` for named NPCs (`SharedDev/.../GLO_CombatNPCs_PostEA.txt:43-58`), honour-gated `ApplyStatus` on a named NPC (`Gustav/.../Act1_GOB_SpiderNest.txt:1360-1365`) | story + stats | ✅ primitives confirmed | Cheapest, no new bodies → no loot/XP/perf surprises. Needs named NPCs or a way to enumerate enemies (§8 `IterateActiveObjectsInSameCombatGroup`) |
+| E3 | **Elite-ify what the level already placed**: `ApplyStatus(_M,"OUR_STATUS",-1.0)` on `CombatStarted`, `SetLevel(_M,_L+2)` (`GetLevel` first), `SetAmbushing(_M,1)` before the fight, `DB_CMB_LevelUpNpcInRegion` for named NPCs (`SharedDev/.../GLO_CombatNPCs_PostEA.txt:43-58`), honour-gated `ApplyStatus` on a named NPC (`Gustav/.../Act1_GOB_SpiderNest.txt:1360-1365`) | story + stats | ✅ primitives confirmed — ⚠️ **but `SetLevel` only sets the level NUMBER, never rescales fixed stat blocks (v3.3 lesson)**; real elite-ification = ApplyStatus with stat boosts | Cheapest, no new bodies → no loot/XP/perf surprises. Needs named NPCs or a way to enumerate enemies (§8 `IterateActiveObjectsInSameCombatGroup`) |
 | E4 | **Stats-layer summons**: give encounter leaders innate/castable summon spells (`SpellProperties "…Summon(<uuid>,…)"`, 183 occurrences in `SharedDev/…/Spell_Target.txt`), or a status whose passive `TriggerRandomCast(chance,,Spell)` (`Shared/…/Passive.txt:1623` `WildMagic`) fires it. A passive on `_Base` + `DifficultyStatuses "STATUS_HARD: …"` would make it Honour-only | stats | ⚠️ the AI has to actually cast it; `OnCombatStarted`/`OnRound` functor contexts exist in `Enumerations.xml` but are used 0× by vanilla passives | Slower to iterate than E1/E2, and summon-AI is the weak link |
-| E5 | Edit the levels themselves (add mobs to the encounter) | binary | ❌ not available | No Divine/editor on this install, no `.lvl` tooling, and nothing level-shaped loose on disk — this repo carries only stats text (29 `.txt` + one `.StatusData`) |
+| E5 | Edit the levels themselves (add mobs to the encounter) | binary | ⚠️ **partially available now** — `tools/divine.sh` (native lslib) extracts/converts/repaks, and level `.lsf` instance editing is the route in `encounters.md` Route 3 (not yet exercised for adding mobs) | was "❌ no tooling" at writing (2026-10-30) — obsolete |
 
 ## 11. Costs and gotchas
 
@@ -505,7 +529,10 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
   in `Data/Mods/*/Story/` are **not** in git and a game patch can rewrite that tree, so keep
   our changes in our own files rather than editing vanilla ones. `tools/deploy_story.sh`
   mirrors our files into `Data/Mods/…` if that mount turns out to be the one that is compiled (§3.1).
-- **A bad goal file fails silently.** Run `python3 tools/check_goal.py` before testing: it
+- **A bad goal file fails LOUDLY as a whole file, silently per-rule.** *(refined 2026-10-31:
+  a whole-file grammar error REFUSES new-game creation with "likely due to mods"; a bad name
+  inside ONE rule can drop just that rule silently — our imp rule died, the wolf rule fired.)*
+  Run `python3 tools/check_goal.py` before testing: it
   rejects unknown call/query/event names, unknown `DB_` predicates, `;` in the wrong places
   and LF line endings (§3.2 — this already caught a name that does not exist).
 - **XP / loot / achievements**: spawned bodies may grant XP (inflating Honour-mode XP that
@@ -520,6 +547,10 @@ Plus the spawn-pool-with-cap pattern (guards): `Shared/.../_CRIME_CrimeGuards.tx
   state machines; reinforcements there break scripts. Gate by level/trigger.
 
 ## 12. E1 + E6 (Nautiloid room probes) as implemented, and how to test them
+
+*(SUPERSEDED 2026-10-31: the file below sat in the dead `Data/Public` mount — result NULL
+(E1/E7). Kept as the forensic record of how the dead channel was proven. If story-side
+features return, write them as `docs/goals/MARTIN_*.txt` masters → `deploy_story.sh --copy`.)*
 
 File: `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt` (in this repo, CRLF,
 git-tracked). Validator-clean: `python3 tools/check_goal.py`. Delete the file to remove the

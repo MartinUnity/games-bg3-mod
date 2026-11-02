@@ -24,8 +24,9 @@ Where things live:
   `Status_BOOST.txt`, `Character.txt`; global balance in `Shared/.../Data.txt`,
   XP curves in `XPData*.txt`)
 - Loot: `<Layer>/Stats/Generated/TreasureTable.txt`
-- Story/goal text: our own files go in `<Layer>/Story/RawFiles/Goals/MARTIN_*.txt`
-  (CRLF, in git). The vanilla goal text still lives outside the repo at
+- Story/goal text: masters live in `docs/goals/MARTIN_*.txt` (CRLF, in git) and deploy to the
+  LIVE story mount via `tools/deploy_story.sh --copy` (the `Data/Public/<Module>/Story/` mount
+  never fires — E1/E7 nulls). The vanilla goal text lives at
   `Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt` —
   944 files, all still stock vanilla (install mtime 2025-09-06). **Resolved 2026-10-31:** the
   live story channel IS that `Data/Mods` mount — rules appended into a vanilla-named goal file
@@ -45,15 +46,18 @@ Where things live:
   2024 root-level file. Vanilla keeps its helper library in
   `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
   declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
-  so our own files declare everything they use. No loca files anywhere in the repo.
+  so our own files declare everything they use. loca: proven route — the pak carries
+  `Localization/English/ChaosReinforcements.loca` (xml source in the mod workspace; recipe in
+  `docs/lua-modding.md`).
 - Lua / Script Extender route (⚠️ parallel channel, not the override workflow; **user wants this
   for the real feature: randomised spawn pools need Lua logic**): fundamentals in
   `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, mod workspace
   `mods/chaos-reinforcements/`. **SE v33 loads and our Lua runs** (probe v1 wrote its template dump on
   SessionLoaded, 2026-10-31) — the historical problem was invisible errors: v33 logging needs
   `"LogRuntime": true` in `bin/ScriptExtenderSettings.json` (`LogEnabled`/`bg3-print.log` are
-  obsolete); logs land in the prefix at `drive_c/users/steamuser/Script Extender Logs/Extender
-  Runtime.log`, and probes also file-log to profile `Script Extender/Chaos_probe.log` via
+  obsolete); logs land per-session in the Larian profile at `Script Extender Logs/Extender
+  Runtime*.log` (under AppData `Larian Studios/Baldur's Gate 3/`; the old drive_c prefix-home
+  path is stale), and probes also file-log to profile `Script Extender/Chaos_probe.log` via
   `Ext.IO.SaveFile`. `bin/DWrite.dll` = official Oct-12 v33 updater (old kept `.bak-2024`;
   `WINEDLLOVERRIDES="DWrite.dll=n,b"` still required — launch options have it). SE itself stages
   under AppData `BG3ScriptExtender/`, not `bin/`. **Spawn-on-combat PROVEN (probe v3: hostile
@@ -64,7 +68,8 @@ Where things live:
   `tools/build_creature_db.py` from converted merged root-template lsx + vanilla stats `using`
   chains (plural parents! `_Giants`→Giant) + the live 32017-entry dump; MUST be
   `Ext.Require`d BEFORE Chaos in BootstrapServer) —
-  622 generic spawnable creatures in 14 D&D type groups, `{id = Name_GUID, hp, cost = hp/10}`;
+  622 generic spawnable creatures in 14 D&D type groups (526 as of v3.32: lvl gate from
+  LevelOverride + artless filter), `{id = Name_GUID, hp, cost = hp/10}`;
   display names live in loca (invisible offline), so story mobs are filtered by template-name
   patterns (`^QUEST_`, `CINE_`, `^Footstep_`, `Elder_Brain`, bosses…); encounter-type affinity
   via RACE_TO_TYPE + dominant enemy type,
@@ -145,14 +150,19 @@ Where things live:
   `tools/divine.sh` + `tools/pack_mod.sh` (proven; unpack verb: `-a extract-package -g bg3`).
   A loaded mod flags the save as modded (achievements off — user doesn't care).
 - Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
-  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → live override at
-  `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630`,
-  `IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)`; the drafts at 11518-11618 in that file are
-  commented out, so grep before trusting a line number). The story-side equivalent is the
+  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → the override at
+  `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11622-11630` is **currently DISABLED** —
+  every `data "Boosts"` line for it is commented out ("HP boost DISABLED 2026-10-31 for
+  chaos-engine calibration"; drafts at 11518-11618 too — grep before trusting any line
+  number); re-enabling is the old difficulty knob, superseded by Lua-side spawn difficulty);
+  the story-side equivalent is the
   vanilla predicate `DB_HonorMode_Enabled(1)`, usable from any goal file (maintained by
   `Data/Mods/SharedDev/.../Goals/GLO_HonorMode.txt:66-70`)
-- `bg3-vanilla-data/` is gitignored and meant to be an unpack of vanilla data used as a
-  baseline; on this checkout it is **absent/empty**, so re-unpack before relying on it
+- `bg3-vanilla-data/` (repo-local) is gitignored and **absent/empty** — do NOT re-unpack
+  16G locally: the working vanilla unpack lives at
+  `/home/martin/Documents/mods/bg3-new/bg3-vanilla-data` (STATS ONLY — no Race/GUI folders;
+  race strings must be derived from stats `_Type` chains or discovery logs). Vanilla .pak
+  files are in `Data/` (NOT `Data/Paks`); `tools/divine.sh` needs absolute paths.
 
 After touching treasure tables, validate:
 `python3 tools/validate_treasure.py` (exit 1 on duplicate entry names or
@@ -194,10 +204,11 @@ rules into vanilla-named goal files in `Data/Mods` and restores them from gitign
 - `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
   goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
   combat-group joining, spawn-position solving), what stays binary (level layout),
-  ranked recipes, and experiment **E1** (implemented at
-  `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt`, §12 = how to test it).
-  Read §3 first: whether loose goal text loads at all on this install is still unproven.
-  Refines drop-chains' "not possible in text" claim.
+  ranked recipes, and experiment **E1** (the dead-`Data/Public`-mount artifact at
+  `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt`, §12 = how it was tested).
+  Refines drop-chains' "not possible in text" claim. **Headline verdicts in §1/§3 predate the
+  2026-10-31 E8/E8b resolution** (live channel = the `Data/Mods` story mount; the
+  `Data/Public/<Module>/Story/` mount never fires) — read §3.1.2 and that banner first.
 - `larian_treasuretables_description.md` — official Larian treasure-table
   format reference (columns, DropCount, rarity weights).
 
