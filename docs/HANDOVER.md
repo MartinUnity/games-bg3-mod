@@ -442,6 +442,15 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.36 log hygiene (owner 2026-11-02):** the one-shot "Race static sample dump"
+  (Ext.DumpExport of a Race static resource = hundreds of lines, spammed the main log
+  unreadable) moved OUT of ChaosReinforcements.log -> profile file
+  `Script Extender/Chaos_race_dump.txt` (Ext.IO.SaveFile; the probe was a race-format
+  one-off, race work now = GetRace discovery lines + grow_race_to_type.py). Fight
+  bookends added in Chaos.lua: unconditional `================ COMBAT <id> STARTED/ENDED ================`
+  separators on CombatStarted (after dedup) / CombatEnded (new listener) - wild-group
+  aggros fire CombatStarted too, so spawned fights are bookended as well. Compile OK,
+  Pak 230832 B.
 - **v3.35 wake-camp loophole + force console + spawn coords (owner 2026-11-02):**
   camp guard worked, but sleep->wake let a warband spawn 19 s after "at CAMP": the
   wake sequence re-fires TeleportedToCamp/FromCamp for EVERY character (party,

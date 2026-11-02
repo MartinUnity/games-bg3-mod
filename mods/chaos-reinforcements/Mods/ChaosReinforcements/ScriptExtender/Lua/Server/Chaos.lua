@@ -165,11 +165,22 @@ end
 local function discover(combatId, players)
     if not raceDumped then
         raceDumped = true
+        -- v3.36 log-hygiene: Ext.DumpExport of a Race resource is HUNDREDS of lines
+        -- (Description blob etc.) and made the main log unreadable (owner). It was a
+        -- one-off race-format probe; the race work now runs on GetRace discovery
+        -- lines + tools/grow_race_to_type.py, so the dump goes to its own file in
+        -- the profile "Script Extender/" folder (Ext.IO.SaveFile, proven route)
+        -- and stays out of the combat log entirely.
         pcall(function ()
             local all = Ext.StaticData.GetAll("Race")
             local first = all and all[1]
             local res = first and Ext.StaticData.Get(first, "Race")
-            log("Race static sample dump:", res and Ext.DumpExport(res) or "none")
+            if res then
+                Ext.IO.SaveFile("Chaos_race_dump.txt", Ext.DumpExport(res))
+                log("Race static sample written to profile file Chaos_race_dump.txt")
+            else
+                log("Race static sample: none")
+            end
         end)
     end
 
@@ -408,9 +419,18 @@ local ok, err = pcall(function ()
         roster[#roster + 1] = object
     end)
 
+    -- fight bookends (v3.36, owner: spawned-group fights are a single line, hard to
+    -- spot when scrolling): a loud separator per combat START/END, unconditional
+    -- (toggles/quiet windows don't suppress them - pure readability). Wild-group
+    -- aggros fire CombatStarted too, so spawned fights get bookended as well.
+    Ext.Osiris.RegisterListener("CombatEnded", 1, "after", function (combatId)
+        log("================ COMBAT", combatId, "ENDED =================")
+    end)
+
     Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
         if seen[combatId] then return end
         seen[combatId] = true
+        log("================ COMBAT", combatId, "STARTED ================")
 
         -- in-game toggle (Toggle.lua shout): no rolls, stack untouched
         if not CHAOS_STATE.reinforce then

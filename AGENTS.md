@@ -143,7 +143,11 @@ Where things live:
   heartbeat gates on host only); `!chaos_force spawn on|off|type <Type>|off|tier 1-3|off|off`
   targeted test overrides (forced type beats theme + forces evil packs → TEAM mode; gates still
   respected; replaced dead setterless WILD_FORCE_TIER); wild spawn log carries `map (x, z) h y`
-  (minimap axes are x/z, y = height););
+  (minimap axes are x/z, y = height); **v3.36 log hygiene**: Race static sample dump
+  moved out of the main log to profile `Script Extender/Chaos_race_dump.txt` (was a
+  hundreds-of-lines DumpExport spam) + unconditional `==== COMBAT <id> STARTED/ENDED ====`
+  bookends on the Osiris CombatStarted/CombatEnded listeners (spawned-group fights
+  included););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);
