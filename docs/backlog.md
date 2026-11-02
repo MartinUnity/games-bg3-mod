@@ -34,8 +34,10 @@ Possible fix directions if it becomes annoying:
   the combat id we already have from `CombatStarted`;
 - spawn closer to the fight's "center" instead of a random single enemy anchor
   (e.g. average of enemy positions, or the dominant-type enemy);
-- `CreateAtObject` offsets (`dx, dy` 1-3) could try larger radii so mobs path INTO
-  the fight rather than standing at the rim.
+- ~~`CreateAtObject` offsets (`dx, dy` 1-3) could try larger radii~~ **FALSE PREMISE
+  (2026-11-02 correlation):** args 3/4 of `CreateAtObject` are `_Temporary`/`_PlaySpawn`,
+  not x/y offsets (legacy naming in old call sites) — placement radius work must happen
+  in our own anchor math (Common.lua), not in the call args.
 
 ## In-game announcements: IMGUI toast RESOLVED (2026-11-02, owner: "imgui toasts works well")
 
@@ -117,7 +119,9 @@ approximate it. Also queued:
 - Honour-only gate: vanilla predicate `DB_HonorMode_Enabled(1)` or an SE-side
   difficulty check (currently the engine runs on every difficulty — intentional for
   testing).
-- TEST_MODE / LEADER_TEST / EQUIP test knobs -> config or remove.
+- ~~TEST_MODE / LEADER_TEST / EQUIP test knobs -> config or remove~~ **DONE v3.33
+  (2026-11-02):** TEST_MODE/LEADER_TEST/WILD_TEST deleted (no EQUIP knobs ever existed);
+  targeted console probes (`!chaos*`) stay.
 - Custom bark/bark-like text: loca route now PROVEN and in the pak
   (`Localization/English/ChaosReinforcements.loca`, recipe in docs/lua-modding.md) - if we
   ever want custom tell lines instead of DebugText, just extend the xml and reconvert.

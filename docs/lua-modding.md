@@ -93,7 +93,8 @@ root's `Mods/`). Against the layout above, four defects, in order of severity:
 4. **The Lua used APIs that do not exist** in SE: `Ext.RegisterListener("CharacterCreated", …)`,
    `Ext.GetDifficulty`, `Ext.StatusAdd`, `Ext.Debug`, `Ext.Random(1,100)`. The real ones are
    `Ext.Osiris.RegisterListener(name, arity, when, fn)`, `Ext.Events.<Name>:Subscribe(fn)`,
-   `Ext.RandomInteger`, `Osi.StatusApply(...)` / `_C().Vars.*`. With no runtime logging enabled
+   `Ext.RandomInteger` (⚠️ this one listed wrong — see correction below), `Osi.StatusApply(...)`
+   / `_C().Vars.*`. With no runtime logging enabled
    (v33 needs `LogRuntime:true`; `LogEnabled` is not a real key), every load error was silently
    invisible.
 
@@ -107,15 +108,15 @@ hallucinated. Both fixable, and `mods/chaos-reinforcements/` is the corrected sk
 
 ## 4. Getting the game to load it
 
-- **Known-good route (needs a pak tool):** build a `.pak` from the workspace and drop it in
-  `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, then enable it in the in-game Mods
-  screen. Tooling is Windows-first (BG3 Modder's Multitool, BG3 Mod Manager, BG3 Mini Tool);
-  ⚠️ no Linux CLI packer verified on this box yet. BG3 Mod Manager reportedly runs under
-  Proton/Wine for this game (Nexus guide, Oct 2025).
-- **No-tooling route (⚠️ unverified):** `tools/deploy_lua_mod.sh --copy` mirrors the workspace
-  into `Data/Mods/<Folder>/` (module mount) and `Data/Public/<Folder>/` (stats), then register
-  the `meta.lsx` UUID in `modsettings.lsx`. This is the "basegame override"/loose-folder idea
-  and may simply not be scanned; the test is whether the boot print shows in `bg3-print.log`.
+- **Known-good route (pak tool now BUILT — see the ✅ entry below):** build a `.pak` from the
+  workspace and drop it in `…/AppData/Local/Larian Studios/Baldur's Gate 3/Mods/`, then enable
+  it in the in-game Mods screen. The Windows-first tools (BG3 Modder's Multitool, BG3 Mod
+  Manager, BG3 Mini Tool) are not needed — `tools/divine.sh` + `tools/pack_mod.sh` do it natively.
+- **No-tooling route ❌ DEAD (settled by §3 post-mortem):** loose Lua mods in
+  `Data/Mods/<Folder>/` were never scanned by the game (that is exactly why the old
+  `HealthBoostLocal`/`HPChaos` mods never loaded). `tools/deploy_lua_mod.sh` is for the stats/story
+  mounts only. Also forget `bg3-print.log` — obsolete; logs are the profile
+  `Script Extender Logs/` runtime log (`LogRuntime:true`) + `Script Extender/*.log` mod files.
 - **Pak CLI ✅ BUILT AND ROUND-TRIP-PROVEN 2026-10-31.** `tools/divine.sh` wraps a native Linux
   build of lslib v1.20.4 `Divine` (source at `/tmp/opencode/pak/lslib` — rebuild there if lost):
   `tools/divine.sh -g bg3 -a list-package|extract-package|create-package -s SRC -d DST`.
@@ -184,12 +185,20 @@ Lifetime rule that bites: engine objects handed to Lua expire at the end of the 
 don't stash an `Ext.Entity`/component in a closure and use it on a later tick (API doc
 "Object Scopes"). Re-fetch by handle instead.
 
-## 6. Skeleton in this repo
+## 6. Skeleton in this repo (current shape, v3.33)
 
-`mods/chaos-reinforcements/Mods/ChaosReinforcements/` = `meta.lsx` + `Config.json` + `BootstrapServer.lua` +
-`Server/Probe.lua`. The probe logs on `SessionLoaded`, dumps every root template to
-`Chaos_root_templates.txt`, spawns one imp (level-native template) and one wolf (foreign
-template) at the host on every `CombatStarted`, and registers `!chaos_spawn` for the console.
-Expected first-run reading: if the boot line appears, the channel is live and the log tells us
-which of the two templates fails; if nothing appears, it is a loading/registration problem
-(§4), not a Lua problem.
+`mods/chaos-reinforcements/Mods/ChaosReinforcements/ScriptExtender/Lua/` — full engine, not a
+probe skeleton anymore. `BootstrapServer.lua` requires in order: `Shared/Channels.lua` (Ext.Net
+announce channel, shared with the client) -> `Server/Common.lua` (log + shared helpers) ->
+`Server/CreatureDB.lua` (526-entry spawnable pool — MUST precede Chaos) ->
+`Server/TeamTemplates.lua` (generated CHAOST roster, `tools/gen_teams.py`) -> `Server/Equip.lua`
+-> `Server/Flavor.lua` -> `Server/Toggle.lua` -> `Server/Chaos.lua` (reinforcement engine) ->
+`Server/Wild.lua` (wandering groups). `BootstrapClient.lua` = Channels + `Client/AnnounceClient.lua`
+(ImGui toasts, owner-verified). `Server/Probe.lua` stays in the pak as the proven reference
+implementation but is NOT required (its listeners would double-spawn).
+Console commands: `!chaos` (toggle), `!chaos_status`, `!chaos_wolf` (spawn probe),
+`!chaos_root` (counts CHAOST_* in GetAllRootTemplates — expects 792 REGISTERED; templates
+load as BINARY `.lsf` only, pack_mod.sh converts).
+Logs: profile `Script Extender/ChaosReinforcements.log` (+ `_client.log`), runtime log in
+profile `Script Extender Logs/` (needs `LogRuntime:true`). First-run reading if the engine
+is silent: check the runtime log for bootstrap errors first, then registration (§4).

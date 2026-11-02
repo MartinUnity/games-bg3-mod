@@ -12,7 +12,9 @@ can be referenced as `T_...` from `Shared/Stats/Generated/TreasureTable.txt` and
 versa. Vanilla (game-pak) entries are the base layer under all of these; redefining a
 vanilla entry name in our files overrides it (that is the whole mod's mechanism).
 
-Reference copy of the vanilla unpack: `bg3-vanilla-data/` (repo-local, do not commit).
+Reference copy of the vanilla unpack: `/home/martin/Documents/mods/bg3-new/bg3-vanilla-data`
+(OUTSIDE the repo, gitignored `bg3-vanilla-data/` here is absent/empty — do not re-unpack 16G;
+that unpack is STATS ONLY, no Race/GUI folders).
 
 ## 2. Item entry (Armor.txt)
 

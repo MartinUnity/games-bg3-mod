@@ -71,7 +71,9 @@ global changes. `SharedDev` = newer/expanded global changes (added
 - **Data.txt**: global gameplay constants (throw distance, haste multiplier,
   disease radius, …).
 - **HealthBoosts.StatusData**: small status-data blob for the health-boost mechanic
-  (touched by `HealthBoostLocal` ScriptExtender mod, see §6).
+  (once targeted by the dead `HealthBoostLocal` SE mod — deleted 2026-11-02, see §6;
+  this file is stats-side only, the live HP knob is `HEALTHBOOST_HARDCORE` in
+  `Status_BOOST.txt`, currently DISABLED).
 
 ## 5. Content catalog (what the user actually added/changed)
 
@@ -132,11 +134,16 @@ data and is unreachable by normal mods. To override an existing item you place
 a file at the same path the original occupies
 (`Gustav/Stats/Generated/...`) and reuse the original entry **name**, changing
 only the payload lines you care about. Everything is hand-edited text — the
-Larian mod tools do not work properly on this Linux install.
+Larian mod tools do not work properly on this Linux install (but a native
+lslib Divine CLI does now: `tools/divine.sh` + `tools/pack_mod.sh`, proven
+2026-10-31 — packing `.pak` mods works fine without the Larian tools).
 
 ### 6.1 What the loader keys on: **file identity** (in-game confirmed 2026-10-31)
 
-- ✅ **Positive control (this is the HP change the owner remembers):** the live Honour HP boost is
+- ✅ **Positive control (this is the HP change the owner remembers; DISABLED since 2026-10-31
+  for chaos-engine calibration — every `data "Boosts"` line is now commented out at
+  `Status_BOOST.txt:11622-11630`, but it DID work in-game while live, which is the point here):**
+  the Honour HP boost was
   `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11620-11630` — a `new entry "HEALTHBOOST_HARDCORE"`
   (vanilla entry name, `using "DIFFICULTY"`) appended at the end of a file vanilla already defines,
   with `data "Boosts" "IncreaseMaxHP(1d6+6);IncreaseMaxHP(Level*2d12)"`, i.e. level-scaled extra HP
@@ -150,8 +157,9 @@ Larian mod tools do not work properly on this Linux install.
   entry-name overrides inside a recognised file are applied.
 - Corollary: to change anything, append to the vanilla file that already defines it, in the layer of
   the active base module (`GustavDev`, per `modsettings.lsx`). New file names are only safe inside a
-  mod `.pak`, where new files (including new story-goal files) are legitimately added — one more
-  reason the pak route is the one that unblocks story work (`docs/HANDOVER.md`).
+  mod `.pak`, where new files (including new root-template files) are legitimately added. Story work
+  was unblocked a different way (2026-10-31): the live story mount is `Data/Mods/<Module>/Story/…`
+  and invented `MARTIN_*.txt` goal names compile+fire **there** (`docs/spawn-chains.md` STATUS UPDATE).
 - Same shape as the two null story experiments: our goal text was a new file name *and* a new mount
   at the same time (`docs/spawn-chains.md` §3.1.2).
 
@@ -174,12 +182,13 @@ SharedDev 15, GustavX 6) plus a `story_header.div` and an empty `story_definitio
 module, every file carrying the install mtime 2025-09-06. The "level cap, 3 short rests,
 companion & pet changes" are implemented in **stats**, not in story goals.
 
-Our own story goals live **in the repo** at `SharedDev/Story/RawFiles/Goals/MARTIN_*.txt`
-(CRLF, git-tracked) — see `docs/spawn-chains.md` for what they do, `tools/check_goal.py` to
-validate them, and `tools/deploy_story.sh` to mirror them into `Data/Mods/…` if the engine
-turns out to compile goals only from there (that mount became writable on 2026-10-31; it used to be
-an `ro` bind mount and only `Data/Public` was `rw`). Whether loose goal text is loaded at all
-is still unproven on this install — `docs/spawn-chains.md` §3/§12. The vanilla corpus also
+Our own story-goal masters live in the repo at `docs/goals/MARTIN_*.txt` (CRLF, git-tracked) and
+deploy to the LIVE story mount `Data/Mods/<Module>/Story/RawFiles/Goals/` via
+`tools/deploy_story.sh --copy`; validate with `tools/check_goal.py` first. Loose goal text IS
+loaded at runtime — but ONLY from that `Data/Mods` mount (E8/E8b positive 2026-10-31); the
+`Data/Public/<Module>/Story/` mount never fires (E1/E7 nulls — the old repo location
+`SharedDev/Story/RawFiles/Goals/` is a dead-channel artifact). See `docs/spawn-chains.md`
+STATUS UPDATE + §3.1.2. The vanilla corpus also
 carries a helper library worth reading before writing new goals — `Shared/Story/RawFiles/Goals/__PROC.txt`
 (457 `PROC_`/`QRY_` rules), `_Greevers_Little_Helpers.txt` (`QRY_OnlyOnce`), `_Attitude.txt`
 (`PROC_MakeNPCHostile`) — but cross-module visibility of those names is unverified, so our own
@@ -189,17 +198,18 @@ files declare everything they use.
 - `Data/Armor.txt` (loose at Data root, mtime 2023-08-21) is **byte-identical**
   to `GustavDev/Stats/Generated/Data/Armor.txt` — a pre-repo leftover; the live
   armor override is the one in the repo. Candidate for deletion.
-- `Mods/HealthBoostLocal/`: ScriptExtender Lua mod — **did not work** on this
-  Linux install (same mod-tools limitation). Disregard.
-- `Mods/HPChaos/`: scrapped, never worked. Disregard.
+- ~~`Mods/HealthBoostLocal/`~~ / ~~`Mods/HPChaos/`~~: dead ScriptExtender Lua mods
+  (never registered/never worked — post-mortem in `docs/lua-modding.md` §3). Their loose
+  `Data/Mods/` copies were **deleted 2026-11-02** (owner OK; no modsettings.lsx refs).
+  Nothing to disregard any more.
 - Saves: several `__HonourMode` + `Zirini`/`Zhari`/`Zhavi` quicksaves; last
   gold log 2026-08-22/23; game pak updated 2026-09-29 (Patch 8 HotFix 10).
 
 ## 7. Status / open items
 
 - The **current repo is the authoritative, complete set** of stat changes
-  (owner-confirmed). `HealthBoostLocal` and `HPChaos` are non-functional and
-  can be ignored.
+  (owner-confirmed). `HealthBoostLocal` and `HPChaos` are non-functional (and their
+  loose `Data/Mods/` copies were deleted 2026-11-02).
 - Minor, not yet decided: whether to delete the stale loose `Data/Armor.txt`;
   whether the `honor-mode` branch / `modsettings.lsx` copies are still wanted
   or can be archived.
