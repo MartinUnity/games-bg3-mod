@@ -120,7 +120,22 @@ Where things live:
   the story mount (HealthBoostLocal, HPChaos_* — never worked, no modsettings refs), RACE_TO_TYPE
   seeded from vanilla stats _Type chains + `tools/grow_race_to_type.py` log aggregator, and TEAM-mode
   reinforce() leaders now draw the wave's donor-race CHAOST tank at a capped level (never trips the
-  over-level despawn; cross-type rolls stay pool-based););
+  over-level despawn; cross-type rolls stay pool-based); **v3.34 false-aggro race + invisible-donor
+  fix** (owner: instant "aggro fizzled" groups 60-70m away + invisible 2-mob tiefling team +
+  black-screen hangs during mob fights): (a) heartbeat(90s)/monitor(2s) were PHASE-LOCKED
+  (90%2==0, both start at SessionLoaded) so the monitor always ticked right after a spawn while
+  AppearAtPosition teleports unsettled and GetPosition still read the host-adjacent CreateAtObject
+  spot → false "player within 12m" aggro on distant mobs → never-engaged loop; fix = `WILD_SETTLE_MS`
+  5s settle stamp (no aggro/expiry while settling) + member-position sanity (members must be within
+  `WILD_MEMBER_SANITY_M`=25m of group center to count, ignores the ~937m AppearAtPosition fallback)
+  + **de-orphan** ("never engaged" groups re-enter tracking, alive mobs stay TTL-governed; real
+  brief fights stay untracked for loot); (b) invisible CHAOST members: gen_teams DONORS for
+  tiefling_m/gith_m carried RUNTIME INSTANCE guids (from an equip-log line, not template MapKeys)
+  → dangling ParentTemplateId → no visual (stats fine); real donors Tieflings_Male_Asmodeus_Guard_
+  Caster_806815fc / Githyanki_Male_Guard_Caster_49567bbf, all 792 templates regenerated, and
+  gen_teams `validate_donors()` now hard-fails any donor id that is not a MapKey in the live
+  root-template dump; black-screen hangs UNPROVEN cause, suspected renderer on dangling-visual
+  mobs — expect gone with fix, watch verdict););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

@@ -185,7 +185,7 @@ Lifetime rule that bites: engine objects handed to Lua expire at the end of the 
 don't stash an `Ext.Entity`/component in a closure and use it on a later tick (API doc
 "Object Scopes"). Re-fetch by handle instead.
 
-## 6. Skeleton in this repo (current shape, v3.33)
+## 6. Skeleton in this repo (current shape, v3.34)
 
 `mods/chaos-reinforcements/Mods/ChaosReinforcements/ScriptExtender/Lua/` — full engine, not a
 probe skeleton anymore. `BootstrapServer.lua` requires in order: `Shared/Channels.lua` (Ext.Net
