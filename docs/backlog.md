@@ -37,23 +37,19 @@ Possible fix directions if it becomes annoying:
 - `CreateAtObject` offsets (`dx, dy` 1-3) could try larger radii so mobs path INTO
   the fight rather than standing at the rim.
 
-## In-game announcements: IMGUI toast MVP shipped (2026-10-31), verdict pending
+## In-game announcements: IMGUI toast RESOLVED (2026-11-02, owner: "imgui toasts works well")
 
 Osiris DebugText is dead (silent no-op, see Toggle feedback entry), and BG3 has NO Osiris
 combat-log call (CombatLogText/DisplayText are DOS2-family, absent from story_header.div).
-MVP now in the pak, replacing the old experiment plan below:
+The MVP (in the pak since 2026-10-31) is CONFIRMED WORKING in playtests:
 - server pushes `Channels.Announce:Broadcast(text)` (Shared/Channels.lua, `Ext.Net.CreateChannel`
   - the doc pattern + proven live by ManyMoreMonsters on this install; SAME channel object
   required by BOTH bootstraps);
-- client (new BootstrapClient.lua) shows a Dear-ImGui toast: `Ext.IMGUI.NewWindow`,
-  `win:AddText`, `obj:SetColor("Text", {r,g,b,a})`, `Ext.IMGUI.GetViewportSize()` - all
-  cribbed from MMM's working code; auto-destroys after 5s (client Ext.Timer assumed, pcall'd);
-  logs to profile `ChaosReinforcements_client.log`.
+- client (BootstrapClient.lua) shows a Dear-ImGui toast: `Ext.IMGUI.NewWindow`,
+  `win:AddText`, `obj:SetColor("Text", {r,g,b,a})`, `Ext.IMGUI.GetViewportSize()`;
+  auto-destroys after 5s; logs to profile `ChaosReinforcements_client.log`.
 - wired to: leader/boss join (Flavor), wild group spawn (Wild), toggle flips (Toggle).
-UNVERIFIED until next playtest: Ext.Net CreateChannel/SetHandler/Broadcast on our mod,
-client Ext.Timer.WaitFor, IMGUI flag fields (NoTitleBar etc.) + win.Position. Watch the
-client log for "toast FAILED/flag refused" lines. The Noesis route (Ext.UI.GetRoot, crash
-risk, needs Ext.UI.Defer in v33) stays parked unless IMGUI proves insufficient.
+Noesis route (Ext.UI.GetRoot, crash risk, needs Ext.UI.Defer in v33) stays parked.
 
 ## Toggle feedback: RESOLVED (2026-10-31)
 
@@ -98,16 +94,16 @@ approximate it. Also queued:
   before acting (owner keeping one alive next fight); arrows/grenades/poisons open. v3.28 moved
   the bow into the ranged role's PRIMARY weapon slot, so the support-bow/melee-weapon
   interference question is moot.
-- **fizzle-backoff watch** (v3.25): in playtests confirm the new verdict lines behave —
-  real fights log `wild: real fight confirmed ... - backoff Nmin`, brief ones log
-  `fight lasted ~Ns - fizzle (anomaly), no backoff`. If genuine short fights (fast
-  wipes) keep getting ruled fizzles and spawn pressure feels too high, raise
-  `WILD_REAL_COMBAT_MS` (15 s) or count kills as proof of a real fight.
+- **fizzle-backoff watch** (v3.25): ✅ RESOLVED 2026-11-02 — owner: "fizzle backoff ...
+  works well" (real-fight confirmation vs fizzle anomaly, and the backoff pacing feel right).
 
 ## Balancing / tuning (from playtests)
 
-- RACE_TO_TYPE map grows only from discovery logs (`enemy: ... type ?` lines) —
-  collect from longer play sessions and extend the map in Chaos.lua.
+- RACE_TO_TYPE map grows from discovery logs (`enemy: ... type ?` lines) — v3.33 seeded
+  it with stats-verified entries (Bugbear/Gnoll/Ogre/Raven/HalfElf/Halfling/Meazel) and
+  added `tools/grow_race_to_type.py`: parses the log, groups resolved/unknown races with
+  frequency + sample templates, prints ready-to-paste suggestion lines. Run it after long
+  sessions, verify each candidate against vanilla stats `_Type` chains, add to Chaos.lua.
 - Level-2 gate (hp<=35/ac<=15/ability<=14) is guessed, not playtested at lvl 2 yet.
 - Budget formula vs party size: `CombatGetInvolvedPartyMembersCount` worked in the
   tutorial (returned 3); re-check with the real 6-8 char party (NPC-keeper mod).
@@ -186,6 +182,7 @@ fights at base ≥ 3; ONE donor race per wave from `dominantRaceKey(enemies)` (g
 → goblin squad; 20% chaos override = random race); composer moved to Common.lua shared
 globals; goblin + half-orc donors added (504 → 792 templates). Wild squads race-coherent
 too. ⚠️ in-game: race-match verdict + `!chaos_root` 792 pending next boot. Remaining
-composition follow-ups: leader is still a pool mob even in team mode (jackpot intent,
-may want donor-race leaders later); non-Humanoid fights stay on the pool path (no
+composition follow-ups: ~~leader is still a pool mob even in team mode~~ **RESOLVED
+v3.33: donor-race CHAOST tank leads team waves** (wildcard backup, capped level, pool
+fallback); non-Humanoid fights stay on the pool path (no
 creature-class content for them); Meazel-style oddities now only via the 20% override.

@@ -417,6 +417,25 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   The Phase Spider pool slot is covered by the concrete `SPIDER_Phaser` (own full art,
   identical stats). Offline sim: no artless spider leaks, gated-pool totals healthy
   (base 1=104..base 12=526), Orthon still lvl=10. Pak 226738 B.
+- **v3.33 owner-verdicts batch + team-leader coherence + housekeeping (2026-11-02):**
+  VERDICTS IN: fizzle-aware backoff ✅ "works well", IMGUI announce toasts ✅ "works well"
+  (backlog entries resolved). Housekeeping (owner OK): dead mods DELETED from the story
+  mount - `Data/Mods/HealthBoostLocal/` + `Data/Mods/HPChaos_0e6a9a3c-.../` (never worked;
+  no modsettings.lsx references); TEST_MODE / LEADER_TEST / WILD_TEST force-knobs REMOVED
+  (Chaos.lua/Wild.lua - controlled iteration replaced blanket triggers; `!chaos_wolf`/
+  `!chaos_root` console probes stay). **B1 RACE_TO_TYPE growth:** seeded Bugbear/Gnoll/
+  Ogre/Raven/HalfElf/Halfling/Meazel (verified vs vanilla stats _Type chains: Bugbear/
+  Gnoll->_Humanoid, Raven->_Critter->_Beast, Ogre->_Giants = DB's own Giant typing;
+  Bugbear was a live "type ?") + new `tools/grow_race_to_type.py` aggregates discovery
+  logs into frequency-sorted paste-ready suggestions. **B2 race-coherent leaders:**
+  reinforce() TEAM mode leader now draws the wave's donor race CHAOST tank (wildcard
+  backup, pool fallback only if both miss) at min(base+J+T, teamLevel+0..2) so the baked
+  LevelOverride can never trip the v3.30 over-level despawn; cross-type chaos rolls keep
+  drawing pool mobs on purpose; log line `leader: TEAM race goblin ...`. Wild team-mode
+  leaders were already baked same-race (v3.29) - untouched. Sim: 3000/3000 leader picks
+  resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
+  Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
+  nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed
@@ -632,8 +651,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
    lua-modding.md §4), and `story_header.div`/`story_definitions.div` exist under
    `Data/Mods/*/Story/RawFiles/`. Whole-file errors already refuse new games (detectable), but
    the *silent per-rule drops* (imp-rule class) are exactly what an offline compile catches.
-5. Cleanup, pending user OK: delete dead `Data/Mods/HealthBoostLocal/` and
-   `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`.
+5. ~~Cleanup, pending user OK~~ **DONE 2026-11-02 (owner OK):** deleted dead
+   `Data/Mods/HealthBoostLocal/` and `Data/Mods/HPChaos_0e6a9a3c-5b69-3e25-9d0f-75f692fc7aaa/`
+   (no modsettings.lsx references; never worked).
 6. Confound rule **lifted** (E8 read done): enabling the SE mod no longer risks a story signal;
    SE Lua can now be used to *verify* the text channel (listeners on `CombatStarted`, DB fact
    reads) and to observe spawns while building the feature.

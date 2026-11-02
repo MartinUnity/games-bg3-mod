@@ -1,7 +1,7 @@
 -- ChaosReinforcements chaos/reinforcement engine (server side). Ext.Require'd AFTER
 -- Common.lua (log + constants), CreatureDB.lua (CHAOS_DB) and Equip.lua (EquipMob).
 --
--- Owner spec: stacking trigger (base 30%, +10..30% per miss; TEST_MODE=100% while testing);
+-- Owner spec: stacking trigger (base 30%, +10..30% per miss);
 -- budget = hostLevel x rand(2-4) x party knob; reinforcements match the ENCOUNTER's creature
 -- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via
 -- the AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs
@@ -20,14 +20,14 @@
 --     only a fallback when the fight could not be classified.
 
 -- Tunables ------------------------------------------------------------------
-local TEST_MODE = false             -- real odds: base 30% + 10..30% per miss
+-- (test knobs TEST_MODE/LEADER_TEST removed v3.33 - controlled iteration on
+--  specifics replaced blanket force-triggers; console: !chaos_wolf probes spawns)
 local BASE_CHANCE = 30
 local STACK_MIN, STACK_MAX = 10, 30 -- +% per encounter that didn't trigger
 local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs are hp/10
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
-local LEADER_TEST = false           -- real odds: 10% leader for packs >= 2
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
 -- Save-load quiet window (owner 2026-11-01: loading a save into an ONGOING fight
@@ -55,17 +55,24 @@ local MOB_HP_BOOST = ""
 -- hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's 2x hits were
 -- the actual killer). From level 3 anything goes except heavy types (HEAVY_TYPES/HEAVY_LEVEL).
 
--- race string (Osiris GetRace) -> creature type; grow from discovery logs
+-- race string (Osiris GetRace) -> creature type; grow from discovery logs.
+-- v3.33 additions verified against vanilla stats _Type chains (Bugbear/Gnoll ->
+-- _Humanoid, Raven -> _Critter -> _Beast, Ogre -> _Giants = the DB's own Giant typing;
+-- Bugbear was a live "type ?" in the owner's log). HalfElf/Halfling mirror the
+-- RACE_TO_DONOR keys (Common.lua). Meazel = name seen in owner reports, race string
+-- unverified - an entry that never matches is harmless.)
 local RACE_TO_TYPE = {
     Wolf = "Beast", Bear = "Beast", Bat = "Beast", Hyena = "Beast", Panther = "Beast",
-    Spider = "Beast", Rat = "Beast", Crocodile = "Beast",
+    Spider = "Beast", Rat = "Beast", Crocodile = "Beast", Raven = "Beast",
     Goblinoid = "Humanoid", Goblin = "Humanoid", Hobgoblin = "Humanoid", Duergar = "Humanoid",
     DwarfHill = "Humanoid", Human = "Humanoid", HalfOrc = "Humanoid", Githyanki = "Humanoid",
-    Tiefling = "Humanoid", DrowElf = "Humanoid", ElfHigh = "Humanoid",
+    Tiefling = "Humanoid", DrowElf = "Humanoid", ElfHigh = "Humanoid", HalfElf = "Humanoid",
+    Halfling = "Humanoid", Bugbear = "Humanoid", Gnoll = "Humanoid", Meazel = "Humanoid",
     Imp = "Fiend", Devil = "Fiend", Demon = "Fiend",
     Skeleton = "Undead", Zombie = "Undead", Ghoul = "Undead",
     Owlbear = "Monstrosity", Bulette = "Monstrosity", HookHorror = "Monstrosity",
     Worg = "Monstrosity", DisplacerBeast = "Monstrosity",
+    Ogre = "Giant",
 }
 
 -- valid leader types per pack type: same type first, then plausible "in charge of" types.
@@ -323,7 +330,7 @@ local function reinforce(host, enemies, combatId)
     -- leader: roll once per pack (>= 2 mobs); same type ~90%, cross-type from the AFFINITY map.
     -- Spawned OUTSIDE the budget - the 10% roll is the "fight just got serious" jackpot.
     if spawned >= 2 then
-        local chance = LEADER_TEST and 100 or LEADER_CHANCE
+        local chance = LEADER_CHANCE
         if rand(1, 100) <= chance then
             local ltype = etype
             -- no cross-type surprises while the low-level ceiling is active (lvl-1 owlbear = TPK)
@@ -334,11 +341,31 @@ local function reinforce(host, enemies, combatId)
                 end
                 if #opts > 0 then ltype = opts[rand(1, #opts)] end
             end
-            local leader = pickLeaderFrom(ltype, base)
+            -- v3.33 race-coherent leader (B2): in TEAM mode the jackpot boss comes from
+            -- the SAME donor race's CHAOST roster (a "Goblin Warlord" beats a random
+            -- stranger leading goblins). tank first (beefy = bossly), wildcard backup;
+            -- the baked LevelOverride is capped to what spawnCreature's over-level guard
+            -- tolerates (base + LEVEL_JITTER + OVERLEVEL_TOLERANCE) so a boss can never
+            -- leak or despawn. Cross-type chaos rolls still draw pool mobs on purpose.
+            local leader, teamLeader = nil, false
+            if teamMode and ltype == etype then
+                local llvl = math.min(base + LEVEL_JITTER + OVERLEVEL_TOLERANCE,
+                                      math.min(12, teamLevel + rand(0, 2)))
+                leader = teamEntry("tank", llvl, teamRaceKey)
+                      or teamEntry("wildcard", llvl, teamRaceKey)
+                teamLeader = leader ~= nil
+                if not leader then
+                    log("leader: no CHAOST tank/wildcard for race", teamRaceKey, "lvl", llvl, "- pool fallback")
+                end
+            end
+            if not leader then leader = pickLeaderFrom(ltype, base) end
             if leader then
-                local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
-                log("leader: type", ltype, "(pack", etype .. ")", leader.id,
-                    "hp", leader.hp, "cost", leader.cost, "lvl", lvl, "(outside budget)")
+                local lvl = leader.fixedLevel
+                    or (base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2))
+                log("leader:", teamLeader and ("TEAM race " .. (teamRaceKey or "?"))
+                                              or ("type " .. ltype),
+                    "(pack", etype .. ")", leader.id,
+                    "hp", leader.hp or "baked", "lvl", lvl, "(outside budget)")
                 local created = spawnCreature(anchors[rand(1, #anchors)], leader, lvl, ltype == "Humanoid", base)
                 if created then
                     spawned = spawned + 1
@@ -400,7 +427,7 @@ local ok, err = pcall(function ()
             return
         end
 
-        local chance = TEST_MODE and 100 or math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
+        local chance = math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
         local roll = rand(1, 100)
         if roll > chance then
             misses = misses + 1
@@ -435,8 +462,7 @@ end)
 Ext.RegisterConsoleCommand("chaos_status", function ()
     local n = 0
     for _ in pairs(seen) do n = n + 1 end
-    log("status: misses", misses, "TEST_MODE", tostring(TEST_MODE),
-        "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n,
+    log("status: misses", misses, "combats seen", n,
         "| toggles: wilds", CHAOS_STATE.wilds and "ON" or "OFF",
         "reinforce", CHAOS_STATE.reinforce and "ON" or "OFF")
     if WILD_STATUS then log(WILD_STATUS()) end   -- wild pipeline snapshot (Wild.lua)
