@@ -154,7 +154,10 @@ Where things live:
   `data "Strength"` - abbreviations were silently dropped, all mobs had base 10s);
   black-screen hangs = Proton/Vulkan swapchain thrash from rapid alt-tabbing (13x
   "0x0 extent -> offscreen" in gold log, zero mod errors — saved to repo `game-logs/`),
-  NOT the mod););
+  NOT the mod); HP inflation diagnosed: LevelOverride+Progressions grant REAL class
+  levels on top of the cumulative Vitality curve (observed = curve + max hit dice,
+  exact on two d10 L7 mobs) — fix candidate: Vitality = lvl-1 hit die only (HANDOVER
+  v3.37 has the numbers + prediction to confirm in-game););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

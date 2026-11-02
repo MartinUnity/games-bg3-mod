@@ -461,8 +461,15 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   rapid alt-tabbing (or borderless window). AC math verified our stats Armor token
   DOES apply (tank 16 = natural 14 + shield 2, melee 12 = natural 12). Compile OK,
   792 templates regenerated, Pak 231985 B. Pending: visible armoured squads, real
-  ability scores (dex-16 ranger hits/sharps), HP 127-vs-57 mystery (recheck after
-  ability fix - LevelOverride leveling may stack hit dice over Vitality).
+  ability scores (dex-16 ranger hits/sharps). HP MYSTERY SOLVED OFFLINE (hypothesis,
+  pending in-game confirm): our GustavDev HEALTHBOOST_HARDCORE override is loaded
+  (Boosts all commented -> no vanilla +30% interference), yet observed HP = curve +
+  EXACT max class hit dice: two d10 L7 mobs +70 (10+6x10), barbarian L4 +46~48
+  (d12 max) -> LevelOverride+Progressions make the engine GRANT real class levels
+  on top of the already-cumulative Vitality curve (double-count). Prediction to test:
+  CON mods now apply, so tank L7 (CON 15) should land ~73+70+14=157 and ranged L7
+  (CON 13) ~57+70+7=134; if confirmed, fix = drop the cumulative Vitality curve
+  (Vitality = level-1 hit die only) and let leveling do the rest, OR strip Progressions.
 - **v3.36 log hygiene (owner 2026-11-02):** the one-shot "Race static sample dump"
   (Ext.DumpExport of a Race static resource = hundreds of lines, spammed the main log
   unreadable) moved OUT of ChaosReinforcements.log -> profile file
