@@ -135,7 +135,15 @@ Where things live:
   Caster_806815fc / Githyanki_Male_Guard_Caster_49567bbf, all 792 templates regenerated, and
   gen_teams `validate_donors()` now hard-fails any donor id that is not a MapKey in the live
   root-template dump; black-screen hangs UNPROVEN cause, suspected renderer on dangling-visual
-  mobs — expect gone with fix, watch verdict););
+  mobs — expect gone with fix, watch verdict); **v3.35 wake-camp loophole + !chaos_force +
+  spawn coords** (owner OK): wake re-fires the camp event pair for EVERY character (party,
+  summons, dogs) and silently releases the host latch (campers never empties → no "camp done"
+  log) → spawn 19 s post-wake at the campsite; fix = 30 s `WILD_CAMP_QUIET_MS` window refreshed
+  by ANY camp event either direction + explicit `host LEFT CAMP` log (Scratch = red herring,
+  heartbeat gates on host only); `!chaos_force spawn on|off|type <Type>|off|tier 1-3|off|off`
+  targeted test overrides (forced type beats theme + forces evil packs → TEAM mode; gates still
+  respected; replaced dead setterless WILD_FORCE_TIER); wild spawn log carries `map (x, z) h y`
+  (minimap axes are x/z, y = height););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

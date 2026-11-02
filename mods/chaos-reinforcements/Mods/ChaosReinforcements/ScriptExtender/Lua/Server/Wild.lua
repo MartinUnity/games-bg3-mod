@@ -64,7 +64,12 @@ local WILD_TEAMS = true
 local WILD_BACKOFF_MIN, WILD_BACKOFF_MAX = 8, 10   -- minutes: no new groups after an encounter
 local WILD_EXPIRE_MIN, WILD_EXPIRE_MAX = 20, 30   -- minutes: group lifespan ("wanders on")
 local WILD_WATCHED_M = 15             -- closer than this, a group's expiry clock holds
-local WILD_FORCE_TIER = nil          -- one-shot test knob consumed (v3.19 playtest OK)
+-- v3.35 console-driven test overrides (owner: humanoid TEAM content rarely rolls on
+-- its own, and controlled iteration wants targeted forcing, e.g.
+-- `!chaos_force spawn on` + `!chaos_force type humanoid`). Sticky until
+-- `!chaos_force off`; gates (camp/combat/safe/backoff/maxgroups) still apply.
+-- Replaces the old one-shot WILD_FORCE_TIER, which had NO setter - dead code.
+local WILD_FORCE = { roll = false, type = nil, tier = nil }
 local WILD_EVIL_CHANCE = 50         -- % of groups that spawn as (red) Evil NPC; the rest
 -- keep their template-default faction (observed: generic "Neutral NPC" = harmless
 -- yellow "resting mercenaries" the player can run through - owner likes the mix).
@@ -124,8 +129,19 @@ local WILD_MEMBER_SANITY_M = 25
 -- world spawns for the rest of the party). ⚠️ playtest: if "wild: at CAMP" never
 -- logs on camping, the events don't fire for the camp UI and we need the fallback
 -- (camp crime-region value is logged by the heartbeat's crime-region probe).
+-- v3.35 wake loophole (owner 2026-11-02: sleep->wake re-fires the camp pair at
+-- +00:31:28, yet a warband spawned 19 s later while the party was still at the
+-- campsite): the wake sequence FIRES CAMP EVENTS AT EVERY CHARACTER (party, summons,
+-- even the courier dog) and releases the HOST's latch - silently, because the
+-- "camp done" log only fires when `campers` empties fully and summons/pets never
+-- get a TeleportedFromCamp. Fix: either camp event from ANY character refreshes a
+-- quiet window - while the camp machinery keeps firing (sleep, wake, gathering,
+-- pets milling around the fire) the party is at/near camp, so no spawns/aggro.
+local WILD_CAMP_QUIET_MS = 30000
 local campers = {}
+local campFlapUntil = 0
 local function hostAtCamp()
+    if MonotonicMs() < campFlapUntil then return true end
     local host = Osi.GetHostCharacter()
     return host ~= nil and host ~= "" and campers[tostring(host)] == true
 end
@@ -300,6 +316,7 @@ end
 
 local function spawnWildGroup(host, base)
     local theme = themeFor(currentLevel)
+    if WILD_FORCE.type then theme = nil end   -- forced flavor beats the region theme
     local themedPool = nil
     if theme then
         themedPool = themedPoolFor(theme, base)
@@ -310,13 +327,25 @@ local function spawnWildGroup(host, base)
     end
     local etype = theme and theme.name or wildType(base)
     if not etype then log("wild: no viable pool at level", base); return end
+    if WILD_FORCE.type then
+        local hit
+        for _, t in ipairs(DEFAULT_TYPES) do
+            if t:lower() == tostring(WILD_FORCE.type):lower() then hit = t break end
+        end
+        if hit then
+            etype = hit
+            log("wild: forced type", hit, "(!chaos_force)")
+        else
+            log("wild: forced type", tostring(WILD_FORCE.type), "not in",
+                table.concat(DEFAULT_TYPES, "/"), "- rolling normally")
+        end
+    end
 
     -- tier roll (owner spec)
     local roll
-    if WILD_FORCE_TIER then
-        roll = 99   -- consumes the one-shot test override
-        log("wild: forced tier", WILD_FORCE_TIER, "(test knob consumed)")
-        WILD_FORCE_TIER = nil
+    if WILD_FORCE.tier then
+        roll = (WILD_FORCE.tier == 1) and 50 or (WILD_FORCE.tier == 2 and 90 or 99)
+        log("wild: forced tier", WILD_FORCE.tier, "(!chaos_force)")
     else
         roll = rand(1, 100)
     end
@@ -328,7 +357,8 @@ local function spawnWildGroup(host, base)
     -- player races, never mixed)
     local groupFaction = WILD_EVIL_FACTION
     local neutralPool = nil
-    if not theme and etype == "Humanoid" and rand(1, 100) <= WILD_EVIL_CHANCE then
+    if not theme and etype == "Humanoid" and not WILD_FORCE.type
+       and rand(1, 100) <= WILD_EVIL_CHANCE then
         neutralPool = {}
         for _, e in ipairs(gatedPool("Humanoid", base) or {}) do
             if e.pr then neutralPool[#neutralPool + 1] = e end
@@ -440,9 +470,13 @@ local function spawnWildGroup(host, base)
         return
     end
     groups[#groups + 1] = group
+    -- v3.35 map coords (owner: spawned groups can be surprisingly hard to find):
+    -- BG3's horizontal plane is x/z (y = height); the minimap readout uses the same
+    -- x/z pair, so "(mapX, mapZ)" can be compared to the player's own readout directly.
     log("wild: spawned group", nextGroupId, "tier", tier, "(roll", roll .. ")", #group.members, "mobs,",
         groupFaction and "(evil pack)" or "(neutral travelers)",
-        "type", etype, "at ~", radius .. "m")
+        "type", etype, "at ~", radius .. "m",
+        string.format("map (%.0f, %.0f) h %.0f", x, z, y))
     -- subtle world-flavor announcement (client toast); tier 3 earns the scary wording
     if tier == 3 then
         Announce("The wilds stir - a dangerous horde gathers nearby...")
@@ -480,7 +514,9 @@ local function heartbeat()
     if not allowed then return end
     if not CHAOS_STATE.wilds then return end   -- in-game toggle (Toggle.lua shout): no new groups
     if hostAtCamp() then
-        wildIdle("host CAMPED (TeleportedToCamp latched - check camp events fire)")
+        wildIdle(MonotonicMs() < campFlapUntil
+            and "CAMP quiet window (camp events flapping - sleep/wake/gathering)"
+            or "host CAMPED (TeleportedToCamp latched)")
         return
     end
     local host = Osi.GetHostCharacter()
@@ -517,7 +553,8 @@ local function heartbeat()
     end
     local okC, inCombat = pcall(Osi.IsInCombat, host)
     if okC and inCombat == 1 then wildIdle("host in combat") return end
-    local chance = math.min(100, WILD_CHANCE + wildMisses * rand(WILD_STACK_MIN, WILD_STACK_MAX))
+    local chance = WILD_FORCE.roll and 100
+        or math.min(100, WILD_CHANCE + wildMisses * rand(WILD_STACK_MIN, WILD_STACK_MAX))
     local r = rand(1, 100)
     if r > chance then
         wildMisses = wildMisses + 1
@@ -663,14 +700,21 @@ WILD_STATUS = function ()
     for _ in pairs(campers) do n = n + 1 end
     local lo = math.min(100, WILD_CHANCE + wildMisses * WILD_STACK_MIN)
     local hi = math.min(100, WILD_CHANCE + wildMisses * WILD_STACK_MAX)
+    local f = {}
+    if WILD_FORCE.roll then f[#f + 1] = "roll" end
+    if WILD_FORCE.type then f[#f + 1] = "type:" .. WILD_FORCE.type end
+    if WILD_FORCE.tier then f[#f + 1] = "tier:" .. WILD_FORCE.tier end
+    local quiet = MonotonicMs() < campFlapUntil
+        and ("camp-quiet " .. math.ceil((campFlapUntil - MonotonicMs()) / 1000) .. "s") or "-"
     return string.format(
-        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d | crime %s | fight %s | misses %d (next %d-%d%%) | gate %s",
-        currentLevel, #groups, WILD_MAX_GROUPS, math.ceil(backoffMs / 60000), n,
+        "wild: lvl %s | groups %d/%d | backoff %dmin | campers %d %s | crime %s | fight %s | misses %d (next %d-%d%%) | force %s | gate %s",
+        currentLevel, #groups, WILD_MAX_GROUPS, math.ceil(backoffMs / 60000), n, quiet,
         lastCrimeRegion ~= "" and lastCrimeRegion or "-",
         pendingEngage and (pendingEngage.combatMs > 0
             and ("~" .. math.floor(pendingEngage.combatMs / 1000) .. "s, arming?")
             or "pending") or "-",
         wildMisses, lo, hi,
+        #f > 0 and table.concat(f, ",") or "-",
         idleReason ~= "" and ("blocked: " .. idleReason) or "clear")
 end
 
@@ -720,10 +764,20 @@ pcall(function ()
     -- the logs double as the playtest probe that these events fire for the camp UI
     Ext.Osiris.RegisterListener("TeleportedToCamp", 1, "after", function (char)
         campers[tostring(char)] = true
+        campFlapUntil = MonotonicMs() + WILD_CAMP_QUIET_MS
         log("wild: at CAMP (", tostring(char) .. ") - spawns + aggro paused")
     end)
     Ext.Osiris.RegisterListener("TeleportedFromCamp", 1, "after", function (char)
         campers[tostring(char)] = nil
+        campFlapUntil = MonotonicMs() + WILD_CAMP_QUIET_MS
+        -- v3.35: the host's release used to be silent (summons/pets keep `campers`
+        -- non-empty forever, so "camp done" never fired) - make it visible: the
+        -- quiet window is what now keeps wake-time spawning out.
+        local host = Osi.GetHostCharacter()
+        if host ~= nil and tostring(char) == tostring(host) then
+            log("wild: host LEFT CAMP - quiet ~", WILD_CAMP_QUIET_MS / 1000 ..
+                "s (wake/transition grace)")
+        end
         if next(campers) == nil then log("wild: camp done - world active again") end
     end)
     Ext.Events.SessionLoaded:Subscribe(function ()
@@ -731,4 +785,55 @@ pcall(function ()
         pcall(Ext.Timer.WaitFor, WILD_HEARTBEAT_MS, heartbeat)
         pcall(Ext.Timer.WaitFor, WILD_MONITOR_MS, monitor)
     end)
+end)
+
+-- !chaos_force - targeted test overrides (console callback gets cmd + space-split
+-- args, numbers arrive as numbers per the SE console API):
+--   !chaos_force                -> show current force state
+--   !chaos_force off            -> clear everything
+--   !chaos_force spawn on|off   -> every heartbeat passes the chance roll (camp/
+--                                  combat/safe-haven/backoff gates STILL apply)
+--   !chaos_force type Humanoid  -> force the group flavor (Beast/Monstrosity/
+--                                  Humanoid/Undead/Fiend; overrides region theme,
+--                                  forces evil packs -> Humanoid = TEAM-mode squads)
+--   !chaos_force tier 2         -> force the squad tier (1/2/3)
+Ext.RegisterConsoleCommand("chaos_force", function (_, a1, a2)
+    local function show()
+        local f = {}
+        if WILD_FORCE.roll then f[#f + 1] = "spawn=on" end
+        if WILD_FORCE.type then f[#f + 1] = "type=" .. WILD_FORCE.type end
+        if WILD_FORCE.tier then f[#f + 1] = "tier=" .. WILD_FORCE.tier end
+        log("chaos_force:", #f > 0 and table.concat(f, " ") or "(nothing forced)",
+            "| usage: !chaos_force spawn on|off | type <Type>|off | tier 1-3|off | off")
+    end
+    if a1 == nil then show() return end
+    local key = tostring(a1):lower()
+    if key == "off" then
+        WILD_FORCE.roll, WILD_FORCE.type, WILD_FORCE.tier = false, nil, nil
+        log("chaos_force: all overrides cleared")
+    elseif key == "spawn" then
+        WILD_FORCE.roll = tostring(a2):lower() == "on"
+        log("chaos_force: forced spawn =", WILD_FORCE.roll and "ON (every heartbeat)" or "off")
+    elseif key == "type" then
+        if a2 == nil or tostring(a2):lower() == "off" then
+            WILD_FORCE.type = nil
+            log("chaos_force: type override cleared")
+        else
+            local v = tostring(a2)
+            WILD_FORCE.type = v
+            log("chaos_force: type forced to", v,
+                "(valid:", table.concat(DEFAULT_TYPES, "/"), "- evil packs, no theme)")
+        end
+    elseif key == "tier" then
+        local t = tonumber(a2)
+        if not t or t < 1 or t > 3 then
+            WILD_FORCE.tier = nil
+            log("chaos_force: tier override cleared (give 1-3 to force)")
+        else
+            WILD_FORCE.tier = math.floor(t)
+            log("chaos_force: tier forced to", WILD_FORCE.tier)
+        end
+    else
+        show()
+    end
 end)

@@ -442,6 +442,21 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.35 wake-camp loophole + force console + spawn coords (owner 2026-11-02):**
+  camp guard worked, but sleep->wake let a warband spawn 19 s after "at CAMP": the
+  wake sequence re-fires TeleportedToCamp/FromCamp for EVERY character (party,
+  summons, Scratch the dog, courier dog) and releases the HOST latch silently
+  (the "camp done" log only fires when `campers` empties — summons/pets never
+  leave). Fix = `WILD_CAMP_QUIET_MS` 30 s quiet window refreshed by ANY camp event
+  either direction (while camp machinery flaps, no spawns/aggro) + explicit
+  `host LEFT CAMP - quiet ~30s` log. Scratch verdict: red herring — non-party
+  members never trigger spawns (heartbeat gates on host only). Also: NEW
+  `!chaos_force spawn on|off | type <Type>|off | tier 1-3|off | off` console overrides
+  (owner wants controlled humanoid-TEAM iterations: force roll pass + flavor; forced
+  type beats region theme, forces evil packs -> TEAM mode; gates stay respected;
+  replaces dead setterless one-shot WILD_FORCE_TIER), and wild spawn lines now carry
+  `map (x, z) h y` coords (BG3 horizontal plane = x/z, matches the minimap readout).
+  `!chaos_status` shows force state + camp-quiet countdown. Compile OK, Pak 230256 B.
 - **v3.34 false-aggro race + invisible CHAOST donors fix (owner 2026-11-02: "3 groups
   in a row spawned and instantly 'aggro fizzled' while I stood still 60-70m away;
   2-person tiefling team totally invisible with fallback portrait; game hangs to

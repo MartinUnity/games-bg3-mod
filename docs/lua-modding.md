@@ -196,7 +196,9 @@ announce channel, shared with the client) -> `Server/Common.lua` (log + shared h
 `Server/Wild.lua` (wandering groups). `BootstrapClient.lua` = Channels + `Client/AnnounceClient.lua`
 (ImGui toasts, owner-verified). `Server/Probe.lua` stays in the pak as the proven reference
 implementation but is NOT required (its listeners would double-spawn).
-Console commands: `!chaos` (toggle), `!chaos_status`, `!chaos_wolf` (spawn probe),
+Console commands: `!chaos` (force a reinforcement wave now), `!chaos_toggle wilds|reinforce`,
+`!chaos_status`, `!chaos_wolf` (spawn probe), `!chaos_force spawn on|off | type <Type>|off |
+tier 1-3|off | off` (targeted test overrides, v3.35),
 `!chaos_root` (counts CHAOST_* in GetAllRootTemplates — expects 792 REGISTERED; templates
 load as BINARY `.lsf` only, pack_mod.sh converts).
 Logs: profile `Script Extender/ChaosReinforcements.log` (+ `_client.log`), runtime log in
