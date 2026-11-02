@@ -158,7 +158,13 @@ def main():
                 'using "_Human"',
             ]
             for ab, v in cfg["stats"].items():
-                stats_lines.append(f'data "{ab}" "{v}"')
+                # v3.37 BUGFIX: stats tokens are FULL names ("Strength"), the
+                # abbreviations (STR/DEX/...) were silently dropped by the stats
+                # parser -> every CHAOST mob ran on _Human base scores (owner:
+                # lvl-7 ranger with 10 dex). Abbrev keys in ROLES stay readable.
+                full = {"STR": "Strength", "DEX": "Dexterity", "CON": "Constitution",
+                        "INT": "Intelligence", "WIS": "Wisdom", "CHA": "Charisma"}.get(ab, ab)
+                stats_lines.append(f'data "{full}" "{v}"')
             stats_lines += [
                 f'data "Vitality" "{cfg["hp"](lvl)}"',
                 f'data "Armor" "{cfg["armor"]}"',

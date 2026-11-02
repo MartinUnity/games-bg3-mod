@@ -442,6 +442,27 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.37 team look & stats fixes (owner 2026-11-02 half-elf squad report):**
+  THREE findings. (a) **Underwear armor:** the ST_Light/Medium/HeavyArmor treasure
+  tables reference I_ARM_*_Body loot stats-ids with NO root template in the live
+  dump (ARM_Leather exists, ARM_Leather_Body doesn't) -> GenerateTreasure silently
+  yielded ZERO armor (bare pcall hid it for dozens of versions). Armor now comes via
+  direct TemplateAddTo of REAL ARM_* root templates (light/medium/heavy bands,
+  TemplateAddedTo auto-equip listener, ids validated against the live dump - all 10
+  OK) -> equipped AND visible; GenerateTreasure failures now log loudly.
+  (b) **Abilities never applied:** gen_teams wrote `data "STR"/"DEX"/...` but stats
+  tokens are FULL names -> parser dropped them silently, every CHAOST mob ran on
+  _Human base scores (lvl-7 ranger with 10 dex). Regenerated all 72 stat entries
+  with Strength/Dexterity/... (roles keep 16-stat mains). (c) **Black-screen crash
+  re-diagnosed:** owner saved gold/network logs to repo `game-logs/` - gold log
+  shows 13x "SwapChain: got 0x0 extent -> going offscreen" churn after repeated
+  alt-tabs, zero Lua/mod errors, network log clean => Proton/Vulkan focus thrash,
+  NOT the mod (v3.34 dangling-visual renderer hypothesis downgraded). Tell: avoid
+  rapid alt-tabbing (or borderless window). AC math verified our stats Armor token
+  DOES apply (tank 16 = natural 14 + shield 2, melee 12 = natural 12). Compile OK,
+  792 templates regenerated, Pak 231985 B. Pending: visible armoured squads, real
+  ability scores (dex-16 ranger hits/sharps), HP 127-vs-57 mystery (recheck after
+  ability fix - LevelOverride leveling may stack hit dice over Vitality).
 - **v3.36 log hygiene (owner 2026-11-02):** the one-shot "Race static sample dump"
   (Ext.DumpExport of a Race static resource = hundreds of lines, spammed the main log
   unreadable) moved OUT of ChaosReinforcements.log -> profile file

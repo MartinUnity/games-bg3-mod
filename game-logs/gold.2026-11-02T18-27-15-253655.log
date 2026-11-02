@@ -1,0 +1,108 @@
+[02-11-2026 17:27:18:264][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\DiscordBinding\DiscordAPIManager.cpp 71 dsc::DiscordAPIManager::Init]: Failed to initialize discord core: 4
+[02-11-2026 17:27:18:874][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\API.cpp 1354 rf::vk::API::CreateVkDevice]: Driver info:
+  ID: MESA_RADV
+  Name: radv
+  Info: Mesa 26.1.6-1
+
+[02-11-2026 17:27:18:919][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:27:21:102][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:27:21:102][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:27:21:120][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:27:22:652][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:27:22:676][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:27:30:409][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateThreaded.cpp 32 ecl::GameStateThreaded::GameStateWorker::DoWork]: Client Thread start: ClientInit
+[02-11-2026 17:27:30:967][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateThreaded.cpp 54 ecl::GameStateThreaded::GameStateWorker::DoWork]: Client Thread ended: ClientInit
+[02-11-2026 17:28:22:227][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:28:22:249][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:28:22:266][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:29:44:132][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:29:44:157][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:29:46:132][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:29:46:157][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:29:46:159][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:30:01:764][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:30:01:788][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:30:47:205][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 879 ecl::CloudManager::SyncToCloud]: Uploading cloud save:
+Local Path: C:/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/profile8.lsf
+Cloud Path: _PROFILE_Public/profile8.lsf
+newFile? No
+	 Time local - cloud: 1793640647 - 1793633966 
+[02-11-2026 17:30:51:254][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 652 ecl::CloudManager::UploadNewSaveGames]: Cloud info:
+	free: 23832696, total: 1895142400
+	Local saves size: 3056486679 (176 saves)
+[02-11-2026 17:30:51:272][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 879 ecl::CloudManager::SyncToCloud]: Uploading cloud save:
+Local Path: C:/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story/Tav-302126171046__QuickSave_207/QuickSave_207.lsv
+Cloud Path: _SAVE_Public/Savegames/Story/Tav-302126171046__QuickSave_207/QuickSave_207.lsv
+newFile? Yes
+	 Time local - cloud: 1793640650 - 0 
+[02-11-2026 17:31:31:060][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 652 ecl::CloudManager::UploadNewSaveGames]: Cloud info:
+	free: 23746038, total: 1895142400
+	Local saves size: 3056616792 (176 saves)
+[02-11-2026 17:31:31:077][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 879 ecl::CloudManager::SyncToCloud]: Uploading cloud save:
+Local Path: C:/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story/Tav-312126171026__QuickSave_208/QuickSave_208.lsv
+Cloud Path: _SAVE_Public/Savegames/Story/Tav-312126171026__QuickSave_208/QuickSave_208.lsv
+newFile? Yes
+	 Time local - cloud: 1793640690 - 0 
+[02-11-2026 17:33:20:368][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 879 ecl::CloudManager::SyncToCloud]: Uploading cloud save:
+Local Path: C:/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/profile8.lsf
+Cloud Path: _PROFILE_Public/profile8.lsf
+newFile? No
+	 Time local - cloud: 1793640800 - 1793640646 
+[02-11-2026 17:33:24:252][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 652 ecl::CloudManager::UploadNewSaveGames]: Cloud info:
+	free: 23597368, total: 1895142400
+	Local saves size: 3056863513 (176 saves)
+[02-11-2026 17:33:24:269][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\CloudManager.cpp 879 ecl::CloudManager::SyncToCloud]: Uploading cloud save:
+Local Path: C:/users/steamuser/AppData/Local/Larian Studios/Baldur's Gate 3/PlayerProfiles/Public/Savegames/Story/Tav-332126171019__QuickSave_209/QuickSave_209.lsv
+Cloud Path: _SAVE_Public/Savegames/Story/Tav-332126171019__QuickSave_209/QuickSave_209.lsv
+newFile? Yes
+	 Time local - cloud: 1793640803 - 0 
+[02-11-2026 17:35:08:420][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:35:08:441][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:35:08:458][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:38:09:910][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:38:09:937][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:38:38:597][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:38:38:625][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:38:38:630][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:40:04:105][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:40:04:132][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:40:27:088][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:40:27:114][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:40:27:131][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:40:37:155][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:40:37:180][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:40:41:152][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:40:41:176][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:40:41:194][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:41:28:876][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:41:28:904][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:41:49:043][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:41:49:071][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:41:49:088][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:41:59:799][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:41:59:825][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:42:01:160][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:42:01:185][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:42:01:203][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:42:55:388][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:42:55:421][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:43:01:352][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:43:01:374][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:43:01:392][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:43:15:700][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:43:15:725][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:43:28:233][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:43:28:257][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:43:28:275][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:44:10:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:44:10:651][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:44:20:897][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:44:20:923][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:44:20:940][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:44:37:716][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:44:37:744][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created
+[02-11-2026 17:44:41:915][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 292 rf::vk::RenderFrame::FlipBuffers]: SwapChain: recreate because QueuePresent returned VK_SUBOPTIMAL_KHR
+[02-11-2026 17:44:41:939][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 681 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying old SwapChain
+[02-11-2026 17:44:41:940][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 473 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: got 0x0 extent -> going offscreen
+[02-11-2026 17:44:57:716][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 675 rf::vk::RenderFrame::DestroySwapChain]: SwapChain: destroying offscreen
+[02-11-2026 17:44:57:742][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\RenderFramework\vk\RenderFrame.cpp 540 rf::vk::RenderFrame::CreateSwapChain]: SwapChain: created

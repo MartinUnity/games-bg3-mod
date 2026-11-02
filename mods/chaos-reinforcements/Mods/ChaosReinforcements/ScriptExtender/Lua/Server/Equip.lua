@@ -36,9 +36,26 @@ local T_MARTIAL = "ST_MartialMeleeWeapons"        -- battleaxe/longsword/...
 local T_MARTIAL_1 = "ST_MartialMeleeWeapons_1"    -- level-scaled variant
 local T_FINESSE = "ST_Finesse_MeleeWeapons"       -- dagger/rapier/scimitar/shortsword
 local T_FINESSE_MAGIC = "ST_Finesse_MeleeWeapons_Magic"
-local T_LIGHT = "ST_LightArmor"
-local T_MEDIUM = "ST_MediumArmor"
-local T_HEAVY = "ST_HeavyArmor"
+-- v3.37 ARMOR FIX (owner: half-elf squad spawned "underwear only" despite AC math
+-- proving armor stats): the ST_Light/Medium/HeavyArmor treasure tables reference
+-- I_ARM_*_Body loot stats-ids that have NO root template in the live dump
+-- (ARM_Leather exists, ARM_Leather_Body does not) -> GenerateTreasure produced
+-- ZERO items from them, silently inside pcall. Armor now comes like staff/shields
+-- already did: direct TemplateAddTo of real ARM_* root templates (Name_GUID from
+-- Chaos_root_templates.txt) -> TemplateAddedTo listener auto-equips -> VISIBLE.
+-- Band choice keeps the old proficiency/tier gating.
+local ARMOR_BANDS = {
+    light  = { "ARM_Padded_63cc7723-245d-4b62-b9e6-5a47283cf777",
+               "ARM_Leather_02ae5d88-8044-43df-8363-02a2900776db",
+               "ARM_StuddedLeather_19451420-13f6-444c-a15b-7abb6dde3f91" },
+    medium = { "ARM_Hide_b78fabcc-d2df-4c74-b5d4-1eda6dc4c071",
+               "ARM_ChainShirt_921cd1e1-c39c-44c3-a090-b667322af7f8",
+               "ARM_ScaleMail_ca0aafad-0f1e-4d76-8e3b-925397bb436b",
+               "ARM_Breastplate_4814825e-23ee-41ed-9784-d9963434150d" },
+    heavy  = { "ARM_RingMail_e3a5099a-397a-4bbc-932c-cd0a00043b79",
+               "ARM_Splint_8ed82f7e-fdd4-4a9f-94b6-f256c599bfdd",
+               "ARM_Plate_95b4e2c4-759a-4d33-a2d1-4e0ee6ed4f29" },
+}
 local T_RANGED = "ST_SimpleRangedWeapons"           -- longbow/shortbow/light crossbow (all simple)
 local T_RANGED_1 = "ST_SimpleRangedWeapons_1"       -- level-scaled variant
 local T_RANGED_M = "ST_MartialRangedWeapons"        -- hand crossbow (martial)
@@ -298,13 +315,13 @@ local function equipmentFor(entry, base, tier)
     -- tier 3 unlocks medium, heavy stays tier-4-only (HEAVY_LEVEL+)
     local armor
     if base <= 1 then
-        armor = T_LIGHT
+        armor = "light"
     elseif tier >= 3 then
-        if tier == 4 and prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = T_HEAVY
-        elseif prof:find("MediumArmor", 1, true) then armor = T_MEDIUM
-        else armor = T_LIGHT end
+        if tier == 4 and prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = "heavy"
+        elseif prof:find("MediumArmor", 1, true) then armor = "medium"
+        else armor = "light" end
     else
-        armor = T_LIGHT
+        armor = "light"
     end
     if not (prof:find("Armor", 1, true) or base <= 1) then
         armor = nil                                                  -- no armor prof: native AC
@@ -347,12 +364,26 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     local tag = groupTier and ("(group " .. groupTier .. (isBoss and " boss" or "") .. ")") or "(roll)"
     log("equip: tier", tier, tag, "role", weaponRoleFor(entry),
         weapon or (extras and "kit-only") or "innate",
-        "+", armor or (clothes and "clothes" or "native-armor"),
+        "+", armor and (armor .. "-armor") or (clothes and "clothes" or "native-armor"),
         "+", extras and (#extras .. " extra") or "no extra",
         "prof", entry.prof or (entry.unarmed and "innate" or "-"))
-    if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
-    if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
-    if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
+    -- v3.37: GenerateTreasure failures must be LOUD (the armor tables failed silently
+    -- for dozens of versions - bare pcalls hid it)
+    if weapon then
+        local okT, errT = pcall(Osi.GenerateTreasure, created, weapon, base, created)
+        if not okT then log("equip: GenerateTreasure FAILED", weapon, "-", tostring(errT)) end
+    end
+    if armor then
+        local band = ARMOR_BANDS[armor]
+        local pick = band[rand(1, #band)]
+        local okA, errA = pcall(Osi.TemplateAddTo, pick, created, 1, 0)
+        if okA then log("equip: armor", pick:match("^[%w_]+") .. " (" .. armor .. ")")
+        else log("equip: armor TemplateAddTo FAILED", pick, "-", tostring(errA)) end
+    end
+    if clothes then
+        local okT, errT = pcall(Osi.GenerateTreasure, created, clothes, base, created)
+        if not okT then log("equip: GenerateTreasure FAILED", clothes, "-", tostring(errT)) end
+    end
     if extras then
         for _, t in ipairs(extras) do
             pcall(Osi.TemplateAddTo, t, created, 1, 0)

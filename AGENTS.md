@@ -147,7 +147,14 @@ Where things live:
   moved out of the main log to profile `Script Extender/Chaos_race_dump.txt` (was a
   hundreds-of-lines DumpExport spam) + unconditional `==== COMBAT <id> STARTED/ENDED ====`
   bookends on the Osiris CombatStarted/CombatEnded listeners (spawned-group fights
-  included););
+  included); **v3.37 team look/stats** (owner report): armor treasure tables were DEAD
+  (I_ARM_*_Body ids have no root template -> silent zero items -> underwear mobs) - armor
+  now via direct TemplateAddTo of real ARM_* templates (bands by tier/prof, ids validated,
+  GenerateTreasure failures logged); gen_teams ability tokens FIXED (`data "STR"` ->
+  `data "Strength"` - abbreviations were silently dropped, all mobs had base 10s);
+  black-screen hangs = Proton/Vulkan swapchain thrash from rapid alt-tabbing (13x
+  "0x0 extent -> offscreen" in gold log, zero mod errors — saved to repo `game-logs/`),
+  NOT the mod););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

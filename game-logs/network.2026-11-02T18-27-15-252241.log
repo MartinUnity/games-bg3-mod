@@ -1,0 +1,198 @@
+[02-11-2026 17:27:19:071][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Uninitialized
+
+[02-11-2026 17:27:19:071][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Unknown, to: Uninitialized
+
+[02-11-2026 17:27:20:593][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: InitMenu
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: StartLoading
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Init
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: LoadPsoCache
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: LoadModule
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: LoadMenu
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: StopLoading
+[02-11-2026 17:27:20:622][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 113 ecl::GameStateMachine::SetTargetStateAfterFade]: ecl::GameStateQueued: Menu after fade: FadeInFadeOut
+[02-11-2026 17:27:21:104][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Unknown, to: InitMenu
+[02-11-2026 17:27:23:560][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: InitMenu, to: StartLoading
+[02-11-2026 17:27:28:898][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\GameNet\PortMapperUPnP.cpp 115 net::PortMapperUPnP::Discover]: [NET] Discovery finished... no usable UPnP enabled routers found
+[02-11-2026 17:27:30:409][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StartLoading, to: Init
+[02-11-2026 17:27:30:992][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Init, to: LoadPsoCache
+[02-11-2026 17:27:32:276][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: LoadPsoCache, to: LoadModule
+[02-11-2026 17:27:43:034][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: LoadModule, to: LoadMenu
+[02-11-2026 17:27:51:722][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: LoadMenu, to: StopLoading
+[02-11-2026 17:27:52:255][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StopLoading, to: Menu
+[02-11-2026 17:27:59:182][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 113 ecl::GameStateMachine::SetTargetStateAfterFade]: ecl::GameStateQueued: StartLoading after fade: FadeInFadeOut
+[02-11-2026 17:27:59:182][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: StartServer
+[02-11-2026 17:27:59:182][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Idle
+[02-11-2026 17:27:59:713][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Menu, to: StartLoading
+[02-11-2026 17:27:59:730][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StartLoading, to: StartServer
+[02-11-2026 17:27:59:730][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LobbyManager.cpp 567 esv::LobbyManager::SetLobbystatus]: [LOBBY] STATUS CHANGED - from: Uninitialized to: Creating
+
+[02-11-2026 17:27:59:731][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Init
+
+[02-11-2026 17:27:59:764][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LobbyManager.cpp 567 esv::LobbyManager::SetLobbystatus]: [LOBBY] STATUS CHANGED - from: Creating to: Created
+
+[02-11-2026 17:27:59:764][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Uninitialized, to: Init
+
+[02-11-2026 17:27:59:784][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\GameNet\AbstractPeer.cpp 2616 net::AbstractPeer::BindSocket]: [NET] Installed socket override on port 1
+[02-11-2026 17:27:59:784][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\GameNet\AbstractPeer.cpp 2624 net::AbstractPeer::BindSocket]: Binding socket to port 23253 ... 
+[02-11-2026 17:27:59:795][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 302 esv::LoadProtocol::LoadSavegame]: * ServerLoadProtocol: Load savegame request: Tav-392126151027__AutoSave_11
+
+[02-11-2026 17:27:59:862][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: InitNetwork
+[02-11-2026 17:27:59:862][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: InitConnection
+[02-11-2026 17:27:59:863][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StartServer, to: Idle
+[02-11-2026 17:27:59:879][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Idle, to: InitNetwork
+[02-11-2026 17:27:59:896][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: InitNetwork, to: InitConnection
+[02-11-2026 17:27:59:900][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\GameNet\AbstractPeer.cpp 1051 net::AbstractPeer::HandleConnectionRequestAccepted]: [NET] <ip_private_data> <9723060211476039303> Connecting to local server ... SUCCESS [MTU: 0]
+[02-11-2026 17:27:59:919][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Framework\Code\GameNet\AbstractPeer.cpp 1009 net::AbstractPeer::HandleIncomingConnection]: [NET] <ip_private_data> <16821028338906537868> Incoming connection from local client [MTU: 0]
+[02-11-2026 17:27:59:919][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameServer.cpp 365 esv::GameServer::OnNewIncomingConnection]: New incoming connection with peer ID 1
+[02-11-2026 17:28:00:052][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\JoiningProtocol.cpp 230 esv::JoiningProtocol::ProcessMsg]: Warning: connecting from different build configurations! Server: Gold | Client: Gold Extender_0
+[02-11-2026 17:28:00:052][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1051 esv::LoadProtocol::SendLoadStartedMessage]: * ServerLoadProtocol: Sending load started message
+
+[02-11-2026 17:28:00:079][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 85 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Load Start
+
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 113 ecl::GameStateMachine::SetTargetStateAfterFade]: ecl::GameStateQueued: StartLoading after fade: Unknown
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Idle
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: UnloadLevel
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: UnloadSession
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Idle
+[02-11-2026 17:28:00:080][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: InitConnection, to: StartLoading
+[02-11-2026 17:28:00:096][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StartLoading, to: Idle
+[02-11-2026 17:28:00:112][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Idle, to: UnloadLevel
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 557 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: 1 / 1 ready -- received load started from: 1
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1464 esv::LoadProtocol::CheckStartLoadReady]: * ServerLoadProtocol: Load handshake done
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: UnloadLevel
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: UnloadSession
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: UnloadModule
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: LoadModule
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: LoadSession
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Init, to: UnloadLevel
+
+[02-11-2026 17:28:00:219][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1067 esv::LoadProtocol::SendLoadModuleMessage]: * ServerLoadProtocol: Sending load module message
+
+[02-11-2026 17:28:00:226][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Unknown, to: UnloadSession
+
+[02-11-2026 17:28:00:226][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Unknown, to: UnloadModule
+
+[02-11-2026 17:28:00:246][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 253 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Module Load
+
+[02-11-2026 17:28:00:286][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 474 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Received module loaded (GustavX) from 1 
+
+[02-11-2026 17:28:00:286][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 498 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Queueing module loaded event for peer 1
+
+[02-11-2026 17:28:00:352][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: UnloadModule, to: LoadModule
+
+[02-11-2026 17:28:00:446][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: UnloadLevel, to: UnloadSession
+[02-11-2026 17:28:00:448][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Unknown, to: Idle
+[02-11-2026 17:28:00:831][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1252 esv::LoadProtocol::HandleModuleLoaded]: * ServerLoadProtocol: Executing module loaded event for peer 1
+
+[02-11-2026 17:28:00:831][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1104 esv::LoadProtocol::SendLoadSessionMessage]: * ServerLoadProtocol: Sending load session message
+
+[02-11-2026 17:28:00:862][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 232 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Session Load
+
+[02-11-2026 17:28:00:862][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: LoadSession
+[02-11-2026 17:28:00:864][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: LoadLevel
+
+[02-11-2026 17:28:00:864][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1127 esv::LoadProtocol::SendLoadLevelMessage]: * ServerLoadProtocol: Sending level load message
+
+[02-11-2026 17:28:00:864][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Idle, to: LoadSession
+[02-11-2026 17:28:02:311][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: LoadModule, to: LoadSession
+
+[02-11-2026 17:28:02:339][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 208 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Level Load
+
+[02-11-2026 17:28:02:339][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: LoadLevel
+[02-11-2026 17:28:02:339][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: LoadSession, to: LoadLevel
+[02-11-2026 17:28:02:358][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 452 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Received session loaded (21923035-0a67-89d8-2854-41a94d33df22) from 1 
+
+[02-11-2026 17:28:02:358][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 463 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Queueing session loaded event for peer 1
+
+[02-11-2026 17:28:02:950][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 408 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Received level created (WLD_Main_A) from 1 
+
+[02-11-2026 17:28:02:950][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 419 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Queueing level created event for peer 1
+
+[02-11-2026 17:28:06:159][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1390 esv::LoadProtocol::HandleSessionLoaded]: * ServerLoadProtocol: Executing session loaded event for peer 1
+
+[02-11-2026 17:28:06:193][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: LoadSession, to: LoadLevel
+
+[02-11-2026 17:28:06:666][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1413 esv::LoadProtocol::HandleLevelCreated]: * ServerLoadProtocol: Executing level created event for peer 1
+
+[02-11-2026 17:28:15:041][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1140 esv::LoadProtocol::SendInstansiateSwapMessage]: * ServerLoadProtocol: Sending level instantiate and swap message
+
+[02-11-2026 17:28:15:629][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 274 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Instantiate Swap
+
+[02-11-2026 17:28:15:629][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: SwapLevel
+[02-11-2026 17:28:15:629][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: StopLoading
+[02-11-2026 17:28:15:629][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: PrepareRunning
+[02-11-2026 17:28:16:084][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: LoadLevel, to: SwapLevel
+[02-11-2026 17:28:16:085][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 430 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: Received level loaded (WLD_Main_A) from 1 
+
+[02-11-2026 17:28:16:085][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1402 esv::LoadProtocol::HandleLevelLoaded]: * ServerLoadProtocol: Executing level loaded event for peer 1
+
+[02-11-2026 17:28:16:095][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 523 esv::LoadProtocol::ProcessMsg]: * ServerLoadProtocol: 1 / 1 ready -- received swap ready from: 1 
+
+[02-11-2026 17:28:16:095][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1479 esv::LoadProtocol::CheckSwapServer]: * ServerLoadProtocol: Swapping level
+
+[02-11-2026 17:28:16:095][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Sync
+
+[02-11-2026 17:28:16:095][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: LoadLevel, to: Sync
+
+[02-11-2026 17:28:16:927][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 756 esv::LoadProtocol::DoState]: * ServerLoadProtocol: Swap Completed!
+
+[02-11-2026 17:28:16:927][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1151 esv::LoadProtocol::SendSwapCompleteMessage]: * ServerLoadProtocol: Sending swap complete message
+
+[02-11-2026 17:28:16:949][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 286 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Swap Complete
+
+[02-11-2026 17:28:16:994][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameServer.cpp 1600 esv::GameServer::ActivatePeer]: GameServer Peer Activate: 1
+[02-11-2026 17:28:17:537][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: SwapLevel, to: StopLoading
+[02-11-2026 17:28:17:612][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: StopLoading, to: PrepareRunning
+[02-11-2026 17:28:25:383][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\LoadProtocol.cpp 1448 esv::LoadProtocol::CheckLevelStart]: * ServerLoadProtocol: Level Starting
+
+[02-11-2026 17:28:25:398][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Running
+
+[02-11-2026 17:28:25:398][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Sync, to: Running
+
+[02-11-2026 17:28:25:606][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\LoadProtocol.cpp 325 ecl::LoadProtocol::ProcessMsg]: * ClientLoadProtocol peer1: Received Level Start
+
+[02-11-2026 17:28:25:606][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 113 ecl::GameStateMachine::SetTargetStateAfterFade]: ecl::GameStateQueued: Running after fade: FadeInFadeOut
+[02-11-2026 17:28:26:144][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: PrepareRunning, to: Running
+[02-11-2026 17:30:46:725][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Save
+
+[02-11-2026 17:30:46:725][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Running, to: Save
+
+[02-11-2026 17:30:46:782][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Save
+[02-11-2026 17:30:46:783][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Running, to: Save
+[02-11-2026 17:30:48:200][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Running
+
+[02-11-2026 17:30:48:230][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Save, to: Running
+
+[02-11-2026 17:30:48:237][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Running
+[02-11-2026 17:30:48:237][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Save, to: Running
+[02-11-2026 17:31:26:656][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Save
+
+[02-11-2026 17:31:26:656][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Running, to: Save
+
+[02-11-2026 17:31:26:720][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Save
+[02-11-2026 17:31:26:721][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Running, to: Save
+[02-11-2026 17:31:28:075][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Running
+
+[02-11-2026 17:31:28:099][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Running
+[02-11-2026 17:31:28:100][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Save, to: Running
+[02-11-2026 17:31:28:105][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Save, to: Running
+
+[02-11-2026 17:33:19:875][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Save
+
+[02-11-2026 17:33:19:875][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Running, to: Save
+
+[02-11-2026 17:33:19:945][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Save
+[02-11-2026 17:33:19:946][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Running, to: Save
+[02-11-2026 17:33:21:260][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 65 esv::GameStateMachine::SetTargetState]: esv::GameStateQueued: Running
+
+[02-11-2026 17:33:21:282][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 130 ecl::GameStateMachine::SetTargetState]: ecl::GameStateQueued: Running
+[02-11-2026 17:33:21:282][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCClient\Client\GameStateMachine.cpp 248 ecl::GameStateMachine::Update]: CLIENT STATE SWAP - from: Save, to: Running
+[02-11-2026 17:33:21:288][D:\Jenkins\workspace\Repo\FW4\Release\Stable\LSProjects\Apps\Gustav\Code\EoCServer\Server\GameStateMachine.cpp 84 esv::GameStateMachine::Update]: SERVER STATE SWAP - from: Save, to: Running
+
