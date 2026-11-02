@@ -200,7 +200,8 @@ Console commands: `!chaos` (force a reinforcement wave now), `!chaos_toggle wild
 `!chaos_status`, `!chaos_wolf` (spawn probe), `!chaos_force spawn on|off | type <Type>|off |
 tier 1-3|off | off` (targeted test overrides, v3.35),
 `!chaos_root` (counts CHAOST_* in GetAllRootTemplates — expects 792 REGISTERED; templates
-load as BINARY `.lsf` only, pack_mod.sh converts).
+load as BINARY `.lsf` only, pack_mod.sh converts). Full reference + wishlist:
+`docs/console-commands.md`.
 Logs: profile `Script Extender/ChaosReinforcements.log` (+ `_client.log`), runtime log in
 profile `Script Extender Logs/` (needs `LogRuntime:true`). First-run reading if the engine
 is silent: check the runtime log for bootstrap errors first, then registration (§4).
