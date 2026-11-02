@@ -442,6 +442,31 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.38 casting + team naming (owner team-fight reports, `game-logs/team-fight-1.txt`;
+  note: those fights ran v3.36, so the v3.37 armor/ability fixes are still UNVERIFIED):**
+  AI quality praised (potion-throwing between allies, web grenades, Action Surge, weapon
+  actions, Warding Flare reaction, barbarian popping a Dancing Lights scroll) - the gap:
+  ZERO castable spells (cleric only meleeed, ranger never marked). Vanilla census
+  (subagent 2026-11-02): Character entries NEVER carry spell tokens; generic mobs get
+  spells from the root-template `SpellSet` attr (MOO_Guard_Cleric), named casters grant
+  via `UnlockSpell(...)` in DefaultBoosts/passives (Goblin_Cleric, DEN_Rolan,
+  TWN_Githyanki_Warlock); slots = `ActionResource(SpellSlot,n,lvl)` or NPC_* progression
+  rows. We take the stats channel: per-level `DefaultBoosts` on each CHAOST_<role>_L<lvl>
+  = vanilla slot curves (FULL_SLOTS cleric/wizard, HALF_SLOTS ranger/bard) + level-gated
+  UnlockSpell kits for healer/caster/ranged/wildcard. ALL spell ids validated vs vanilla
+  Spell_*.txt (Target_SacredFlame, Target_MAG_SpiritualWeapon, Shout_SpiritGuardians,
+  Target_HuntersMark, Projectile_FireBolt, Zone_Thunderwave...; NO generic
+  Suggestion/DissonantWhispers/LightningBolt entries exist). Naming: tooltip showed the
+  DONOR's loca name ("Drow Half-Elf") because FlavorNameFix only renamed BLANK names -
+  CHAOST mobs now relabeled unconditionally to entry.nm, and ROLE_LABEL went
+  class-flavored (Cleric/Wizard/Hunter/Berserker/Vanguard/Bard) -> "Half-Elf Cleric".
+  Owner's Proton/Vulkan fix: Full screen -> **Borderless window** = permanent cure for
+  both the minimize-on-click-outside and the swapchain thrash (worth a line in any
+  Linux/Proton install notes). Also corroborated v3.37: saving-throw profs + weapon
+  actions prove Progressions apply, and "12 in primary stat, 10 rest" = base 10 + the
+  asi_* progression node's +2 (our stats lines were still dropped in v3.36) -> with the
+  token fix expect real scores (dex-16 ranger etc). Pak 232879 B. Pending: everything
+  v3.37 pending + visible spell bars + AI actually casting + "Half-Elf Cleric" tooltips.
 - **v3.37 team look & stats fixes (owner 2026-11-02 half-elf squad report):**
   THREE findings. (a) **Underwear armor:** the ST_Light/Medium/HeavyArmor treasure
   tables reference I_ARM_*_Body loot stats-ids with NO root template in the live

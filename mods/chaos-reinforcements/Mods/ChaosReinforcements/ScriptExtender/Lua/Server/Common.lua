@@ -332,9 +332,10 @@ RACE_LABEL = {
     dwarf = "Dwarf", tiefling = "Tiefling", gith = "Githyanki",
     goblin = "Goblin", halforc = "Half-Orc",
 }
-ROLE_LABEL = {
-    tank = "Vanguard", melee_dps = "Fighter", ranged = "Archer",
-    caster = "Mystic", healer = "Priest", wildcard = "Mercenary",
+ROLE_LABEL = {  -- v3.38: aligned to the actual progression classes (tooltip shows
+    -- these via entry.nm; owner noticed vanilla casters carry "Wizard"/"Cleric" labels)
+    tank = "Vanguard", melee_dps = "Berserker", ranged = "Hunter",
+    caster = "Wizard", healer = "Cleric", wildcard = "Bard",
 }
 
 -- enemy race (Osiris GetRace, keys verified live in RACE_TO_TYPE) -> donor race key.

@@ -1,0 +1,135 @@
+## 2 fights with a team in more detail
+
+- All teams had the same drow template with only underpants
+- Loot was only what they had on hand + special ( weapon + shield (if any)) along with any remaining potion / arrow / throwables
+- I'm pretty sure they do not have armor on even though their AC is high (I cannot explain AC 15-16 without any armor though
+
+
+## FIGHT 1 ##
+
+[CHAOS +00:03:12] equipped WPN_HUM_Shield_C_0_8db871c4-fd37-9a89-2e7c-10a5e0e10c97 on CHAOST_tank_L5_halforc_m_eeae749e-0312-6341-7a0e-6cbae99ac4bc
+[CHAOS +00:03:12] equipped WPN_HUM_Shield_C_0_1ad598c1-1208-d4e3-d16e-7fb83557ad10 on CHAOST_healer_L7_halforc_m_1a11177a-655e-d081-5432-f5e702d3da3d
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_7dcca57b-7701-6877-07ba-4eb5262bc47d on CHAOST_tank_L5_halforc_m_eeae749e-0312-6341-7a0e-6cbae99ac4bc
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_Greater_614da637-fe6c-f64e-76a9-6d998e5b640e on CHAOST_melee_dps_L7_halforc_m_e226fe99-c0c0-5e8f-a7c5-24a5d4e5ca4d
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_7759580a-974b-5ad5-512e-56ea5cfbfb70 on CHAOST_ranged_L5_halforc_m_523918bb-1c6a-09d5-3953-b035e0604de8
+[CHAOS +00:03:12] equipped CONS_Potion_Psychic_Resistance_a36b8bdb-39c9-3cf1-64e3-178718d656d9 on CHAOST_ranged_L5_halforc_m_523918bb-1c6a-09d5-3953-b035e0604de8
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_Greater_37fae713-cb4c-d88e-d571-8d05111b7279 on CHAOST_healer_L7_halforc_m_1a11177a-655e-d081-5432-f5e702d3da3d
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_Greater_7bd4fc05-6971-6c66-c215-7e021c7a2cd4 on CHAOST_melee_dps_L7_halforc_f_700b2440-9cd3-1f39-3b40-d685774fec37
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_3321923d-ba46-b09f-50a0-d4e33fcfce74 on CHAOST_ranged_L4_halforc_m_45325f72-f058-8275-ded7-eb7803c0f48d
+[CHAOS +00:03:12] equipped CONS_Potion_Healing_A_Greater_045cbd11-5734-53b3-7cf0-cd7cd637d531 on CHAOST_wildcard_L6_halforc_m_049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:12] equipped CONS_Poison_Malice_88c82bb0-74e3-bc8d-5bad-70724989d61a on CHAOST_melee_dps_L7_halforc_m_e226fe99-c0c0-5e8f-a7c5-24a5d4e5ca4d
+[CHAOS +00:03:12] equipped CONS_Poison_Wyvern_9010a1ad-a04b-21e9-97a3-4b2501831c71 on CHAOST_melee_dps_L7_halforc_f_700b2440-9cd3-1f39-3b40-d685774fec37
+[CHAOS +00:03:12] equipped CONS_Poison_Wyvern_d6669df1-d655-83d0-b04a-8251b14d7053 on CHAOST_wildcard_L6_halforc_m_049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:12] equipped CONS_Poison_Purple_Worm_de07b9ee-3e62-6423-1fa4-965857e338ea on CHAOST_wildcard_L6_halforc_m_049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:12] equipped CONS_Poison_Purple_Worm_de07b9ee-3e62-6423-1fa4-965857e338ea on CHAOST_wildcard_L6_halforc_m_049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:12] equipped ARR_Arrow_Of_Piercing_11cd1531-3716-ad43-ed67-323f9d92cd87 on CHAOST_ranged_L5_halforc_m_523918bb-1c6a-09d5-3953-b035e0604de8
+[CHAOS +00:03:12] equipped ARR_Arrow_Of_Detonation_2cf9bcb2-48ed-93ec-e2a7-818d732ccf71 on CHAOST_ranged_L4_halforc_m_45325f72-f058-8275-ded7-eb7803c0f48d
+[CHAOS +00:03:12] equipped ALCH_Solution_Grenade_Web_208c8fc3-008e-ac9e-cc79-fba95529a070 on CHAOST_healer_L7_halforc_m_1a11177a-655e-d081-5432-f5e702d3da3d
+[CHAOS +00:03:12] equipped ALCH_Solution_Grenade_SporesToxic_f11f2dbb-8a3c-4b06-5ffd-11f6a7a52991 on CHAOST_melee_dps_L7_halforc_f_700b2440-9cd3-1f39-3b40-d685774fec37
+[CHAOS +00:03:12] equipped WPN_HUM_Greatsword_A_0_4f055796-ec7f-95f8-295b-9660a7c5d3c1 on CHAOST_tank_L5_halforc_m_eeae749e-0312-6341-7a0e-6cbae99ac4bc
+[CHAOS +00:03:12] equipped WPN_HUM_Rapier_A_0_7d88b2ff-c055-872a-f7ae-32026d229a9d on CHAOST_melee_dps_L7_halforc_m_e226fe99-c0c0-5e8f-a7c5-24a5d4e5ca4d
+[CHAOS +00:03:12] equipped WPN_HUM_HeavyCrossbow_A_0_64c1c575-2b26-ff57-0e86-71e78cc48d4b on CHAOST_ranged_L5_halforc_m_523918bb-1c6a-09d5-3953-b035e0604de8
+[CHAOS +00:03:12] equipped WPN_HUM_Longsword_A_0_dba935f6-d353-4593-6efb-1331d4e94ad2 on CHAOST_healer_L7_halforc_m_1a11177a-655e-d081-5432-f5e702d3da3d
+[CHAOS +00:03:12] equipped WPN_HUM_Flail_A_0_572599dc-3c1c-4d6f-3ef6-ddbf3f87e481 on CHAOST_melee_dps_L7_halforc_f_700b2440-9cd3-1f39-3b40-d685774fec37
+[CHAOS +00:03:12] equipped WPN_HUM_HandCrossbow_A_0_e88e38e4-e297-59dd-2e6b-20fe994a5260 on CHAOST_ranged_L4_halforc_m_45325f72-f058-8275-ded7-eb7803c0f48d
+[CHAOS +00:03:12] equipped WPN_HUM_Greatsword_A_0_dc24b876-0d25-6ca2-95bf-b0a3c9f86f0c on CHAOST_wildcard_L6_halforc_m_049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:12] wild: member placed, drift 16.1m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 14.6m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 15.8m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 14.5m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 16.5m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 16.8m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:12] wild: member placed, drift 16.6m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:03:13] arm check: dc24b876-0d25-6ca2-95bf-b0a3c9f86f0c on 049f6c66-31eb-6233-4696-f709961deb2c
+[CHAOS +00:03:13] arm check: 64c1c575-2b26-ff57-0e86-71e78cc48d4b on 523918bb-1c6a-09d5-3953-b035e0604de8
+[CHAOS +00:03:13] arm check: 7d88b2ff-c055-872a-f7ae-32026d229a9d on e226fe99-c0c0-5e8f-a7c5-24a5d4e5ca4d
+[CHAOS +00:03:13] arm check: e88e38e4-e297-59dd-2e6b-20fe994a5260 on 45325f72-f058-8275-ded7-eb7803c0f48d
+[CHAOS +00:03:13] arm check: 572599dc-3c1c-4d6f-3ef6-ddbf3f87e481 on 700b2440-9cd3-1f39-3b40-d685774fec37
+[CHAOS +00:03:13] arm check: dba935f6-d353-4593-6efb-1331d4e94ad2 on 1a11177a-655e-d081-5432-f5e702d3da3d
+[CHAOS +00:03:13] arm check: 4f055796-ec7f-95f8-295b-9660a7c5d3c1 on eeae749e-0312-6341-7a0e-6cbae99ac4bc
+
+- ranger #1
+  - used 2x arrow of acid in rount #1
+  - used 2x arrow of acid in round #2 (might have been ranger #2 - not sure)
+- fighter used healing portion on party then action surge -> another attack (amazing)
+- barbarian
+  - Round #1 - used enrage; couldnt' reach my party
+  - Round #2 - threw dancing lights on top of my rogue that hiding the round before -- so at least he can no longer sneak there; pretty advanced gameplay
+- ranger #2
+  - shot arrows x2 (no special gear or he also shot 2x acid arrows, didn't pay attention)
+- healer (cleric) even used Warding Flare as reaction when my melee tried to him him => super amazing)
+  - round #1 - was incapped
+  - round #2 - I think he tried to move into position for using a area hit all for 2d10 dam (can't recall the name of the spell; special ability by a cleric of light I think - radiance of the dawn?) -- anyways, he moved away from my tank who hit him + killed him, so I will never know.
+
+
+## FIGHT 2 ##
+
+[CHAOS +00:19:44] wild: forced type Humanoid (!chaos_force)
+[CHAOS +00:19:44] wild: forced tier 2 (!chaos_force)
+[CHAOS +00:19:44] wild: team mode - tank/melee_dps/ranged/healer race halfelf
+[CHAOS +00:19:44] equip: tier 2 (group 2) role melee ST_MartialMeleeWeapons + ST_LightArmor + 1 extra prof SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields
+[CHAOS +00:19:44] equip: class kit 1 template(s) on 7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] support: melee band 2 2 item rolls on 7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equip: potions 1
+[CHAOS +00:19:44] equip: tier 2 (group 2) role melee ST_MartialMeleeWeapons + ST_LightArmor + 1 extra prof SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields
+[CHAOS +00:19:44] equip: class kit 1 template(s) on 89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] support: melee band 2 1 item rolls on 89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] equip: potions 1
+[CHAOS +00:19:44] rename(SetStoryDisplayName): called
+[CHAOS +00:19:44] leader buffs: CHAOS_VIT_1 ok | CHAOS_STAT_2 ok
+[CHAOS +00:19:44] gold: Gold_Pocket_Poor lvl 7 on 89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] announce: Ozrik of the Pale Legion joins the battle with reinforcements!
+[CHAOS +00:19:44] wild: leader Ozrik of the Pale Legion
+[CHAOS +00:19:44] equip: tier 2 (group 2) role ranged ST_MartialRangedWeapons + ST_LightArmor + no extra prof SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields
+[CHAOS +00:19:44] support: ranged band 2 1 item rolls on 5c8f5316-dc77-db4a-4b5e-9c53c63b1c70
+[CHAOS +00:19:44] equip: potions 1
+[CHAOS +00:19:44] equip: tier 2 (group 2) role melee ST_MartialMeleeWeapons + ST_LightArmor + 1 extra prof SimpleWeapons;MartialWeapons;LightArmor;MediumArmor;HeavyArmor;Shields
+[CHAOS +00:19:44] equip: class kit 1 template(s) on 27cf8895-a306-4a2a-a8fa-469566722738
+[CHAOS +00:19:44] equip: potions 1
+[CHAOS +00:19:44] wild: spawned group 2 tier 2 (roll 90) 4 mobs, (evil pack) type Humanoid at ~ 71m map (-35, 366) h 20
+[CHAOS +00:19:44] announce: A hostile warband prowls nearby...
+[CHAOS +00:19:44] equipped WPN_HUM_Shield_B_0_ce007d51-5ce0-9af3-ace0-ef69f0231e62 on CHAOST_tank_L4_halfelf_m_7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equipped WPN_HUM_Shield_C_0_6d569626-2813-7d51-740a-74906ac2a0c6 on CHAOST_melee_dps_L7_halfelf_m_89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] equipped WPN_HUM_Shield_C_0_c9c8067c-9d9a-8b30-cd65-dad68fa149ec on CHAOST_healer_L7_halfelf_m_27cf8895-a306-4a2a-a8fa-469566722738
+[CHAOS +00:19:44] equipped ALCH_Solution_Grenade_Web_04a59eb9-1abf-55c5-447b-70705d8cd757 on CHAOST_tank_L4_halfelf_m_7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equipped ALCH_Solution_Grenade_Web_4663d122-413f-559e-51fe-dbbc3b5da94d on CHAOST_melee_dps_L7_halfelf_m_89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] equipped CONS_Poison_Drow_029456aa-8edf-696d-7451-a7d7d2aac935 on CHAOST_tank_L4_halfelf_m_7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equipped CONS_Potion_Healing_A_fe0f1abd-7726-8234-86e9-75fd3785704e on CHAOST_tank_L4_halfelf_m_7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equipped CONS_Potion_Healing_A_Greater_83a8290d-ec3a-e9bf-d5cb-7d02724072ca on CHAOST_melee_dps_L7_halfelf_m_89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] equipped CONS_Potion_Healing_A_d06f6f07-d8b3-4b04-1e6b-b9546c0f662f on CHAOST_ranged_L4_halfelf_m_5c8f5316-dc77-db4a-4b5e-9c53c63b1c70
+[CHAOS +00:19:44] equipped CONS_Potion_Healing_A_Greater_000d61a4-2d8e-ea03-34e4-55af6c81a2c3 on CHAOST_healer_L7_halfelf_m_27cf8895-a306-4a2a-a8fa-469566722738
+[CHAOS +00:19:44] equipped ARR_Arrow_Of_Ricochet_100d2675-d660-2f92-cf81-7d3012674d17 on CHAOST_ranged_L4_halfelf_m_5c8f5316-dc77-db4a-4b5e-9c53c63b1c70
+[CHAOS +00:19:44] equipped WPN_HUM_Shortsword_A_0_ce50954e-8b9f-c917-72a3-ce62e26497d8 on CHAOST_tank_L4_halfelf_m_7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:44] equipped WPN_HUM_Maul_A_0_c0027e8a-c774-b9a0-79e1-072b938c05bb on CHAOST_melee_dps_L7_halfelf_m_89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:19:44] equipped WPN_HUM_Longbow_A_0_bfa82967-151a-03fa-e7d8-bbdc62fd3ced on CHAOST_ranged_L4_halfelf_m_5c8f5316-dc77-db4a-4b5e-9c53c63b1c70
+[CHAOS +00:19:44] equipped WPN_HUM_Trident_A_0_c71ce295-3dfa-6b1d-b543-20df309c1c08 on CHAOST_healer_L7_halfelf_m_27cf8895-a306-4a2a-a8fa-469566722738
+[CHAOS +00:19:45] wild: member placed, drift 3.2m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:19:45] wild: member placed, drift 3.6m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:19:45] wild: member placed, drift 3.2m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:19:45] wild: member placed, drift 3.5m Evil NPC_64321d50-d516-b1b2-cfac-2eb773de1ff6
+[CHAOS +00:19:46] arm check: bfa82967-151a-03fa-e7d8-bbdc62fd3ced on 5c8f5316-dc77-db4a-4b5e-9c53c63b1c70
+[CHAOS +00:19:46] arm check: c71ce295-3dfa-6b1d-b543-20df309c1c08 on 27cf8895-a306-4a2a-a8fa-469566722738
+[CHAOS +00:19:46] arm check: ce50954e-8b9f-c917-72a3-ce62e26497d8 on 7d448777-dcef-09a7-9228-b4b5d8c7f429
+[CHAOS +00:19:46] arm check: c0027e8a-c774-b9a0-79e1-072b938c05bb on 89483594-a3ec-462f-8a2d-89bb0a7084d8
+[CHAOS +00:21:03] wild: group 2 aggroed by S_Player_Astarion_c7c13742-bacd-460a-8f65-f864fe41f255 ( 4 mobs ); backoff arms only after a real fight
+
+- Leader (Ozrik) - barbarian (lvl7) - ac12
+  - Round #1: threw web grenade that hit my entire party of 6
+  - Round #2: Enraged + used Weapon Action Concussive Smash
+  - Round #3: Threw healing potion to heam himself + ally (greater), then 2x normal melee attacks
+  - Round #4: 2x attacks (invoked reckless attack)
+- Ranger #1 (lvl4) - ac13 (12 dex, so +1 from dex and maybe shield for +2?)
+  - Round #1: Shot arrow of many target
+  - Round #2: 2x ranged attacks
+- Melee/tank (lvl4) - ac14 
+  - Round #1: Threw web grenade
+  - Round #2: Used Weapon action "Piercing Strike", then Action Surge and then normal melee attack (nice!). Tank is only lvl4, if he had been lvl5 that would have meant 4x attacks (which is great!)
+  - Round #3: Attacked 1x
+  - Special: 
+- Healer - cleric (lvl7) - AC12
+  - Round #1: Threw healing potion that healed leader + ranger #1 (Greater healing potion so ~20'ish heal on each (nice!))
+  - Round #2: Threw healing potion on 2x party members (it's own, not mine, so good!)wq
+  - Round #3: 1x attack
+  - Round #4: 1x attack
+  - Special: Beside the Warding Flare, never used any spells (description just says Drow Half-Elf, I think for a wizard it says Drow Half-Elf Wizard)
+

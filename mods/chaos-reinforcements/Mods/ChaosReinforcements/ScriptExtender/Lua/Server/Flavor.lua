@@ -90,12 +90,15 @@ local function displayNameText(char)
     return nil
 end
 
--- public: fallback naming for BLANK-named spawn templates (owner 2026-11-02, in-game:
--- ettercap + hobgoblin rendered as nameless "lvl 2" mouse-overs). Neither template nor
--- stats carries a DisplayName; the race resource usually provides the name, but some
--- races have none. Check the rendered name 500ms after spawn; if blank/"Not Found"/
--- raw ResStr key, apply the DB's pretty stats name (entry.nm) via SetStoryDisplayName
--- (the proven leader-rename call). Mobs that already render a name are untouched.
+-- public: naming for spawns. v3.11 origin: fallback naming for BLANK-named spawn
+-- templates (ettercap/hobgoblin rendered as nameless "lvl 2" mouse-overs) - check the
+-- rendered name 500ms after spawn; if blank/"Not Found"/raw ResStr key, apply the DB's
+-- pretty stats name (entry.nm) via SetStoryDisplayName (the proven leader-rename call).
+-- v3.38 (owner: team cleric tooltip said "Drow Half-Elf" - donor's loca name, while
+-- vanilla casters show "... Cleric"): CHAOST team mobs DO render a name - the donor
+-- template's - so the blank-check never fired and entry.nm ("Half-Elf Cleric") never
+-- applied. Team mobs (the only callers with entry.nm) now get relabeled UNCONDITIONALLY
+-- (txt ~= fallback); pool mobs keep the old blank-only behavior.
 function FlavorNameFix(mob, fallback)
     if not fallback or fallback == "" then return end
     pcall(Ext.Timer.WaitFor, 500, function ()
@@ -105,9 +108,10 @@ function FlavorNameFix(mob, fallback)
         if not okD or not dn then return end
         local okT, txt = pcall(function () return tostring(dn.Name:Get()) end)
         if not okT then return end
-        if txt == "" or txt == "Not Found" or txt:find("^ResStr_") then
+        local blank = txt == "" or txt == "Not Found" or txt:find("^ResStr_")
+        if blank or txt ~= fallback then
             pcall(Osi.SetStoryDisplayName, mob, fallback)
-            log("namefix:", mob, "blank (" .. txt .. ") ->", fallback)
+            log("namefix:", mob, "(" .. txt .. ") ->", fallback)
         end
     end)
 end

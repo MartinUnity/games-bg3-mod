@@ -154,10 +154,19 @@ Where things live:
   `data "Strength"` - abbreviations were silently dropped, all mobs had base 10s);
   black-screen hangs = Proton/Vulkan swapchain thrash from rapid alt-tabbing (13x
   "0x0 extent -> offscreen" in gold log, zero mod errors — saved to repo `game-logs/`),
-  NOT the mod); HP inflation diagnosed: LevelOverride+Progressions grant REAL class
+  NOT the mod; owner PERM fix = **Borderless window** instead of Full screen on
+  Proton/Vulkan); HP inflation diagnosed: LevelOverride+Progressions grant REAL class
   levels on top of the cumulative Vitality curve (observed = curve + max hit dice,
   exact on two d10 L7 mobs) — fix candidate: Vitality = lvl-1 hit die only (HANDOVER
-  v3.37 has the numbers + prediction to confirm in-game););
+  v3.37 has the numbers + prediction to confirm in-game);
+  **v3.38 casting + naming** (owner: mobs had class features but cast NOTHING): spells/
+  slots now via per-level `DefaultBoosts` on CHAOST entries — `ActionResource(SpellSlot,n,lvl)`
+  curves + level-gated `UnlockSpell(id,,,,ability)` kits for healer/caster/ranged/wildcard
+  (vanilla-precedent channel; ALL ids validated vs vanilla Spell_*.txt — vanilla Characters
+  never carry spell-list tokens; generic mobs' spells come from root-template SpellSet attr
+  instead); tooltips showed donor loca name ("Drow Half-Elf") because FlavorNameFix was
+  blank-only — team mobs now relabeled unconditionally, ROLE_LABEL class-flavored
+  (Cleric/Wizard/Hunter/Berserker/Vanguard/Bard) → "Half-Elf Cleric"););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

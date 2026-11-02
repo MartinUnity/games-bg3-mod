@@ -91,6 +91,52 @@ ROLES = {
         cast="Charisma"),
 }
 
+# ---- v3.38 SPELL KITS (owner: mobs had class features but cast NOTHING - cleric
+# meleeing, ranger never marking). Vanilla census (subagent, 2026-11-02): Character
+# entries have no spell-list token; generic mobs get spells from root-template
+# SpellSet attr, named casters grant via UnlockSpell(...) + slots via
+# ActionResource(SpellSlot,count,level) boosts (precedents: Goblin_Cleric
+# DefaultBoosts, Roland's DEN_Rolan_DefaultSpells passive, TWN_Githyanki_Warlock).
+# We take the proven stats-only channel: per-entry DefaultBoosts (our CHAOST entries
+# are per-level, so gating is direct). ALL spell ids validated against vanilla
+# Spell_*.txt (no I_ARM_*_Body-style silent drops); _Human/_Humanoid define no
+# DefaultBoosts, so adding ours overrides nothing. Slot curves = vanilla NPC_Cleric/
+# player tables; UnlockSpell form from Passive.txt:808 (spell,,,,ability).
+FULL_SLOTS = {  # cleric/wizard curve: level -> {slot_level: count}
+    1: {1: 2}, 2: {1: 3}, 3: {1: 4, 2: 2}, 4: {1: 4, 2: 3},
+    5: {1: 4, 2: 3, 3: 2}, 6: {1: 4, 2: 3, 3: 3}, 7: {1: 4, 2: 3, 3: 3},
+    8: {1: 4, 2: 3, 3: 3, 4: 1}, 9: {1: 4, 2: 3, 3: 3, 4: 2},
+    10: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1}, 11: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
+    12: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
+}
+HALF_SLOTS = {  # ranger/bard curve
+    1: {}, 2: {1: 2}, 3: {1: 3}, 4: {1: 3},
+    5: {1: 4, 2: 2}, 6: {1: 4, 2: 2}, 7: {1: 4, 2: 3}, 8: {1: 4, 2: 3},
+    9: {1: 4, 2: 3, 3: 2}, 10: {1: 4, 2: 3, 3: 2},
+    11: {1: 4, 2: 3, 3: 2, 4: 1}, 12: {1: 4, 2: 3, 3: 2, 4: 1},
+}
+# role -> (casting ability, slot curve, [(min char level, spell stats id), ...])
+SPELLS = {
+    "healer": ("Wisdom", FULL_SLOTS, [
+        (1, "Target_SacredFlame"),            # cantrip
+        (1, "Target_Bless"), (1, "Target_HealingWord"),
+        (2, "Projectile_GuidingBolt"), (2, "Target_ShieldOfFaith"),
+        (3, "Target_MAG_SpiritualWeapon"),
+        (5, "Shout_SpiritGuardians"), (7, "Target_CallLightning")]),
+    "caster": ("Intelligence", FULL_SLOTS, [
+        (1, "Projectile_FireBolt"), (1, "Projectile_AcidSplash"),  # cantrips
+        (1, "Projectile_MagicMissile"), (1, "Zone_Thunderwave"), (1, "Target_MageArmor"),
+        (3, "Projectile_ScorchingRay"), (3, "Target_Web"),
+        (3, "Projectile_ChromaticOrb_Acid"), (5, "Shout_MirrorImage")]),
+    "ranged": ("Wisdom", HALF_SLOTS, [
+        (2, "Target_HuntersMark"), (2, "Target_Barkskin"),
+        (5, "Target_SpikeGrowth"), (5, "Target_Goodberry"),
+        (7, "Shout_PassWithoutTrace")]),
+    "wildcard": ("Charisma", HALF_SLOTS, [
+        (1, "Target_ViciousMockery"),         # cantrip
+        (2, "Target_HealingWord")]),
+}
+
 # vanilla humanoid donors (ParentTemplateId): proven-spawnable player-race templates.
 # ⚠️ 2026-11-02 lesson: tiefling_m/gith_m first carried RUNTIME INSTANCE guids copied
 # from an equip-log line ("TemplateName_<instance-guid>", not the template MapKey) -
@@ -176,6 +222,15 @@ def main():
             ]
             if cfg["cast"]:
                 stats_lines.append(f'data "SpellCastingAbility" "{cfg["cast"]}"')
+            kit = SPELLS.get(role)
+            if kit:
+                ab, curve, spells = kit
+                boosts = [f'ActionResource(SpellSlot,{cnt},{slvl})'
+                          for slvl, cnt in sorted(curve.get(lvl, {}).items())]
+                boosts += [f'UnlockSpell({sid},,,,{ab})'
+                           for need, sid in spells if lvl >= need]
+                if boosts:
+                    stats_lines.append('data "DefaultBoosts" "' + ";".join(boosts) + '"')
             stats_lines.append("")
             for tag, donor in DONORS:
                 mapkey = str(uuid.uuid4())
