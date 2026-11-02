@@ -212,7 +212,12 @@ def main():
                         "INT": "Intelligence", "WIS": "Wisdom", "CHA": "Charisma"}.get(ab, ab)
                 stats_lines.append(f'data "{full}" "{v}"')
             stats_lines += [
-                f'data "Vitality" "{cfg["hp"](lvl)}"',
+                # v3.39 HP DOUBLE-COUNT FIX: LevelOverride+Progressions make the engine
+                # level the mob FOR REAL (rolled hit dice per level - owner wants that
+                # dice variance kept, NOT deterministic 5e pools), so Vitality must be
+                # the LVL-1 pool only; the old cumulative curve stacked UNDER the dice
+                # = ~2x HP (owner: L7 barbarian 187, L5 110). Expect now ~curve +/- roll.
+                f'data "Vitality" "{cfg["hp"](1)}"',
                 f'data "Armor" "{cfg["armor"]}"',
                 f'data "Level" "{lvl}"',
                 f'data "Proficiency Group" "{cfg["prof"]}"',

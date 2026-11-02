@@ -432,6 +432,41 @@ function EquipMob(created, base, entry, groupTier, isBoss)
                 "on", created)
         end)
     end
+    probeGear(created, armor ~= nil)
+end
+
+-- v3.39 ONE-SHOT DIAGNOSTIC (owner: ARM_* equips per log, but every team member renders
+-- the same blue robe - weapon art shows, armor art does not; our pipeline provably adds
+-- no garments for armored mobs, so WHERE does the robe ride in?). Dumps the full
+-- Equipment + Inventory components of the first 3 armored spawns to profile file
+-- Chaos_gear_dump.txt (file, not main log - owner hates spam). Flip PROBE_GEAR=false
+-- once the robe mystery is solved.
+local PROBE_GEAR = true
+local GEAR_FILE = "Chaos_gear_dump.txt"
+local GEAR_DUMP = ""
+local gearProbes = 0
+function probeGear(mob, armored)
+    if not PROBE_GEAR or not armored or gearProbes >= 3 then return end
+    gearProbes = gearProbes + 1
+    pcall(Ext.Timer.WaitFor, 2000, function ()
+        local okE, ent = pcall(Ext.Entity.Get, mob)
+        if not okE or not ent then log("gear: entity gone", mob) return end
+        local chunk = "=== mob " .. tostring(mob) .. " (probe " .. gearProbes .. ") ===\n"
+        for _, comp in ipairs({ "Equipment", "Inventory" }) do
+            local okC, c = pcall(function () return ent[comp] end)
+            if okC and c ~= nil then
+                local okD, d = pcall(Ext.DumpExport, c)
+                chunk = chunk .. "-- " .. comp .. " --\n"
+                chunk = chunk .. (okD and tostring(d) or ("dump threw: " .. tostring(d))) .. "\n"
+            else
+                chunk = chunk .. "-- " .. comp .. ": NIL --\n"
+            end
+        end
+        GEAR_DUMP = GEAR_DUMP .. chunk .. "\n"
+        local okIO, eIO = pcall(Ext.IO.SaveFile, GEAR_FILE, GEAR_DUMP)
+        log("gear: dumped", tostring(mob):sub(1, 8), okIO and "ok" or ("SAVE FAILED " .. tostring(eIO)),
+            "-> " .. GEAR_FILE)
+    end)
 end
 
 -- level-appropriate pocket gold for leaders (owner spec 2026-10-31): leader gets a

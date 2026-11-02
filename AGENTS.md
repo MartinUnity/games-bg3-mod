@@ -166,7 +166,14 @@ Where things live:
   never carry spell-list tokens; generic mobs' spells come from root-template SpellSet attr
   instead); tooltips showed donor loca name ("Drow Half-Elf") because FlavorNameFix was
   blank-only — team mobs now relabeled unconditionally, ROLE_LABEL class-flavored
-  (Cleric/Wizard/Hunter/Berserker/Vanguard/Bard) → "Half-Elf Cleric"););
+  (Cleric/Wizard/Hunter/Berserker/Vanguard/Bard) → "Half-Elf Cleric");
+  **v3.39 HP double-count fix + gear probe** (owner verdict: equip/stats/naming all ✅):
+  CHAOST Vitality = level-1 pool only — the engine still levels and ROLLS hit dice per
+  level (owner: keep the dice variance, no deterministic 5e pools); blue-robe visual
+  mystery UNSOLVED (ARM_* equip per log, all 10 templates carry real VisualTemplate art,
+  our pipeline grants no garments to armored mobs, yet everyone renders the same robe)
+  → one-shot `probeGear` dumps Equipment+Inventory of first 3 armored spawns to profile
+  `Chaos_gear_dump.txt` — read next session, then set PROBE_GEAR=false););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

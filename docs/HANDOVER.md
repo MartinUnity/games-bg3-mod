@@ -442,6 +442,23 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.39 (owner verdict on v3.38: "Equipment works! Stats work!"):** naming ✅ (live log:
+  "Elf Cleric"/"Human Vanguard" namefix lines), ARM_* equip lines ✅, casting pending
+  more observation. Two follow-ups. (1) **HP still ~2x** — diagnosis CONFIRMED: L7
+  barbarian 187 (that one was the LEADER: + CHAOS_VIT_1 buff on top), L5 110 vs curve 53,
+  L4-5 grunts 70-110 vs a lvl-5 party at 50-60. Fix applied: Vitality = **level-1 pool
+  only** (hp(1)) in gen_teams; the engine's LevelOverride+Progressions leveling adds the
+  per-level hit dice. Owner explicitly wants the DICE kept (deterministic 5e class pools
+  rejected — "rolling hit dice per level... exactly what we want with the chaos system").
+  Expect L7 barbarian ~60-80 now. (2) **Blue-robe mystery:** armor equips per log, but
+  every team member renders the same blue robe (weapon art fine). Excluded: our pipeline
+  (clothes gated `if not armor`), dead art (plain ARM_* root templates DO carry
+  VisualTemplate - earlier regex lied because root .lsx uses GameObject nodes, not
+  "record"), race-suffixed variants (none exist). Robe is game-side: visual fallback or
+  inherited donor item. v3.39 ships a ONE-SHOT gear probe (PROBE_GEAR=true in Equip.lua):
+  first 3 armored spawns dump Equipment+Inventory components to profile file
+  Chaos_gear_dump.txt (file, not main log). Read it next session to name the robe, then
+  flip PROBE_GEAR=false. Pak 233517 B.
 - **v3.38 casting + team naming (owner team-fight reports, `game-logs/team-fight-1.txt`;
   note: those fights ran v3.36, so the v3.37 armor/ability fixes are still UNVERIFIED):**
   AI quality praised (potion-throwing between allies, web grenades, Action Surge, weapon
