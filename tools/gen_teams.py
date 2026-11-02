@@ -91,18 +91,23 @@ ROLES = {
         cast="Charisma"),
 }
 
-# vanilla humanoid donors (ParentTemplateId): proven-spawnable player-race templates
+# vanilla humanoid donors (ParentTemplateId): proven-spawnable player-race templates.
+# ⚠️ 2026-11-02 lesson: tiefling_m/gith_m first carried RUNTIME INSTANCE guids copied
+# from an equip-log line ("TemplateName_<instance-guid>", not the template MapKey) -
+# dangling ParentTemplateId => invisible body + fallback portrait (owner report:
+# 2-person tiefling team invisible with shadowed human-face icon). Donors are now
+# validated against the live root-template dump at generation time (see main()).
 DONORS = [
     ("human_m", "BASE_Humans_Male_Aggressive_e0eaf4bd-1c00-4947-aaa1-b1801fbfadfe"),
     ("elf_f", "BASE_Elves_Female_Drow_0bd09fae-e858-4a6e-8d1a-72dd0eb4cb60"),
     ("halfelf_m", "BASE_HalfElves_Male_Drow_9335e9a8-ad69-4180-b286-6e86c8e444a9"),
     ("halfling_m", "BASE_Halflings_Male_Crowd_Refugee_A_0fc1e8e9-18e2-407f-8ee2-4de350f15b5f"),
     ("dwarf_f", "Dwarves_Female_Duergar_Guard_Melee_94f7da13-e289-494b-9889-166614e3fc6f"),
-    ("tiefling_m", "Tieflings_Male_Asmodeus_Guard_Caster_748a7bde-5a75-4d37-0aac-a8ad0f170903"),
-    ("gith_m", "Githyanki_Male_Guard_Caster_8f31c26a-67c0-b0bf-8a7a-a08a627b1692"),
+    ("tiefling_m", "Tieflings_Male_Asmodeus_Guard_Caster_806815fc-a6ae-4ad0-b928-10c189597abb"),
+    ("gith_m", "Githyanki_Male_Guard_Caster_49567bbf-6d5c-4685-80ce-cde321572841"),
     # v3.29 race-coherence donors (owner: goblin fights spawned HUMAN reinforcements -
     # odd mix; CHAOST squads now pick a donor race matching the fight's dominant enemy
-    # race). ids verified against the live root-template dump 2026-11-01.
+    # race). All donor ids are validated against the live dump at generation time.
     ("goblin_m", "BASE_Goblins_Male_fb1af356-55c0-4b63-8418-353170bfeb75"),
     ("goblin_f", "BASE_Goblins_Female_9629600b-2e80-4862-9ddb-1ae8e2ee824c"),
     ("halforc_m", "BASE_HalfOrcs_Male_0350f048-11f5-42fe-8399-228e419f4789"),
@@ -112,7 +117,34 @@ DONORS = [
 MAX_LEVEL = 12
 
 
+DUMP = pathlib.Path("/home/martin/.local/share/Steam/steamapps/compatdata/1086940/"
+                    "pfx/drive_c/users/steamuser/AppData/Local/Larian Studios/"
+                    "Baldur's Gate 3/Script Extender/Chaos_root_templates.txt")
+
+
+def validate_donors():
+    """Every donor id must be a real root-template MapKey (live dump: guid\\tName).
+    Guards against the 2026-11-02 instance-guid mixup: a dangling ParentTemplateId
+    spawns fine but inherits NO visual (invisible mob + fallback portrait)."""
+    dump = {}
+    for line in DUMP.read_text(encoding="utf-8", errors="replace").splitlines():
+        parts = line.split("\t")
+        if len(parts) == 2:
+            dump[parts[0]] = parts[1]
+    bad = []
+    for tag, donor in DONORS:
+        tpl, guid = donor.rsplit("_", 1)
+        if guid not in dump:
+            hits = [g for g, n in dump.items() if n == tpl]
+            bad.append(f"  {tag}: {guid} not a template MapKey (by name: {hits})")
+        elif dump[guid] != tpl:
+            bad.append(f"  {tag}: {guid} is '{dump[guid]}', wanted '{tpl}'")
+    if bad:
+        raise SystemExit("DONOR VALIDATION FAILED - refusing to generate:\n" + "\n".join(bad))
+
+
 def main():
+    validate_donors()
     stats_lines = []
     tpl_lines = []
     lookup = {r: {} for r in ROLES}

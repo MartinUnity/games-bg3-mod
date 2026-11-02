@@ -101,7 +101,18 @@ local wildMisses = 0 -- v3.31 roll-streak: heartbeats since the last wild spawn,
 -- "fight over" (SetHostileAndEnterCombat may take a tick or two to show).
 local WILD_REAL_COMBAT_MS = 15000
 local WILD_ENGAGE_GRACE_MS = 6000
-local pendingEngage = nil   -- { id, members, combatMs, goneMs }
+local pendingEngage = nil   -- { id, members, combatMs, goneMs, group }
+-- v3.34 settle guard (owner 2026-11-02: three groups in a row "aggroed" at spawn,
+-- 58-72m from a standing-still player, then fizzled): heartbeat (90s) and monitor
+-- (2s) both start at SessionLoaded and 90 % 2 == 0, so they are PHASE-LOCKED - the
+-- monitor tick always fires right after the heartbeat's spawn block, while the
+-- members' AppearAtPosition teleports are still unsettled and GetPosition still
+-- reads the host-adjacent CreateAtObject spot. No group may aggro (or expire)
+-- during its first WILD_SETTLE_MS; additionally a member's position must be
+-- within WILD_MEMBER_SANITY_M of the recorded group center to count for aggro
+-- (kills stale reads deterministically, and also ignores 900m+ fallback placements).
+local WILD_SETTLE_MS = 5000
+local WILD_MEMBER_SANITY_M = 25
 
 -- Camp guard (owner 2026-11-01, campsite spawn incident): making camp teleports the
 -- party to the campsite WITHOUT an Osiris level change (confirmed: entering camp
@@ -281,7 +292,8 @@ local function aggroGroup(group, player)
     end
     -- no instant backoff (owner 2026-11-01): arm only if the monitor later
     -- confirms a REAL fight (see pendingEngage note at the constants)
-    pendingEngage = { id = group.id, members = group.members, combatMs = 0, goneMs = 0 }
+    pendingEngage = { id = group.id, members = group.members, combatMs = 0, goneMs = 0,
+                      group = group }
     log("wild: group", group.id, "aggroed by", player, "(", #group.members,
         "mobs ); backoff arms only after a real fight")
 end
@@ -353,7 +365,8 @@ local function spawnWildGroup(host, base)
     nextGroupId = nextGroupId + 1
     local group = { id = nextGroupId, members = {}, type = etype,
                     faction = groupFaction, cx = x, cy = y, cz = z,
-                    ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000 }
+                    ttlMs = rand(WILD_EXPIRE_MIN, WILD_EXPIRE_MAX) * 60000,
+                    settleMs = WILD_SETTLE_MS }   -- v3.34: no aggro/expiry until placed
     -- team mode: compose class-teams for humanoid evil packs (iteration 3)
     local teamMode = WILD_TEAMS and etype == "Humanoid" and groupFaction
                      and not themedPool and not neutralPool
@@ -557,9 +570,19 @@ local function monitor()
                     log("wild: group", pendingEngage.id, "fight lasted ~",
                         math.floor(pendingEngage.combatMs / 1000) ..
                         "s - fizzle (anomaly), no backoff")
+                    -- brief-but-real fight: members may be dead or alive; NOT
+                    -- re-tracked (a TTL delete could strip lootable corpses)
                 else
                     log("wild: group", pendingEngage.id, "never engaged (aggro fizzled)",
-                        "- anomaly, no backoff")
+                        "- anomaly, no backoff; re-tracked")
+                    -- v3.34 de-orphan: the aggro never produced a fight, so the
+                    -- mobs are ALIVE out there - put the group back under proximity
+                    -- + TTL tracking instead of leaving a hostile pack nobody
+                    -- governs (2026-11-02: 3 orphaned packs in 8 min)
+                    if pendingEngage.group then
+                        pendingEngage.group.settleMs = WILD_SETTLE_MS
+                        groups[#groups + 1] = pendingEngage.group
+                    end
                 end
                 pendingEngage = nil
             end
@@ -575,21 +598,35 @@ local function monitor()
     local remaining = {}
     for _, group in ipairs(groups) do
         local nearest, nearDist = nil, math.huge
+        local sanity2 = WILD_MEMBER_SANITY_M * WILD_MEMBER_SANITY_M
         for _, guid in ipairs(group.members) do
             local okM, mx, my, mz = pcall(Osi.GetPosition, guid)
             if okM then
-                for _, p in ipairs(players) do
-                    local okP, px, py, pz = pcall(Osi.GetPosition, p)
-                    if okP then
-                        -- 3D distance: a group on the floor below (the GOB_ Sanctum
-                        -- disk-puzzle room) must NOT aggro through the ceiling
-                        local d2 = (mx - px) ^ 2 + (my - py) ^ 2 + (mz - pz) ^ 2
-                        if d2 < nearDist then nearest, nearDist = p, d2 end
+                -- v3.34: stale/fallback positions (freshly created at the host's
+                -- feet, or an AppearAtPosition fallback ~900m off) must not count
+                -- for aggro - only members near the RECORDED group center do
+                local settled = true
+                if group.cx then
+                    settled = (mx - group.cx) ^ 2 + (my - group.cy) ^ 2 +
+                              (mz - group.cz) ^ 2 <= sanity2
+                end
+                if settled then
+                    for _, p in ipairs(players) do
+                        local okP, px, py, pz = pcall(Osi.GetPosition, p)
+                        if okP then
+                            -- 3D distance: a group on the floor below (the GOB_ Sanctum
+                            -- disk-puzzle room) must NOT aggro through the ceiling
+                            local d2 = (mx - px) ^ 2 + (my - py) ^ 2 + (mz - pz) ^ 2
+                            if d2 < nearDist then nearest, nearDist = p, d2 end
+                        end
                     end
                 end
             end
         end
-        if nearDist <= WILD_AGGRO_RANGE * WILD_AGGRO_RANGE and group.faction then
+        if group.settleMs and group.settleMs > 0 then
+            group.settleMs = group.settleMs - WILD_MONITOR_MS
+            remaining[#remaining + 1] = group   -- settling: no aggro, expiry holds
+        elseif nearDist <= WILD_AGGRO_RANGE * WILD_AGGRO_RANGE and group.faction then
             aggroGroup(group, nearest)   -- neutral travelers never auto-aggro
         elseif nearDist <= WILD_WATCHED_M * WILD_WATCHED_M then
             remaining[#remaining + 1] = group   -- watched: expiry clock holds

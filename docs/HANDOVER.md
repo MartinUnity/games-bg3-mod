@@ -442,6 +442,40 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.34 false-aggro race + invisible CHAOST donors fix (owner 2026-11-02: "3 groups
+  in a row spawned and instantly 'aggro fizzled' while I stood still 60-70m away;
+  2-person tiefling team totally invisible with fallback portrait; game hangs to
+  black screen during wandering-mob fights, 2-3x"):** TWO bugs, both found from the
+  log. **(a) False-aggro race:** heartbeat (90s) and monitor (2s) both start at
+  SessionLoaded and 90%2==0 → PHASE-LOCKED, monitor tick always fires right after the
+  heartbeat's spawn block while AppearAtPosition teleports are unsettled and
+  GetPosition still reads the host-adjacent CreateAtObject spot → "player within 12m"
+  → spurious aggro from 60-75m → group leaves tracking → SetHostileAndEnterCombat on
+  distant mid-appear mobs never sustains → "never engaged" 6s later, no backoff, next
+  heartbeat spawns another victim (the old pre-v3.25 "aggroed + backoff 10min" lines
+  were the same bug silently eating spawn chances). Fix (Wild.lua): `WILD_SETTLE_MS`
+  5s settle stamp on group creation (no aggro/expiry while settling), member-position
+  sanity (only members within `WILD_MEMBER_SANITY_M`=25m of the recorded group center
+  count for aggro - also ignores the observed ~937m AppearAtPosition fallback), and
+  **de-orphan**: a "never engaged" verdict re-adds the group to tracking (mobs are
+  alive out there) so proximity + TTL govern them again; brief-but-real fights
+  (combatMs>0) stay untracked (a TTL delete could strip lootable corpses).
+  **(b) Invisible team members:** gen_teams.py DONORS for tiefling_m/gith_m carried
+  RUNTIME INSTANCE guids copied from an equip-log line ("TemplateName_<instance>",
+  not the template MapKey) → dangling ParentTemplateId → no visual inheritance →
+  invisible body + shadowed fallback portrait (stats/kit fine - explicit on the
+  node, matching the owner's "proper lvl7 barbarian" inspection). Real donors:
+  tiefling_m = `Tieflings_Male_Asmodeus_Guard_Caster_806815fc-...`, gith_m =
+  `Githyanki_Male_Guard_Caster_49567bbf-...` (both vanilla merged.lsx, both proven
+  visible as wild pool spawns). All 792 CHAOST templates regenerated (new mapkeys);
+  `validate_donors()` in gen_teams.py now hard-fails if any donor id is not a real
+  MapKey in the live root-template dump. ⚠️ Crash hypothesis (unproven): renderer
+  hang on dangling-visual characters (all black-screen hangs happened during
+  wandering-mob fights; no dumps/crash artifacts in SE logs or journal) - expect it
+  to disappear with the donor fix; if it persists, look at orphaned invisible packs
+  from PRE-fix sessions (gone after session restart - temporary=1). Pak shipped,
+  lsf verified (72x each corrected donor, 0x bogus). Pending verdicts: visible
+  tiefling/gith teams, no more spawn-time "aggroed" lines, settle-guard no-aggro.
 - **v3.26 HOTFIX: `os` does not exist in SE server Lua (owner: "no log output anymore,
   new game on v3.25"):** the Extender Runtime log (profile `Script Extender Logs/`,
   per-session files — the prefix-home path in AGENTS.md is stale) showed
