@@ -452,7 +452,7 @@ function probeGear(mob, armored)
         local okE, ent = pcall(Ext.Entity.Get, mob)
         if not okE or not ent then log("gear: entity gone", mob) return end
         local chunk = "=== mob " .. tostring(mob) .. " (probe " .. gearProbes .. ") ===\n"
-        for _, comp in ipairs({ "Equipment", "Inventory" }) do
+        for _, comp in ipairs({ "Equipment", "Inventory", "OutfitOverride" }) do
             local okC, c = pcall(function () return ent[comp] end)
             if okC and c ~= nil then
                 local okD, d = pcall(Ext.DumpExport, c)

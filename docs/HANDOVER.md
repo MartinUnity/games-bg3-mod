@@ -455,10 +455,14 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   (clothes gated `if not armor`), dead art (plain ARM_* root templates DO carry
   VisualTemplate - earlier regex lied because root .lsx uses GameObject nodes, not
   "record"), race-suffixed variants (none exist). Robe is game-side: visual fallback or
-  inherited donor item. v3.39 ships a ONE-SHOT gear probe (PROBE_GEAR=true in Equip.lua):
-  first 3 armored spawns dump Equipment+Inventory components to profile file
-  Chaos_gear_dump.txt (file, not main log). Read it next session to name the robe, then
-  flip PROBE_GEAR=false. Pak 233517 B.
+  inherited donor item. FURTHER EXONERATIONS: donor BASE_* node carries NO item children
+  (BASE_* families live in GustavDev _merged, not Shared); the ST_* weapon tables hold
+  ONLY I_WPN_* (no garments). Prime suspect: OutfitOverride (vanilla default-outfit
+  channel for unspecced BASE_* civilians - Commoners' Robes ARE that blue robe) - the
+  probe dumps it too. v3.39 ships a ONE-SHOT gear probe (PROBE_GEAR=true in Equip.lua):
+  first 3 armored spawns dump Equipment+Inventory+OutfitOverride components to profile
+  file Chaos_gear_dump.txt (file, not main log). Read it next session to name the robe,
+  then flip PROBE_GEAR=false. Pak 233517 B.
 - **v3.38 casting + team naming (owner team-fight reports, `game-logs/team-fight-1.txt`;
   note: those fights ran v3.36, so the v3.37 armor/ability fixes are still UNVERIFIED):**
   AI quality praised (potion-throwing between allies, web grenades, Action Surge, weapon
