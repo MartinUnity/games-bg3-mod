@@ -2,3 +2,4 @@ bg3-vanilla-data/
 games-bg3.code-workspace
 __pycache__/
 tools/e8b_backup/
+mods/*/Public/**/RootTemplates/*.lsf

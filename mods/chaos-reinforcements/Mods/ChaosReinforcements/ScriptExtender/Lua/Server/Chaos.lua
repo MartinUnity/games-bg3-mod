@@ -1,14 +1,16 @@
 -- ChaosReinforcements chaos/reinforcement engine (server side). Ext.Require'd AFTER
 -- Common.lua (log + constants), CreatureDB.lua (CHAOS_DB) and Equip.lua (EquipMob).
 --
--- Owner spec: stacking trigger (base 30%, +10..30% per miss; TEST_MODE=100% while testing);
+-- Owner spec: stacking trigger (base 30%, +10..30% per miss);
 -- budget = hostLevel x rand(2-4) x party knob; reinforcements match the ENCOUNTER's creature
 -- family; leader rolls only when a pack of >= 2 spawned, ~90% in-type / ~10% cross-type via
 -- the AFFINITY map, spawned OUTSIDE the budget (jackpot escalation); at host level <= 2 mobs
 -- never exceed the player's level.
 --
 -- Learnings baked in (see docs/HANDOVER.md):
---   - Osi.SetLevel sets the level NUMBER but does NOT rescale fixed monster stat blocks;
+--   - NO Osi.SetLevel calls anywhere (game hard-crash 2026-11-01: it faults inside
+--     OsirisWrappers::CallWrapper -> bg3.exe; pcall cannot survive native crashes -
+--     and it only sets the level NUMBER, never rescales fixed monster stat blocks);
 --     difficulty control happens at PICK time (CreatureDB native stats + GATES below).
 --   - SE databases are keyed by ARITY: DB_Is_InCombat has 2 columns -> Get(nil, nil) via
 --     table.unpack({}, 1, ncols). Appending nils to a table does not grow it.
@@ -18,17 +20,31 @@
 --     only a fallback when the fight could not be classified.
 
 -- Tunables ------------------------------------------------------------------
-local TEST_MODE = false             -- real odds: base 30% + 10..30% per miss
+-- (test knobs TEST_MODE/LEADER_TEST removed v3.33 - controlled iteration on
+--  specifics replaced blanket force-triggers; console: !chaos_wolf probes spawns)
 local BASE_CHANCE = 30
 local STACK_MIN, STACK_MAX = 10, 30 -- +% per encounter that didn't trigger
 local BUDGET_LO, BUDGET_HI = 2, 4   -- budget = hostLevel * rand(LO,HI), costs are hp/10
 local PARTY_KNOB = 0.15             -- +15% budget per party member beyond 4
 local MAX_SPAWNS = 8                -- total, leader included
 local LEADER_CHANCE = 10            -- % of packs (>=2 mobs) that get a leader
-local LEADER_TEST = false           -- real odds: 10% leader for packs >= 2
 local SAME_TYPE_LEADER = 90         -- % of leaders drawn from the pack's own type
 local WAVE_DELAY_MS = 1500         -- let enemies enter combat before we classify the fight
-local VERIFY_DELAY_MS = 2000       -- delayed SetLevel verification
+-- Save-load quiet window (owner 2026-11-01: loading a save into an ONGOING fight
+-- re-fires CombatStarted ~12 s after SessionLoaded -> a second reinforcement wave
+-- spawned around a restored goblin fight). Rolls are suppressed this long after
+-- every session load; live log showed CombatStarted at +16 s vs SessionLoaded +4 s.
+local LOAD_QUIET_MS = 20000
+
+-- v3.29 team-mode reinforcements (option 2, owner: "humans among goblins is too odd" -
+-- combat reinforcements get the same CHAOST class-team composer as wild squads, with
+-- ONE donor race per wave matching the fight's dominant enemy race).
+local TEAM_MIN_LEVEL = 3        -- below this, CHAOST baked levels bypass the calibrated
+                                -- low-level pool GATES (a lvl-3 team vs a lvl-2 party is
+                                -- a TPK) -> legacy gated-pool path instead
+local TEAM_CHAOS_CHANCE = 20    -- % of waves that ignore the enemy race for a random one
+local TEAM_COST = 0.7           -- member cost ~= lvl * this (baked CHAOST hp ~ 11/lvl but
+                                -- class chars are squishier per HP than fixed monsters)
 
 -- HP boost formerly in GustavDev Status_BOOST.txt (HEALTHBOOST_HARDCORE, disabled there
 -- 2026-10-31 for calibration). Lua-side reimplementation will use a custom stats file;
@@ -39,17 +55,24 @@ local MOB_HP_BOOST = ""
 -- hp/AC/ability caps per host level, plus an ExtraAttack ban (the Merregon's 2x hits were
 -- the actual killer). From level 3 anything goes except heavy types (HEAVY_TYPES/HEAVY_LEVEL).
 
--- race string (Osiris GetRace) -> creature type; grow from discovery logs
+-- race string (Osiris GetRace) -> creature type; grow from discovery logs.
+-- v3.33 additions verified against vanilla stats _Type chains (Bugbear/Gnoll ->
+-- _Humanoid, Raven -> _Critter -> _Beast, Ogre -> _Giants = the DB's own Giant typing;
+-- Bugbear was a live "type ?" in the owner's log). HalfElf/Halfling mirror the
+-- RACE_TO_DONOR keys (Common.lua). Meazel = name seen in owner reports, race string
+-- unverified - an entry that never matches is harmless.)
 local RACE_TO_TYPE = {
     Wolf = "Beast", Bear = "Beast", Bat = "Beast", Hyena = "Beast", Panther = "Beast",
-    Spider = "Beast", Rat = "Beast", Crocodile = "Beast",
+    Spider = "Beast", Rat = "Beast", Crocodile = "Beast", Raven = "Beast",
     Goblinoid = "Humanoid", Goblin = "Humanoid", Hobgoblin = "Humanoid", Duergar = "Humanoid",
     DwarfHill = "Humanoid", Human = "Humanoid", HalfOrc = "Humanoid", Githyanki = "Humanoid",
-    Tiefling = "Humanoid", DrowElf = "Humanoid", ElfHigh = "Humanoid",
+    Tiefling = "Humanoid", DrowElf = "Humanoid", ElfHigh = "Humanoid", HalfElf = "Humanoid",
+    Halfling = "Humanoid", Bugbear = "Humanoid", Gnoll = "Humanoid", Meazel = "Humanoid",
     Imp = "Fiend", Devil = "Fiend", Demon = "Fiend",
     Skeleton = "Undead", Zombie = "Undead", Ghoul = "Undead",
     Owlbear = "Monstrosity", Bulette = "Monstrosity", HookHorror = "Monstrosity",
     Worg = "Monstrosity", DisplacerBeast = "Monstrosity",
+    Ogre = "Giant",
 }
 
 -- valid leader types per pack type: same type first, then plausible "in charge of" types.
@@ -74,6 +97,7 @@ local AFFINITY = {
 
 local misses = 0
 local seen = {}
+local loadQuietUntil = 0     -- MonotonicMs() deadline: no reinforcement rolls after a session load
 local combatRoster = {}   -- combatGuid -> { participant guids, via EnteredCombat }
 local rosterPlayers = {}  -- guid -> true (skip list), refreshed per wave
 local raceDumped = false
@@ -89,35 +113,30 @@ local function spawnCreature(anchor, entry, targetLevel, doEquip, base)
             created = Osi.CreateAtObject(entry.id, anchor, 1, 1, "", 1)
         end
         if created and created ~= "" then
-            local newLvl = "?"
-            if targetLevel then
-                local okL, eL = pcall(Osi.SetLevel, created, targetLevel)
-                if okL then
-                    newLvl = targetLevel
-                    local okG, lvl = pcall(Osi.GetLevel, created)  -- immediate read-back
-                    if okG then newLvl = tostring(lvl) end
-                    pcall(Ext.Timer.WaitFor, VERIFY_DELAY_MS, function ()
-                        local okV, vLvl = pcall(Osi.GetLevel, created)
-                        if okV then log("verify", entry.id, "lvl", vLvl, "wanted", targetLevel) end
-                    end)
-                else
-                    log("SetLevel threw:", eL)
-                end
-            end
-            pcall(Osi.SetFaction, created, EVIL)
-            -- self-correction: SetLevel is silently refused by some templates -
-            -- a native lvl-10 caster among lvl-3s is a TPK, despawn and re-pick
-            local lvlNow = tonumber(newLvl)
+            -- NO Osi.SetLevel here (game hard-crash 2026-11-01: SetLevel faulted inside
+            -- bg3se OsirisWrappers::CallWrapper -> bg3.exe; pcall cannot survive engine
+            -- crashes - and v3.3 proved SetLevel only sets the level NUMBER, it never
+            -- rescales fixed monster stat blocks, i.e. cosmetic next to the crash risk).
+            -- v3.30 ORDER FIX (owner Orthon log 2026-11-01): check the NATIVE level
+            -- BEFORE SetFaction(EVIL)/hostility. Flipping the faction of an over-level
+            -- mob dragged it into combat, and the deferred delete then refused to
+            -- delete a combatant - lvl-10 devils survived in a lvl-5 fight (nameless,
+            -- because the name-fix path never ran for despawned mobs). While neutral,
+            -- the mob never engages and the ladder-delete outside combat succeeds.
+            local okG, lvlNow2 = pcall(Osi.GetLevel, created)
+            local lvlNow = tonumber(okG and lvlNow2 or nil)
+            if entry.nm then FlavorNameFix(created, entry.nm) end   -- blank-name fallback (Flavor.lua); before the despawn branch so even STUCK survivors get named
             if lvlNow and base and lvlNow > base + LEVEL_JITTER + OVERLEVEL_TOLERANCE then
                 log("over-level despawn:", entry.id, "lvl", lvlNow,
                     "> base", base, "+ tolerance - re-picking")
-                pcall(Osi.RequestDeleteTemporary, created)
+                ScheduleOverlevelDelete(created, entry.id, "")
                 return nil
             end
+            pcall(Osi.SetFaction, created, EVIL)
             local okX, eX = pcall(Osi.SetHostileAndEnterCombat, EVIL, HERO, created, anchor)
             log("spawn", entry.id, "hp", entry.hp, "ac", entry.ac or "?",
                 "str", entry.str or entry.dex or "?",
-                (entry.ea and "ExtraAttack " or ""), "lvl", newLvl,
+                (entry.ea and "ExtraAttack " or ""), "lvl", entry.lvl or lvlNow or "?",
                 (okX and "hostile" or ("hostility threw: " .. tostring(eX))))
             markSpawned(created)
             tagAsOurs(created)
@@ -146,11 +165,22 @@ end
 local function discover(combatId, players)
     if not raceDumped then
         raceDumped = true
+        -- v3.36 log-hygiene: Ext.DumpExport of a Race resource is HUNDREDS of lines
+        -- (Description blob etc.) and made the main log unreadable (owner). It was a
+        -- one-off race-format probe; the race work now runs on GetRace discovery
+        -- lines + tools/grow_race_to_type.py, so the dump goes to its own file in
+        -- the profile "Script Extender/" folder (Ext.IO.SaveFile, proven route)
+        -- and stays out of the combat log entirely.
         pcall(function ()
             local all = Ext.StaticData.GetAll("Race")
             local first = all and all[1]
             local res = first and Ext.StaticData.Get(first, "Race")
-            log("Race static sample dump:", res and Ext.DumpExport(res) or "none")
+            if res then
+                Ext.IO.SaveFile("Chaos_race_dump.txt", Ext.DumpExport(res))
+                log("Race static sample written to profile file Chaos_race_dump.txt")
+            else
+                log("Race static sample: none")
+            end
         end)
     end
 
@@ -208,10 +238,13 @@ local function reinforce(host, enemies, combatId)
     end
     local okL, hostLevel = pcall(Osi.GetLevel, host)
     local base = (okL and tonumber(hostLevel)) or 3
-    -- party size: count the members actually involved in this combat when we can
+    -- party size: count the members actually involved in this combat when we can.
+    -- v3.30: never below the DB_Players count - the involved-count read at wave time
+    -- can lag (owner log: party 6 seen, involved said 1 -> budget knob used party 1;
+    -- players were still trickling into the fight 1.5 s after CombatStarted).
     local party = #factGuids("DB_Players", 1)
     local okN, n = pcall(Osi.CombatGetInvolvedPartyMembersCount, combatId)
-    if combatId and okN and tonumber(n) then party = tonumber(n) end
+    if combatId and okN and tonumber(n) and tonumber(n) > party then party = tonumber(n) end
     local budget = math.floor(base * rand(BUDGET_LO, BUDGET_HI) * (1 + PARTY_KNOB * math.max(0, party - 4)))
     -- anchor at the fight's own enemies when we know them ("reinforcements arrive near their
     -- allies"); the host is only a fallback for fights we could not classify
@@ -230,10 +263,62 @@ local function reinforce(host, enemies, combatId)
         "spawnlevel", targetLevel, "anchors", #anchors,
         base <= SOFT_CAP_LEVEL and "gate " .. base or "")
 
+    -- v3.29 TEAM MODE (option 2, owner spec): Humanoid fights with enough budget run
+    -- the CHAOST class-team composer (slots/roles/level like wild squads) instead of
+    -- the bag-of-pool-mobs pick, and ONE donor race for the whole wave matching the
+    -- fight's dominant enemy race (goblin fight -> goblin squad, not human mobs).
+    -- Gated to base >= TEAM_MIN_LEVEL: below that, baked CHAOST levels bypass the
+    -- calibrated low-level pool GATES. TEAM_CHAOS_CHANCE keeps a random race mix.
+    local teamMode, teamSlotList, teamRaceKey, teamLevel, teamCost = false, nil, nil, nil, 0
+    if etype == "Humanoid" and base >= TEAM_MIN_LEVEL and CHAOS_TEAMS ~= nil then
+        teamRaceKey = dominantRaceKey(enemies)
+        local races = donorRaces()
+        if #races > 0 and (not teamRaceKey or rand(1, 100) <= TEAM_CHAOS_CHANCE) then
+            teamRaceKey = races[rand(1, #races)]
+        end
+        teamLevel = teamLevelFor(base)
+        teamCost = math.max(2, math.ceil(teamLevel * TEAM_COST))
+        local size = math.min(MAX_SPAWNS - 1, math.floor(budget / teamCost))  -- leader slot free
+        if size >= 2 then
+            teamMode = true
+            teamSlotList = teamSlots(size)
+            log("wave: TEAM mode -", table.concat(teamSlotList, "/"),
+                "race", teamRaceKey or "?", "lvl", teamLevel, "cost", teamCost, "size", size)
+        end
+    end
+
     -- pack first (leader gets a separate allowance, and only rolls for packs >= 2)
     local spawned, spent = 0, 0
     EquipResetPending()
     local fails = 0
+    if teamMode then
+        for i = 1, #teamSlotList do
+            local role = teamSlotList[i]
+            local entry = teamEntry(role, teamLevel, teamRaceKey)
+            if not entry then
+                log("team: no CHAOST template for", role, "- pool fallback")
+            end
+            local created = entry and spawnCreature(anchors[rand(1, #anchors)], entry,
+                                                    teamLevel, true, base)
+            if entry and not created then
+                log("team: slot", role, "spawn failed - pool retry")
+                entry = nil
+            end
+            if not entry then
+                local pool = gatedPool("Humanoid", base)
+                if pool then
+                    pool = poolForRace(pool, teamRaceKey) or pool   -- keep the squad coherent
+                    local e = pool[rand(1, #pool)]
+                    if e then
+                        created = spawnCreature(anchors[rand(1, #anchors)], e, targetLevel, true, base)
+                        if created then spent = spent + e.cost end
+                    end
+                end
+            end
+            if created then spawned = spawned + 1 end
+        end
+        if spent == 0 then spent = spawned * teamCost end   -- log bookkeeping only
+    else
     while spawned < MAX_SPAWNS - 1 and budget - spent > 0 do
         local e = pickFrom(etype, budget - spent, base)
         if not e then
@@ -251,11 +336,12 @@ local function reinforce(host, enemies, combatId)
             if fails >= 3 then log("pack: giving up after 3 failed spawns"); break end
         end
     end
+    end   -- if teamMode / else legacy pack
 
     -- leader: roll once per pack (>= 2 mobs); same type ~90%, cross-type from the AFFINITY map.
     -- Spawned OUTSIDE the budget - the 10% roll is the "fight just got serious" jackpot.
     if spawned >= 2 then
-        local chance = LEADER_TEST and 100 or LEADER_CHANCE
+        local chance = LEADER_CHANCE
         if rand(1, 100) <= chance then
             local ltype = etype
             -- no cross-type surprises while the low-level ceiling is active (lvl-1 owlbear = TPK)
@@ -266,11 +352,31 @@ local function reinforce(host, enemies, combatId)
                 end
                 if #opts > 0 then ltype = opts[rand(1, #opts)] end
             end
-            local leader = pickLeaderFrom(ltype, base)
+            -- v3.33 race-coherent leader (B2): in TEAM mode the jackpot boss comes from
+            -- the SAME donor race's CHAOST roster (a "Goblin Warlord" beats a random
+            -- stranger leading goblins). tank first (beefy = bossly), wildcard backup;
+            -- the baked LevelOverride is capped to what spawnCreature's over-level guard
+            -- tolerates (base + LEVEL_JITTER + OVERLEVEL_TOLERANCE) so a boss can never
+            -- leak or despawn. Cross-type chaos rolls still draw pool mobs on purpose.
+            local leader, teamLeader = nil, false
+            if teamMode and ltype == etype then
+                local llvl = math.min(base + LEVEL_JITTER + OVERLEVEL_TOLERANCE,
+                                      math.min(12, teamLevel + rand(0, 2)))
+                leader = teamEntry("tank", llvl, teamRaceKey)
+                      or teamEntry("wildcard", llvl, teamRaceKey)
+                teamLeader = leader ~= nil
+                if not leader then
+                    log("leader: no CHAOST tank/wildcard for race", teamRaceKey, "lvl", llvl, "- pool fallback")
+                end
+            end
+            if not leader then leader = pickLeaderFrom(ltype, base) end
             if leader then
-                local lvl = base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2)
-                log("leader: type", ltype, "(pack", etype .. ")", leader.id,
-                    "hp", leader.hp, "cost", leader.cost, "lvl", lvl, "(outside budget)")
+                local lvl = leader.fixedLevel
+                    or (base <= SOFT_CAP_LEVEL and base or targetLevel + rand(0, 2))
+                log("leader:", teamLeader and ("TEAM race " .. (teamRaceKey or "?"))
+                                              or ("type " .. ltype),
+                    "(pack", etype .. ")", leader.id,
+                    "hp", leader.hp or "baked", "lvl", lvl, "(outside budget)")
                 local created = spawnCreature(anchors[rand(1, #anchors)], leader, lvl, ltype == "Humanoid", base)
                 if created then
                     spawned = spawned + 1
@@ -286,6 +392,21 @@ end
 
 -- listeners --------------------------------------------------------------------
 local ok, err = pcall(function ()
+    -- save-load quiet window: loading a save into an ONGOING fight makes the game
+    -- re-fire CombatStarted (live log 2026-11-01: SessionLoaded +04 s, CombatStarted
+    -- +16 s -> a second wave spawned around the restored fight). Suppress rolls for
+    -- LOAD_QUIET_MS after every session load; a fresh fight inside that window is
+    -- rare and only costs one roll.
+    Ext.Events.SessionLoaded:Subscribe(function ()
+        local now = MonotonicMs()
+        if now then
+            loadQuietUntil = now + LOAD_QUIET_MS
+            log("SessionLoaded: reinforcement rolls quiet for", LOAD_QUIET_MS / 1000, "s (save-load restore guard)")
+        else
+            loadQuietUntil = 0   -- clock unavailable: no window, behave like before
+        end
+    end)
+
     -- roster: track who actually entered each combat (backup for the DB read)
     Ext.Osiris.RegisterListener("EnteredCombat", 2, "after", function (object, combatGuid)
         local roster = combatRoster[combatGuid]
@@ -298,9 +419,18 @@ local ok, err = pcall(function ()
         roster[#roster + 1] = object
     end)
 
+    -- fight bookends (v3.36, owner: spawned-group fights are a single line, hard to
+    -- spot when scrolling): a loud separator per combat START/END, unconditional
+    -- (toggles/quiet windows don't suppress them - pure readability). Wild-group
+    -- aggros fire CombatStarted too, so spawned fights get bookended as well.
+    Ext.Osiris.RegisterListener("CombatEnded", 1, "after", function (combatId)
+        log("================ COMBAT", combatId, "ENDED =================")
+    end)
+
     Ext.Osiris.RegisterListener("CombatStarted", 1, "after", function (combatId)
         if seen[combatId] then return end
         seen[combatId] = true
+        log("================ COMBAT", combatId, "STARTED ================")
 
         -- in-game toggle (Toggle.lua shout): no rolls, stack untouched
         if not CHAOS_STATE.reinforce then
@@ -308,7 +438,16 @@ local ok, err = pcall(function ()
             return
         end
 
-        local chance = TEST_MODE and 100 or math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
+        -- save-load quiet window (see SessionLoaded subscription above): the game
+        -- re-fires CombatStarted when it restores an in-progress fight on load.
+        -- Don't roll AND don't touch the miss stack - this isn't a real encounter.
+        local nowMs = MonotonicMs()
+        if loadQuietUntil > 0 and nowMs and nowMs < loadQuietUntil then
+            log("CombatStarted", combatId, "skipped: save-load quiet window (restored combat?)")
+            return
+        end
+
+        local chance = math.min(100, BASE_CHANCE + misses * rand(STACK_MIN, STACK_MAX))
         local roll = rand(1, 100)
         if roll > chance then
             misses = misses + 1
@@ -343,14 +482,43 @@ end)
 Ext.RegisterConsoleCommand("chaos_status", function ()
     local n = 0
     for _ in pairs(seen) do n = n + 1 end
-    log("status: misses", misses, "TEST_MODE", tostring(TEST_MODE),
-        "LEADER_TEST", tostring(LEADER_TEST), "combats seen", n,
+    log("status: misses", misses, "combats seen", n,
         "| toggles: wilds", CHAOS_STATE.wilds and "ON" or "OFF",
         "reinforce", CHAOS_STATE.reinforce and "ON" or "OFF")
+    if WILD_STATUS then log(WILD_STATUS()) end   -- wild pipeline snapshot (Wild.lua)
 end)
 Ext.RegisterConsoleCommand("chaos_wolf", function ()
     local host = Osi.GetHostCharacter()
     if host and host ~= "" then
         spawnCreature(host, { id = "Wolf_41da0eff-b533-43cc-a014-218f7d23fa11", hp = 11, cost = 1 }, 1)
     end
+end)
+-- !chaos_root: are our CHAOST_* root templates registered in the live game?
+-- (2026-11-01: every CreateAtObject for CHAOST_* failed - root templates only load
+-- as BINARY .lsf from paks; the lsx-only pak registered nothing.)
+Ext.RegisterConsoleCommand("chaos_root", function ()
+    -- v3.40: newer SE returns a host Map<FixedString, GameObjectTemplate> object, NOT a
+    -- Lua table (guard used to reject it as "failed"). pairs() iterates it fine
+    -- (Probe.lua's dump proves it); keys are template GUIDs, so match CHAOST on the
+    -- value's .Name too.
+    local ok, all = pcall(Ext.Template.GetAllRootTemplates)
+    if not ok or all == nil then
+        log("chaos_root: GetAllRootTemplates failed:", tostring(all))
+        return
+    end
+    local total, found = 0, 0
+    local okIt, errIt = pcall(function ()
+        for k, v in pairs(all) do
+            total = total + 1
+            local nm = ""
+            pcall(function () nm = tostring(v.Name) end)
+            if tostring(k):find("CHAOST") or nm:find("CHAOST") then found = found + 1 end
+        end
+    end)
+    if not okIt then
+        log("chaos_root: iteration failed:", tostring(errIt), "obj:", tostring(all))
+        return
+    end
+    log("chaos_root:", found, "CHAOST templates among", total, "root templates",
+        found > 0 and "- REGISTERED" or "- NOT LOADED (check pak .lsf!)")
 end)

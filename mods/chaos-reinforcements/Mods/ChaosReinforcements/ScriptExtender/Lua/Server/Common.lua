@@ -7,13 +7,61 @@ local function flush()
     pcall(function () Ext.IO.SaveFile("ChaosReinforcements.log", table.concat(LINES, "\n")) end)
 end
 
-function log(...)
-    local parts = {}
-    for i = 1, select("#", ...) do
-        parts[#parts + 1] = tostring(select(i, ...))
+-- Timestamps (owner 2026-11-01). ⚠️ THE SE SERVER LUA HAS NO `os` GLOBAL: the v3.23
+-- pcall(os.date, ...) "guard" indexed os BEFORE pcall ran and threw - log() is called
+-- in module main chunks and event handlers, so the whole bootstrap + the wild
+-- heartbeat subscription died silently (runtime log 2026-11-01: "attempt to index a
+-- nil value (global 'os')" everywhere, zero game log lines). Feature-detect SE's
+-- wall clock, fall back to session-monotonic (Ext.Timer.MonotonicTime, vendored docs
+-- 1592), then to a bare stamp. Cannot throw.
+local monoBase = nil   -- first MonotonicTime reading; that clock counts from OS BOOT,
+                      -- not session start (owner: +332:32:15 stamp = machine uptime)
+
+-- Monotonic milliseconds (guarded; nil if the call is missing/thrown). Shared for
+-- wall-of-time logic like the save-load quiet window (Chaos.lua).
+function MonotonicMs()
+    local ok, ms = pcall(function () return Ext.Timer.MonotonicTime() end)
+    return ok and tonumber(ms) or nil
+end
+
+local function clockStr()
+    local ok, t = pcall(function ()
+        if Ext.IO and Ext.IO.GetCurrentDateTime then
+            return Ext.IO.GetCurrentDateTime("%H:%M:%S")
+        end
+        return nil
+    end)
+    if ok and type(t) == "string" and t ~= "" then return t end
+    local ok2, ms = pcall(function () return Ext.Timer.MonotonicTime() end)
+    local n = ok2 and tonumber(ms) or nil
+    if n then   -- "+HH:MM:SS" since MOD LOAD (anchored on first reading)
+        if monoBase == nil then monoBase = n end
+        local total = math.floor((n - monoBase) / 1000)
+        return string.format("+%02d:%02d:%02d", math.floor(total / 3600),
+            math.floor(total / 60) % 60, total % 60)
     end
-    LINES[#LINES + 1] = "[CHAOS] " .. table.concat(parts, " ")
-    flush()
+    return nil
+end
+
+function log(...)
+    -- fully pcall-guarded: log() must NEVER throw at its caller. It is called at
+    -- module load, in Osiris listeners and timers; one throwing log once killed
+    -- the entire mod (v3.23-25 incident). NB: the varargs are passed EXPLICITLY to
+    -- the inner function - nested `...` is Lua 5.2+ syntax, and the SE runtime is
+    -- not guaranteed to accept it (compile-checked offline under LuaJIT).
+    local ok, joined = pcall(function (...)
+        local parts = {}
+        for i = 1, select("#", ...) do
+            parts[#parts + 1] = tostring(select(i, ...))
+        end
+        local stamp = clockStr()
+        return "[CHAOS" .. (stamp and (" " .. stamp) or "") .. "] "
+            .. table.concat(parts, " ")
+    end, ...)
+    if ok and joined then
+        LINES[#LINES + 1] = joined
+        flush()
+    end
 end
 
 -- Push an announcement to every client (client side shows an IMGUI toast, Client/
@@ -163,6 +211,38 @@ function gatedPool(typeName, base)
     return out
 end
 
+-- deferred delete with RETRY LADDER for over-level spawns (v3.30, owner log 2026-11-01:
+-- two lvl-10 Orthons survived into a lvl-5 fight because the single deferred delete
+-- found them already in combat (SetFaction(EVIL) had dragged them in) and skipped
+-- forever - they also rendered nameless, the name-fix path never ran for them).
+-- Deleting a fresh char can crash (2026-11-02 lesson), and deleting a combatant is
+-- worse, so retry OUTSIDE combat at 3s / +10s / +30s / +90s; log a STUCK survivor.
+function ScheduleOverlevelDelete(guid, id, tag)
+    tag = tag or ""
+    local ladder = { 3000, 10000, 30000, 90000 }
+    local n = 0
+    local attempt
+    attempt = function ()
+        n = n + 1
+        local wait = ladder[n]
+        pcall(Ext.Timer.WaitFor, wait, function ()
+            local okI, ic = pcall(Osi.IsInCombat, guid)
+            if okI and ic == 1 then
+                if n >= #ladder then
+                    log(tag, "over-level despawn STUCK (still in combat):", id)
+                else
+                    log(tag, "over-level despawn deferred (in combat):", id)
+                    attempt()
+                end
+            else
+                pcall(Osi.RequestDeleteTemporary, guid)
+                log(tag, "over-level despawn done:", id)
+            end
+        end)
+    end
+    attempt()
+end
+
 function pickFrom(typeName, maxCost, base)
     local pool = gatedPool(typeName, base)
     if not pool or #pool == 0 then return nil end
@@ -193,4 +273,142 @@ function targetLevelFor(base)
         return math.max(1, base + math.random(-2, 0))
     end
     return math.max(1, base + math.random(-LEVEL_JITTER, LEVEL_JITTER))
+end
+
+-- team composer pieces (v3.29; v3.44 class-build variants) ---------------------
+-- Shared between Wild (out-of-combat teams) and Chaos (reinforcement teams).
+-- CHAOS_TEAMS (TeamTemplates.lua, required AFTER this file) maps CLASS BUILD ->
+-- level -> donor-race template ids. TEAM_SLOTS maps a wave slot to weighted build
+-- variants; BUILD_MIN/BUILD_PROFS/BUILD_LABEL/BUILD_WP describe the builds
+-- (all generated by tools/gen_teams.py, touched only at call time here).
+
+-- v3.44 (owner): slots roll CLASS builds. Builds gated by BUILD_MIN (monk/rogue/
+-- sorcerer/paladin/warlock/hexblade only at lvl5+ - below party lvl ~4 they
+-- one-shot the players). Weights renormalize over eligible builds.
+function pickBuild(slot, lvl)
+    local opts = TEAM_SLOTS and TEAM_SLOTS[slot]
+    if not opts then return nil end
+    local avail, tot = {}, 0
+    for _, o in ipairs(opts) do
+        if (BUILD_MIN[o.build] or 1) <= lvl then
+            avail[#avail + 1] = o
+            tot = tot + o.w
+        end
+    end
+    if #avail == 0 then return nil end
+    local r = math.random(1, tot)
+    for _, o in ipairs(avail) do
+        r = r - o.w
+        if r <= 0 then return o.build end
+    end
+    return avail[#avail].build
+end
+
+TEAM_FILL = { "melee_dps", "ranged", "caster", "healer", "wildcard" }
+
+-- slot layout per the owner spec: guaranteed frontliner + dps + ranged, healer from
+-- size 4, then random fill (the chaos: bard/warlock wildcards included)
+function teamSlots(count)
+    local slots = { "tank", "melee_dps", "ranged" }
+    if count >= 4 then slots[#slots + 1] = "healer" end
+    while #slots < count do slots[#slots + 1] = TEAM_FILL[math.random(1, #TEAM_FILL)] end
+    while #slots > count do table.remove(slots) end   -- tiny waves: drop ranged first
+    return slots
+end
+
+-- levels are BAKED into the CHAOST templates; pick close to the party's. Low-level
+-- ceiling (same principle as the pool GATES): host at/below SOFT_CAP_LEVEL never
+-- faces team members ABOVE their level, explicit bumps are clamped too.
+function teamLevelFor(base, bump)
+    if base <= SOFT_CAP_LEVEL then
+        return math.max(1, base + math.min(0, bump or math.random(-1, 0)))
+    end
+    return math.max(1, math.min(12, base + (bump or math.random(-1, 2))))
+end
+
+-- donor races: parsed once from the template names CHAOST_<role>_L<n>_<race>_<sex>
+TEAM_RACES = nil
+function donorRaces()
+    if TEAM_RACES then return TEAM_RACES end
+    local seen, out = {}, {}
+    for _, byLevel in pairs(CHAOS_TEAMS or {}) do
+        for _, ids in pairs(byLevel) do
+            for _, id in ipairs(ids) do
+                local race = id:match("^CHAOST_[%w_]+_L%d+_(%a+)_[mf]_")
+                if race and not seen[race] then seen[race] = true; out[#out + 1] = race end
+            end
+        end
+    end
+    TEAM_RACES = out
+    return out
+end
+
+RACE_LABEL = {
+    human = "Human", elf = "Elf", halfelf = "Half-Elf", halfling = "Halfling",
+    dwarf = "Dwarf", tiefling = "Tiefling", gith = "Githyanki",
+    goblin = "Goblin", halforc = "Half-Orc",
+}
+-- (v3.44: class labels moved to the generated BUILD_LABEL table)
+
+-- enemy race (Osiris GetRace, keys verified live in RACE_TO_TYPE) -> donor race key.
+-- Hobgoblin/Duergar/Goblinoid borrow the closest donor (goblin/dwarf) - owner accepts
+-- goblin-ish for goblinoid fights, the sin is the MIX, not the exact species.
+RACE_TO_DONOR = {
+    Human = "human", ElfHigh = "elf", DrowElf = "elf", HalfElf = "halfelf",
+    Halfling = "halfling", DwarfHill = "dwarf", Dwarf = "dwarf", Duergar = "dwarf",
+    Tiefling = "tiefling", Githyanki = "gith",
+    Goblin = "goblin", Goblinoid = "goblin", Hobgoblin = "goblin",
+    HalfOrc = "halforc",
+}
+
+function dominantRaceKey(enemies)
+    local counts = {}
+    for _, e in ipairs(enemies) do
+        local k = RACE_TO_DONOR[e.race]
+        if k then counts[k] = (counts[k] or 0) + 1 end
+    end
+    local best, n = nil, 0
+    for k, c in pairs(counts) do if c > n then best, n = k, c end end
+    return best
+end
+
+-- v3.44: `slot` is a wave slot (tank/melee_dps/...); the CLASS BUILD is rolled per
+-- slot (TEAM_SLOTS weights + BUILD_MIN gate). entry.build/wp feed Equip.lua's
+-- class kit (two-handed / dual / javelins / 1h+shield / staff / unarmed).
+function teamEntry(slot, lvl, raceKey)
+    local build = pickBuild(slot, lvl)
+    if not build then return nil end
+    local list = CHAOS_TEAMS and CHAOS_TEAMS[build] and CHAOS_TEAMS[build][lvl]
+    if not list or #list == 0 then return nil end
+    local picks = list
+    if raceKey then
+        local sub = {}
+        for _, id in ipairs(list) do
+            if id:find("_L" .. lvl .. "_" .. raceKey .. "_", 1, true) then sub[#sub + 1] = id end
+        end
+        if #sub > 0 then picks = sub end
+    end
+    local nm = (RACE_LABEL[raceKey] or "Chaos") .. " " .. (BUILD_LABEL[build] or "Mercenary")
+    return { id = picks[math.random(1, #picks)], fixedLevel = lvl,
+             build = build, wp = (BUILD_WP and BUILD_WP[build]) or "table",
+             prof = (BUILD_PROFS and BUILD_PROFS[build]) or "",
+             role = slot, nm = nm }
+end
+
+-- race-coherent fallback: pool mobs whose stats name carries the squad's race word
+-- ("Goblin Ranger" for a goblin squad; "Half Orc Caster" matches Half-Orc)
+function poolForRace(pool, raceKey)
+    local word = RACE_LABEL[raceKey]
+    if not word or not pool then return nil end
+    local w1 = word:gsub("%-", " ")   -- "Half Orc Caster" nm style
+    local w2 = word:gsub("%-", "")    -- "HalfOrc" template-id style
+    local out = {}
+    for _, e in ipairs(pool) do
+        local nm, id = e.nm or "", e.id or ""
+        if nm:find(w1, 1, true) or nm:find(w2, 1, true)
+           or id:find(w1, 1, true) or id:find(w2, 1, true) then
+            out[#out + 1] = e
+        end
+    end
+    return #out > 0 and out or nil
 end

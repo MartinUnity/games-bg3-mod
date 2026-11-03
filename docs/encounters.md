@@ -16,6 +16,8 @@ no level-editing needed.
 **Proven primitive chain** (probe v3 + E8b pair, verbatim):
 
 ```
+-- NB args 3/4 are _Temporary/_PlaySpawn (NOT x/y offsets - legacy dx/dy naming in
+-- our call sites): CreateAtObject(_Template,_Anchor,_Temporary,_PlaySpawn,_SpawnFinishEvent,_MatchOrientation,out _Created)
 created = Osi.CreateAtObject(templateName_GUID, anchor, dx, dy, "", 1)
 Osi.SetFaction(created, "Evil_4be9261a-e481-8d9d-3528-f36956a19b17")
 Osi.SetHostileAndEnterCombat("Evil_4be9261a-...", "Hero_a1542c81-...", created, anchor)
@@ -33,6 +35,8 @@ Osi.SetHostileAndEnterCombat("Evil_4be9261a-...", "Hero_a1542c81-...", created, 
   throws (restricted context).
 - `Osi.SetLevel(created, n)` sets the level NUMBER but does NOT rescale fixed monster
   stat blocks — difficulty must be chosen at pick time (CreatureDB native stats).
+  ⚠️ The call is REMOVED from our Lua: it faulted inside the SE wrapper (OsirisWrappers::
+  CallWrapper → bg3.exe hard crash, 2026-11-01); pcall cannot survive native faults.
 - Equipment at runtime: `Osi.GenerateTreasure(char, "ST_SimpleMeleeWeapons", level, finder)`
   + `TemplateAddTo` for potions + `Osi.Equip`; auto-equip via the `TemplateAddedTo` event.
 - Delayed logic: `Ext.Timer.WaitFor(ms, fn)`.
@@ -101,13 +105,23 @@ entries (unlike loose `Data/Public` files, pak stats files load). Use cases:
 - Validate expectations first: pak-stats loading on this install is *documented for
   vanilla-named files only* (E8b); a brand-new pak stats file needs one probe test.
 
-## Route 6 — Custom root templates via pak-level template files — 🟠 POSSIBLE, UNTESTED
+## Route 6 — Custom root templates via pak-level template files — ✅ PROVEN MECHANISM (registration), ⚠️ first live spawn pending
 
 New root templates (with visuals/gear baked in) could be authored as `.lsx` character
 templates and shipped in the pak's `RootTemplates/` — that is how mods add fully-dressed
-creatures. Then `Osi.CreateAtObject` works with them like any root template. Untested
-here; the live-dump cross-check in `tools/build_creature_db.py` shows the game's root
-template table is data, so pak templates should merge — needs a probe.
+creatures. Then `Osi.CreateAtObject` works with them like any root template. **Verdict
+2026-11-01:** the channel works ONLY as BINARY `.lsf` — vanilla packs store root
+templates as `_merged.lsf`, and every working mod pak here (MMM, EncountersOverhaul,
+extra_enemies_honour, Goon's) ships `.lsf` under `RootTemplates/`; an `.lsx`-only file
+there registers NOTHING (silent: `CreateAtObject` just returns empty — cost us 5 failed
+CHAOST team spawns). Generate with
+`tools/divine.sh -g bg3 -a convert-resource -i lsx -o lsf -s IN.lsx -d OUT.lsf`
+(absolute paths; roundtrip-checked against EncountersOverhaul's shipped pair and our
+504-template `ChaosTeams.lsx`). `tools/pack_mod.sh` now auto-converts staged
+`RootTemplates/*.lsx` at build time. Verify registration in-game with `!chaos_root`
+(counts CHAOST_* in `Ext.Template.GetAllRootTemplates()`). Stats-side caveat learned the
+hard way: `data "Progressions"` references progression **TableUUID**s — one wrong hex
+char silently strips a whole class kit from the template.
 
 ## Route 7 — Ruled out on this install
 

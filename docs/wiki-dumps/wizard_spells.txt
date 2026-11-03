@@ -1,0 +1,2430 @@
+   #[1]Edit [2]bg3.wiki (en) [3]bg3.wiki Atom feed
+
+   Ad placeholder
+
+List of Wizard spells
+
+   From bg3.wiki
+   [4]Jump to navigation [5]Jump to search
+           [6]Spells
+   Lists of spells by level
+     * [7]All spells
+     * [8]Cantrips
+     * [9]1st level
+     * [10]2nd level
+     * [11]3rd level
+     * [12]4th level
+     * [13]5th level
+     * [14]6th level
+
+   Lists of spells by school
+     * [15]Abjuration
+     * [16]Conjuration
+     * [17]Divination
+     * [18]Enchantment
+     * [19]Evocation
+     * [20]Illusion
+     * [21]Necromancy
+     * [22]Transmutation
+
+   Lists of spells by class
+     * [23]Bard
+     * [24]Cleric
+     * [25]Druid
+     * [26]Paladin
+     * [27]Ranger
+     * [28]Sorcerer
+     * [29]Warlock
+     * Wizard
+     * [30]Arcane Trickster
+     * [31]Eldritch Knight
+
+          Other lists
+     * [32]Upcastable spells
+     * [33]Healing spells
+     * [34]NPC spells
+     * [35]Ritual spells
+     * [36]Scrolls
+
+     * [37]v
+     * [38]t
+     * [39]e
+
+   A lists of spells available to be prepared by the [40]wizard class.
+   [ ]
+
+Contents
+
+     * [41]1 Overview
+     * [42]2 Wizard spell list
+     * [43]3 Wizard spells without scrolls
+          + [44]3.1 Cantrips
+          + [45]3.2 First Level
+          + [46]3.3 Second Level
+          + [47]3.4 Third Level
+          + [48]3.5 Fourth Level
+          + [49]3.6 Sixth Level
+     * [50]4 See also
+
+Overview[[51]edit section | [52]visual editor]
+
+   [53][95px-Class_Wizard_Hotbar_Icon.png.webp]
+
+   Wizard spells are [54]prepared spells, and must be prepared by the
+   wizard out of the spells in their spellbook. Unlike other classes that
+   use prepared spells, wizards don't gain access to all wizard spells
+   automatically. They select 6 spells to learn initially, and can only
+   learn an additional 2 on each level up. Outside of that, they must
+   [55]transcribe spells into their spellbook by using [56]scrolls. In
+   exchange, the wizard spell list is considerably larger than other
+   classes.
+
+   Wizard spells will use the caster's [57]Intelligence modifier for
+   [58]Spell Save DC and [59]Spell Attack rolls.
+
+Wizard spell list[[60]edit section | [61]visual editor]
+
+   Name Level Cast time Duration Range/Area Attack/Save Damage/Effect
+   [62]Acid Splash [63]Acid Splash C Upcast Icon.png Action
+   -
+   Range Icon.png  18 m (60 ft)
+   2 m (7 ft) Radius  2 m (7 ft) Radius
+   DEX Save  [64]DEX [65]Save
+   1d6 Acid ⁠[66]Acid
+   [67]Blade Ward [68]Blade Ward C Upcast Icon.png Action Duration
+   Icons.png 2 turns Range Icon.png  Self
+   -
+   -
+   [69]Bone Chill [70]Bone Chill C Upcast Icon.png Action Duration
+   Icons.png 1 turn Range Icon.png  18 m (60 ft)
+   -
+   1d8 Necrotic ⁠[71]Necrotic
+   [72]Booming Blade [73]Booming Blade C Upcast Icon.png Action Duration
+   Icons.png 1 turn Range Icon.png  Weapon Range
+   -
+   Normal weapon damage
+   1d8 Thunder ⁠[74]Thunder
+   [75]Bursting Sinew [76]Bursting Sinew C Upcast Icon.png Action
+   -
+   Range Icon.png  18 m (60 ft)
+   3 m (10 ft) Radius  3 m (10 ft) Radius
+   DEX Save  [77]DEX [78]Save
+   1d10 Piercing ⁠[79]Piercing
+   [80]Dancing Lights [81]Dancing Lights  C Upcast Icon.png Action
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   -
+   -
+   [82]Fire Bolt [83]Fire Bolt C Upcast Icon.png Action
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   1d10 Fire ⁠[84]Fire
+   [85]Friends [86]Friends  C Upcast Icon.png Action Duration Icons.png
+   10 turns Range Icon.png  9 m (30 ft)
+   -
+   -
+   [87]Light [88]Light C Upcast Icon.png Action Duration Icons.png Until
+   long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [89]Mage Hand [90]Mage Hand C Upcast Icon.png Action Duration Icons.png
+   10 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [91]Minor Illusion [92]Minor Illusion C Upcast Icon.png Action Duration
+   Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [93]Poison Spray [94]Poison Spray C Upcast Icon.png Action
+   -
+   Range Icon.png  3 m (10 ft)
+   CON Save  [95]CON [96]Save
+   1d12 Poison ⁠[97]Poison
+   [98]Ray of Frost [99]Ray of Frost C Upcast Icon.png Action Duration
+   Icons.png 1 turn Range Icon.png  18 m (60 ft)
+   -
+   1d8 Cold ⁠[100]Cold
+   [101]Shocking Grasp [102]Shocking Grasp C Upcast Icon.png Action
+   Duration Icons.png 1 turn Range Icon.png  1.5 m (5 ft)
+   -
+   1d8 Lightning ⁠[103]Lightning
+   [104]Toll the Dead [105]Toll the Dead C Upcast Icon.png Action
+   -
+   Range Icon.png  18 m (60 ft)
+   WIS Save  [106]WIS [107]Save
+   1d12 Necrotic ⁠[108]Necrotic
+   [109]True Strike [110]True Strike  C Upcast Icon.png Action Duration
+   Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [111]Burning Hands [112]Burning Hands 1 Upcast Icon.png Action + Level
+   1 Spell Slot
+   -
+   Range Icon.png  Self
+   5 m (17 ft) Cone  5 m (17 ft) Cone
+   DEX Save  [113]DEX [114]Save
+   3d6 Fire ⁠[115]Fire
+   [116]Charm Person [117]Charm Person 1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [118]WIS [119]Save
+   -
+   [120]Chromatic Orb [121]Chromatic Orb 1 Upcast Icon.png Action + Level
+   1 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [122]Colour Spray [123]Colour Spray 1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png 1 turn Range Icon.png  Self
+   5 m (17 ft) Cone  5 m (17 ft) Cone
+   -
+   -
+   [124]Disguise Self [125]Disguise Self  1 Action + Level 1 Spell Slot
+   Duration Icons.png Until long rest Range Icon.png  Self
+   -
+   -
+   [126]Enhance Leap [127]Enhance Leap  1 Action + Level 1 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [128]Expeditious Retreat [129]Expeditious Retreat  1 Bonus Action +
+   Level 1 Spell Slot Duration Icons.png Until long rest Range Icon.png
+    Self
+   -
+   -
+   [130]False Life [131]False Life 1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png Until long rest Range Icon.png  Self
+   -
+   -
+   [132]Feather Fall [133]Feather Fall  1 Bonus Action + Level 1 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  Self
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   -
+   -
+   [134]Find Familiar [135]Find Familiar  1 Action + Level 1 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [136]Fog Cloud [137]Fog Cloud  1 Upcast Icon.png Action + Level 1 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   4.5 m (15 ft) Radius  4.5 m (15 ft) Radius
+   -
+   -
+   [138]Grease [139]Grease 1 Action + Level 1 Spell Slot Duration
+   Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   DEX Save  [140]DEX [141]Save
+   -
+   [142]Ice Knife [143]Ice Knife 1 Upcast Icon.png Action + Level 1 Spell
+   Slot Duration Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   2 m (7 ft) Radius  2 m (7 ft) Radius
+   DEX Save  [144]DEX [145]Save
+   1d10 Piercing ⁠[146]Piercing
+   2d6 Cold ⁠[147]Cold
+   [148]Longstrider [149]Longstrider  1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png Until long rest Range Icon.png  1.5 m
+   (5 ft)
+   -
+   -
+   [150]Mage Armour [151]Mage Armour 1 Action + Level 1 Spell Slot
+   Duration Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [152]Magic Missile [153]Magic Missile 1 Upcast Icon.png Action + Level
+   1 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   1d4 + 1 Force ⁠[154]Force
+   1d4 + 1 Force ⁠[155]Force
+   1d4 + 1 Force ⁠[156]Force
+   [157]Protection from Evil and Good [158]Protection from Evil and
+   Good  1 Action + Level 1 Spell Slot Duration Icons.png Until long rest
+   Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [159]Ray of Sickness [160]Ray of Sickness 1 Upcast Icon.png Action
+   + Level 1 Spell Slot Duration Icons.png 2 turns Range Icon.png  18 m
+   (60 ft)
+   CON Save  [161]CON [162]Save
+   2d8 Poison ⁠[163]Poison
+   [164]Shield (spell) [165]Shield (spell) 1 Reaction + Level 1 Spell Slot
+   Duration Icons.png 1 turn Range Icon.png  Self
+   -
+   -
+   [166]Sleep [167]Sleep 1 Upcast Icon.png Action + Level 1 Spell Slot
+   Duration Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [168]Tasha's Hideous Laughter [169]Tasha's Hideous Laughter  1 Action
+   + Level 1 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   WIS Save  [170]WIS [171]Save
+   -
+   [172]Thunderwave [173]Thunderwave 1 Upcast Icon.png Action + Level 1
+   Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   5 m (17 ft) Cube  5 m (17 ft) Cube
+   CON Save  [174]CON [175]Save
+   2d8 Thunder ⁠[176]Thunder
+   [177]Witch Bolt [178]Witch Bolt  1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   1d12 Lightning ⁠[179]Lightning
+   [180]Arcane Lock [181]Arcane Lock 2 Action + Level 2 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [182]Blindness [183]Blindness 2 Upcast Icon.png Action + Level 2 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   CON Save  [184]CON [185]Save
+   -
+   [186]Blur [187]Blur  2 Action + Level 2 Spell Slot Duration Icons.png
+   10 turns Range Icon.png  Self
+   -
+   -
+   [188]Cloud of Daggers [189]Cloud of Daggers  2 Upcast Icon.png Action
+   + Level 2 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   -
+   4d4 Slashing ⁠[190]Slashing
+   [191]Crown of Madness [192]Crown of Madness  2 Action + Level 2 Spell
+   Slot Duration Icons.png 3 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [193]WIS [194]Save
+   -
+   [195]Darkness [196]Darkness  2 Action + Level 2 Spell Slot Duration
+   Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [197]Darkvision (spell) [198]Darkvision (spell) 2 Action + Level 2
+   Spell Slot Duration Icons.png Until long rest Range Icon.png  1.5 m
+   (5 ft)
+   -
+   -
+   [199]Detect Thoughts [200]Detect Thoughts    2 Action + Level 2 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  Self
+   -
+   -
+   [201]Enlarge/Reduce [202]Enlarge/Reduce  2 Action + Level 2 Spell Slot
+   -
+   Range Icon.png  9 m (30 ft)
+   -
+   -
+   [203]Flaming Sphere [204]Flaming Sphere  2 Upcast Icon.png Action +
+   Level 2 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   2 m (7 ft) Radius  2 m (7 ft) Radius
+   DEX Save  [205]DEX [206]Save
+   2d6 Fire ⁠[207]Fire
+   [208]Gust of Wind [209]Gust of Wind 2 Action + Level 2 Spell Slot
+   Duration Icons.png 1 turn Range Icon.png  Self
+   12 m (40 ft) Line  12 m (40 ft) Line
+   STR Save  [210]STR [211]Save
+   -
+   [212]Hold Person [213]Hold Person  2 Upcast Icon.png Action + Level 2
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [214]WIS [215]Save
+   -
+   [216]Invisibility (spell) [217]Invisibility (spell)  2 Upcast Icon.png
+   Action + Level 2 Spell Slot Duration Icons.png 10 turns Range Icon.png
+    1.5 m (5 ft)
+   -
+   -
+   [218]Knock [219]Knock 2 Action + Level 2 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [220]Magic Weapon [221]Magic Weapon  2 Upcast Icon.png Action + Level 2
+   Spell Slot Duration Icons.png Until long rest Range Icon.png  1.5 m
+   (5 ft)
+   -
+   -
+   [222]Melf's Acid Arrow [223]Melf's Acid Arrow 2 Upcast Icon.png Action
+   + Level 2 Spell Slot Duration Icons.png 1 turn Range Icon.png  18 m
+   (60 ft)
+   -
+   4d4 Acid ⁠[224]Acid
+   2d4 Acid ⁠[225]Acid
+   [226]Mirror Image [227]Mirror Image 2 Action + Level 2 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  Self
+   -
+   -
+   [228]Misty Step [229]Misty Step 2 Bonus Action + Level 2 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [230]Phantasmal Force [231]Phantasmal Force  2 Action + Level 2 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   INT Save  [232]INT [233]Save
+   -
+   [234]Ray of Enfeeblement [235]Ray of Enfeeblement  2 Action + Level 2
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [236]Scorching Ray [237]Scorching Ray 2 Upcast Icon.png Action + Level
+   2 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   2d6 Fire ⁠[238]Fire
+   2d6 Fire ⁠[239]Fire
+   2d6 Fire ⁠[240]Fire
+   [241]See Invisibility [242]See Invisibility 2 Action + Level 2 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  Self
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   DEX Save  [243]DEX [244]Save
+   -
+   [245]Shadow Blade [246]Shadow Blade 2 Upcast Icon.png Bonus Action
+   + Level 2 Spell Slot Duration Icons.png Until long rest Range Icon.png
+    Self
+   -
+   2d8 + [247]Strength or Dexterity modifier Psychic ⁠[248]Psychic
+   [249]Shatter [250]Shatter 2 Upcast Icon.png Action + Level 2 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   3 m (10 ft) Radius  3 m (10 ft) Radius
+   CON Save  [251]CON [252]Save
+   3d8 Thunder ⁠[253]Thunder
+   [254]Web [255]Web  2 Action + Level 2 Spell Slot Duration Icons.png
+   10 turns Range Icon.png  18 m (60 ft)
+   4 m (13 ft) Radius  4 m (13 ft) Radius
+   DEX Save  [256]DEX [257]Save
+   -
+   [258]Animate Dead [259]Animate Dead 3 Upcast Icon.png Action + Level 3
+   Spell Slot
+   -
+   Range Icon.png  3 m (10 ft)
+   -
+   -
+   [260]Bestow Curse [261]Bestow Curse  3 Upcast Icon.png Action + Level 3
+   Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   WIS Save  [262]WIS [263]Save
+   -
+   [264]Blink [265]Blink 3 Action + Level 3 Spell Slot Duration Icons.png
+   10 turns Range Icon.png  Self
+   -
+   -
+   [266]Counterspell [267]Counterspell 3 Upcast Icon.png Reaction + Level
+   3 Spell Slot
+   -
+   -
+   -
+   -
+   [268]Fear [269]Fear  3 Action + Level 3 Spell Slot Duration Icons.png
+   2 turns Range Icon.png  Self
+   9 m (30 ft) Cone  9 m (30 ft) Cone
+   WIS Save  [270]WIS [271]Save
+   -
+   [272]Feign Death [273]Feign Death 3 Action + Level 3 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [274]Fireball [275]Fireball 3 Upcast Icon.png Action + Level 3 Spell
+   Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   4 m (13 ft) Radius  4 m (13 ft) Radius
+   DEX Save  [276]DEX [277]Save
+   8d6 Fire ⁠[278]Fire
+   [279]Gaseous Form [280]Gaseous Form  3 Action + Level 3 Spell Slot
+   Duration Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [281]Glyph of Warding [282]Glyph of Warding 3 Upcast Icon.png Action
+   + Level 3 Spell Slot
+   -
+   Range Icon.png  9 m (30 ft)
+   4 m (13 ft) Radius  4 m (13 ft) Radius
+   DEX Save  [283]DEX [284]Save
+   -
+   [285]Grant Flight [286]Grant Flight  3 Upcast Icon.png Action + Level 3
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [287]Haste [288]Haste  3 Action + Level 3 Spell Slot Duration Icons.png
+   10 turns Range Icon.png  9 m (30 ft)
+   -
+   -
+   [289]Hypnotic Pattern [290]Hypnotic Pattern  3 Action + Level 3 Spell
+   Slot Duration Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   WIS Save  [291]WIS [292]Save
+   -
+   [293]Lightning Bolt [294]Lightning Bolt 3 Upcast Icon.png Action +
+   Level 3 Spell Slot
+   -
+   Range Icon.png  Self
+   30 m (100 ft) Line  30 m (100 ft) Line
+   DEX Save  [295]DEX [296]Save
+   8d6 Lightning ⁠[297]Lightning
+   [298]Protection from Energy [299]Protection from Energy  3 Action +
+   Level 3 Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [300]Remove Curse [301]Remove Curse 3 Action + Level 3 Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [302]Sleet Storm [303]Sleet Storm  3 Action + Level 3 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   CON Save  [304]CON [305]Save
+   -
+   [306]Slow [307]Slow  3 Action + Level 3 Spell Slot Duration Icons.png
+   10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [308]WIS [309]Save
+   -
+   [310]Stinking Cloud [311]Stinking Cloud  3 Action + Level 3 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   CON Save  [312]CON [313]Save
+   -
+   [314]Vampiric Touch [315]Vampiric Touch  3 Upcast Icon.png Action +
+   Level 3 Spell Slot Duration Icons.png 10 turns Range Icon.png  1.5 m
+   (5 ft)
+   -
+   3d6 Necrotic ⁠[316]Necrotic
+   [317]Banishment [318]Banishment  4 Upcast Icon.png Action + Level 4
+   Spell Slot Duration Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   CHA Save  [319]CHA [320]Save
+   -
+   [321]Blight [322]Blight 4 Upcast Icon.png Action + Level 4 Spell Slot
+   -
+   Range Icon.png  9 m (30 ft)
+   CON Save  [323]CON [324]Save
+   8d8 Necrotic ⁠[325]Necrotic
+   [326]Confusion [327]Confusion  4 Upcast Icon.png Action + Level 4 Spell
+   Slot Duration Icons.png 3 turns Range Icon.png  18 m (60 ft)
+   6 m (20 ft) Radius  6 m (20 ft) Radius
+   WIS Save  [328]WIS [329]Save
+   -
+   [330]Conjure Minor Elemental [331]Conjure Minor Elemental 4 Action
+   + Level 4 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [332]Dimension Door [333]Dimension Door 4 Action + Level 4 Spell Slot
+   -
+   Range Icon.png  50 m (167 ft)
+   -
+   -
+   [334]Evard's Black Tentacles [335]Evard's Black Tentacles  4 Action
+   + Level 4 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   6 m (20 ft) Radius  6 m (20 ft) Radius
+   STR Save  [336]STR [337]Save
+   3d6 Bludgeoning ⁠[338]Bludgeoning
+   [339]Fire Shield [340]Fire Shield 4 Action + Level 4 Spell Slot
+   -
+   Range Icon.png  Self
+   -
+   -
+   [341]Greater Invisibility [342]Greater Invisibility  4 Action + Level 4
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [343]Ice Storm [344]Ice Storm 4 Upcast Icon.png Action + Level 4 Spell
+   Slot Duration Icons.png 2 turns Range Icon.png  18 m (60 ft)
+   6 m (20 ft) Radius  6 m (20 ft) Radius
+   DEX Save  [345]DEX [346]Save
+   2d8 Bludgeoning ⁠[347]Bludgeoning
+   4d6 Cold ⁠[348]Cold
+   [349]Otiluke's Resilient Sphere [350]Otiluke's Resilient Sphere  4
+   Action + Level 4 Spell Slot Duration Icons.png 3 turns Range Icon.png
+    9 m (30 ft)
+   -
+   -
+   [351]Phantasmal Killer [352]Phantasmal Killer  4 Upcast Icon.png Action
+   + Level 4 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   WIS Save  [353]WIS [354]Save
+   4d10 Psychic ⁠[355]Psychic
+   [356]Polymorph [357]Polymorph  4 Action + Level 4 Spell Slot Duration
+   Icons.png 5 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [358]WIS [359]Save
+   -
+   [360]Stoneskin [361]Stoneskin  4 Action + Level 4 Spell Slot Duration
+   Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [362]Wall of Fire [363]Wall of Fire  4 Upcast Icon.png Action + Level 4
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   DEX Save  [364]DEX [365]Save
+   5d8 Fire ⁠[366]Fire
+   [367]Cloudkill [368]Cloudkill  5 Upcast Icon.png Action + Level 5 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   5d8 Poison ⁠[369]Poison
+   [370]Cone of Cold [371]Cone of Cold 5 Upcast Icon.png Action + Level 5
+   Spell Slot
+   -
+   Range Icon.png  Self
+   9 m (30 ft) Cone  9 m (30 ft) Cone
+   CON Save  [372]CON [373]Save
+   8d8 Cold ⁠[374]Cold
+   [375]Conjure Elemental [376]Conjure Elemental 5 Upcast Icon.png Action
+   + Level 5 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [377]Dominate Person [378]Dominate Person  5 Action + Level 5 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [379]WIS [380]Save
+   -
+   [381]Hold Monster [382]Hold Monster  5 Upcast Icon.png Action + Level 5
+   Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [383]WIS [384]Save
+   -
+   [385]Planar Binding [386]Planar Binding  5 Action + Level 5 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   WIS Save  [387]WIS [388]Save
+   -
+   [389]Seeming [390]Seeming 5 Action + Level 5 Spell Slot Duration
+   Icons.png Until long rest Range Icon.png  18 m (60 ft)
+   -
+   -
+   [391]Telekinesis [392]Telekinesis  5 Action + Level 5 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   STR Save  [393]STR [394]Save
+   -
+   [395]Wall of Stone [396]Wall of Stone  5 Action + Level 5 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [397]Arcane Gate [398]Arcane Gate  6 Action + Level 6 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   -
+   -
+   [399]Chain Lightning [400]Chain Lightning 6 Action + Level 6 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   DEX Save  [401]DEX [402]Save
+   10d8 Lightning ⁠[403]Lightning
+   [404]Circle of Death [405]Circle of Death 6 Action + Level 6 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   CON Save  [406]CON [407]Save
+   8d6 Necrotic ⁠[408]Necrotic
+   [409]Create Undead [410]Create Undead 6 Action + Level 6 Spell Slot
+   Duration Icons.png Until long rest Range Icon.png  3 m (10 ft)
+   -
+   -
+   [411]Disintegrate [412]Disintegrate 6 Action + Level 6 Spell Slot
+   -
+   Range Icon.png  9 m (30 ft)
+   DEX Save  [413]DEX [414]Save
+   10d6 + 40 Force ⁠[415]Force
+   [416]Eyebite [417]Eyebite  6 Action + Level 6 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   WIS Save  [418]WIS [419]Save
+   -
+   [420]Flesh to Stone [421]Flesh to Stone  6 Action + Level 6 Spell Slot
+   Duration Icons.png 3 turns Range Icon.png  18 m (60 ft)
+   CON Save  [422]CON [423]Save
+   -
+   [424]Globe of Invulnerability [425]Globe of Invulnerability  6 Action
+   + Level 6 Spell Slot Duration Icons.png 3 turns Range Icon.png  3 m
+   (10 ft)
+   3 m (10 ft) Radius  3 m (10 ft) Radius
+   -
+   -
+   [426]Otiluke's Freezing Sphere [427]Otiluke's Freezing Sphere 6 Action
+   + Level 6 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   CON Save  [428]CON [429]Save
+   10d6 Cold ⁠[430]Cold
+   [431]Otto's Irresistible Dance [432]Otto's Irresistible Dance  6 Action
+   + Level 6 Spell Slot Duration Icons.png 10 turns Range Icon.png  9 m
+   (30 ft)
+   WIS Save  [433]WIS [434]Save
+   -
+   [435]Sunbeam [436]Sunbeam  6 Action + Level 6 Spell Slot Duration
+   Icons.png 10 turns 18 m (60 ft) Line  18 m (60 ft) Line
+   CON Save  [437]CON [438]Save
+   6d8 Radiant ⁠[439]Radiant
+   [440]Wall of Ice [441]Wall of Ice  6 Action + Level 6 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   DEX Save  [442]DEX [443]Save
+   10d6 Cold ⁠[444]Cold
+   10d6 Cold ⁠[445]Cold
+
+Wizard spells without scrolls[[446]edit section | [447]visual editor]
+
+   The following wizard spells do not have an acquirable scroll, and thus
+   cannot be learned by transcribing scrolls, and can only be learned
+   through leveling:
+
+Cantrips[[448]edit section | [449]visual editor]
+
+          [450]Acid Splash  [451]Acid Splash
+          [452]Blade Ward  [453]Blade Ward
+          [454]Booming Blade  [455]Booming Blade
+          [456]Bursting Sinew  [457]Bursting Sinew
+          [458]Dancing Lights  [459]Dancing Lights
+          [460]Friends  [461]Friends
+          [462]Light  [463]Light
+          [464]Mage Hand  [465]Mage Hand
+          [466]Minor Illusion  [467]Minor Illusion
+          [468]Poison Spray  [469]Poison Spray
+          [470]Toll the Dead  [471]Toll the Dead
+          [472]True Strike  [473]True Strike
+
+First Level[[474]edit section | [475]visual editor]
+
+          [476]Enhance Leap  [477]Enhance Leap
+          [478]Find Familiar  [479]Find Familiar
+          [480]Longstrider  [481]Longstrider
+          [482]Shield  [483]Shield
+
+Second Level[[484]edit section | [485]visual editor]
+
+          [486]Phantasmal Force  [487]Phantasmal Force
+          [488]Shadow Blade  [489]Shadow Blade
+
+Third Level[[490]edit section | [491]visual editor]
+
+          [492]Counterspell  [493]Counterspell
+
+Fourth Level[[494]edit section | [495]visual editor]
+
+          [496]Otiluke's Resilient Sphere  [497]Otiluke's Resilient Sphere
+
+Sixth Level[[498]edit section | [499]visual editor]
+
+          [500]Arcane Gate  [501]Arcane Gate
+          [502]Create Undead  [503]Create Undead
+
+See also[[504]edit section | [505]visual editor]
+
+     * [506]Spells without scrolls
+     * [507]Transcribing scrolls
+
+     * [508]v
+     * [509]t
+     * [510]e
+
+   [511]Wizard
+
+   Subclasses
+
+     * [512]Abjuration School
+     * [513]Bladesinging
+     * [514]Conjuration School
+     * [515]Divination School
+     * [516]Enchantment School
+     * [517]Evocation School
+     * [518]Illusion School
+     * [519]Necromancy School
+     * [520]Transmutation School
+
+   Spells
+
+     * [521]Abjuration  [522]Abjuration
+     * [523]Conjuration  [524]Conjuration
+     * [525]Divination  [526]Divination
+     * [527]Enchantment  [528]Enchantment
+     * [529]Evocation  [530]Evocation
+     * [531]Illusion  [532]Illusion
+     * [533]Necromancy  [534]Necromancy
+     * [535]Transmutation  [536]Transmutation
+
+   Other class features
+
+     * [537]Arcane Recovery  [538]Arcane Recovery
+     * [539]Arcane Ward  [540]Arcane Ward
+     * [541]Benign Transposition: Teleport  [542]Benign Transposition:
+       Teleport
+     * [543]Bladesong  [544]Bladesong
+     * [545]Empowered Evocation  [546]Empowered Evocation
+     * [547]Experimental Alchemy  [548]Experimental Alchemy
+     * [549]Expert Divination  [550]Expert Divination
+     * [551]Extra Attack  [552]Extra Attack
+     * [553]Focused Conjuration  [554]Focused Conjuration
+     * [555]Grim Harvest  [556]Grim Harvest
+     * [557]Hypnotic Gaze  [558]Hypnotic Gaze
+     * [559]Illusory Self  [560]Illusory Self
+     * [561]Improved Abjuration  [562]Improved Abjuration
+     * [563]Improved Minor Illusion  [564]Improved Minor Illusion
+     * [565]Instinctive Charm  [566]Instinctive Charm
+     * [567]Inured to Undeath  [568]Inured to Undeath
+     * [569]Minor Conjuration: Create Water  [570]Minor Conjuration:
+       Create Water
+     * [571]Portent  [572]Portent
+     * [573]Potent Cantrip  [574]Potent Cantrip
+     * [575]Projected Ward  [576]Projected Ward
+     * [577]Sculpt Spells  [578]Sculpt Spells
+     * [579]See Invisibility  [580]See Invisibility
+     * [581]Shapechanger  [582]Shapechanger
+     * [583]Song of Defence  [584]Song of Defence
+     * [585]Split Enchantment  [586]Split Enchantment
+     * [587]Third Eye: Darkvision  [588]Third Eye: Darkvision
+     * [589]Third Eye: See Invisibility  [590]Third Eye: See Invisibility
+     * [591]Training in War and Song  [592]Training in War and Song
+     * [593]Transmuter's Stone  [594]Transmuter's Stone
+     * Undead Thralls
+          + [595]Animate Dead  [596]Animate Dead
+          + [597]Additional Undead  [598]Additional Undead
+          + [599]Better Summons  [600]Better Summons
+
+   Spotted an issue with this page? [601]Leave a comment! Note that your
+   IP address will be publicly logged unless you [602]create an account.
+   You can also [603]edit the page to fix the issue. See [604]How to
+   Contribute to get started, and maybe [605]join our Discord so we can
+   coordinate our efforts.
+
+   Retrieved from
+   "[606]https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&oldid=41
+   4668"
+
+   [607]Categories:
+     * [608]Lists
+     * [609]Lists of spells
+
+Navigation menu
+
+Personal tools
+
+     * Not logged in
+     * [610]Talk
+     * [611]Contributions
+     * [612]Create account
+     * [613]Log in
+
+Namespaces
+
+     * [614]Page
+     * [615]Discussion
+
+   [ ] English
+
+Views
+
+     * [616]Read
+     * [617]Edit page
+     * [618]Visual editor
+     * [619]View history
+
+   [ ] More
+
+Search
+
+   ____________________ Search Go
+
+Navigation
+
+     * [620]Main page
+     * [621]Help index
+     * [622]Learn to edit
+     * [623]Navigation
+     * [624]Guides
+     * [625]Modding
+     * [626]Upload file
+     * [627]Discord
+     * [628]Backups
+     * [629]Payment
+
+Special
+
+     * [630]Recent changes
+     * [631]Newly added files
+     * [632]Special pages
+     * [633]Random page
+     * [634]Maintenance
+     * [635]Version
+
+Tools
+
+     * [636]What links here
+     * [637]Related changes
+     * [638]Special pages
+     * [639]Printable version
+     * [640]Permanent link
+     * [641]Page information
+     * [642]Cargo data
+
+Advertisement
+
+     * [643]About ads on bg3.wiki
+     * [644]Please report bad ads
+
+   Ad placeholder
+
+     * This page was last edited on 9 September 2026, at 21:26.
+     * Content is available under [645]CC BY-NC-SA 4.0 or CC BY-SA 4.0;
+       please see the linked page for details.
+
+     * [646]Privacy policy
+     * [647]About bg3.wiki
+     * [648]Copyrights
+     * [649]Mobile view
+
+     * [650]Powered by MediaWiki
+
+References
+
+   Visible links:
+   1. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit
+   2. https://bg3.wiki/w/rest.php/v1/search
+   3. https://bg3.wiki/w/index.php?title=Special:RecentChanges&feed=atom
+   4. https://bg3.wiki/wiki/List_of_Wizard_spells#mw-head
+   5. https://bg3.wiki/wiki/List_of_Wizard_spells#searchInput
+   6. https://bg3.wiki/wiki/Spells
+   7. https://bg3.wiki/wiki/List_of_all_spells
+   8. https://bg3.wiki/wiki/List_of_cantrips
+   9. https://bg3.wiki/wiki/List_of_1st_level_spells
+  10. https://bg3.wiki/wiki/List_of_2nd_level_spells
+  11. https://bg3.wiki/wiki/List_of_3rd_level_spells
+  12. https://bg3.wiki/wiki/List_of_4th_level_spells
+  13. https://bg3.wiki/wiki/List_of_5th_level_spells
+  14. https://bg3.wiki/wiki/List_of_6th_level_spells
+  15. https://bg3.wiki/wiki/Abjuration
+  16. https://bg3.wiki/wiki/Conjuration
+  17. https://bg3.wiki/wiki/Divination
+  18. https://bg3.wiki/wiki/Enchantment_(school)
+  19. https://bg3.wiki/wiki/Evocation
+  20. https://bg3.wiki/wiki/Illusion
+  21. https://bg3.wiki/wiki/Necromancy
+  22. https://bg3.wiki/wiki/Transmutation
+  23. https://bg3.wiki/wiki/List_of_Bard_spells
+  24. https://bg3.wiki/wiki/List_of_Cleric_spells
+  25. https://bg3.wiki/wiki/List_of_Druid_spells
+  26. https://bg3.wiki/wiki/List_of_Paladin_spells
+  27. https://bg3.wiki/wiki/List_of_Ranger_spells
+  28. https://bg3.wiki/wiki/List_of_Sorcerer_spells
+  29. https://bg3.wiki/wiki/List_of_Warlock_spells
+  30. https://bg3.wiki/wiki/List_of_Arcane_Trickster_spells
+  31. https://bg3.wiki/wiki/List_of_Eldritch_Knight_spells
+  32. https://bg3.wiki/wiki/Upcasting
+  33. https://bg3.wiki/wiki/List_of_Healing_spells
+  34. https://bg3.wiki/wiki/List_of_NPC_spells
+  35. https://bg3.wiki/wiki/List_of_Ritual_spells
+  36. https://bg3.wiki/wiki/Scrolls
+  37. https://bg3.wiki/wiki/Template:Spells
+  38. https://bg3.wiki/wiki/Template_talk:Spells
+  39. https://bg3.wiki/wiki/Special:EditPage/Template:Spells
+  40. https://bg3.wiki/wiki/Wizard
+  41. https://bg3.wiki/wiki/List_of_Wizard_spells#Overview
+  42. https://bg3.wiki/wiki/List_of_Wizard_spells#Wizard_spell_list
+  43. https://bg3.wiki/wiki/List_of_Wizard_spells#Wizard_spells_without_scrolls
+  44. https://bg3.wiki/wiki/List_of_Wizard_spells#Cantrips
+  45. https://bg3.wiki/wiki/List_of_Wizard_spells#First_Level
+  46. https://bg3.wiki/wiki/List_of_Wizard_spells#Second_Level
+  47. https://bg3.wiki/wiki/List_of_Wizard_spells#Third_Level
+  48. https://bg3.wiki/wiki/List_of_Wizard_spells#Fourth_Level
+  49. https://bg3.wiki/wiki/List_of_Wizard_spells#Sixth_Level
+  50. https://bg3.wiki/wiki/List_of_Wizard_spells#See_also
+  51. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=1
+  52. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=1
+  53. https://bg3.wiki/wiki/File:Class_Wizard_Hotbar_Icon.png
+  54. https://bg3.wiki/wiki/Prepared_spells
+  55. https://bg3.wiki/wiki/Transcribing_scrolls
+  56. https://bg3.wiki/wiki/Scrolls
+  57. https://bg3.wiki/wiki/Intelligence
+  58. https://bg3.wiki/wiki/Spell_Save_DC
+  59. https://bg3.wiki/wiki/Spell_Attack
+  60. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=2
+  61. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=2
+  62. https://bg3.wiki/wiki/Acid_Splash
+  63. https://bg3.wiki/wiki/Acid_Splash
+  64. https://bg3.wiki/wiki/Dexterity
+  65. https://bg3.wiki/wiki/Saving_throws
+  66. https://bg3.wiki/wiki/Acid
+  67. https://bg3.wiki/wiki/Blade_Ward
+  68. https://bg3.wiki/wiki/Blade_Ward
+  69. https://bg3.wiki/wiki/Bone_Chill
+  70. https://bg3.wiki/wiki/Bone_Chill
+  71. https://bg3.wiki/wiki/Necrotic
+  72. https://bg3.wiki/wiki/Booming_Blade
+  73. https://bg3.wiki/wiki/Booming_Blade
+  74. https://bg3.wiki/wiki/Thunder
+  75. https://bg3.wiki/wiki/Bursting_Sinew
+  76. https://bg3.wiki/wiki/Bursting_Sinew
+  77. https://bg3.wiki/wiki/Dexterity
+  78. https://bg3.wiki/wiki/Saving_throws
+  79. https://bg3.wiki/wiki/Piercing
+  80. https://bg3.wiki/wiki/Dancing_Lights
+  81. https://bg3.wiki/wiki/Dancing_Lights
+  82. https://bg3.wiki/wiki/Fire_Bolt
+  83. https://bg3.wiki/wiki/Fire_Bolt
+  84. https://bg3.wiki/wiki/Fire
+  85. https://bg3.wiki/wiki/Friends
+  86. https://bg3.wiki/wiki/Friends
+  87. https://bg3.wiki/wiki/Light
+  88. https://bg3.wiki/wiki/Light
+  89. https://bg3.wiki/wiki/Mage_Hand
+  90. https://bg3.wiki/wiki/Mage_Hand
+  91. https://bg3.wiki/wiki/Minor_Illusion
+  92. https://bg3.wiki/wiki/Minor_Illusion
+  93. https://bg3.wiki/wiki/Poison_Spray
+  94. https://bg3.wiki/wiki/Poison_Spray
+  95. https://bg3.wiki/wiki/Constitution
+  96. https://bg3.wiki/wiki/Saving_throws
+  97. https://bg3.wiki/wiki/Poison
+  98. https://bg3.wiki/wiki/Ray_of_Frost
+  99. https://bg3.wiki/wiki/Ray_of_Frost
+ 100. https://bg3.wiki/wiki/Cold
+ 101. https://bg3.wiki/wiki/Shocking_Grasp
+ 102. https://bg3.wiki/wiki/Shocking_Grasp
+ 103. https://bg3.wiki/wiki/Lightning
+ 104. https://bg3.wiki/wiki/Toll_the_Dead
+ 105. https://bg3.wiki/wiki/Toll_the_Dead
+ 106. https://bg3.wiki/wiki/Wisdom
+ 107. https://bg3.wiki/wiki/Saving_throws
+ 108. https://bg3.wiki/wiki/Necrotic
+ 109. https://bg3.wiki/wiki/True_Strike
+ 110. https://bg3.wiki/wiki/True_Strike
+ 111. https://bg3.wiki/wiki/Burning_Hands
+ 112. https://bg3.wiki/wiki/Burning_Hands
+ 113. https://bg3.wiki/wiki/Dexterity
+ 114. https://bg3.wiki/wiki/Saving_throws
+ 115. https://bg3.wiki/wiki/Fire
+ 116. https://bg3.wiki/wiki/Charm_Person
+ 117. https://bg3.wiki/wiki/Charm_Person
+ 118. https://bg3.wiki/wiki/Wisdom
+ 119. https://bg3.wiki/wiki/Saving_throws
+ 120. https://bg3.wiki/wiki/Chromatic_Orb
+ 121. https://bg3.wiki/wiki/Chromatic_Orb
+ 122. https://bg3.wiki/wiki/Colour_Spray
+ 123. https://bg3.wiki/wiki/Colour_Spray
+ 124. https://bg3.wiki/wiki/Disguise_Self
+ 125. https://bg3.wiki/wiki/Disguise_Self
+ 126. https://bg3.wiki/wiki/Enhance_Leap
+ 127. https://bg3.wiki/wiki/Enhance_Leap
+ 128. https://bg3.wiki/wiki/Expeditious_Retreat
+ 129. https://bg3.wiki/wiki/Expeditious_Retreat
+ 130. https://bg3.wiki/wiki/False_Life
+ 131. https://bg3.wiki/wiki/False_Life
+ 132. https://bg3.wiki/wiki/Feather_Fall
+ 133. https://bg3.wiki/wiki/Feather_Fall
+ 134. https://bg3.wiki/wiki/Find_Familiar
+ 135. https://bg3.wiki/wiki/Find_Familiar
+ 136. https://bg3.wiki/wiki/Fog_Cloud
+ 137. https://bg3.wiki/wiki/Fog_Cloud
+ 138. https://bg3.wiki/wiki/Grease
+ 139. https://bg3.wiki/wiki/Grease
+ 140. https://bg3.wiki/wiki/Dexterity
+ 141. https://bg3.wiki/wiki/Saving_throws
+ 142. https://bg3.wiki/wiki/Ice_Knife
+ 143. https://bg3.wiki/wiki/Ice_Knife
+ 144. https://bg3.wiki/wiki/Dexterity
+ 145. https://bg3.wiki/wiki/Saving_throws
+ 146. https://bg3.wiki/wiki/Piercing
+ 147. https://bg3.wiki/wiki/Cold
+ 148. https://bg3.wiki/wiki/Longstrider
+ 149. https://bg3.wiki/wiki/Longstrider
+ 150. https://bg3.wiki/wiki/Mage_Armour
+ 151. https://bg3.wiki/wiki/Mage_Armour
+ 152. https://bg3.wiki/wiki/Magic_Missile
+ 153. https://bg3.wiki/wiki/Magic_Missile
+ 154. https://bg3.wiki/wiki/Force
+ 155. https://bg3.wiki/wiki/Force
+ 156. https://bg3.wiki/wiki/Force
+ 157. https://bg3.wiki/wiki/Protection_from_Evil_and_Good
+ 158. https://bg3.wiki/wiki/Protection_from_Evil_and_Good
+ 159. https://bg3.wiki/wiki/Ray_of_Sickness
+ 160. https://bg3.wiki/wiki/Ray_of_Sickness
+ 161. https://bg3.wiki/wiki/Constitution
+ 162. https://bg3.wiki/wiki/Saving_throws
+ 163. https://bg3.wiki/wiki/Poison
+ 164. https://bg3.wiki/wiki/Shield_(spell)
+ 165. https://bg3.wiki/wiki/Shield_(spell)
+ 166. https://bg3.wiki/wiki/Sleep
+ 167. https://bg3.wiki/wiki/Sleep
+ 168. https://bg3.wiki/wiki/Tasha's_Hideous_Laughter
+ 169. https://bg3.wiki/wiki/Tasha's_Hideous_Laughter
+ 170. https://bg3.wiki/wiki/Wisdom
+ 171. https://bg3.wiki/wiki/Saving_throws
+ 172. https://bg3.wiki/wiki/Thunderwave
+ 173. https://bg3.wiki/wiki/Thunderwave
+ 174. https://bg3.wiki/wiki/Constitution
+ 175. https://bg3.wiki/wiki/Saving_throws
+ 176. https://bg3.wiki/wiki/Thunder
+ 177. https://bg3.wiki/wiki/Witch_Bolt
+ 178. https://bg3.wiki/wiki/Witch_Bolt
+ 179. https://bg3.wiki/wiki/Lightning
+ 180. https://bg3.wiki/wiki/Arcane_Lock
+ 181. https://bg3.wiki/wiki/Arcane_Lock
+ 182. https://bg3.wiki/wiki/Blindness
+ 183. https://bg3.wiki/wiki/Blindness
+ 184. https://bg3.wiki/wiki/Constitution
+ 185. https://bg3.wiki/wiki/Saving_throws
+ 186. https://bg3.wiki/wiki/Blur
+ 187. https://bg3.wiki/wiki/Blur
+ 188. https://bg3.wiki/wiki/Cloud_of_Daggers
+ 189. https://bg3.wiki/wiki/Cloud_of_Daggers
+ 190. https://bg3.wiki/wiki/Slashing
+ 191. https://bg3.wiki/wiki/Crown_of_Madness
+ 192. https://bg3.wiki/wiki/Crown_of_Madness
+ 193. https://bg3.wiki/wiki/Wisdom
+ 194. https://bg3.wiki/wiki/Saving_throws
+ 195. https://bg3.wiki/wiki/Darkness
+ 196. https://bg3.wiki/wiki/Darkness
+ 197. https://bg3.wiki/wiki/Darkvision_(spell)
+ 198. https://bg3.wiki/wiki/Darkvision_(spell)
+ 199. https://bg3.wiki/wiki/Detect_Thoughts
+ 200. https://bg3.wiki/wiki/Detect_Thoughts
+ 201. https://bg3.wiki/wiki/Enlarge/Reduce
+ 202. https://bg3.wiki/wiki/Enlarge/Reduce
+ 203. https://bg3.wiki/wiki/Flaming_Sphere
+ 204. https://bg3.wiki/wiki/Flaming_Sphere
+ 205. https://bg3.wiki/wiki/Dexterity
+ 206. https://bg3.wiki/wiki/Saving_throws
+ 207. https://bg3.wiki/wiki/Fire
+ 208. https://bg3.wiki/wiki/Gust_of_Wind
+ 209. https://bg3.wiki/wiki/Gust_of_Wind
+ 210. https://bg3.wiki/wiki/Strength
+ 211. https://bg3.wiki/wiki/Saving_throws
+ 212. https://bg3.wiki/wiki/Hold_Person
+ 213. https://bg3.wiki/wiki/Hold_Person
+ 214. https://bg3.wiki/wiki/Wisdom
+ 215. https://bg3.wiki/wiki/Saving_throws
+ 216. https://bg3.wiki/wiki/Invisibility_(spell)
+ 217. https://bg3.wiki/wiki/Invisibility_(spell)
+ 218. https://bg3.wiki/wiki/Knock
+ 219. https://bg3.wiki/wiki/Knock
+ 220. https://bg3.wiki/wiki/Magic_Weapon
+ 221. https://bg3.wiki/wiki/Magic_Weapon
+ 222. https://bg3.wiki/wiki/Melf's_Acid_Arrow
+ 223. https://bg3.wiki/wiki/Melf's_Acid_Arrow
+ 224. https://bg3.wiki/wiki/Acid
+ 225. https://bg3.wiki/wiki/Acid
+ 226. https://bg3.wiki/wiki/Mirror_Image
+ 227. https://bg3.wiki/wiki/Mirror_Image
+ 228. https://bg3.wiki/wiki/Misty_Step
+ 229. https://bg3.wiki/wiki/Misty_Step
+ 230. https://bg3.wiki/wiki/Phantasmal_Force
+ 231. https://bg3.wiki/wiki/Phantasmal_Force
+ 232. https://bg3.wiki/wiki/Intelligence
+ 233. https://bg3.wiki/wiki/Saving_throws
+ 234. https://bg3.wiki/wiki/Ray_of_Enfeeblement
+ 235. https://bg3.wiki/wiki/Ray_of_Enfeeblement
+ 236. https://bg3.wiki/wiki/Scorching_Ray
+ 237. https://bg3.wiki/wiki/Scorching_Ray
+ 238. https://bg3.wiki/wiki/Fire
+ 239. https://bg3.wiki/wiki/Fire
+ 240. https://bg3.wiki/wiki/Fire
+ 241. https://bg3.wiki/wiki/See_Invisibility
+ 242. https://bg3.wiki/wiki/See_Invisibility
+ 243. https://bg3.wiki/wiki/Dexterity
+ 244. https://bg3.wiki/wiki/Saving_throws
+ 245. https://bg3.wiki/wiki/Shadow_Blade
+ 246. https://bg3.wiki/wiki/Shadow_Blade
+ 247. https://bg3.wiki/wiki/Finesse
+ 248. https://bg3.wiki/wiki/Psychic
+ 249. https://bg3.wiki/wiki/Shatter
+ 250. https://bg3.wiki/wiki/Shatter
+ 251. https://bg3.wiki/wiki/Constitution
+ 252. https://bg3.wiki/wiki/Saving_throws
+ 253. https://bg3.wiki/wiki/Thunder
+ 254. https://bg3.wiki/wiki/Web
+ 255. https://bg3.wiki/wiki/Web
+ 256. https://bg3.wiki/wiki/Dexterity
+ 257. https://bg3.wiki/wiki/Saving_throws
+ 258. https://bg3.wiki/wiki/Animate_Dead
+ 259. https://bg3.wiki/wiki/Animate_Dead
+ 260. https://bg3.wiki/wiki/Bestow_Curse
+ 261. https://bg3.wiki/wiki/Bestow_Curse
+ 262. https://bg3.wiki/wiki/Wisdom
+ 263. https://bg3.wiki/wiki/Saving_throws
+ 264. https://bg3.wiki/wiki/Blink
+ 265. https://bg3.wiki/wiki/Blink
+ 266. https://bg3.wiki/wiki/Counterspell
+ 267. https://bg3.wiki/wiki/Counterspell
+ 268. https://bg3.wiki/wiki/Fear
+ 269. https://bg3.wiki/wiki/Fear
+ 270. https://bg3.wiki/wiki/Wisdom
+ 271. https://bg3.wiki/wiki/Saving_throws
+ 272. https://bg3.wiki/wiki/Feign_Death
+ 273. https://bg3.wiki/wiki/Feign_Death
+ 274. https://bg3.wiki/wiki/Fireball
+ 275. https://bg3.wiki/wiki/Fireball
+ 276. https://bg3.wiki/wiki/Dexterity
+ 277. https://bg3.wiki/wiki/Saving_throws
+ 278. https://bg3.wiki/wiki/Fire
+ 279. https://bg3.wiki/wiki/Gaseous_Form
+ 280. https://bg3.wiki/wiki/Gaseous_Form
+ 281. https://bg3.wiki/wiki/Glyph_of_Warding
+ 282. https://bg3.wiki/wiki/Glyph_of_Warding
+ 283. https://bg3.wiki/wiki/Dexterity
+ 284. https://bg3.wiki/wiki/Saving_throws
+ 285. https://bg3.wiki/wiki/Grant_Flight
+ 286. https://bg3.wiki/wiki/Grant_Flight
+ 287. https://bg3.wiki/wiki/Haste
+ 288. https://bg3.wiki/wiki/Haste
+ 289. https://bg3.wiki/wiki/Hypnotic_Pattern
+ 290. https://bg3.wiki/wiki/Hypnotic_Pattern
+ 291. https://bg3.wiki/wiki/Wisdom
+ 292. https://bg3.wiki/wiki/Saving_throws
+ 293. https://bg3.wiki/wiki/Lightning_Bolt
+ 294. https://bg3.wiki/wiki/Lightning_Bolt
+ 295. https://bg3.wiki/wiki/Dexterity
+ 296. https://bg3.wiki/wiki/Saving_throws
+ 297. https://bg3.wiki/wiki/Lightning
+ 298. https://bg3.wiki/wiki/Protection_from_Energy
+ 299. https://bg3.wiki/wiki/Protection_from_Energy
+ 300. https://bg3.wiki/wiki/Remove_Curse
+ 301. https://bg3.wiki/wiki/Remove_Curse
+ 302. https://bg3.wiki/wiki/Sleet_Storm
+ 303. https://bg3.wiki/wiki/Sleet_Storm
+ 304. https://bg3.wiki/wiki/Constitution
+ 305. https://bg3.wiki/wiki/Saving_throws
+ 306. https://bg3.wiki/wiki/Slow
+ 307. https://bg3.wiki/wiki/Slow
+ 308. https://bg3.wiki/wiki/Wisdom
+ 309. https://bg3.wiki/wiki/Saving_throws
+ 310. https://bg3.wiki/wiki/Stinking_Cloud
+ 311. https://bg3.wiki/wiki/Stinking_Cloud
+ 312. https://bg3.wiki/wiki/Constitution
+ 313. https://bg3.wiki/wiki/Saving_throws
+ 314. https://bg3.wiki/wiki/Vampiric_Touch
+ 315. https://bg3.wiki/wiki/Vampiric_Touch
+ 316. https://bg3.wiki/wiki/Necrotic
+ 317. https://bg3.wiki/wiki/Banishment
+ 318. https://bg3.wiki/wiki/Banishment
+ 319. https://bg3.wiki/wiki/Charisma
+ 320. https://bg3.wiki/wiki/Saving_throws
+ 321. https://bg3.wiki/wiki/Blight
+ 322. https://bg3.wiki/wiki/Blight
+ 323. https://bg3.wiki/wiki/Constitution
+ 324. https://bg3.wiki/wiki/Saving_throws
+ 325. https://bg3.wiki/wiki/Necrotic
+ 326. https://bg3.wiki/wiki/Confusion
+ 327. https://bg3.wiki/wiki/Confusion
+ 328. https://bg3.wiki/wiki/Wisdom
+ 329. https://bg3.wiki/wiki/Saving_throws
+ 330. https://bg3.wiki/wiki/Conjure_Minor_Elemental
+ 331. https://bg3.wiki/wiki/Conjure_Minor_Elemental
+ 332. https://bg3.wiki/wiki/Dimension_Door
+ 333. https://bg3.wiki/wiki/Dimension_Door
+ 334. https://bg3.wiki/wiki/Evard's_Black_Tentacles
+ 335. https://bg3.wiki/wiki/Evard's_Black_Tentacles
+ 336. https://bg3.wiki/wiki/Strength
+ 337. https://bg3.wiki/wiki/Saving_throws
+ 338. https://bg3.wiki/wiki/Bludgeoning
+ 339. https://bg3.wiki/wiki/Fire_Shield
+ 340. https://bg3.wiki/wiki/Fire_Shield
+ 341. https://bg3.wiki/wiki/Greater_Invisibility
+ 342. https://bg3.wiki/wiki/Greater_Invisibility
+ 343. https://bg3.wiki/wiki/Ice_Storm
+ 344. https://bg3.wiki/wiki/Ice_Storm
+ 345. https://bg3.wiki/wiki/Dexterity
+ 346. https://bg3.wiki/wiki/Saving_throws
+ 347. https://bg3.wiki/wiki/Bludgeoning
+ 348. https://bg3.wiki/wiki/Cold
+ 349. https://bg3.wiki/wiki/Otiluke's_Resilient_Sphere
+ 350. https://bg3.wiki/wiki/Otiluke's_Resilient_Sphere
+ 351. https://bg3.wiki/wiki/Phantasmal_Killer
+ 352. https://bg3.wiki/wiki/Phantasmal_Killer
+ 353. https://bg3.wiki/wiki/Wisdom
+ 354. https://bg3.wiki/wiki/Saving_throws
+ 355. https://bg3.wiki/wiki/Psychic
+ 356. https://bg3.wiki/wiki/Polymorph
+ 357. https://bg3.wiki/wiki/Polymorph
+ 358. https://bg3.wiki/wiki/Wisdom
+ 359. https://bg3.wiki/wiki/Saving_throws
+ 360. https://bg3.wiki/wiki/Stoneskin
+ 361. https://bg3.wiki/wiki/Stoneskin
+ 362. https://bg3.wiki/wiki/Wall_of_Fire
+ 363. https://bg3.wiki/wiki/Wall_of_Fire
+ 364. https://bg3.wiki/wiki/Dexterity
+ 365. https://bg3.wiki/wiki/Saving_throws
+ 366. https://bg3.wiki/wiki/Fire
+ 367. https://bg3.wiki/wiki/Cloudkill
+ 368. https://bg3.wiki/wiki/Cloudkill
+ 369. https://bg3.wiki/wiki/Poison
+ 370. https://bg3.wiki/wiki/Cone_of_Cold
+ 371. https://bg3.wiki/wiki/Cone_of_Cold
+ 372. https://bg3.wiki/wiki/Constitution
+ 373. https://bg3.wiki/wiki/Saving_throws
+ 374. https://bg3.wiki/wiki/Cold
+ 375. https://bg3.wiki/wiki/Conjure_Elemental
+ 376. https://bg3.wiki/wiki/Conjure_Elemental
+ 377. https://bg3.wiki/wiki/Dominate_Person
+ 378. https://bg3.wiki/wiki/Dominate_Person
+ 379. https://bg3.wiki/wiki/Wisdom
+ 380. https://bg3.wiki/wiki/Saving_throws
+ 381. https://bg3.wiki/wiki/Hold_Monster
+ 382. https://bg3.wiki/wiki/Hold_Monster
+ 383. https://bg3.wiki/wiki/Wisdom
+ 384. https://bg3.wiki/wiki/Saving_throws
+ 385. https://bg3.wiki/wiki/Planar_Binding
+ 386. https://bg3.wiki/wiki/Planar_Binding
+ 387. https://bg3.wiki/wiki/Wisdom
+ 388. https://bg3.wiki/wiki/Saving_throws
+ 389. https://bg3.wiki/wiki/Seeming
+ 390. https://bg3.wiki/wiki/Seeming
+ 391. https://bg3.wiki/wiki/Telekinesis
+ 392. https://bg3.wiki/wiki/Telekinesis
+ 393. https://bg3.wiki/wiki/Strength
+ 394. https://bg3.wiki/wiki/Saving_throws
+ 395. https://bg3.wiki/wiki/Wall_of_Stone
+ 396. https://bg3.wiki/wiki/Wall_of_Stone
+ 397. https://bg3.wiki/wiki/Arcane_Gate
+ 398. https://bg3.wiki/wiki/Arcane_Gate
+ 399. https://bg3.wiki/wiki/Chain_Lightning
+ 400. https://bg3.wiki/wiki/Chain_Lightning
+ 401. https://bg3.wiki/wiki/Dexterity
+ 402. https://bg3.wiki/wiki/Saving_throws
+ 403. https://bg3.wiki/wiki/Lightning
+ 404. https://bg3.wiki/wiki/Circle_of_Death
+ 405. https://bg3.wiki/wiki/Circle_of_Death
+ 406. https://bg3.wiki/wiki/Constitution
+ 407. https://bg3.wiki/wiki/Saving_throws
+ 408. https://bg3.wiki/wiki/Necrotic
+ 409. https://bg3.wiki/wiki/Create_Undead
+ 410. https://bg3.wiki/wiki/Create_Undead
+ 411. https://bg3.wiki/wiki/Disintegrate
+ 412. https://bg3.wiki/wiki/Disintegrate
+ 413. https://bg3.wiki/wiki/Dexterity
+ 414. https://bg3.wiki/wiki/Saving_throws
+ 415. https://bg3.wiki/wiki/Force
+ 416. https://bg3.wiki/wiki/Eyebite
+ 417. https://bg3.wiki/wiki/Eyebite
+ 418. https://bg3.wiki/wiki/Wisdom
+ 419. https://bg3.wiki/wiki/Saving_throws
+ 420. https://bg3.wiki/wiki/Flesh_to_Stone
+ 421. https://bg3.wiki/wiki/Flesh_to_Stone
+ 422. https://bg3.wiki/wiki/Constitution
+ 423. https://bg3.wiki/wiki/Saving_throws
+ 424. https://bg3.wiki/wiki/Globe_of_Invulnerability
+ 425. https://bg3.wiki/wiki/Globe_of_Invulnerability
+ 426. https://bg3.wiki/wiki/Otiluke's_Freezing_Sphere
+ 427. https://bg3.wiki/wiki/Otiluke's_Freezing_Sphere
+ 428. https://bg3.wiki/wiki/Constitution
+ 429. https://bg3.wiki/wiki/Saving_throws
+ 430. https://bg3.wiki/wiki/Cold
+ 431. https://bg3.wiki/wiki/Otto's_Irresistible_Dance
+ 432. https://bg3.wiki/wiki/Otto's_Irresistible_Dance
+ 433. https://bg3.wiki/wiki/Wisdom
+ 434. https://bg3.wiki/wiki/Saving_throws
+ 435. https://bg3.wiki/wiki/Sunbeam
+ 436. https://bg3.wiki/wiki/Sunbeam
+ 437. https://bg3.wiki/wiki/Constitution
+ 438. https://bg3.wiki/wiki/Saving_throws
+ 439. https://bg3.wiki/wiki/Radiant
+ 440. https://bg3.wiki/wiki/Wall_of_Ice
+ 441. https://bg3.wiki/wiki/Wall_of_Ice
+ 442. https://bg3.wiki/wiki/Dexterity
+ 443. https://bg3.wiki/wiki/Saving_throws
+ 444. https://bg3.wiki/wiki/Cold
+ 445. https://bg3.wiki/wiki/Cold
+ 446. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=3
+ 447. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=3
+ 448. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=4
+ 449. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=4
+ 450. https://bg3.wiki/wiki/Acid_Splash
+ 451. https://bg3.wiki/wiki/Acid_Splash
+ 452. https://bg3.wiki/wiki/Blade_Ward
+ 453. https://bg3.wiki/wiki/Blade_Ward
+ 454. https://bg3.wiki/wiki/Booming_Blade
+ 455. https://bg3.wiki/wiki/Booming_Blade
+ 456. https://bg3.wiki/wiki/Bursting_Sinew
+ 457. https://bg3.wiki/wiki/Bursting_Sinew
+ 458. https://bg3.wiki/wiki/Dancing_Lights
+ 459. https://bg3.wiki/wiki/Dancing_Lights
+ 460. https://bg3.wiki/wiki/Friends
+ 461. https://bg3.wiki/wiki/Friends
+ 462. https://bg3.wiki/wiki/Light
+ 463. https://bg3.wiki/wiki/Light
+ 464. https://bg3.wiki/wiki/Mage_Hand
+ 465. https://bg3.wiki/wiki/Mage_Hand
+ 466. https://bg3.wiki/wiki/Minor_Illusion
+ 467. https://bg3.wiki/wiki/Minor_Illusion
+ 468. https://bg3.wiki/wiki/Poison_Spray
+ 469. https://bg3.wiki/wiki/Poison_Spray
+ 470. https://bg3.wiki/wiki/Toll_the_Dead
+ 471. https://bg3.wiki/wiki/Toll_the_Dead
+ 472. https://bg3.wiki/wiki/True_Strike
+ 473. https://bg3.wiki/wiki/True_Strike
+ 474. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=5
+ 475. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=5
+ 476. https://bg3.wiki/wiki/Enhance_Leap
+ 477. https://bg3.wiki/wiki/Enhance_Leap
+ 478. https://bg3.wiki/wiki/Find_Familiar
+ 479. https://bg3.wiki/wiki/Find_Familiar
+ 480. https://bg3.wiki/wiki/Longstrider
+ 481. https://bg3.wiki/wiki/Longstrider
+ 482. https://bg3.wiki/wiki/Shield_(spell)
+ 483. https://bg3.wiki/wiki/Shield_(spell)
+ 484. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=6
+ 485. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=6
+ 486. https://bg3.wiki/wiki/Phantasmal_Force
+ 487. https://bg3.wiki/wiki/Phantasmal_Force
+ 488. https://bg3.wiki/wiki/Shadow_Blade
+ 489. https://bg3.wiki/wiki/Shadow_Blade
+ 490. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=7
+ 491. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=7
+ 492. https://bg3.wiki/wiki/Counterspell
+ 493. https://bg3.wiki/wiki/Counterspell
+ 494. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=8
+ 495. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=8
+ 496. https://bg3.wiki/wiki/Otiluke's_Resilient_Sphere
+ 497. https://bg3.wiki/wiki/Otiluke's_Resilient_Sphere
+ 498. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=9
+ 499. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=9
+ 500. https://bg3.wiki/wiki/Arcane_Gate
+ 501. https://bg3.wiki/wiki/Arcane_Gate
+ 502. https://bg3.wiki/wiki/Create_Undead
+ 503. https://bg3.wiki/wiki/Create_Undead
+ 504. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit&section=10
+ 505. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit&section=10
+ 506. https://bg3.wiki/wiki/Spells_without_scrolls
+ 507. https://bg3.wiki/wiki/Transcribing_scrolls
+ 508. https://bg3.wiki/wiki/Template:WizardNavbox
+ 509. https://bg3.wiki/wiki/Template_talk:WizardNavbox
+ 510. https://bg3.wiki/wiki/Special:EditPage/Template:WizardNavbox
+ 511. https://bg3.wiki/wiki/Wizard
+ 512. https://bg3.wiki/wiki/Abjuration_School
+ 513. https://bg3.wiki/wiki/Bladesinging
+ 514. https://bg3.wiki/wiki/Conjuration_School
+ 515. https://bg3.wiki/wiki/Divination_School
+ 516. https://bg3.wiki/wiki/Enchantment_School
+ 517. https://bg3.wiki/wiki/Evocation_School
+ 518. https://bg3.wiki/wiki/Illusion_School
+ 519. https://bg3.wiki/wiki/Necromancy_School
+ 520. https://bg3.wiki/wiki/Transmutation_School
+ 521. https://bg3.wiki/wiki/Abjuration
+ 522. https://bg3.wiki/wiki/Abjuration
+ 523. https://bg3.wiki/wiki/Conjuration
+ 524. https://bg3.wiki/wiki/Conjuration
+ 525. https://bg3.wiki/wiki/Divination
+ 526. https://bg3.wiki/wiki/Divination
+ 527. https://bg3.wiki/wiki/Enchantment_(school)
+ 528. https://bg3.wiki/wiki/Enchantment_(school)
+ 529. https://bg3.wiki/wiki/Evocation
+ 530. https://bg3.wiki/wiki/Evocation
+ 531. https://bg3.wiki/wiki/Illusion
+ 532. https://bg3.wiki/wiki/Illusion
+ 533. https://bg3.wiki/wiki/Necromancy
+ 534. https://bg3.wiki/wiki/Necromancy
+ 535. https://bg3.wiki/wiki/Transmutation
+ 536. https://bg3.wiki/wiki/Transmutation
+ 537. https://bg3.wiki/wiki/Arcane_Recovery
+ 538. https://bg3.wiki/wiki/Arcane_Recovery
+ 539. https://bg3.wiki/wiki/Arcane_Ward
+ 540. https://bg3.wiki/wiki/Arcane_Ward
+ 541. https://bg3.wiki/wiki/Benign_Transposition:_Teleport
+ 542. https://bg3.wiki/wiki/Benign_Transposition:_Teleport
+ 543. https://bg3.wiki/wiki/Bladesong
+ 544. https://bg3.wiki/wiki/Bladesong
+ 545. https://bg3.wiki/wiki/Empowered_Evocation
+ 546. https://bg3.wiki/wiki/Empowered_Evocation
+ 547. https://bg3.wiki/wiki/Experimental_Alchemy
+ 548. https://bg3.wiki/wiki/Experimental_Alchemy
+ 549. https://bg3.wiki/wiki/Expert_Divination
+ 550. https://bg3.wiki/wiki/Expert_Divination
+ 551. https://bg3.wiki/wiki/Extra_Attack
+ 552. https://bg3.wiki/wiki/Extra_Attack
+ 553. https://bg3.wiki/wiki/Focused_Conjuration
+ 554. https://bg3.wiki/wiki/Focused_Conjuration
+ 555. https://bg3.wiki/wiki/Grim_Harvest
+ 556. https://bg3.wiki/wiki/Grim_Harvest
+ 557. https://bg3.wiki/wiki/Hypnotic_Gaze
+ 558. https://bg3.wiki/wiki/Hypnotic_Gaze
+ 559. https://bg3.wiki/wiki/Illusory_Self
+ 560. https://bg3.wiki/wiki/Illusory_Self
+ 561. https://bg3.wiki/wiki/Improved_Abjuration
+ 562. https://bg3.wiki/wiki/Improved_Abjuration
+ 563. https://bg3.wiki/wiki/Improved_Minor_Illusion
+ 564. https://bg3.wiki/wiki/Improved_Minor_Illusion
+ 565. https://bg3.wiki/wiki/Instinctive_Charm
+ 566. https://bg3.wiki/wiki/Instinctive_Charm
+ 567. https://bg3.wiki/wiki/Inured_to_Undeath
+ 568. https://bg3.wiki/wiki/Inured_to_Undeath
+ 569. https://bg3.wiki/wiki/Minor_Conjuration:_Create_Water
+ 570. https://bg3.wiki/wiki/Minor_Conjuration:_Create_Water
+ 571. https://bg3.wiki/wiki/Portent
+ 572. https://bg3.wiki/wiki/Portent
+ 573. https://bg3.wiki/wiki/Potent_Cantrip
+ 574. https://bg3.wiki/wiki/Potent_Cantrip
+ 575. https://bg3.wiki/wiki/Projected_Ward
+ 576. https://bg3.wiki/wiki/Projected_Ward
+ 577. https://bg3.wiki/wiki/Sculpt_Spells
+ 578. https://bg3.wiki/wiki/Sculpt_Spells
+ 579. https://bg3.wiki/wiki/See_Invisibility_(class_action)
+ 580. https://bg3.wiki/wiki/See_Invisibility_(class_action)
+ 581. https://bg3.wiki/wiki/Shapechanger_(passive_feature)
+ 582. https://bg3.wiki/wiki/Shapechanger_(passive_feature)
+ 583. https://bg3.wiki/wiki/Song_of_Defence
+ 584. https://bg3.wiki/wiki/Song_of_Defence
+ 585. https://bg3.wiki/wiki/Split_Enchantment
+ 586. https://bg3.wiki/wiki/Split_Enchantment
+ 587. https://bg3.wiki/wiki/Third_Eye:_Darkvision
+ 588. https://bg3.wiki/wiki/Third_Eye:_Darkvision
+ 589. https://bg3.wiki/wiki/Third_Eye:_See_Invisibility
+ 590. https://bg3.wiki/wiki/Third_Eye:_See_Invisibility
+ 591. https://bg3.wiki/wiki/Training_in_War_and_Song
+ 592. https://bg3.wiki/wiki/Training_in_War_and_Song
+ 593. https://bg3.wiki/wiki/Transmuter's_Stone_(passive_feature)
+ 594. https://bg3.wiki/wiki/Transmuter's_Stone_(passive_feature)
+ 595. https://bg3.wiki/wiki/Undead_Thralls:_Animate_Dead
+ 596. https://bg3.wiki/wiki/Undead_Thralls:_Animate_Dead
+ 597. https://bg3.wiki/wiki/Undead_Thralls:_Additional_Undead
+ 598. https://bg3.wiki/wiki/Undead_Thralls:_Additional_Undead
+ 599. https://bg3.wiki/wiki/Undead_Thralls:_Better_Summons
+ 600. https://bg3.wiki/wiki/Undead_Thralls:_Better_Summons
+ 601. https://bg3.wiki/wiki/Talk:List_of_Wizard_spells
+ 602. https://bg3.wiki/w/index.php?title=Special:CreateAccount
+ 603. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit
+ 604. https://bg3.wiki/wiki/Help:How_to_Contribute
+ 605. https://discord.gg/EYNTAQXaNs
+ 606. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&oldid=414668
+ 607. https://bg3.wiki/wiki/Special:Categories
+ 608. https://bg3.wiki/wiki/Category:Lists
+ 609. https://bg3.wiki/wiki/Category:Lists_of_spells
+ 610. https://bg3.wiki/wiki/Special:MyTalk
+ 611. https://bg3.wiki/wiki/Special:MyContributions
+ 612. https://bg3.wiki/w/index.php?title=Special:CreateAccount&returnto=List+of+Wizard+spells
+ 613. https://bg3.wiki/w/index.php?title=Special:UserLogin&returnto=List+of+Wizard+spells
+ 614. https://bg3.wiki/wiki/List_of_Wizard_spells
+ 615. https://bg3.wiki/wiki/Talk:List_of_Wizard_spells
+ 616. https://bg3.wiki/wiki/List_of_Wizard_spells
+ 617. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=edit
+ 618. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&veaction=edit
+ 619. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=history
+ 620. https://bg3.wiki/
+ 621. https://bg3.wiki/wiki/Help:Index
+ 622. https://bg3.wiki/wiki/Help:Editing_manual
+ 623. https://bg3.wiki/wiki/bg3wiki:Navigation
+ 624. https://bg3.wiki/wiki/Guide:Guides
+ 625. https://bg3.wiki/wiki/Modding:Modding
+ 626. https://bg3.wiki/wiki/Special:Upload
+ 627. https://discord.gg/EYNTAQXaNs
+ 628. https://bg3.wiki/wiki/bg3wiki:Backups
+ 629. https://bg3.wiki/wiki/bg3wiki:Payment
+ 630. https://bg3.wiki/wiki/Special:RecentChanges
+ 631. https://bg3.wiki/wiki/Special:NewFiles
+ 632. https://bg3.wiki/wiki/Special:SpecialPages
+ 633. https://bg3.wiki/wiki/Special:Random
+ 634. https://bg3.wiki/wiki/Category:Wiki_maintenance
+ 635. https://bg3.wiki/wiki/Special:Version
+ 636. https://bg3.wiki/wiki/Special:WhatLinksHere/List_of_Wizard_spells
+ 637. https://bg3.wiki/wiki/Special:RecentChangesLinked/List_of_Wizard_spells
+ 638. https://bg3.wiki/wiki/Special:SpecialPages
+ 639. javascript:print();
+ 640. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&oldid=414668
+ 641. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=info
+ 642. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&action=pagevalues
+ 643. https://bg3.wiki/wiki/bg3wiki:Ads
+ 644. https://bg3.wiki/wiki/bg3wiki:Report_ads
+ 645. https://bg3.wiki/wiki/bg3wiki:Copyrights
+ 646. https://bg3.wiki/wiki/bg3wiki:Privacy_policy
+ 647. https://bg3.wiki/wiki/bg3wiki:About
+ 648. https://bg3.wiki/wiki/bg3wiki:Copyrights
+ 649. https://bg3.wiki/w/index.php?title=List_of_Wizard_spells&mobileaction=toggle_view_mobile
+ 650. https://www.mediawiki.org/
+
+   Hidden links:
+ 652. https://bg3.wiki/w/images/2/23/Class_Wizard_Hotbar_Icon.png
+ 653. https://bg3.wiki/w/images/9/99/Acid_Splash_Icon.webp
+ 654. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 655. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 656. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 657. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 658. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 659. https://bg3.wiki/w/images/5/5f/Acid_Damage_Icon.png
+ 660. https://bg3.wiki/w/images/0/04/Blade_Ward_Icon.webp
+ 661. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 662. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 663. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 664. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 665. https://bg3.wiki/w/images/0/03/Bone_Chill_Icon.webp
+ 666. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 667. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 668. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 669. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 670. https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png
+ 671. https://bg3.wiki/w/images/f/fd/Booming_Blade_Icon.webp
+ 672. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 673. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 674. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 675. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 676. https://bg3.wiki/w/images/8/87/Thunder_Damage_Icon.png
+ 677. https://bg3.wiki/w/images/0/0f/Bursting_Sinew_Icon.webp
+ 678. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 679. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 680. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 681. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 682. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 683. https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png
+ 684. https://bg3.wiki/w/images/b/ba/Dancing_Lights_Icon.webp
+ 685. https://bg3.wiki/wiki/Concentration
+ 686. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 687. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 688. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 689. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 690. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 691. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 692. https://bg3.wiki/w/images/2/23/Fire_Bolt_Icon.webp
+ 693. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 694. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 695. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 696. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+ 697. https://bg3.wiki/w/images/7/75/Friends_Icon.webp
+ 698. https://bg3.wiki/wiki/Concentration
+ 699. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 700. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 701. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 702. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 703. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 704. https://bg3.wiki/w/images/5/5c/Light_Icon.webp
+ 705. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 706. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 707. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 708. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 709. https://bg3.wiki/w/images/f/f9/Mage_Hand_Icon.webp
+ 710. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 711. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 712. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 713. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 714. https://bg3.wiki/w/images/9/9d/Minor_Illusion_Icon.webp
+ 715. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 716. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 717. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 718. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 719. https://bg3.wiki/w/images/1/1d/Poison_Spray_Icon.webp
+ 720. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 721. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 722. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 723. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 724. https://bg3.wiki/w/images/5/55/Poison_Damage_Icon.png
+ 725. https://bg3.wiki/w/images/f/f9/Ray_of_Frost_Icon.webp
+ 726. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 727. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 728. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 729. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 730. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+ 731. https://bg3.wiki/w/images/2/2f/Shocking_Grasp_Icon.webp
+ 732. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 733. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 734. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 735. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 736. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+ 737. https://bg3.wiki/w/images/c/c0/Toll_the_Dead_Icon.webp
+ 738. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 739. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 740. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 741. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 742. https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png
+ 743. https://bg3.wiki/w/images/4/47/True_Strike_Icon.webp
+ 744. https://bg3.wiki/wiki/Concentration
+ 745. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 746. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 747. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 748. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 749. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 750. https://bg3.wiki/w/images/c/cf/Burning_Hands_Icon.webp
+ 751. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 752. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 753. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 754. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 755. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 756. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 757. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+ 758. https://bg3.wiki/w/images/b/bc/Charm_Person_Icon.webp
+ 759. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 760. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 761. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 762. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 763. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 764. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 765. https://bg3.wiki/w/images/8/8e/Chromatic_Orb_Icon.webp
+ 766. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 767. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 768. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 769. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 770. https://bg3.wiki/w/images/2/24/Colour_Spray_Icon.webp
+ 771. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 772. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 773. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 774. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 775. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 776. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 777. https://bg3.wiki/w/images/8/8d/Disguise_Self_Icon.webp
+ 778. https://bg3.wiki/wiki/Ritual_Spells
+ 779. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 780. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 781. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 782. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 783. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 784. https://bg3.wiki/w/images/4/46/Enhance_Leap_Icon.webp
+ 785. https://bg3.wiki/wiki/Ritual_Spells
+ 786. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 787. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 788. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 789. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 790. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 791. https://bg3.wiki/w/images/d/d6/Expeditious_Retreat_Icon.webp
+ 792. https://bg3.wiki/wiki/Concentration
+ 793. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 794. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+ 795. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 796. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 797. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 798. https://bg3.wiki/w/images/f/f2/False_Life_Icon.webp
+ 799. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 800. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 801. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 802. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 803. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 804. https://bg3.wiki/w/images/0/00/Feather_Fall_Icon.webp
+ 805. https://bg3.wiki/wiki/Ritual_Spells
+ 806. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 807. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+ 808. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 809. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 810. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 811. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 812. https://bg3.wiki/w/images/8/8b/Find_Familiar_Cat_Icon.webp
+ 813. https://bg3.wiki/wiki/Ritual_Spells
+ 814. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 815. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 816. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 817. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 818. https://bg3.wiki/w/images/c/c0/Fog_Cloud_Icon.webp
+ 819. https://bg3.wiki/wiki/Concentration
+ 820. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 821. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 822. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 823. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 824. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 825. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 826. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 827. https://bg3.wiki/w/images/7/7a/Grease_Icon.webp
+ 828. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 829. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 830. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 831. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 832. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 833. https://bg3.wiki/w/images/1/17/Ice_Knife_Icon.webp
+ 834. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 835. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 836. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 837. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 838. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 839. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 840. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 841. https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png
+ 842. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+ 843. https://bg3.wiki/w/images/3/35/Longstrider_Icon.webp
+ 844. https://bg3.wiki/wiki/Ritual_Spells
+ 845. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 846. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 847. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 848. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 849. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 850. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 851. https://bg3.wiki/w/images/0/0d/Mage_Armour_Icon.webp
+ 852. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 853. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 854. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 855. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 856. https://bg3.wiki/w/images/d/d4/Magic_Missile_Icon.webp
+ 857. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 858. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 859. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 860. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 861. https://bg3.wiki/w/images/d/d1/Force_Damage_Icon.png
+ 862. https://bg3.wiki/w/images/d/d1/Force_Damage_Icon.png
+ 863. https://bg3.wiki/w/images/d/d1/Force_Damage_Icon.png
+ 864. https://bg3.wiki/w/images/3/35/Protection_from_Evil_and_Good_Icon.webp
+ 865. https://bg3.wiki/wiki/Concentration
+ 866. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 867. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 868. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 869. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 870. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 871. https://bg3.wiki/w/images/7/74/Ray_of_Sickness_Icon.webp
+ 872. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 873. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 874. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 875. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 876. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 877. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 878. https://bg3.wiki/w/images/5/55/Poison_Damage_Icon.png
+ 879. https://bg3.wiki/w/images/c/cf/Shield_spell_Icon.webp
+ 880. https://bg3.wiki/w/images/c/c1/Reaction_Icon.png
+ 881. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 882. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 883. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 884. https://bg3.wiki/w/images/a/ae/Sleep_Icon.webp
+ 885. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 886. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 887. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 888. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 889. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 890. https://bg3.wiki/w/images/2/27/Tasha%27s_Hideous_Laughter_Icon.webp
+ 891. https://bg3.wiki/wiki/Concentration
+ 892. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 893. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 894. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 895. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 896. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 897. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 898. https://bg3.wiki/w/images/0/04/Thunderwave_Icon.webp
+ 899. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 900. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 901. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 902. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 903. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 904. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 905. https://bg3.wiki/w/images/8/87/Thunder_Damage_Icon.png
+ 906. https://bg3.wiki/w/images/d/d2/Witch_Bolt_Icon.webp
+ 907. https://bg3.wiki/wiki/Concentration
+ 908. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 909. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 910. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 911. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 912. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 913. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 914. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+ 915. https://bg3.wiki/w/images/7/79/Arcane_Lock_Icon.webp
+ 916. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 917. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 918. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 919. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 920. https://bg3.wiki/w/images/5/5a/Blindness_Icon.webp
+ 921. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 922. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 923. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 924. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 925. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 926. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 927. https://bg3.wiki/w/images/0/0d/Blur_Icon.webp
+ 928. https://bg3.wiki/wiki/Concentration
+ 929. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 930. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 931. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 932. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 933. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 934. https://bg3.wiki/w/images/3/3d/Cloud_of_Daggers_Icon.webp
+ 935. https://bg3.wiki/wiki/Concentration
+ 936. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 937. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 938. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 939. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 940. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 941. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 942. https://bg3.wiki/w/images/f/f0/Slashing_Damage_Icon.png
+ 943. https://bg3.wiki/w/images/4/48/Crown_of_Madness_Icon.webp
+ 944. https://bg3.wiki/wiki/Concentration
+ 945. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 946. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 947. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 948. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 949. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 950. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 951. https://bg3.wiki/w/images/b/bf/Darkness_Icon.webp
+ 952. https://bg3.wiki/wiki/Concentration
+ 953. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 954. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 955. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 956. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 957. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 958. https://bg3.wiki/w/images/0/01/Darkvision_spell_Icon.webp
+ 959. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 960. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 961. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 962. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 963. https://bg3.wiki/w/images/b/b6/Detect_Thoughts_Icon.webp
+ 964. https://bg3.wiki/wiki/Concentration
+ 965. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 966. https://bg3.wiki/wiki/Ritual_Spells
+ 967. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 968. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 969. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 970. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 971. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 972. https://bg3.wiki/w/images/c/c6/Enlarge_Reduce_Icon.webp
+ 973. https://bg3.wiki/wiki/Concentration
+ 974. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 975. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 976. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 977. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 978. https://bg3.wiki/w/images/6/66/Flaming_Sphere_Icon.webp
+ 979. https://bg3.wiki/wiki/Concentration
+ 980. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 981. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 982. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 983. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 984. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 985. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 986. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 987. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 988. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+ 989. https://bg3.wiki/w/images/5/58/Gust_of_Wind_Icon.webp
+ 990. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 991. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 992. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 993. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 994. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 995. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 996. https://bg3.wiki/w/images/7/75/Hold_Person_Icon.webp
+ 997. https://bg3.wiki/wiki/Concentration
+ 998. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 999. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1000. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1001. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1002. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1003. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1004. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1005. https://bg3.wiki/w/images/4/4e/Invisibility_spell_Icon.webp
+1006. https://bg3.wiki/wiki/Concentration
+1007. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1008. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1009. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1010. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1011. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1012. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1013. https://bg3.wiki/w/images/a/a4/Knock_Icon.webp
+1014. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1015. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1016. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1017. https://bg3.wiki/w/images/9/9c/Magic_Weapon_Icon.webp
+1018. https://bg3.wiki/wiki/Concentration
+1019. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1020. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1021. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1022. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1023. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1024. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1025. https://bg3.wiki/w/images/6/67/Melf%27s_Acid_Arrow_Icon.webp
+1026. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1027. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1028. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1029. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1030. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1031. https://bg3.wiki/w/images/5/5f/Acid_Damage_Icon.png
+1032. https://bg3.wiki/w/images/5/5f/Acid_Damage_Icon.png
+1033. https://bg3.wiki/w/images/4/41/Mirror_Image_Icon.webp
+1034. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1035. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1036. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1037. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1038. https://bg3.wiki/w/images/1/1f/Misty_Step_Icon.webp
+1039. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+1040. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1041. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1042. https://bg3.wiki/w/images/a/ac/Phantasmal_Force_Icon.webp
+1043. https://bg3.wiki/wiki/Concentration
+1044. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1045. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1046. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1047. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1048. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1049. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1050. https://bg3.wiki/w/images/7/7b/Ray_of_Enfeeblement_Icon.webp
+1051. https://bg3.wiki/wiki/Concentration
+1052. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1053. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1054. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1055. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1056. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1057. https://bg3.wiki/w/images/8/8e/Scorching_Ray_Icon.webp
+1058. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1059. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1060. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1061. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1062. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+1063. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+1064. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+1065. https://bg3.wiki/w/images/c/c3/See_Invisibility_Icon.webp
+1066. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1067. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1068. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1069. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1070. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1071. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1072. https://bg3.wiki/w/images/6/6e/Shadow_Blade_Icon.webp
+1073. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1074. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+1075. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1076. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1077. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1078. https://bg3.wiki/w/images/0/04/Psychic_Damage_Icon.png
+1079. https://bg3.wiki/w/images/c/c5/Shatter_Icon.webp
+1080. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1081. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1082. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1083. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1084. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1085. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1086. https://bg3.wiki/w/images/8/87/Thunder_Damage_Icon.png
+1087. https://bg3.wiki/w/images/8/8b/Web_Icon.webp
+1088. https://bg3.wiki/wiki/Concentration
+1089. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1090. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1091. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1092. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1093. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1094. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1095. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1096. https://bg3.wiki/w/images/2/2f/Animate_Dead_Icon.webp
+1097. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1098. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1099. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1100. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1101. https://bg3.wiki/w/images/0/00/Bestow_Curse_Icon.webp
+1102. https://bg3.wiki/wiki/Concentration
+1103. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1104. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1105. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1106. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1107. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1108. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1109. https://bg3.wiki/w/images/b/b3/Blink_Icon.webp
+1110. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1111. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1112. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1113. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1114. https://bg3.wiki/w/images/5/50/Counterspell_Icon.webp
+1115. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1116. https://bg3.wiki/w/images/c/c1/Reaction_Icon.png
+1117. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1118. https://bg3.wiki/w/images/a/ad/Fear_Icon.webp
+1119. https://bg3.wiki/wiki/Concentration
+1120. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1121. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1122. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1123. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1124. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1125. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1126. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1127. https://bg3.wiki/w/images/f/fe/Feign_Death_Icon.webp
+1128. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1129. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1130. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1131. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1132. https://bg3.wiki/w/images/c/cb/Fireball_Icon.webp
+1133. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1134. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1135. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1136. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1137. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1138. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1139. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+1140. https://bg3.wiki/w/images/6/62/Gaseous_Form_Icon.webp
+1141. https://bg3.wiki/wiki/Concentration
+1142. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1143. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1144. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1145. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1146. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1147. https://bg3.wiki/w/images/8/88/Glyph_of_Warding_Icon.webp
+1148. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1149. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1150. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1151. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1152. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1153. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1154. https://bg3.wiki/w/images/4/45/Grant_Flight_Icon.webp
+1155. https://bg3.wiki/wiki/Concentration
+1156. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1157. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1158. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1159. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1160. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1161. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1162. https://bg3.wiki/w/images/1/11/Haste_Icon.webp
+1163. https://bg3.wiki/wiki/Concentration
+1164. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1165. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1166. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1167. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1168. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1169. https://bg3.wiki/w/images/2/28/Hypnotic_Pattern_Icon.webp
+1170. https://bg3.wiki/wiki/Concentration
+1171. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1172. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1173. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1174. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1175. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1176. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1177. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1178. https://bg3.wiki/w/images/c/cb/Lightning_Bolt_Icon.webp
+1179. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1180. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1181. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1182. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1183. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1184. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1185. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+1186. https://bg3.wiki/w/images/1/15/Protection_from_Energy_Icon.webp
+1187. https://bg3.wiki/wiki/Concentration
+1188. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1189. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1190. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1191. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1192. https://bg3.wiki/w/images/7/7f/Remove_Curse_Icon.webp
+1193. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1194. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1195. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1196. https://bg3.wiki/w/images/5/50/Sleet_Storm_Icon.webp
+1197. https://bg3.wiki/wiki/Concentration
+1198. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1199. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1200. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1201. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1202. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1203. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1204. https://bg3.wiki/w/images/b/be/Slow_Icon.webp
+1205. https://bg3.wiki/wiki/Concentration
+1206. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1207. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1208. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1209. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1210. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1211. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1212. https://bg3.wiki/w/images/b/b7/Stinking_Cloud_Icon.webp
+1213. https://bg3.wiki/wiki/Concentration
+1214. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1215. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1216. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1217. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1218. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1219. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1220. https://bg3.wiki/w/images/8/85/Vampiric_Touch_Icon.webp
+1221. https://bg3.wiki/wiki/Concentration
+1222. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1223. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1224. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1225. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1226. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1227. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1228. https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png
+1229. https://bg3.wiki/w/images/6/6d/Banishment_Icon.webp
+1230. https://bg3.wiki/wiki/Concentration
+1231. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1232. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1233. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1234. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1235. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1236. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1237. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1238. https://bg3.wiki/w/images/e/e0/Blight_Icon.webp
+1239. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1240. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1241. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1242. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1243. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1244. https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png
+1245. https://bg3.wiki/w/images/7/7b/Confusion_Icon.webp
+1246. https://bg3.wiki/wiki/Concentration
+1247. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1248. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1249. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1250. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1251. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1252. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1253. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1254. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1255. https://bg3.wiki/w/images/0/08/Conjure_Minor_Elemental_Azer_Icon.webp
+1256. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1257. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1258. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1259. https://bg3.wiki/w/images/d/da/Dimension_Door_Icon.webp
+1260. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1261. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1262. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1263. https://bg3.wiki/w/images/d/d6/Evard%27s_Black_Tentacles_Icon.webp
+1264. https://bg3.wiki/wiki/Concentration
+1265. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1266. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1267. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1268. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1269. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1270. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1271. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1272. https://bg3.wiki/w/images/7/7d/Bludgeoning_Damage_Icon.png
+1273. https://bg3.wiki/w/images/e/e0/Fire_Shield_Icon.webp
+1274. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1275. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1276. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1277. https://bg3.wiki/w/images/2/28/Greater_Invisibility_Icon.webp
+1278. https://bg3.wiki/wiki/Concentration
+1279. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1280. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1281. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1282. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1283. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1284. https://bg3.wiki/w/images/9/9b/Ice_Storm_Icon.webp
+1285. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1286. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1287. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1288. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1289. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1290. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1291. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1292. https://bg3.wiki/w/images/7/7d/Bludgeoning_Damage_Icon.png
+1293. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+1294. https://bg3.wiki/w/images/8/82/Otiluke%27s_Resilient_Sphere_Icon.webp
+1295. https://bg3.wiki/wiki/Concentration
+1296. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1297. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1298. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1299. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1300. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1301. https://bg3.wiki/w/images/d/da/Phantasmal_Killer_Icon.webp
+1302. https://bg3.wiki/wiki/Concentration
+1303. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1304. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1305. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1306. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1307. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1308. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1309. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1310. https://bg3.wiki/w/images/0/04/Psychic_Damage_Icon.png
+1311. https://bg3.wiki/w/images/f/f6/Polymorph_Icon.webp
+1312. https://bg3.wiki/wiki/Concentration
+1313. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1314. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1315. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1316. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1317. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1318. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1319. https://bg3.wiki/w/images/c/c3/Stoneskin_Icon.webp
+1320. https://bg3.wiki/wiki/Concentration
+1321. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1322. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1323. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1324. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1325. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1326. https://bg3.wiki/w/images/c/ca/Wall_of_Fire_Icon.webp
+1327. https://bg3.wiki/wiki/Concentration
+1328. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1329. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1330. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1331. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1332. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1333. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1334. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1335. https://bg3.wiki/w/images/8/84/Fire_Damage_Icon.png
+1336. https://bg3.wiki/w/images/7/74/Cloudkill_Icon.webp
+1337. https://bg3.wiki/wiki/Concentration
+1338. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1339. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1340. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1341. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1342. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1343. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1344. https://bg3.wiki/w/images/5/55/Poison_Damage_Icon.png
+1345. https://bg3.wiki/w/images/e/ef/Cone_of_Cold_Icon.webp
+1346. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1347. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1348. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1349. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1350. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1351. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1352. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+1353. https://bg3.wiki/w/images/e/e6/Conjure_Elemental_Icon.webp
+1354. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1355. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1356. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1357. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1358. https://bg3.wiki/w/images/1/1d/Dominate_Person_Icon.webp
+1359. https://bg3.wiki/wiki/Concentration
+1360. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1361. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1362. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1363. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1364. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1365. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1366. https://bg3.wiki/w/images/c/cf/Hold_Monster_Icon.webp
+1367. https://bg3.wiki/wiki/Concentration
+1368. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1369. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+1370. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1371. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1372. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1373. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1374. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1375. https://bg3.wiki/w/images/f/fa/Planar_Binding_Icon.webp
+1376. https://bg3.wiki/wiki/Concentration
+1377. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1378. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1379. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1380. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1381. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1382. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1383. https://bg3.wiki/w/images/f/f4/Seeming_Icon.webp
+1384. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1385. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1386. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1387. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1388. https://bg3.wiki/w/images/c/c7/Telekinesis_Icon.webp
+1389. https://bg3.wiki/wiki/Concentration
+1390. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1391. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1392. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1393. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1394. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1395. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1396. https://bg3.wiki/w/images/e/e2/Wall_of_Stone_Icon.webp
+1397. https://bg3.wiki/wiki/Concentration
+1398. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1399. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1400. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1401. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1402. https://bg3.wiki/w/images/6/6e/Arcane_Gate_Icon.webp
+1403. https://bg3.wiki/wiki/Concentration
+1404. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1405. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1406. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1407. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1408. https://bg3.wiki/w/images/c/c9/Chain_Lightning_Icon.webp
+1409. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1410. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1411. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1412. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1413. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+1414. https://bg3.wiki/w/images/f/f2/Circle_of_Death_Icon.webp
+1415. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1416. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1417. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1418. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1419. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1420. https://bg3.wiki/w/images/3/39/Necrotic_Damage_Icon.png
+1421. https://bg3.wiki/w/images/d/da/Create_Undead_Icon.webp
+1422. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1423. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1424. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1425. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1426. https://bg3.wiki/w/images/8/8a/Disintegrate_Icon.webp
+1427. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1428. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1429. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1430. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1431. https://bg3.wiki/w/images/d/d1/Force_Damage_Icon.png
+1432. https://bg3.wiki/w/images/f/f7/Eyebite_Panicked_Icon.webp
+1433. https://bg3.wiki/wiki/Concentration
+1434. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1435. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1436. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1437. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1438. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1439. https://bg3.wiki/w/images/7/72/Flesh_to_Stone_Icon.webp
+1440. https://bg3.wiki/wiki/Concentration
+1441. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1442. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1443. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1444. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1445. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1446. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1447. https://bg3.wiki/w/images/7/7a/Globe_of_Invulnerability_Icon.webp
+1448. https://bg3.wiki/wiki/Concentration
+1449. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1450. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1451. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1452. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1453. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1454. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1455. https://bg3.wiki/w/images/a/af/Otiluke%27s_Freezing_Sphere_Icon.webp
+1456. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1457. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1458. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1459. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1460. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+1461. https://bg3.wiki/w/images/8/8c/Otto%27s_Irresistible_Dance_Icon.webp
+1462. https://bg3.wiki/wiki/Concentration
+1463. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1464. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1465. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1466. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1467. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1468. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1469. https://bg3.wiki/w/images/6/63/Sunbeam_Icon.webp
+1470. https://bg3.wiki/wiki/Concentration
+1471. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1472. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1473. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1474. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1475. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+1476. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1477. https://bg3.wiki/w/images/7/78/Radiant_Damage_Icon.png
+1478. https://bg3.wiki/w/images/d/d2/Wall_of_Ice_Icon.webp
+1479. https://bg3.wiki/wiki/Concentration
+1480. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+1481. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+1482. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+1483. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+1484. https://bg3.wiki/w/images/0/08/Range_Icon.png
+1485. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+1486. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+1487. https://bg3.wiki/w/images/0/05/Cold_Damage_Icon.png
+1488. https://bg3.wiki/w/images/9/99/Acid_Splash_Icon.webp
+1489. https://bg3.wiki/w/images/0/04/Blade_Ward_Icon.webp
+1490. https://bg3.wiki/w/images/f/fd/Booming_Blade_Icon.webp
+1491. https://bg3.wiki/w/images/0/0f/Bursting_Sinew_Icon.webp
+1492. https://bg3.wiki/w/images/b/ba/Dancing_Lights_Icon.webp
+1493. https://bg3.wiki/w/images/7/75/Friends_Icon.webp
+1494. https://bg3.wiki/w/images/5/5c/Light_Icon.webp
+1495. https://bg3.wiki/w/images/f/f9/Mage_Hand_Icon.webp
+1496. https://bg3.wiki/w/images/9/9d/Minor_Illusion_Icon.webp
+1497. https://bg3.wiki/w/images/1/1d/Poison_Spray_Icon.webp
+1498. https://bg3.wiki/w/images/c/c0/Toll_the_Dead_Icon.webp
+1499. https://bg3.wiki/w/images/4/47/True_Strike_Icon.webp
+1500. https://bg3.wiki/w/images/4/46/Enhance_Leap_Icon.webp
+1501. https://bg3.wiki/w/images/8/8b/Find_Familiar_Cat_Icon.webp
+1502. https://bg3.wiki/w/images/3/35/Longstrider_Icon.webp
+1503. https://bg3.wiki/w/images/c/cf/Shield_spell_Icon.webp
+1504. https://bg3.wiki/w/images/a/ac/Phantasmal_Force_Icon.webp
+1505. https://bg3.wiki/w/images/6/6e/Shadow_Blade_Icon.webp
+1506. https://bg3.wiki/w/images/5/50/Counterspell_Icon.webp
+1507. https://bg3.wiki/w/images/8/82/Otiluke%27s_Resilient_Sphere_Icon.webp
+1508. https://bg3.wiki/w/images/6/6e/Arcane_Gate_Icon.webp
+1509. https://bg3.wiki/w/images/d/da/Create_Undead_Icon.webp
+1510. https://bg3.wiki/w/images/0/0d/Mage_Armour_Icon.webp
+1511. https://bg3.wiki/w/images/8/8b/Find_Familiar_Cat_Icon.webp
+1512. https://bg3.wiki/w/images/4/47/True_Strike_Icon.webp
+1513. https://bg3.wiki/w/images/b/bc/Charm_Person_Icon.webp
+1514. https://bg3.wiki/w/images/2/23/Fire_Bolt_Icon.webp
+1515. https://bg3.wiki/w/images/8/8d/Disguise_Self_Icon.webp
+1516. https://bg3.wiki/w/images/0/03/Bone_Chill_Icon.webp
+1517. https://bg3.wiki/w/images/4/46/Enhance_Leap_Icon.webp
+1518. https://bg3.wiki/w/images/e/ed/Arcane_Recovery_Icon.webp
+1519. https://bg3.wiki/w/images/7/79/Arcane_Ward_Icon.webp
+1520. https://bg3.wiki/w/images/a/a6/Benign_Transposition_Teleport_Icon.webp
+1521. https://bg3.wiki/w/images/8/80/Bladesong_Icon.webp
+1522. https://bg3.wiki/w/images/d/d0/Empowered_Evocation_Icon.webp
+1523. https://bg3.wiki/w/images/e/e8/Experimental_Alchemy_Icon.webp
+1524. https://bg3.wiki/w/images/f/f4/Expert_Divination_Icon.webp
+1525. https://bg3.wiki/w/images/5/5a/Extra_Attack_Icon.webp
+1526. https://bg3.wiki/w/images/1/1e/Focused_Conjuration_Icon.webp
+1527. https://bg3.wiki/w/images/5/59/Grim_Harvest_Icon.webp
+1528. https://bg3.wiki/w/images/f/f6/Hypnotic_Gaze_Icon.webp
+1529. https://bg3.wiki/w/images/a/a8/Illusory_Self_Icon.webp
+1530. https://bg3.wiki/w/images/4/4a/Improved_Abjuration_Icon.webp
+1531. https://bg3.wiki/w/images/3/37/Improved_Minor_Illusion_Icon.webp
+1532. https://bg3.wiki/w/images/9/92/Instinctive_Charm_Icon.webp
+1533. https://bg3.wiki/w/images/c/c0/Inured_to_Undeath_Icon.webp
+1534. https://bg3.wiki/w/images/d/d1/Create_Water_Icon.webp
+1535. https://bg3.wiki/w/images/1/1d/Portent_Icon.webp
+1536. https://bg3.wiki/w/images/c/c9/Potent_Cantrip_Icon.webp
+1537. https://bg3.wiki/w/images/7/79/Projected_Ward_Icon.webp
+1538. https://bg3.wiki/w/images/9/97/Sculpt_Spells_Icon.webp
+1539. https://bg3.wiki/w/images/c/c3/See_Invisibility_Icon.webp
+1540. https://bg3.wiki/w/images/9/9d/Shapechanger_Icon.webp
+1541. https://bg3.wiki/w/images/f/f9/Song_of_Defence_Icon.webp
+1542. https://bg3.wiki/w/images/b/b1/Split_Enchantment_Icon.webp
+1543. https://bg3.wiki/w/images/b/b0/Third_Eye_Darkvision_Icon.webp
+1544. https://bg3.wiki/w/images/b/bd/Third_Eye_See_Invisibility_Icon.webp
+1545. https://bg3.wiki/w/images/d/d2/Training_in_War_and_Song_Icon.webp
+1546. https://bg3.wiki/w/images/0/00/Transmuter%27s_Stone_passive_feature_Icon.webp
+1547. https://bg3.wiki/w/images/1/11/Undead_Thralls_Animate_Dead_Icon.webp
+1548. https://bg3.wiki/w/images/0/0a/Undead_Thralls_Additional_Undead_Icon.webp
+1549. https://bg3.wiki/w/images/9/9a/Undead_Thralls_Better_Summons_Icon.webp
+1550. https://bg3.wiki/

@@ -38,9 +38,18 @@ BAD_NAME = re.compile(
     r"|^QUEST_|^Footstep_|Elder_Brain|NetherBrain|Doppelganger|Shapechanger"
     r"|Boss|Raphael|Vlaakith|Gortash|Orin|Yugot|Endbringer|Absolute|Cazador|Kasster|Thaniel"
     r"|Companion|Summon|Wildshape|Portrait|Civilian|PlayerWildshape|Hallucination|Duplicity"
+    r"|CreateUndead|Conjure"   # spell-products (summon lifecycle; the CreateUndead mummy
     r"|Mannequin|_Act\d|DrinkingBuddy|Cub\b|Dad\b|Pregnant|Tutorial|Children|Baby|Hunt|Dialog|Double"
     r"|Gazer_.*Mylac|Gazemaster|Woe_|Mephit_Grease_Young|Crippled"
-    r"|^\[WIP\]|(^|_)CINE_|(^|_)WIP_|TOBEDELETED"
+    r"|^\[WIP\]|(^|_)CINE_|(^|_)CIN($|_)|(^|_)WIP_|TOBEDELETED"
+    # newly exposed by the 2026-11-02 indentation fix (templates previously renamed by
+    # child-node attrs were invisible): proxies, cinematics, critters, crowd/teaser
+    # shells, act-3 story gnomes, and full dragons (adult red = hp 400 at native lvl 1
+    # - passes every level gate; owner: no dragons off story)
+    r"|^COL_|HitboxProxy|Crowd|Teaser|Combat_Test|Explosive|Tressym|FROG"
+    r"|Dragon($|_)|^WYR_|(^|_)(Cat|Crab|Rabbit|Squirrel|Chicken)($|_)"
+    r"|_TEMP($|_)|(^|_)(Brewer|Surgeon)($|_)"   # story NPC shells (Brewer_Jef_TEMP etc)
+    r"|(^|_)(OX|Cow|Goat|Sheep|Pig|Chicken|Horse|Donkey|Camel|Mule)($|_)"   # livestock (OX_A spawned as a "warband")
     r"|^BHAAL_|HouseOfHope|Redcap_Pirate|Sharran_|DarkJusticiar|SteelWatcher|"
     r"DeathKnight|ApostleOfMyrkul|Dog_Ghost|FallenWizard|AnimateDead|WYR_Wyrmsway"
     r"|Ketheric|^MOO_|baptismTrigger|Form_Player|FindFamiliar|ConjureElemental|"
@@ -178,17 +187,38 @@ def load_dump_keys():
 
 
 def scan_templates():
-    """name -> (guid, statsname); attributes are alphabetical, so per node the order is
-    MapKey (own guid) -> Name -> Stats -> Type; each MapKey opens a record."""
+    """name -> (guid, statsname, levelOverride); attributes are alphabetical, so per node
+    LevelOverride? -> MapKey (own guid) -> Name -> Stats -> Type; each MapKey opens a record.
+    INDENTATION FIX (2026-11-02): template nodes carry CHILD nodes (visual body parts,
+    footstep info...) whose own Name attributes (e.g. "Hand_r", "Hand_Right" inside
+    the ettercap/hook-horror templates) used to bleed into the parent record and
+    rename it - the DB shipped "Hand_r_<guid>" for BASE_Monstrosity_Ettercap.
+    Only accept attributes at the SAME indent depth as the opening MapKey."""
     out = {}
     name_re = re.compile(r'<attribute id="Name" type="LSString" value="([^"]+)"')
     mapkey_re = re.compile(r'<attribute id="MapKey" type="FixedString" value="([^"]+)"')
     stats_re = re.compile(r'<attribute id="Stats" type="FixedString" value="([^"]*)"')
     type_re = re.compile(r'<attribute id="Type" type="FixedString" value="([^"]+)"')
+    # root-template LevelOverride: the REAL native level of most monsters. The stats
+    # block rarely carries `Level` (only 2 entries in the whole DB), which is why the
+    # lvl gate missed the lvl-10 Orthon that reached a lvl-5 fight 2026-11-01.
+    lvl_re = re.compile(r'<attribute id="LevelOverride" type="int32" value="(-?\d+)"')
+    # ART attrs (v3.32, invisible Phase Spider 2026-11-01): body art is inherited via
+    # ParentTemplateId UNLESS the node overrides it with an explicit EMPTY string.
+    # BASE_Quadruped_Beast_Spider_Phase does exactly that (VisualTemplate="") -> spawned
+    # invisible with a placeholder portrait (owner saw it 3x). Humanoid templates survive
+    # an empty VisualTemplate only if they carry their own CharacterVisualResourceID
+    # (race body art), so the drop rule is: VisualTemplate="" AND no own CVRID.
+    # CVRID sorts BEFORE MapKey (pending buffer), VisualTemplate AFTER it.
+    cvr_re = re.compile(r'<attribute id="CharacterVisualResourceID" type="FixedString" value="([^"]*)"')
+    vis_re = re.compile(r'<attribute id="VisualTemplate" type="FixedString" value="([^"]*)"')
 
     def flush(cur):
         if cur.get("name") and cur.get("guid") and cur.get("type") == "character":
-            out[cur["name"]] = (cur["guid"], cur.get("stats", ""))
+            vis_empty = cur.get("vis") == ""
+            has_cvr = cur.get("cvr") not in (None, "", "00000000-0000-0000-0000-000000000000")
+            out[cur["name"]] = (cur["guid"], cur.get("stats", ""), cur.get("lvl"),
+                                vis_empty, has_cvr)
 
     for fn in LSX_FILES:
         p = RT / fn
@@ -196,11 +226,32 @@ def scan_templates():
             print(f"WARN: missing {p}")
             continue
         cur = {}
+        cur_depth = None
+        pending_lvl = None   # LevelOverride sorts BEFORE MapKey (attrs are alphabetical)
+        pending_cvr = None   # CharacterVisualResourceID likewise (v3.32 art filter)
         for line in p.read_text(errors="replace").splitlines():
+            indent = len(line) - len(line.lstrip("\t"))
             m = mapkey_re.search(line)
             if m:
                 flush(cur)
-                cur = {"guid": m.group(1)}
+                cur = {"guid": m.group(1), "lvl": pending_lvl, "cvr": pending_cvr}
+                pending_lvl = None
+                pending_cvr = None
+                cur_depth = indent
+                continue
+            if cur_depth is None or indent != cur_depth:
+                continue   # child-node attribute - never part of this template
+            m = lvl_re.search(line)
+            if m:
+                pending_lvl = int(m.group(1))
+                continue
+            m = cvr_re.search(line)
+            if m:
+                pending_cvr = m.group(1)
+                continue
+            m = vis_re.search(line)
+            if m and cur.get("guid"):
+                cur["vis"] = m.group(1)
                 continue
             m = name_re.search(line)
             if m and cur.get("guid"):
@@ -227,7 +278,11 @@ def main():
     print(f"stats entries: {len(stats)}; root templates (character): {len(templates)}; dump keys: {len(dump_keys)}")
 
     rows = {}
-    for name, (guid, statsname) in templates.items():
+    artless = []
+    for name, (guid, statsname, tpl_lvl, vis_empty, has_cvr) in templates.items():
+        if vis_empty and not has_cvr:
+            artless.append(name)   # explicit empty VisualTemplate override, no race art
+            continue
         if name.lower() in blocklist:
             continue
         if BAD_NAME.search(name) or BAD_STATS.search(statsname):
@@ -267,14 +322,20 @@ def main():
             level = int(level) if level else 1
         except ValueError:
             level = 1
+        if tpl_lvl and tpl_lvl > level:
+            level = tpl_lvl   # template LevelOverride (Orthon_A lvl 10 lives ONLY here)
         pr = bool(PLAYER_RACE.match(name))
         rows[name] = (guid, t, hp, cost, statsname, level, len(immunes),
                       ac, strength, dex, con, wis, cha, ea, prof, unarmed != "", pr)
 
+    if artless:
+        print(f"artless (empty VisualTemplate override, no own CVRID - invisible bodies): "
+              f"{len(artless)}")
+        print("  " + ", ".join(sorted(artless)))
     print(f"generic spawnable creatures: {len(rows)}")
     bytype = {}
     for name, (guid, t, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr) in rows.items():
-        bytype.setdefault(t, []).append((name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr))
+        bytype.setdefault(t, []).append((name, guid, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr))
     for t in sorted(bytype):
         print(f"  {t}: {len(bytype[t])}")
 
@@ -284,18 +345,31 @@ def main():
         except (TypeError, ValueError):
             return None
 
+    def pretty(statsname):
+        """Human-readable fallback display name (for mobs whose race resource has no
+        name): CamelCase + underscores -> spaced words. 'HookHorror'->'Hook Horror'."""
+        s = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", statsname)
+        s = s.replace("_", " ")
+        return re.sub(r"\s+", " ", s).strip()
+
     lines = ["-- Auto-generated by tools/build_creature_db.py - do not edit by hand.",
              "-- ChaosReinforcements creature DB: generic spawnable root templates,",
              "-- grouped by creature type. {id, hp, cost = hp/10, ac (Armor), str, dex, con,",
              "-- ea = ExtraAttack passive, prof = Proficiency Group, unarmed = UnarmedAttackAbility,",
-             "-- lvl = native stat Level (rarely > 1; gated at pick time vs player level)",
+             "-- lvl = native level: stats Level OR root-template LevelOverride (v3.30 -",
+             "--     the real one for most monsters; gated at pick time vs player level),",
+             "-- nm = pretty stats name, the fallback display name for blank-named mobs",
+             "-- (neither template nor stats carries DisplayName; the race resource usually",
+             "-- does, but some (ettercap, hook horror, hobgoblin) render BLANK - Flavor.lua",
+             "-- checks DisplayName at spawn and applies nm via SetStoryDisplayName).",
              "-- - NATIVE stat blocks; SetLevel does not rescale them. prof/unarmed drive",
              "-- equipment choice (innate attackers have no prof group at all).",
              "CHAOS_DB = {"]
     for t in sorted(bytype):
         lines.append(f"  {t} = {{")
-        for name, guid, hp, cost, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr in sorted(bytype[t]):
-            extra = f", lvl = {level}" if level > 1 else ""
+        for name, guid, hp, cost, sn, level, imm, ac, strength, dex, con, wis, cha, ea, prof, unarmed, pr in sorted(bytype[t]):
+            extra = f", nm = \"{pretty(sn)}\"" if pretty(sn) else ""
+            extra += f", lvl = {level}" if level > 1 else ""
             extra += f", imm = {imm}" if imm > 0 else ""
             extra += f", ac = {num(ac)}" if num(ac) is not None else ""
             extra += f", str = {num(strength)}" if num(strength) is not None else ""

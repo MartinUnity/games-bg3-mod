@@ -4,9 +4,26 @@
 -- player level, so low-level fights never roll expensive loot:
 --   - innate attackers (unarmed, no prof) get NOTHING (never replace innate attacks)
 --   - host level 1: always cheapest (simple weapon + light armor), no matter the profile
---   - tier roll keeps the chaos: tier >= 2 unlocks martial weapons if proficient,
---     tier 4 (jackpot) unlocks medium armor if proficient (heavy at HEAVY_LEVEL+) and the
---     magic/level-scaled weapon tables ("weapon cost x2" proxy)
+--   - tier keeps the chaos: tier >= 2 unlocks martial weapons if proficient,
+--     tier 3 unlocks medium armor, tier 4 (jackpot) unlocks heavy armor (HEAVY_LEVEL+)
+--     and the magic/level-scaled weapon tables ("weapon cost x2" proxy)
+--   - WILD groups pass their GROUP tier (core/squad/warband) as the baseline instead of
+--     the old per-member re-roll: squad bumps to 2 (20% -> 3), warband to 3 (20% -> 4),
+--     boss slot +2; combat reinforcements keep the legacy self-roll (groupTier = nil)
+--   - consumables: healing potion is BASELINE (guaranteed from level 3 up, all tiers) so
+--     even dps can bail out a teammate with a throw; one extra roll per member from the
+--     member-level-band pool (owner spec: low=1-3, mid=4-8, top=9-12) - poisons are the
+--     lowest extras, speed the highest (top pool crown jewel, never mid/low)
+--   - support slot (class-appropriate, owner spec 2026-11-01): caster = 0-X scrolls,
+--     ranged = bow + 0-X special arrow stacks, melee = 0-X strong poisons/grenades;
+--     pool band (low/mid/top) follows encounter rank (group tier), count rides the
+--     equip tier - ⚠️ NPC scroll/arrow AI use needs in-game confirmation (logged)
+--   - role parity (v3.28, owner: reinforcements must LOOK class-appropriate): role =
+--     team slot, or template-name guess for pool mobs (Ranger/Hunter... -> ranged;
+--     Caster/Cleric/Wizard/Necro... -> caster). Casters get a QUARTERSTAFF (+scrolls),
+--     not a rapier lottery; ranged get bows as the PRIMARY weapon (martial tables at
+--     tier 2+, level-scaled at tier 4); Shields-proficient melees carry shields
+--     (tank slot 100%, other melee ~55%) - finesse/weirdness gated to melee only
 -- Gear rolls in via Osi.GenerateTreasure (vanilla random tables, level-segmented); the
 -- TemplateAddedTo listener auto-equips it; potions stay in inventory (mob AI drinks them).
 
@@ -19,9 +36,91 @@ local T_MARTIAL = "ST_MartialMeleeWeapons"        -- battleaxe/longsword/...
 local T_MARTIAL_1 = "ST_MartialMeleeWeapons_1"    -- level-scaled variant
 local T_FINESSE = "ST_Finesse_MeleeWeapons"       -- dagger/rapier/scimitar/shortsword
 local T_FINESSE_MAGIC = "ST_Finesse_MeleeWeapons_Magic"
-local T_LIGHT = "ST_LightArmor"
-local T_MEDIUM = "ST_MediumArmor"
-local T_HEAVY = "ST_HeavyArmor"
+-- v3.37 ARMOR FIX (owner: half-elf squad spawned "underwear only" despite AC math
+-- proving armor stats): the ST_Light/Medium/HeavyArmor treasure tables reference
+-- I_ARM_*_Body loot stats-ids that have NO root template in the live dump
+-- (ARM_Leather exists, ARM_Leather_Body does not) -> GenerateTreasure produced
+-- ZERO items from them, silently inside pcall. Armor now comes like staff/shields
+-- already did: direct TemplateAddTo of real ARM_* root templates (Name_GUID from
+-- Chaos_root_templates.txt) -> TemplateAddedTo listener auto-equips -> VISIBLE.
+-- Band choice keeps the old proficiency/tier gating.
+local ARMOR_BANDS = {
+    light  = { "ARM_Padded_63cc7723-245d-4b62-b9e6-5a47283cf777",
+               "ARM_Leather_02ae5d88-8044-43df-8363-02a2900776db",
+               "ARM_StuddedLeather_19451420-13f6-444c-a15b-7abb6dde3f91" },
+    medium = { "ARM_Hide_b78fabcc-d2df-4c74-b5d4-1eda6dc4c071",
+               "ARM_ChainShirt_921cd1e1-c39c-44c3-a090-b667322af7f8",
+               "ARM_ScaleMail_ca0aafad-0f1e-4d76-8e3b-925397bb436b",
+               "ARM_Breastplate_4814825e-23ee-41ed-9784-d9963434150d" },
+    heavy  = { "ARM_RingMail_e3a5099a-397a-4bbc-932c-cd0a00043b79",
+               "ARM_Splint_8ed82f7e-fdd4-4a9f-94b6-f256c599bfdd",
+               "ARM_Plate_95b4e2c4-759a-4d33-a2d1-4e0ee6ed4f29" },
+}
+local T_RANGED = "ST_SimpleRangedWeapons"           -- longbow/shortbow/light crossbow (all simple)
+local T_RANGED_1 = "ST_SimpleRangedWeapons_1"       -- level-scaled variant
+local T_RANGED_M = "ST_MartialRangedWeapons"        -- hand crossbow (martial)
+local T_RANGED_M1 = "ST_MartialRangedWeapons_1"
+-- v3.28 role-parity kit (owner: reinforcements must LOOK class-appropriate):
+-- casters get a quarterstaff, Shields-proficient melees get shields (shields are
+-- off-hand WPN_* templates; the TemplateAddedTo auto-equip listener places them).
+-- ids verified against the live root-template dump (no DONOTUSE/NOT_APPROVED).
+local STAFF_0 = "WPN_HUM_Quarterstaff_A_0_96e2abaf-78ff-4dcb-a6a3-a5f0c348bd9f"
+local STAFF_1 = "WPN_HUM_Quarterstaff_A_1_2fa18ee4-92df-486f-97d2-dd0a720b6fad"
+local SHIELD_BASIC = {
+    "WPN_HUM_Shield_B_0_24fa28d4-f679-44bf-865e-c7e70dcb9588",
+    "WPN_HUM_Shield_C_0_4491fcaf-03bf-4087-baf3-b638657080f6",
+}
+local SHIELD_1 = "WPN_HUM_Shield_D_1_26b81847-b0dd-4150-aef7-602fcbb72eca"
+
+-- v3.42 CLERIC KIT: healers always fight one-handed + shield (owner: a healer swinging
+-- a 2h weapon is off-class). Direct templates (validated in the live root-template
+-- dump), same channel as staff/shields; _A_1 = level-scaled variants at tier 4.
+local HEAL_1H = {
+    "WPN_HUM_Mace_A_0_3186796d-3ab3-4d49-bfc2-cba1aff0cf5a",
+    "WPN_HUM_Warhammer_A_0_6b17998d-2e79-405d-8b1f-beb53658312f",
+    "WPN_HUM_Battleaxe_A_0_a086b825-8f17-4f0e-855b-178f8cdc515a",
+    "WPN_HUM_Morningstar_A_0_26a9fba6-1a60-4691-84ea-da7ffcb304e0",
+}
+local HEAL_1H_1 = {
+    "WPN_HUM_Mace_A_1_5a948b12-ca43-4256-9821-0d151036dbd1",
+    "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f",
+    "WPN_HUM_Battleaxe_A_1_c17ee133-cbb5-418f-88be-5ef27991cf50",
+    "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c",
+}
+-- v3.44 CLASS-KIT weapon pools (all ids validated in the live root-template dump).
+-- twohanded brute kit (GreatWeaponFighting builds):
+local WP_2H = {
+    "WPN_HUM_Greatsword_A_0_ecfb9f69-5bc3-402e-acd8-c91d57e28403",
+    "WPN_HUM_Greataxe_A_0_d5712e24-ce9e-42ce-8fad-6e049b62c28c",
+    "WPN_HUM_Maul_A_0_5487ceb4-b009-46ae-8ed6-cd3baaf0a18d",
+    "WPN_HUM_Halberd_A_0_f928a70d-5b23-4605-9cae-5342f9ed206e",
+}
+local WP_2H_1 = {
+    "WPN_HUM_Greatsword_A_1_1a2a58b7-4bd5-44d5-b1fe-8cd7e5b53def",
+    "WPN_HUM_Greataxe_A_1_afbfaee7-e2cd-48e7-8c46-d2377c7320e3",
+    "WPN_HUM_Maul_A_1_7e8ef269-0e7b-4352-8828-89c5fced943c",
+    "WPN_HUM_Halberd_A_1_d1019d9d-e5ae-4601-8a63-1b33421926e1",
+}
+-- dex dual-wielder: LIGHT one-hands only (TwoWeaponFighting requirement).
+local WP_DUAL = {
+    "WPN_HUM_Shortsword_A_0_467ddb4f-6791-41fa-99f7-ee8620d63bbe",
+    "WPN_HUM_Scimitar_A_0_868217db-9dcb-414c-bb88-e321ab3e0349",
+    "WPN_HUM_Dagger_A_0_569b0f3d-abcd-4b01-aaf0-979091288163",
+    "WPN_HUM_Handaxe_A_0_46b64a36-8446-45bd-98e8-ee81e3136baa",
+    "WPN_HUM_LightHammer_A_0_494f21ac-5a1b-4e91-bd30-551b79532516",
+}
+local WP_DUAL_1 = {
+    "WPN_HUM_Shortsword_A_1_261b946f-154b-4f75-8985-cab6531034a2",
+    "WPN_HUM_Scimitar_A_1_7cc7a0e1-d0b8-4569-afb2-d538e8941894",
+    "WPN_HUM_Dagger_A_1_1eab180b-5bf9-48ea-aece-7ba20d1deb78",
+    "WPN_HUM_Handaxe_A_1_7a05135d-b285-4186-8a32-a870f1684b60",
+    "WPN_HUM_LightHammer_A_1_d0419aaf-9e20-4029-b8e9-9e1a62661b13",
+}
+-- javelin thrower barbarian (3-8 rolled per member, owner spec)
+local WP_JAVELIN = {
+    "WPN_HUM_Javelin_A_0_0a7adc8d-b561-4f81-a8f2-ec07b5d54955",
+    "WPN_HUM_Javelin_A_1_b908f109-b379-4a49-8f41-5b7f154d9b76",
+}
 -- cosmetic decency fallback (owner 2026-10-31: casters without armor prof spawned
 -- weaponless-looking AND naked); vanilla vanity tables, random common/rich garment,
 -- sells for nothing, no proficiency requirement, does not block spellcasting
@@ -37,9 +136,64 @@ local POTION_HEAL = {
 }
 local POTION_SPEED = "CONS_Potion_Speed_ad9f3f24-d755-48b6-aa7b-c34da068209f"
 
+-- "extra" consumable ladder (owner spec 2026-11-01): pool gated by the MEMBER's level
+-- band - low = lvl 1-3, mid = 4-8, top = 9-12 - most members sit in mid. Poisons are
+-- the lowest extras (applied with the free "use" action; NPC AI handles it), speed is
+-- the crown jewel and lives ONLY in the top pool. DONOTUSE variants excluded; ids from
+-- the live root-template dump (profile Script Extender/Chaos_root_templates.txt).
+-- entries: { template, weight }
+local POTION_POOLS = {
+    low = {   -- lvl 1-3
+        { "CONS_Poison_Basic_28645376-e6e8-436a-8e9a-c62877fae07d", 45 },
+        { "CONS_Potion_Antitoxin_f0c7d8bb-85e9-4937-96bb-49ba69d28631", 15 },
+        { "CONS_Potion_Fire_Resistance_2608c096-a0f5-4172-ad04-c1b170e10d95", 12 },
+        { "CONS_Potion_Lightning_Resistance_05257244-ab59-4eab-9745-d1fea7b8cd10", 12 },
+        { "CONS_Poison_Crawler_Mucus_5865caed-4a5d-45b7-b365-1113334a8e7b", 16 },
+    },
+    mid = {   -- lvl 4-8
+        { "CONS_Potion_Heroism_A_bb27cc17-5af9-4d53-818b-3e620f3f59f2", 30 },
+        { "CONS_Potion_Poison_Resistance_ae28b14c-0881-45fe-8237-9fcb1c951d3d", 15 },
+        { "CONS_Potion_Psychic_Resistance_164ac6f3-8f93-4d74-9f72-e7c49723dedb", 15 },
+        { "CONS_Potion_Necrotic_Resistance_f3c0aefb-a399-42c6-8d85-7fdceb6d18f5", 15 },
+        { "CONS_Poison_Drow_f528a334-bdb3-4cf1-b74c-0e08942daeb1", 15 },
+        { "CONS_Poison_Malice_d990fefe-e0f3-46ba-915e-35aebc6c6599", 10 },
+    },
+    top = {   -- lvl 9-12 - speed last: highest tier, weight = crown-jewel share
+        { "CONS_Potion_Heroism_A_bb27cc17-5af9-4d53-818b-3e620f3f59f2", 20 },
+        { "CONS_Potion_Hill_Giant_Strength_c69fb092-2f4f-4688-82b6-7d92405626b1", 20 },
+        { "CONS_Potion_Invisible_A_809d5026-4896-4b3a-986e-95da58da77e2", 18 },
+        { "CONS_Poison_Wyvern_eca393b0-3f8e-4862-814b-9e236a0d4129", 15 },
+        { "CONS_Poison_Purple_Worm_56e531e9-78e4-430b-bc98-611c1b1ccd08", 12 },
+        { POTION_SPEED, 15 },
+    },
+}
+local POTION_BANDS = { { 3, "low" }, { 8, "mid" }, { 99, "top" } }
+
 local pending = {}   -- guid of freshly spawned humanoid -> true (auto-equip guard)
 
 local function rand(lo, hi) return math.random(lo, hi) end
+
+-- v3.28 role guess (equip parity): team slots carry an explicit role; CreatureDB
+-- pool mobs get a name-pattern read (verified against the live DB's nm strings:
+-- "Goblin Ranger", "Elf Druid", "Human Cultist Bhaal Invoker", "Sahuagin Hunter"...).
+-- Order matters: "Ranger Stone Guard" -> ranged (frontline read is secondary).
+local RANGED_WORDS = { "Ranger", "Hunter", "Archer", "Scout", "Sniper", "Marksman", "Crossbow", "Bowman" }
+local CASTER_WORDS = { "Caster", "Cleric", "Druid", "Warlock", "Wizard", "Mage", "Priest", "Acolyte",
+                       "Shaman", "Necro", "Invoker", "Conjurer", "Sorcerer", "Healer", "Bard" }
+local function nameHas(hay, words)
+    for _, w in ipairs(words) do
+        if hay:find(w, 1, true) then return true end
+    end
+    return false
+end
+local function weaponRoleFor(entry)
+    if entry.role == "ranged" or entry.role == "caster" then return entry.role end
+    if entry.role then return "melee" end          -- tank / dps / healer / wildcard slots
+    local hay = (entry.nm or "") .. " " .. tostring(entry.id or "")
+    if nameHas(hay, RANGED_WORDS) then return "ranged" end
+    if nameHas(hay, CASTER_WORDS) then return "caster" end
+    return "melee"
+end
 
 local function healPotionFor(base)
     if base >= 11 then return POTION_HEAL[3] end
@@ -47,16 +201,156 @@ local function healPotionFor(base)
     return POTION_HEAL[1]
 end
 
--- weapon + armor table for this creature/tier, or nil for "designed without"
+local function potionPoolFor(lvl)
+    for _, b in ipairs(POTION_BANDS) do
+        if lvl <= b[1] then return POTION_POOLS[b[2]] end
+    end
+    return POTION_POOLS.top
+end
+
+local function rollPotion(pool)
+    local total = 0
+    for _, e in ipairs(pool) do total = total + e[2] end
+    local r = rand(1, total)
+    for _, e in ipairs(pool) do
+        r = r - e[2]
+        if r <= 0 then return e[1] end
+    end
+    return pool[1][1]
+end
+
+-- equipment tier baseline: WILD groups pass their group tier (owner: gear richness
+-- follows the encounter rank, not an independent per-member lottery); a small bump
+-- keeps the chaos (80% baseline, 20% one band up). Combat reinforcements (groupTier
+-- = nil) keep the legacy owner bands <=80/<=95/<=98/jackpot.
+-- v3.43: boss +2 REMOVED - leaders/bosses get the SAME baseline as the encounter and
+-- express their edge through the capped magic-gear rolls instead (owner spec).
+local function tierBaseline(groupTier, isBoss)
+    if not groupTier then
+        local roll = rand(1, 100)
+        return roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
+    end
+    local t = groupTier
+    if rand(1, 100) <= 20 then t = t + 1 end
+    return math.min(t, 4)
+end
+
+-- class-appropriate "support" slot (owner spec 2026-11-01): casters get 0-X spell
+-- scrolls, ranged get 0-X special arrows (BG3 ammo is shared arrows/bolts) + a bow so
+-- the arrows are usable, melee gets stronger poisons + alchemist grenades. POOL BAND
+-- (low/mid/top) follows the encounter rank (group tier, equip tier 3+ pushes up one);
+-- COUNT is 0-X binomial on the equip tier (X = groupTier + equip bonuses, cap 4).
+-- ⚠️ playtest: scrolls may need the spell known by the caster kit, and NPC AI may
+-- ignore arrows/scrolls - the log lines mark who got what for that follow-up.
+-- ids = Name_<guid> from the live root-template dump.
+local SUPPORT_POOLS = {
+    caster = {
+        { "LOOT_SCROLL_MagicMissile_945cd4f0-991b-4663-b72e-790d49fee27e",
+          "LOOT_SCROLL_BurningHands_bc00df72-3c98-4bf2-9650-28e08f79b57c",
+          "LOOT_SCROLL_ChromaticOrb_c6aef37e-bc4d-46e7-a963-15b4cd8163bd",
+          "LOOT_SCROLL_WitchBolt_e69f52a4-3d86-4f08-a9b4-c70ba4cc3070",
+          "LOOT_SCROLL_Thunderwave_94caa680-50b8-46b1-b775-19150d783b2f" },
+        { "LOOT_SCROLL_Fireball_79d2bb95-53fc-4e41-a004-5e1b83db8de7",
+          "LOOT_SCROLL_Web_2eedb4ac-47fa-4039-9684-8b4bb0923a26",
+          "LOOT_SCROLL_Shatter_2ad118cb-b11f-45ca-a206-7575bbbaccc6",
+          "LOOT_SCROLL_ChainLightning_13105f7d-55fa-4292-abfe-b9d80054b48e",
+          "LOOT_SCROLL_Confusion_7634cc33-d16b-4640-ba7c-8c6a26653591" },
+        { "LOOT_SCROLL_Sunbeam_049d70c4-7ea3-4b6c-af6f-44dab7813a89",
+          "LOOT_SCROLL_WallOfFire_0f3c7369-d0bd-4b97-960d-1407f4c8eebf",
+          "LOOT_SCROLL_Cloudkill_0e793d2d-1cd7-4b90-a71b-821423e50969",
+          "LOOT_SCROLL_Disintegrate_3f737706-57ca-45e6-b0d1-45238da76329",
+          "LOOT_SCROLL_Fly_1df15994-c860-4930-beed-3135b74025fa" },
+    },
+    ranged = {
+        { "ARR_Arrow_Of_Fire_9a142fae-bcea-4e88-a407-16d3b27468b9",
+          "ARR_Arrow_Of_Ice_2e297d80-823b-4200-926e-6ca23f488090",
+          "ARR_Arrow_Of_Lightning_1b0f095b-cb22-4bf9-aecf-4e5a26504ec8",
+          "ARR_Arrow_Of_Acid_0bfb72d2-0e8e-4d16-aeae-3159b0d4b195" },
+        { "ARR_Arrow_Of_Ricochet_b11b3f7f-d8ec-41db-93b9-24474aea31e3",
+          "ARR_Arrow_Of_Piercing_eee2f284-1a42-462a-8b38-50bd2e3885c5",
+          "ARR_Arrow_Of_Smokepowder_0788a2bb-c732-4ebb-abf9-2ef150f509be",
+          "ARR_Arrow_Of_Fire_9a142fae-bcea-4e88-a407-16d3b27468b9" },
+        { "ARR_Arrow_Of_Detonation_a0985797-4ec7-475c-8e11-0361e387f39a",
+          "ARR_Arrow_Of_Lightning_1b0f095b-cb22-4bf9-aecf-4e5a26504ec8",
+          "ARR_Arrow_Of_Ice_2e297d80-823b-4200-926e-6ca23f488090" },
+    },
+    melee = {
+        { "CONS_Poison_Serpent_Venom_b0385b93-f525-4740-8126-471a76fa31a2",
+          "ALCH_Solution_Grenade_Light_c3236e6e-21e4-4e39-a5b4-fda105d8ce3f" },
+        { "CONS_Poison_Drow_f528a334-bdb3-4cf1-b74c-0e08942daeb1",
+          "CONS_Poison_Malice_d990fefe-e0f3-46ba-915e-35aebc6c6599",
+          "ALCH_Solution_Grenade_Web_a4d98266-948b-4467-96cd-6a316f37ceda",
+          "ALCH_Solution_Grenade_SporesConfusion_cbc47f2b-b88a-4bd8-99cd-aacc2dc2ea44" },
+        { "CONS_Poison_Wyvern_eca393b0-3f8e-4862-814b-9e236a0d4129",
+          "CONS_Poison_Purple_Worm_56e531e9-78e4-430b-bc98-611c1b1ccd08",
+          "ALCH_Solution_Grenade_SporesToxic_9320005f-18c6-4c2b-be7f-e168d3b15573" },
+    },
+}
+
+local function supportRoleFor(entry)
+    -- v3.28: same name/role read as the weapon side (pool mobs now get caster scrolls
+    -- and ranged arrow stacks too); team healers keep the melee kit (poisons/grenades,
+    -- they heal with potions - playtest-confirmed AI behaviour).
+    if entry.role == "healer" then return "melee" end
+    return weaponRoleFor(entry)
+end
+
+local function supportSlot(entry, groupTier, tier)
+    local gt = groupTier or 1
+    local band = gt + (tier >= 3 and 1 or 0)
+    band = math.max(1, math.min(band, 3))
+    local cap = math.min(gt + (tier >= 3 and 1 or 0) + (tier == 4 and 1 or 0), 4)
+    local p = (tier == 1 and 30) or (tier == 2 and 60) or (tier == 3 and 80) or 100
+    local n = 0
+    for _ = 1, cap do
+        if rand(1, 100) <= p then n = n + 1 end
+    end
+    if n == 0 then return supportRoleFor(entry), band, nil end
+    local role = supportRoleFor(entry)
+    local pool = SUPPORT_POOLS[role][band]
+    local picked = {}
+    local qty = 1
+    for _ = 1, n do
+        local t = pool[rand(1, #pool)]
+        if role == "ranged" then
+            qty = rand(3, 5) + (tier >= 3 and 1 or 0)   -- arrows come in stacks
+        end
+        picked[#picked + 1] = { t, qty }
+    end
+    return role, band, picked
+end
+
+-- weapon + armor table for this creature/tier, or nil for "designed without".
+-- v3.28 role parity (owner: reinforcements must look class-appropriate):
+--   caster -> quarterstaff TEMPLATE (not a rapier lottery); needs weapon proficiency,
+--             tier 4 gets the level-scaled staff
+--   ranged -> bow/crossbow table as the PRIMARY weapon (was an ad-hoc bow in support)
+--   melee/tank -> shield when Shields-proficient: tank always, other melee ~55%
+-- third return = extra root templates (staff/shield) added directly; the
+-- TemplateAddedTo auto-equip listener places them (shields are off-hand weapons).
 local function equipmentFor(entry, base, tier)
     local prof = entry.prof or ""
     if entry.unarmed and prof == "" then return nil, nil end   -- innate attacker
-
-    local finesse = (entry.dex or 10) > (entry.str or 10)
+    local wp = entry.wp or "table"     -- v3.44 class-kit directive (BUILD_WP)
+    if wp == "unarmed" then return nil, nil end  -- monk: fists + table passives
+    local role = weaponRoleFor(entry)
+    local kit1h = entry.role == "healer" or wp == "1h_shield"  -- 1h+shield builds
     local martial = prof:find("MartialWeapons", 1, true) ~= nil
+    local staffed = wp == "staff"
+        or (role == "caster"
+            and (prof:find("SimpleWeapons", 1, true) or prof:find("Quarterstaffs", 1, true)) ~= nil)
+    local finesse = (entry.dex or 10) > (entry.str or 10)
+                    and role ~= "caster" and role ~= "ranged" and not kit1h
+                    and wp ~= "twohanded"            -- high-dex casters/ranged keep their kit
     local weapon
-    if base <= 1 then
-        weapon = T_SIMPLE                                            -- lvl 1: cheapest, period
+    if staffed or kit1h or wp == "twohanded" or wp == "dual" then
+        weapon = nil                        -- the kit IS the weapon (extras below)
+    elseif role == "ranged" then
+        if base <= 1 then weapon = T_RANGED
+        elseif tier >= 2 and martial then weapon = T_RANGED_M
+        else weapon = T_RANGED end
+    elseif base <= 1 then
+        weapon = T_SIMPLE                                      -- lvl 1: cheapest, period
     elseif tier >= 2 and martial then
         weapon = T_MARTIAL
     else
@@ -69,24 +363,60 @@ local function equipmentFor(entry, base, tier)
     if tier == 4 and base >= 4 then
         if finesse then weapon = T_FINESSE_MAGIC
         elseif weapon == T_MARTIAL then weapon = T_MARTIAL_1
-        else weapon = T_SIMPLE_1 end
+        elseif weapon == T_RANGED then weapon = T_RANGED_1
+        elseif weapon == T_RANGED_M then weapon = T_RANGED_M1
+        elseif weapon == T_SIMPLE then weapon = T_SIMPLE_1 end
     end
 
-    -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light
+    -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light;
+    -- tier 3 unlocks medium, heavy stays tier-4-only (HEAVY_LEVEL+).
+    -- v3.44: dual-wield fighters wear LIGHT armor at ANY level (owner spec).
     local armor
-    if base <= 1 then
-        armor = T_LIGHT
-    elseif tier == 4 then
-        if prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = T_HEAVY
-        elseif prof:find("MediumArmor", 1, true) then armor = T_MEDIUM
-        else armor = T_LIGHT end
+    if base <= 1 or wp == "dual" then
+        armor = "light"
+    elseif tier >= 3 then
+        if tier == 4 and prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = "heavy"
+        elseif prof:find("MediumArmor", 1, true) then armor = "medium"
+        else armor = "light" end
     else
-        armor = T_LIGHT
+        armor = "light"
     end
     if not (prof:find("Armor", 1, true) or base <= 1) then
         armor = nil                                                  -- no armor prof: native AC
     end
-    return weapon, armor
+    -- class kit extras (v3.28 staff/shields + v3.44 two-handed/dual/javelin kits).
+    local extras
+    if staffed then
+        extras = { (tier == 4 and base >= 4) and STAFF_1 or STAFF_0 }
+    elseif kit1h then
+        -- v3.42: healers (and paladin/hexblade kits) ALWAYS fight 1h, and always carry
+        -- a shield when proficient (owner: more AC, proper cleric fantasy).
+        extras = { (tier == 4) and HEAL_1H_1[rand(1, #HEAL_1H_1)] or HEAL_1H[rand(1, #HEAL_1H)] }
+        if prof:find("Shields", 1, true) then
+            extras[#extras + 1] = (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)]
+        end
+    elseif wp == "twohanded" then
+        -- v3.44 brute: guaranteed 2h martial (no shield - two hands on the steel)
+        extras = { (tier == 4) and WP_2H_1[rand(1, #WP_2H_1)] or WP_2H[rand(1, #WP_2H)] }
+    elseif wp == "dual" then
+        -- v3.44 duelist: two LIGHT weapons (main + off-hand), no shield
+        local pool = (tier == 4) and WP_DUAL_1 or WP_DUAL
+        local a = rand(1, #pool)
+        local b = rand(1, #pool)
+        if b == a then b = b % #pool + 1 end
+        extras = { pool[a], pool[b] }
+    elseif role == "melee" and prof:find("Shields", 1, true)
+           and rand(1, 100) <= (entry.role == "tank" and 100 or 55) then
+        extras = { (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)] }
+    end
+    -- v3.44 javelin thrower (barbarian 25% variant): 3-8 javelins on top (owner).
+    if wp == "javelins" then
+        extras = extras or {}
+        local n = rand(3, 8)
+        local jid = (tier >= 3) and WP_JAVELIN[2] or WP_JAVELIN[1]
+        for _ = 1, n do extras[#extras + 1] = jid end
+    end
+    return weapon, armor, extras
 end
 
 -- public ------------------------------------------------------------------------
@@ -97,38 +427,168 @@ function EquipResetPending()
     pending = {}
 end
 
-function EquipMob(created, base, entry)
+-- v3.43 MAGIC GEAR on leaders/bosses (owner spec, lvl5+): same baseline kit as the
+-- encounter, but each gear SLOT gets an independent roll to receive a +1 item instead:
+-- leaders 10/20/30% and bosses 15/30/45% by level band (5-6 / 7-8 / 9+); item COUNT is
+-- capped per band (1/2/3 - a 2h+armor mob naturally caps at 2). Slots roll in random
+-- order. Items = vanilla quality-1 templates (WeaponEnchantment(1) / AC+1 / Rare-ish
+-- loot) - all ids validated against the live root-template dump. +1 ceiling on purpose
+-- (owner: don't flood the player's loot economy).
+local MAGIC_CHANCE_LEADER = { 10, 20, 30 }
+local MAGIC_CHANCE_BOSS   = { 15, 30, 45 }
+local MAGIC_WEAPON = {  -- melee 1h by level band (safe under shields)
+    { "WPN_HUM_Mace_A_1_5a948b12-ca43-4256-9821-0d151036dbd1",
+      "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f" },
+    { "WPN_HUM_Battleaxe_A_1_c17ee133-cbb5-418f-88be-5ef27991cf50",
+      "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c" },
+    { "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c",
+      "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f" },
+}
+local MAGIC_RANGED = {
+    { "WPN_HUM_Shortbow_A_1_a46173b7-afd6-48e0-9c76-817acd027574" },
+    { "WPN_HUM_Longbow_A_1_049173ec-636a-487e-a9ed-bfafeadf6bb7" },
+    { "WPN_HUM_Longbow_A_1_049173ec-636a-487e-a9ed-bfafeadf6bb7",
+      "WPN_HUM_HeavyCrossbow_A_1_6af59cba-cc38-4511-9c3b-75caac4b96b5" },
+}
+local MAGIC_ARMOR = {
+    light  = { "ARM_Padded_1_f5faa6c5-a43c-4edd-a77f-6e7536a7e683",
+               "ARM_Leather_1_90a79e46-e327-41f4-a349-8e4dd70b1892",
+               "ARM_StuddedLeather_1_58d7927f-c6eb-4635-85b6-70265c621b3d",
+               "ARM_Hide_1_94ed8ec8-93a4-4a8c-bc47-55cb3faae7c0" },
+    medium = { "ARM_ChainShirt_1_eac652ed-ecf7-4505-bf64-0fec29e7d677",
+               "ARM_ScaleMail_1_dc748177-8590-4a99-a446-feccbd8d8eb4" },
+    heavy  = { "ARM_Splint_1_ecfb1364-b1a0-4d0e-b82a-0becd8c291fd",
+               "ARM_Plate_1_dd905194-9a67-4c61-b26d-5b4da4725cde" },
+}
+local MAGIC_SHIELD = "WPN_HUM_Shield_A_1_cb2d6c27-ec29-4555-adf2-41e8c1952439"
+
+function magicGear(mob, mlvl, entry, weapon, armor, extras, isBoss, isLeader)
+    if not (isBoss or isLeader) or mlvl < 5 then return end
+    local band = mlvl >= 9 and 3 or (mlvl >= 7 and 2 or 1)
+    local p = (isBoss and MAGIC_CHANCE_BOSS or MAGIC_CHANCE_LEADER)[band]
+    local cap = band   -- 1/2/3 items by band
+    local role = weaponRoleFor(entry)
+    local slots = {}
+    local hasWeapon = weapon ~= nil
+    local hasShield = false
+    if extras then
+        for _, e in ipairs(extras) do
+            local s = tostring(e)
+            if s:find("Shield") then hasShield = true
+            elseif s:find("WPN_") or s:find("STAFF") then hasWeapon = true end
+        end
+    end
+    -- v3.45 (owner: BOSS Duelist got a magic WARHAMMER - wrong kit, wielded 2h so dex
+    -- was dead): the weapon roll must follow the build's wp kit, not the generic 1h pool.
+    if hasWeapon then
+        local pool
+        if role == "ranged" then pool = MAGIC_RANGED[band]
+        elseif entry.wp == "dual" then pool = WP_DUAL_1        -- light weapons (TWF pair)
+        elseif entry.wp == "twohanded" then pool = WP_2H_1     -- greatsword/greataxe/maul/halberd
+        else pool = MAGIC_WEAPON[band] end                     -- 1h_shield/table/javelins
+        slots[#slots + 1] = pool
+    end
+    if armor then slots[#slots + 1] = MAGIC_ARMOR[armor] end
+    if hasShield then slots[#slots + 1] = { MAGIC_SHIELD } end
+    for i = #slots, 2, -1 do local j = rand(1, i); slots[i], slots[j] = slots[j], slots[i] end
+    local given, rolled, names = 0, 0, {}
+    for si = 1, math.min(#slots, cap) do
+        rolled = rolled + 1
+        if rand(1, 100) <= p then
+            local pool = slots[si]
+            local pick = pool[rand(1, #pool)]
+            local okM, errM = pcall(Osi.TemplateAddTo, pick, mob, 1, 0)
+            if okM then
+                given = given + 1
+                names[#names + 1] = tostring(pick):match("^([%w_]+)_") or pick
+            else
+                log("magic: TemplateAddTo FAILED", pick, "-", tostring(errM))
+            end
+        end
+    end
+    log("magic:", isBoss and "BOSS" or "leader", "lvl", mlvl, p .. "%", rolled, "roll(s)",
+        given > 0 and ("got " .. table.concat(names, ",")) or "none", "on", tostring(mob):sub(1, 8))
+end
+
+function EquipMob(created, base, entry, groupTier, isBoss, isLeader)
     if not EQUIP_MOBS then return end
     pending[created] = true
-    -- owner's bands: <=80% basic, <=95% more, <=98% even more, else jackpot
-    local roll = rand(1, 100)
-    local tier = roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
+    local tier = tierBaseline(groupTier, isBoss)
+    -- member level (team templates bake their own) decides the potion band:
+    -- low 1-3 / mid 4-8 / top 9-12 (owner spec)
+    local mlvl = entry.fixedLevel or base
     if base <= 1 then tier = 1 end                                  -- lvl 1: cheapest gear only
-    local weapon, armor = equipmentFor(entry, base, tier)
+    -- v3.43 ARMOR-TIER BANDS per level (owner: lvl7+ wore heavy too consistently;
+    -- 8+ SHOULD be plate when proficient): lvl 3-4 floor2, lvl 5 coin-flip floor2/3,
+    -- lvl 6-7 floor3 (medium), lvl 8+ floor4 (heavy unlock). Group rolls/20% bump
+    -- still stack above the floor.
+    if base >= 8 then tier = math.max(tier, 4)
+    elseif base >= 6 then tier = math.max(tier, 3)
+    elseif base == 5 then tier = math.max(tier, rand(1, 100) <= 50 and 2 or 3)
+    elseif base >= 3 then tier = math.max(tier, 2) end
+    if tier > 4 then tier = 4 end
+    local weapon, armor, extras = equipmentFor(entry, base, tier)
     -- no armor (innate/native AC) -> still give a random garment so the mob isn't
     -- naked; jackpot tier gets the rich wardrobe (owner: "make it interesting")
     local clothes = nil
     if not armor then
         clothes = (tier == 4) and T_CLOTHES_RICH or T_CLOTHES_COMMON
     end
-    log("equip: tier", tier, "(roll", roll .. ")",
-        weapon or "innate", "+", armor or (clothes and "clothes" or "native-armor"),
+    local tag = groupTier and ("(group " .. groupTier .. (isBoss and " boss" or "") .. ")") or "(roll)"
+    log("equip: tier", tier, tag, "role", weaponRoleFor(entry),
+        weapon or (extras and "kit-only") or "innate",
+        "+", armor and (armor .. "-armor") or (clothes and "clothes" or "native-armor"),
+        "+", extras and (#extras .. " extra") or "no extra",
         "prof", entry.prof or (entry.unarmed and "innate" or "-"))
-    if weapon then pcall(Osi.GenerateTreasure, created, weapon, base, created) end
-    if armor then pcall(Osi.GenerateTreasure, created, armor, base, created) end
-    if clothes then pcall(Osi.GenerateTreasure, created, clothes, base, created) end
-    -- consumables
+    -- v3.37: GenerateTreasure failures must be LOUD (the armor tables failed silently
+    -- for dozens of versions - bare pcalls hid it)
+    if weapon then
+        local okT, errT = pcall(Osi.GenerateTreasure, created, weapon, base, created)
+        if not okT then log("equip: GenerateTreasure FAILED", weapon, "-", tostring(errT)) end
+    end
+    if armor then
+        local band = ARMOR_BANDS[armor]
+        local pick = band[rand(1, #band)]
+        local okA, errA = pcall(Osi.TemplateAddTo, pick, created, 1, 0)
+        if okA then log("equip: armor", pick:match("^[%w_]+") .. " (" .. armor .. ")")
+        else log("equip: armor TemplateAddTo FAILED", pick, "-", tostring(errA)) end
+    end
+    if clothes then
+        local okT, errT = pcall(Osi.GenerateTreasure, created, clothes, base, created)
+        if not okT then log("equip: GenerateTreasure FAILED", clothes, "-", tostring(errT)) end
+    end
+    if extras then
+        for _, t in ipairs(extras) do
+            pcall(Osi.TemplateAddTo, t, created, 1, 0)
+        end
+        log("equip: class kit", #extras, "template(s) on", created)
+    end
+    -- class-appropriate support slot (v3.28: the ranged bow is now the PRIMARY weapon
+    -- via equipmentFor, no separate bow roll here - the special arrows need it)
+    local role, band, support = supportSlot(entry, groupTier, tier)
+    if support then
+        for _, s in ipairs(support) do
+            pcall(Osi.TemplateAddTo, s[1], created, s[2], 0)
+        end
+        log("support:", role, "band", band, #support, "item rolls on", created)
+    end
+    -- consumables: healing potion is the BASELINE from lvl 3 up, one per member at
+    -- every group tier (owner: even dps can bail a teammate out with a throw);
+    -- below lvl 3 the old rare-roll odds stay (10%/25%, tier 3+ = grown playtest odds).
+    -- Then ONE "extra" roll from the member's band pool (poisons low, speed top);
+    -- equip tier 4 doubles the healing and guarantees the extra.
     local potions = {}
-    if tier == 1 then
-        if rand(1, 100) <= 10 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 2 then
-        if rand(1, 100) <= 25 then potions[#potions + 1] = healPotionFor(base) end
-    elseif tier == 3 then
-        potions[#potions + 1] = healPotionFor(base)
-    else
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = healPotionFor(base)
-        potions[#potions + 1] = POTION_SPEED   -- "extra random thing", not overpowered
+    local heal = healPotionFor(math.max(base, mlvl))
+    if mlvl >= 3 then
+        potions[#potions + 1] = heal
+    elseif tier >= 3 or rand(1, 100) <= (tier == 2 and 25 or 10) then
+        potions[#potions + 1] = heal
+    end
+    if tier == 4 then
+        potions[#potions + 1] = heal
+        potions[#potions + 1] = rollPotion(potionPoolFor(mlvl))
+    elseif rand(1, 100) <= (tier == 3 and 50 or (tier == 2 and 25 or 10)) then
+        potions[#potions + 1] = rollPotion(potionPoolFor(mlvl))
     end
     for _, p in ipairs(potions) do
         pcall(Osi.TemplateAddTo, p, created, 1, 0)
@@ -136,14 +596,55 @@ function EquipMob(created, base, entry)
     if #potions > 0 then log("equip: potions", #potions) end
     -- deferred ground-truth probe: did the weapon actually reach the slot?
     -- (works even if the TemplateAddedTo route is dead - in-game logs showed gear
-    -- rolls but no visible weapons/armor on the mobs)
-    if weapon then
+    -- rolls but no visible weapons/armor on the mobs); staff counts as the weapon
+    local probe = weapon or (extras and (extras[1] == STAFF_0 or extras[1] == STAFF_1))
+    if probe then
         pcall(Ext.Timer.WaitFor, 1500, function ()
             local okW, w = pcall(Osi.GetEquippedWeapon, created)
             log("arm check:", (okW and w and w ~= "") and tostring(w) or "NO WEAPON EQUIPPED",
                 "on", created)
         end)
     end
+    magicGear(created, mlvl, entry, weapon, armor, extras, isBoss, isLeader)
+    probeGear(created, armor ~= nil)
+end
+
+-- v3.39 ONE-SHOT DIAGNOSTIC, v3 in-place (v1/v2 ECS dumps were blind: Equipment/
+-- Inventory are CLIENT-side components, NIL server-side; ServerCharacter holds no item
+-- lists). Ask OSIRIS instead - it owns the equip DB. Vanilla slot names from goals:
+-- "Breast" (body armor), "Melee Main Weapon". One compact log line per mob for the
+-- first 4 armored spawns; EquipFailed listener (arity 2, from story_header) capped at 6.
+-- Flip PROBE_GEAR=false once the naked/robe mystery is solved.
+-- v3.40 VERDICT (owner: AC 16 hunter / AC 15 tank visible in combat, weapons held from
+-- round 0): equip mechanics CONFIRMED working (Breast=OK probes + AC math). Remaining
+-- "naked" is RENDER-only: NPC body art is baked into CharacterVisualResourceID per
+-- template (armored vanilla NPCs like AbsoluteGuard carry armored CVRID bodies; our
+-- BASE_* donors are civilian bodies) - body-armor ATTACHMENTS do not render on NPCs.
+-- Fix path = per-race CVRID overrides on CHAOST templates, not equip changes.
+local PROBE_GEAR = false
+local gearProbes = 0
+function probeGear(mob, armored)
+    if not PROBE_GEAR or not armored or gearProbes >= 4 then return end
+    gearProbes = gearProbes + 1
+    pcall(Ext.Timer.WaitFor, 1500, function ()
+        local okB, breast = pcall(Osi.GetEquippedItem, mob, "Breast")
+        local okW, wep = pcall(Osi.GetEquippedWeapon, mob)
+        local b = (okB and breast and breast ~= "") and ("Breast=" .. tostring(breast):sub(1, 13)) or "Breast=EMPTY"
+        local w = (okW and wep and wep ~= "") and "main=OK" or "main=EMPTY"
+        log("gear probe:", b, w, "on", tostring(mob):sub(1, 8))
+    end)
+end
+if PROBE_GEAR then
+    local fails = 0
+    pcall(function ()
+        Ext.Osiris.RegisterListener("EquipFailed", 2, "after", function (item, who)
+            if fails < 6 then
+                fails = fails + 1
+                log("EquipFailed:", tostring(item), "->", tostring(who):sub(1, 8),
+                    fails >= 6 and "(cap)" or "")
+            end
+        end)
+    end)
 end
 
 -- level-appropriate pocket gold for leaders (owner spec 2026-10-31): leader gets a
@@ -167,14 +668,24 @@ end
 -- SPAWNED registry (normalized guids, works for Chaos AND Wild mobs) and logs
 -- failures too, so the next log pinpoints the real cause.
 -- weapons/armor equip into their slot; potions/gold fail into inventory (param 3).
+-- v3.40 EQUIP ARGS FIX: trailing (1,0,1) on Osi.Equip are HAND args (vanilla goals:
+-- Equip(char, weapon, 1, 0, 1) main-hand / Equip(char, offhand, 1, 0, 0)). Forcing
+-- MAIN HAND on a breastplate fails at Osiris level - weapons rendered (owner: "totally
+-- naked, weapons in hand") because they happened to want the main hand, body gear never
+-- equipped. The old log only checked pcall() success, so the failure was invisible.
+-- Bare Equip(char, item) = engine auto-slots via GetEquipmentSlotForItem (vanilla
+-- precedent: Equip(Ketheric, ApostleScythe) bare).
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
         if isSpawned(holder) then
-            local okE, eE = pcall(Osi.Equip, holder, object, 1, 0, 1)
-            if okE then
-                log("equipped", object, "on", holder)
-            else
-                log("equip FAILED:", object, "on", holder, "-", tostring(eE))
+            -- NB: Osi.Equip CALLS return nil even on success (only the Breast/AC probes
+            -- and EquipFailed prove landings) - so "REFUSED" is only logged on an
+            -- explicit false; nil just means "call executed".
+            local okE, eE = pcall(Osi.Equip, holder, object)
+            if not okE then
+                log("equip THREW:", object, "on", holder, "-", tostring(eE))
+            elseif eE == false then
+                log("equip REFUSED:", object, "(", tostring(tmpl), ") on", holder)
             end
         end
     end)

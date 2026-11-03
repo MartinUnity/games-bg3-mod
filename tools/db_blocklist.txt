@@ -27,3 +27,6 @@ SPEC_A
 SPEC_B
 TollCollector
 # Workflow: eyeball tools/CreatureDB.review.lua (a copy of the generated DB), delete the
+Vampire_Spawn_A
+Vampire_Spawn_Human_Female
+Vampire_Spawn_Human_Male

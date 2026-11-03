@@ -22,7 +22,7 @@ import sys
 # --- UCL table vocabulary (guids verified against the installed UtutsCoreLibrary) ----
 UCL = {
     # base classes
-    "Fighter": "1c4c6006-bb49-4dac-954a-5a83b815a695",
+    "Fighter": "1c4c6006-0b49-4dac-954a-5a83b815a695",
     "Barbarian": "ae343448-6fce-40b2-8eb7-b5e4316dff58",
     "Ranger": "06762adc-24d9-4689-8d09-8dfa9182dd4b",
     "Rogue": "4356e226-3b97-46c6-9e16-2b8f302ab42f",
