@@ -442,6 +442,43 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.43 armor-tier bands per level + capped MAGIC GEAR on leaders/bosses (owner spec
+  after v3.42 playtest: "lvl7+ consistently wore heavy; 8+ should be plate"):**
+  (1) band table replaces the v3.42 floor: lvl 3-4 floor2, **lvl 5 coin-flip floor2/3**,
+  lvl 6-7 floor3 (medium), lvl 8+ floor4 (heavy/plate unlock); offline sim confirms
+  base5 ~50/50 t2/t3, base6 100% t3, base8+ 100% t4. Boss +2 tier bump REMOVED -
+  leaders/bosses get the SAME baseline as the encounter. (2) MAGIC GEAR replaces that
+  bump: `magicGear()` in Equip.lua fires only for leaders (wild slotMap slots) and the
+  boss at mlvl>=5; per-slot independent rolls - leaders 10/20/30%, bosses 15/30/45% by
+  band 5-6/7-8/9+; item cap = band (1/2/3); slots (weapon-or-bow / armor / shield) are
+  shuffled and rolled in random order; items = **vanilla quality-1 templates** (WPN_*_1
+  carry WeaponEnchantment(1)+Magical, ARM_*_1 have AC+1 - no new stats content needed;
+  all 16 ids validated in the live root-template dump: armor Padded f5faa6c5/Leather
+  90a79e46/StuddedLeather 58d7927f/Hide 94ed8ec8/ChainShirt eac652ed/ScaleMail
+  dc748177/Splint ecfb1364/Plate dd905194, shield WPN_HUM_Shield_A_1 cb2d6c27, weapons
+  Warhammer 3e1b3db9/Battleaxe c17ee133/Morningstar deea755b/Mace 5a948b12, bows
+  Shortbow a46173b7/Longbow 049173ec/HeavyCrossbow 6af59cba). +1 ceiling on purpose
+  (owner: don't flood player loot). Magic item added via TemplateAddTo; the
+  TemplateAddedTo listener auto-equips it and the replaced item drops as loot.
+  isLeader plumbed Wild.lua spawnWildMob (slotMap[i]) -> EquipMob; combat
+  reinforcements have no leader concept (no magic there). Log: `magic: BOSS/leader lvl N
+  P% roll(s) got ARM_.../none on <guid>`. Pak 249709 B. ⚠️ in-game verdict pending.
+  NOTE: vanilla "_1" = quality-1 items already enchant-1; ARM_Shield_1 stats point at
+  WPN_HUM_Shield_A_1 root (cb2d6c27). v3.44 = class roster expansion (druid healer
+  25%, 2x fighter dps, barb thrower 25%, warlock/monk/rogue/sorcerer/paladin lvl5+
+  gate, hexblade 25%, druid shapeshifter 75%/caster 25% dps) - BLOCKED on progression
+  TableUUIDs for the new classes (not yet extracted; look in vanilla pak
+  ProgressionTable .lsx via divine -a extract-package -x "*rogression*").
+- **v3.42 healer kit + level tier floor (owner v3.41 verdict: Githyanki squad looks
+  GREAT, baked-look vs rolled-gear mismatch explicitly ACCEPTED; HP ✅ - L8 berserker
+  108, L5 cleric 60, L6 hunter 70, L5 vanguard 70 = right chaos band):** two balance
+  fixes. (1) HEALERS ALWAYS 1h+shield (owner: "cleric wields a 2h weapon, should always
+  be 1h+shield for more AC"): composer `entry.role=="healer"` short-circuits the weapon
+  tables; kit = validated WPN_HUM_Mace/Warhammer/Battleaxe/Morningstar _A_0 templates
+  (_A_1 at tier 4) + shield 100% when Shields-proficient (HEAL_1H/HEAL_1H_1).
+  (2) TIER FLOOR per level (owner: "no lvl6-8 fighter in stock light/padded"): lvl3-5
+  never tier1, lvl6+ never below tier3 (= medium unlock; heavy stays tier-4 jackpot);
+  group-roll bump/boss +2 still stack above the floor. Pak 247982 B.
 - **v3.41 NAKED-MOB MYSTERY CLOSED as render-layer (owner verdict v3.40: "AC 16 hunter /
   AC 15 tank in fight, weapons from round 0 - but still naked"):** equip mechanics are
   PROVEN (gear probes Breast=OK + AC math). The `equip REFUSED` lines were a log artifact:

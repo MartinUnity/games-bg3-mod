@@ -235,7 +235,7 @@ end
 -- PreventTeleportOnFailure=0 the engine falls back to the nearest valid position on
 -- its own if the exact spot is bad. A delayed verify pass logs the final position so
 -- playtests can confirm the mob actually left the host's feet.
-local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupTier, isBoss)
+local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupTier, isBoss, isLeader)
     local ok, created = pcall(function ()
         local mob = Osi.CreateAtObject(entry.id, host, 1, 0, "", 1)
         if not mob or mob == "" then
@@ -275,7 +275,7 @@ local function spawnWildMob(entry, host, x, y, z, base, doEquip, faction, groupT
         end
         markSpawned(mob)
         tagAsOurs(mob)
-        if doEquip then EquipMob(mob, base, entry, groupTier, isBoss) end
+        if doEquip then EquipMob(mob, base, entry, groupTier, isBoss, isLeader) end
         -- NOTE: no SetFaction / no SetHostileAndEnterCombat here - the group stays put
         -- and neutral until the player walks into WILD_AGGRO_RANGE (monitor below)
         -- verify (deferred: appear + faction change resolve next frame)
@@ -440,7 +440,7 @@ local function spawnWildGroup(host, base)
         -- etype == "Humanoid" check (goblin warband is not a type name)
         local doEquip = (entry.prof ~= nil and entry.prof ~= "")
         local guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip,
-                                  groupFaction, tier, boss and i == 1)
+                                  groupFaction, tier, boss and i == 1, slotMap[i] ~= nil)
         -- failed team slot (CHAOST template unregistered/broken) must never leave an
         -- empty group (owner 2026-11-01: "group spawn FAILED (no members)" x5 after a
         -- root-template registration failure) - retry the slot with a plain pool mob.
@@ -452,7 +452,7 @@ local function spawnWildGroup(host, base)
                 doEquip = (entry.prof ~= nil and entry.prof ~= "")
                 log("wild: team slot failed - pool retry:", entry.id)
                 guid = spawnWildMob(entry, host, x + jitter, y, z + jitterZ, base, doEquip,
-                                    groupFaction, tier, boss and i == 1)
+                                    groupFaction, tier, boss and i == 1, slotMap[i] ~= nil)
             end
         end
         if guid then

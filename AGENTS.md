@@ -180,6 +180,15 @@ Where things live:
   CVRID per CHAOST node = vanilla Guard_Melee/Ranger/Caster bodies per donor race
   (RACE_VISUALS table; HalfOrc bodies live in SharedDev/_merged root templates);
   PROBE_GEAR=false; goblin Tier2 bodies + tiefling body taste = backlog);
+  **v3.42 healers always 1h+shield** (owner: cleric had 2h): composer `entry.role==
+  "healer"` bypasses weapon tables, kit = WPN_HUM_Mace/Warhammer/Battleaxe/Morningstar
+  _A_0 (_A_1 at tier4) + shield 100%; **v3.43 armor bands per level** (lvl3-4 floor2,
+  lvl5 coin-flip 2/3, lvl6-7 floor3 medium, lvl8+ floor4 plate — lvl7+ wore heavy too
+  much before) + **capped magic gear on leaders/bosses** (same baseline kit, then per-
+  slot +1-item rolls: leaders 10/20/30%, bosses 15/30/45% by band 5-6/7-8/9+, item cap
+  = band 1/2/3, slots shuffled; boss tier +2 bump removed; items = vanilla quality-1
+  templates WPN_*/ARM_*_1 — all ids live-validated; `magicGear()` in Equip.lua,
+  isLeader plumbed via Wild slotMap; log `magic: BOSS/leader ...`);
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

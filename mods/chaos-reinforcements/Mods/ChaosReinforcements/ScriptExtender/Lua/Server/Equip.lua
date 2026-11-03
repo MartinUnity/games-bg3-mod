@@ -71,6 +71,22 @@ local SHIELD_BASIC = {
     "WPN_HUM_Shield_C_0_4491fcaf-03bf-4087-baf3-b638657080f6",
 }
 local SHIELD_1 = "WPN_HUM_Shield_D_1_26b81847-b0dd-4150-aef7-602fcbb72eca"
+
+-- v3.42 CLERIC KIT: healers always fight one-handed + shield (owner: a healer swinging
+-- a 2h weapon is off-class). Direct templates (validated in the live root-template
+-- dump), same channel as staff/shields; _A_1 = level-scaled variants at tier 4.
+local HEAL_1H = {
+    "WPN_HUM_Mace_A_0_3186796d-3ab3-4d49-bfc2-cba1aff0cf5a",
+    "WPN_HUM_Warhammer_A_0_6b17998d-2e79-405d-8b1f-beb53658312f",
+    "WPN_HUM_Battleaxe_A_0_a086b825-8f17-4f0e-855b-178f8cdc515a",
+    "WPN_HUM_Morningstar_A_0_26a9fba6-1a60-4691-84ea-da7ffcb304e0",
+}
+local HEAL_1H_1 = {
+    "WPN_HUM_Mace_A_1_5a948b12-ca43-4256-9821-0d151036dbd1",
+    "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f",
+    "WPN_HUM_Battleaxe_A_1_c17ee133-cbb5-418f-88be-5ef27991cf50",
+    "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c",
+}
 -- cosmetic decency fallback (owner 2026-10-31: casters without armor prof spawned
 -- weaponless-looking AND naked); vanilla vanity tables, random common/rich garment,
 -- sells for nothing, no proficiency requirement, does not block spellcasting
@@ -171,14 +187,16 @@ end
 
 -- equipment tier baseline: WILD groups pass their group tier (owner: gear richness
 -- follows the encounter rank, not an independent per-member lottery); a small bump
--- keeps the chaos (80% baseline, 20% one band up; boss slot rides +2). Combat
--- reinforcements (groupTier = nil) keep the legacy owner bands <=80/<=95/<=98/jackpot.
+-- keeps the chaos (80% baseline, 20% one band up). Combat reinforcements (groupTier
+-- = nil) keep the legacy owner bands <=80/<=95/<=98/jackpot.
+-- v3.43: boss +2 REMOVED - leaders/bosses get the SAME baseline as the encounter and
+-- express their edge through the capped magic-gear rolls instead (owner spec).
 local function tierBaseline(groupTier, isBoss)
     if not groupTier then
         local roll = rand(1, 100)
         return roll <= 80 and 1 or (roll <= 95 and 2 or (roll <= 98 and 3 or 4))
     end
-    local t = groupTier + (isBoss and 2 or 0)
+    local t = groupTier
     if rand(1, 100) <= 20 then t = t + 1 end
     return math.min(t, 4)
 end
@@ -280,14 +298,15 @@ local function equipmentFor(entry, base, tier)
     local prof = entry.prof or ""
     if entry.unarmed and prof == "" then return nil, nil end   -- innate attacker
     local role = weaponRoleFor(entry)
+    local healer = entry.role == "healer"   -- v3.42 cleric kit (composer role, not name-guess)
     local martial = prof:find("MartialWeapons", 1, true) ~= nil
     local staffed = role == "caster"
         and (prof:find("SimpleWeapons", 1, true) or prof:find("Quarterstaffs", 1, true)) ~= nil
     local finesse = (entry.dex or 10) > (entry.str or 10)
-                    and role ~= "caster" and role ~= "ranged"  -- high-dex casters/ranged keep their kit
+                    and role ~= "caster" and role ~= "ranged" and not healer  -- high-dex casters/ranged keep their kit
     local weapon
-    if staffed then
-        weapon = nil                                           -- the staff IS the weapon (extras below)
+    if staffed or healer then
+        weapon = nil                                           -- the staff / 1H kit IS the weapon (extras below)
     elseif role == "ranged" then
         if base <= 1 then weapon = T_RANGED
         elseif tier >= 2 and martial then weapon = T_RANGED_M
@@ -331,6 +350,13 @@ local function equipmentFor(entry, base, tier)
     local extras
     if staffed then
         extras = { (tier == 4 and base >= 4) and STAFF_1 or STAFF_0 }
+    elseif healer then
+        -- v3.42: healer ALWAYS fights 1h, and always carries a shield when proficient
+        -- (owner: more AC, proper cleric fantasy) - no 2h weapon lotteries.
+        extras = { (tier == 4) and HEAL_1H_1[rand(1, #HEAL_1H_1)] or HEAL_1H[rand(1, #HEAL_1H)] }
+        if prof:find("Shields", 1, true) then
+            extras[#extras + 1] = (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)]
+        end
     elseif role == "melee" and prof:find("Shields", 1, true)
            and rand(1, 100) <= (entry.role == "tank" and 100 or 55) then
         extras = { (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)] }
@@ -346,7 +372,81 @@ function EquipResetPending()
     pending = {}
 end
 
-function EquipMob(created, base, entry, groupTier, isBoss)
+-- v3.43 MAGIC GEAR on leaders/bosses (owner spec, lvl5+): same baseline kit as the
+-- encounter, but each gear SLOT gets an independent roll to receive a +1 item instead:
+-- leaders 10/20/30% and bosses 15/30/45% by level band (5-6 / 7-8 / 9+); item COUNT is
+-- capped per band (1/2/3 - a 2h+armor mob naturally caps at 2). Slots roll in random
+-- order. Items = vanilla quality-1 templates (WeaponEnchantment(1) / AC+1 / Rare-ish
+-- loot) - all ids validated against the live root-template dump. +1 ceiling on purpose
+-- (owner: don't flood the player's loot economy).
+local MAGIC_CHANCE_LEADER = { 10, 20, 30 }
+local MAGIC_CHANCE_BOSS   = { 15, 30, 45 }
+local MAGIC_WEAPON = {  -- melee 1h by level band (safe under shields)
+    { "WPN_HUM_Mace_A_1_5a948b12-ca43-4256-9821-0d151036dbd1",
+      "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f" },
+    { "WPN_HUM_Battleaxe_A_1_c17ee133-cbb5-418f-88be-5ef27991cf50",
+      "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c" },
+    { "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c",
+      "WPN_HUM_Warhammer_A_1_3e1b3db9-036e-4931-ab92-c3730a1c3d5f" },
+}
+local MAGIC_RANGED = {
+    { "WPN_HUM_Shortbow_A_1_a46173b7-afd6-48e0-9c76-817acd027574" },
+    { "WPN_HUM_Longbow_A_1_049173ec-636a-487e-a9ed-bfafeadf6bb7" },
+    { "WPN_HUM_Longbow_A_1_049173ec-636a-487e-a9ed-bfafeadf6bb7",
+      "WPN_HUM_HeavyCrossbow_A_1_6af59cba-cc38-4511-9c3b-75caac4b96b5" },
+}
+local MAGIC_ARMOR = {
+    light  = { "ARM_Padded_1_f5faa6c5-a43c-4edd-a77f-6e7536a7e683",
+               "ARM_Leather_1_90a79e46-e327-41f4-a349-8e4dd70b1892",
+               "ARM_StuddedLeather_1_58d7927f-c6eb-4635-85b6-70265c621b3d",
+               "ARM_Hide_1_94ed8ec8-93a4-4a8c-bc47-55cb3faae7c0" },
+    medium = { "ARM_ChainShirt_1_eac652ed-ecf7-4505-bf64-0fec29e7d677",
+               "ARM_ScaleMail_1_dc748177-8590-4a99-a446-feccbd8d8eb4" },
+    heavy  = { "ARM_Splint_1_ecfb1364-b1a0-4d0e-b82a-0becd8c291fd",
+               "ARM_Plate_1_dd905194-9a67-4c61-b26d-5b4da4725cde" },
+}
+local MAGIC_SHIELD = "WPN_HUM_Shield_A_1_cb2d6c27-ec29-4555-adf2-41e8c1952439"
+
+function magicGear(mob, mlvl, entry, weapon, armor, extras, isBoss, isLeader)
+    if not (isBoss or isLeader) or mlvl < 5 then return end
+    local band = mlvl >= 9 and 3 or (mlvl >= 7 and 2 or 1)
+    local p = (isBoss and MAGIC_CHANCE_BOSS or MAGIC_CHANCE_LEADER)[band]
+    local cap = band   -- 1/2/3 items by band
+    local role = weaponRoleFor(entry)
+    local slots = {}
+    local hasWeapon = weapon ~= nil
+    local hasShield = false
+    if extras then
+        for _, e in ipairs(extras) do
+            local s = tostring(e)
+            if s:find("Shield") then hasShield = true
+            elseif s:find("WPN_") or s:find("STAFF") then hasWeapon = true end
+        end
+    end
+    if hasWeapon then slots[#slots + 1] = (role == "ranged") and MAGIC_RANGED[band] or MAGIC_WEAPON[band] end
+    if armor then slots[#slots + 1] = MAGIC_ARMOR[armor] end
+    if hasShield then slots[#slots + 1] = { MAGIC_SHIELD } end
+    for i = #slots, 2, -1 do local j = rand(1, i); slots[i], slots[j] = slots[j], slots[i] end
+    local given, rolled, names = 0, 0, {}
+    for si = 1, math.min(#slots, cap) do
+        rolled = rolled + 1
+        if rand(1, 100) <= p then
+            local pool = slots[si]
+            local pick = pool[rand(1, #pool)]
+            local okM, errM = pcall(Osi.TemplateAddTo, pick, mob, 1, 0)
+            if okM then
+                given = given + 1
+                names[#names + 1] = tostring(pick):match("^([%w_]+)_") or pick
+            else
+                log("magic: TemplateAddTo FAILED", pick, "-", tostring(errM))
+            end
+        end
+    end
+    log("magic:", isBoss and "BOSS" or "leader", "lvl", mlvl, p .. "%", rolled, "roll(s)",
+        given > 0 and ("got " .. table.concat(names, ",")) or "none", "on", tostring(mob):sub(1, 8))
+end
+
+function EquipMob(created, base, entry, groupTier, isBoss, isLeader)
     if not EQUIP_MOBS then return end
     pending[created] = true
     local tier = tierBaseline(groupTier, isBoss)
@@ -354,6 +454,15 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     -- low 1-3 / mid 4-8 / top 9-12 (owner spec)
     local mlvl = entry.fixedLevel or base
     if base <= 1 then tier = 1 end                                  -- lvl 1: cheapest gear only
+    -- v3.43 ARMOR-TIER BANDS per level (owner: lvl7+ wore heavy too consistently;
+    -- 8+ SHOULD be plate when proficient): lvl 3-4 floor2, lvl 5 coin-flip floor2/3,
+    -- lvl 6-7 floor3 (medium), lvl 8+ floor4 (heavy unlock). Group rolls/20% bump
+    -- still stack above the floor.
+    if base >= 8 then tier = math.max(tier, 4)
+    elseif base >= 6 then tier = math.max(tier, 3)
+    elseif base == 5 then tier = math.max(tier, rand(1, 100) <= 50 and 2 or 3)
+    elseif base >= 3 then tier = math.max(tier, 2) end
+    if tier > 4 then tier = 4 end
     local weapon, armor, extras = equipmentFor(entry, base, tier)
     -- no armor (innate/native AC) -> still give a random garment so the mob isn't
     -- naked; jackpot tier gets the rich wardrobe (owner: "make it interesting")
@@ -432,6 +541,7 @@ function EquipMob(created, base, entry, groupTier, isBoss)
                 "on", created)
         end)
     end
+    magicGear(created, mlvl, entry, weapon, armor, extras, isBoss, isLeader)
     probeGear(created, armor ~= nil)
 end
 
