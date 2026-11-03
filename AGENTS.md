@@ -170,15 +170,16 @@ Where things live:
   **v3.39 HP double-count fix + gear probe** (owner verdict: equip/stats/naming all ✅):
   CHAOST Vitality = level-1 pool only — the engine still levels and ROLLS hit dice per
   level (owner: keep the dice variance, no deterministic 5e pools); blue-robe visual
-  mystery → v3.40 ROOT CAUSE: `Osi.Equip(char, item, 1, 0, 1)` trailing args are HAND
-  args (vanilla offhand uses 1,0,0) — we forced main-hand on everything, so body armor
-  failed at Osiris level (weapons rendered, armor never equipped; pcall-only logging hid
-  it). Fix = bare `Osi.Equip(char,item)` auto-slot. Probe v3 (Osiris-native):
-  `GetEquippedItem(mob,"Breast")` + EquipFailed listener, compact log lines; ECS dumps
-  were blind (item instances live in neither Equipment nor ServerCharacter server-side).
-  Fallback lever if Breast stays empty: `CharacterGiveEquipmentSet` with EQP_* sets from
-  `Shared/Stats/Generated/Equipment.txt` (vanilla NPC outfit channel; our mobs'
-  `PlayerStats.Equipment` is ""); set PROBE_GEAR=false when verified);
+  mystery → v3.40 equip fix: `Osi.Equip(char, item, 1, 0, 1)` trailing args are HAND args
+  (vanilla offhand uses 1,0,0) — main-hand forced on everything, body armor failed at
+  Osiris level; bare `Osi.Equip(char,item)` auto-slots (Osiris CALLs return nil even on
+  success — only explicit false = refusal, REFUSED logs were an artifact). VERIFIED in-game
+  (Breast=OK probes, AC 15/16). But mobs STILL render naked → v3.41 real visual answer:
+  BG3 does NOT attach body-armor art to NPC bodies — gear is BAKED into each template's
+  `CharacterVisualResourceID` body mesh (only hand props attach). gen_teams now stamps
+  CVRID per CHAOST node = vanilla Guard_Melee/Ranger/Caster bodies per donor race
+  (RACE_VISUALS table; HalfOrc bodies live in SharedDev/_merged root templates);
+  PROBE_GEAR=false; goblin Tier2 bodies + tiefling body taste = backlog);
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

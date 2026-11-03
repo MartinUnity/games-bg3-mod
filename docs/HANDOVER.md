@@ -442,6 +442,24 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.41 NAKED-MOB MYSTERY CLOSED as render-layer (owner verdict v3.40: "AC 16 hunter /
+  AC 15 tank in fight, weapons from round 0 - but still naked"):** equip mechanics are
+  PROVEN (gear probes Breast=OK + AC math). The `equip REFUSED` lines were a log artifact:
+  Osiris CALLs return nil even on success, so only an explicit `false` is a refusal.
+  Root visual cause: the client does NOT attach body-armor item art to NPC bodies at all
+  - vanilla NPCs wear their gear BAKED INTO the per-template CharacterVisualResourceID
+  body mesh (armored AbsoluteGuard CVRID 10058599 vs our civilian BASE_Humans_Male
+  c0807a07; same generic VisualTemplate 3773c64c). Hand props (weapons) DO attach, which
+  is why only weapons showed. FIX: gen_teams now overrides `CharacterVisualResourceID`
+  on every CHAOST node with vanilla guard-style bodies per donor race x role class
+  (tank/melee/wildcard -> Guard_Melee body, ranged -> Ranger, healer/caster -> Caster;
+  table RACE_VISUALS/ROLE_VIS, harvested from vanilla templates' OWN CVRIDs incl.
+  HalfOrcs which live in SharedDev/_merged - new extraction /tmp/opencode/rt3; that also
+  explained probe CVs 9ec94019/e23ab84d = HalfOrcs_M/F base bodies = inheritance works).
+  PROBE_GEAR=false now. Pak 247086 B, 792/792 nodes carry the override. BACKLOG: goblin
+  _Tier2 bodies (fb5c6d24/66a0dc01/b1825b38) for tier>=3 squads; tiefling bodies are a
+  gamble (Asmodeus Player_Strong/InvokeDuplicity - iterate on owner verdict); human_m
+  caster reuses the guard body (no clean vanilla cleric CVRID found; TEST_* skipped).
 - **v3.39 (owner verdict on v3.38: "Equipment works! Stats work!"):** naming ✅ (live log:
   "Elf Cleric"/"Human Vanguard" namefix lines), ARM_* equip lines ✅, casting pending
   more observation. Two follow-ups. (1) **HP still ~2x** — diagnosis CONFIRMED: L7

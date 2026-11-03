@@ -190,3 +190,16 @@ composition follow-ups: ~~leader is still a pool mob even in team mode~~ **RESOL
 v3.33: donor-race CHAOST tank leads team waves** (wildcard backup, capped level, pool
 fallback); non-Humanoid fights stay on the pool path (no
 creature-class content for them); Meazel-style oddities now only via the 20% override.
+
+**Cosmetic visuals (v3.41, 2026-11-03)** — NPC gear is baked into the template's
+CharacterVisualResourceID body; every CHAOST node now stamps a vanilla guard-style body
+per race (RACE_VISUALS in gen_teams.py). Parking lot:
+- Goblin **_Tier2** bodies (fb5c6d24 melee / 66a0dc01 f / b1825b38 ranger) = beefier
+  look for tier>=3 squads (swap by group tier inside EquipMob? no — CVRID is template
+  static, would need per-tier CHAOST variants or accept one look per race).
+- Tiefling body CHOSEN on taste only (Asmodeus Player_Strong melee / InvokeDuplicity
+  caster) — needs owner in-game verdict; originals looked "naked".
+- human_m + dwarf_f casters reuse the melee body (no clean vanilla cleric CVRID;
+  TEST_Humans_Male_JOBO_CC_Previs_* skipped as dev placeholders).
+- Body vs stats mismatch is cosmetic: rolled armor (AC) may not match the baked look
+  (e.g. plate AC on a light-armored body). Accept unless owner complains.

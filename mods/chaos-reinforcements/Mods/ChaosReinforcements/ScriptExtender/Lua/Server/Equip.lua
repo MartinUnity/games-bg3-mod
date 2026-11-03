@@ -441,7 +441,13 @@ end
 -- "Breast" (body armor), "Melee Main Weapon". One compact log line per mob for the
 -- first 4 armored spawns; EquipFailed listener (arity 2, from story_header) capped at 6.
 -- Flip PROBE_GEAR=false once the naked/robe mystery is solved.
-local PROBE_GEAR = true
+-- v3.40 VERDICT (owner: AC 16 hunter / AC 15 tank visible in combat, weapons held from
+-- round 0): equip mechanics CONFIRMED working (Breast=OK probes + AC math). Remaining
+-- "naked" is RENDER-only: NPC body art is baked into CharacterVisualResourceID per
+-- template (armored vanilla NPCs like AbsoluteGuard carry armored CVRID bodies; our
+-- BASE_* donors are civilian bodies) - body-armor ATTACHMENTS do not render on NPCs.
+-- Fix path = per-race CVRID overrides on CHAOST templates, not equip changes.
+local PROBE_GEAR = false
 local gearProbes = 0
 function probeGear(mob, armored)
     if not PROBE_GEAR or not armored or gearProbes >= 4 then return end
@@ -498,16 +504,14 @@ end
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
         if isSpawned(holder) then
+            -- NB: Osi.Equip CALLS return nil even on success (only the Breast/AC probes
+            -- and EquipFailed prove landings) - so "REFUSED" is only logged on an
+            -- explicit false; nil just means "call executed".
             local okE, eE = pcall(Osi.Equip, holder, object)
             if not okE then
                 log("equip THREW:", object, "on", holder, "-", tostring(eE))
-            elseif not eE then
-                -- Osiris refused the equip (item stays in inventory). Normal for
-                -- potions/gold/consumables; LOUD for real gear.
-                local t = tostring(tmpl)
-                if t:find("^ARM_") or t:find("^WPN_") then log("equip REFUSED:", object, "(", t, ") on", holder) end
-            else
-                log("equipped", object, "on", holder)
+            elseif eE == false then
+                log("equip REFUSED:", object, "(", tostring(tmpl), ") on", holder)
             end
         end
     end)

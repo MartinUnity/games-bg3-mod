@@ -162,6 +162,51 @@ DONORS = [
 
 MAX_LEVEL = 12
 
+# v3.41 BAKED-ARMOR LOOK: the client does NOT attach body-armor item art to NPC bodies
+# (only hand props -> weapons showed, armor never did; AC was always correct). Vanilla
+# NPCs "wear" gear through their per-template CharacterVisualResourceID body mesh
+# (Guard_* templates carry armored bodies; our BASE_* donors are civilian/naked-ish).
+# Override CVRID per CHAOST template. Harvested from vanilla root templates' own CVRIDs
+# (guard/ranger/caster gear-styled bodies; HalfOrcs live in SharedDev _merged).
+# Backlog: goblin _Tier2 bodies (fb5c6d24/66a0dc01/b1825b38) for tier>=3 squads.
+ROLE_VIS = {"tank": "melee", "melee_dps": "melee", "wildcard": "melee",
+            "ranged": "ranged", "healer": "caster", "caster": "caster"}
+RACE_VISUALS = {
+    "human_m":    {"melee": "f70e62b1-4c33-df8a-674d-3533518224bd",
+                   "ranged": "67fb31a5-dcd6-d719-61a9-2a1e527617f1",
+                   "caster": "f70e62b1-4c33-df8a-674d-3533518224bd"},
+    "elf_f":      {"melee": "04a453b4-8195-25c7-da7e-dc82621ad792",
+                   "ranged": "8334eb6d-7aa5-1543-8af5-c65adf8adb65",
+                   "caster": "dabc3b41-ab12-c480-7deb-31991fcff959"},
+    "halfelf_m":  {"melee": "eaf54c93-b352-2b0d-4826-a8612b89b277",
+                   "ranged": "238c39bf-cc0b-0b4f-dae2-b9e1997243bf",
+                   "caster": "f87255bc-40a8-a7ec-efd4-a650181719d9"},
+    "halfling_m": {"melee": "e682cca7-3c57-475a-66a2-e7e4d1726afe",
+                   "ranged": "9e36debd-d0de-08bc-dac8-884d75c8f078",
+                   "caster": "91d0c768-02d0-054d-ed11-231ddb33292e"},
+    "dwarf_f":    {"melee": "ef5208d8-aef6-a411-77ef-fbf4139b1006",
+                   "ranged": "d2c289c6-8c97-3f1d-a489-61116f47403a",
+                   "caster": "ef5208d8-aef6-a411-77ef-fbf4139b1006"},
+    "tiefling_m": {"melee": "351d13d4-a4de-0dd0-24df-3a194285c7e6",
+                   "ranged": "351d13d4-a4de-0dd0-24df-3a194285c7e6",
+                   "caster": "a178a41d-05c3-3bc8-4879-15d2effe3300"},
+    "gith_m":     {"melee": "c217f7f3-ea9c-8a64-a658-c840cf351768",
+                   "ranged": "b1e09345-43ff-f39e-aa5c-47a8500abca6",
+                   "caster": "c217f7f3-ea9c-8a64-a658-c840cf351768"},
+    "goblin_m":   {"melee": "fd51396f-20ee-e253-0b8e-9392b4ad5dd3",
+                   "ranged": "d1e40d4e-b212-5887-cfab-c157e1db04a4",
+                   "caster": "90dc73a3-5072-c4b1-2bab-a6610289d8b7"},
+    "goblin_f":   {"melee": "e0e4ca2d-532b-76a1-e20f-ab57cdd243fd",
+                   "ranged": "ebad5850-ddf4-0a35-0205-c62e0d8534a9",
+                   "caster": "6a11ddfa-cf03-b126-a05f-2fa7a7a121f7"},
+    "halforc_m":  {"melee": "815f28c9-17ff-5e92-b14b-9c28ca7ad13e",
+                   "ranged": "815f28c9-17ff-5e92-b14b-9c28ca7ad13e",
+                   "caster": "815f28c9-17ff-5e92-b14b-9c28ca7ad13e"},
+    "halforc_f":  {"melee": "2572d868-df2e-47ae-12d3-f7c159bf0339",
+                   "ranged": "2572d868-df2e-47ae-12d3-f7c159bf0339",
+                   "caster": "2572d868-df2e-47ae-12d3-f7c159bf0339"},
+}
+
 
 DUMP = pathlib.Path("/home/martin/.local/share/Steam/steamapps/compatdata/1086940/"
                     "pfx/drive_c/users/steamuser/AppData/Local/Larian Studios/"
@@ -241,6 +286,9 @@ def main():
                 mapkey = str(uuid.uuid4())
                 name = f"CHAOST_{role}_L{lvl}_{tag}"
                 lookup[role].setdefault(lvl, []).append(f"{name}_{mapkey}")
+                vis = RACE_VISUALS.get(tag, {}).get(ROLE_VIS[role])
+                if not vis:
+                    print(f"WARN: no CVRID visual for {tag}/{role}")
                 tpl_lines += [
                     '\t\t\t\t\t<node id="GameObjects">',
                     f'\t\t\t\t\t\t<attribute id="Name" type="LSString" value="{name}" />',
@@ -250,8 +298,11 @@ def main():
                     f'\t\t\t\t\t\t<attribute id="LevelOverride" type="int32" value="{lvl}" />',
                     '\t\t\t\t\t\t<attribute id="SpellSet" type="FixedString" value="CommonNPCActions" />',
                     '\t\t\t\t\t\t<attribute id="Type" type="FixedString" value="character" />',
-                    "\t\t\t\t\t</node>",
                 ]
+                if vis:
+                    tpl_lines.append(
+                        f'\t\t\t\t\t\t<attribute id="CharacterVisualResourceID" type="FixedString" value="{vis}" />')
+                tpl_lines.append("\t\t\t\t\t</node>")
 
     OUT_STATS.parent.mkdir(parents=True, exist_ok=True)
     OUT_STATS.write_text("\r\n".join(stats_lines) + "\r\n")
