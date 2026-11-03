@@ -478,7 +478,16 @@ function magicGear(mob, mlvl, entry, weapon, armor, extras, isBoss, isLeader)
             elseif s:find("WPN_") or s:find("STAFF") then hasWeapon = true end
         end
     end
-    if hasWeapon then slots[#slots + 1] = (role == "ranged") and MAGIC_RANGED[band] or MAGIC_WEAPON[band] end
+    -- v3.45 (owner: BOSS Duelist got a magic WARHAMMER - wrong kit, wielded 2h so dex
+    -- was dead): the weapon roll must follow the build's wp kit, not the generic 1h pool.
+    if hasWeapon then
+        local pool
+        if role == "ranged" then pool = MAGIC_RANGED[band]
+        elseif entry.wp == "dual" then pool = WP_DUAL_1        -- light weapons (TWF pair)
+        elseif entry.wp == "twohanded" then pool = WP_2H_1     -- greatsword/greataxe/maul/halberd
+        else pool = MAGIC_WEAPON[band] end                     -- 1h_shield/table/javelins
+        slots[#slots + 1] = pool
+    end
     if armor then slots[#slots + 1] = MAGIC_ARMOR[armor] end
     if hasShield then slots[#slots + 1] = { MAGIC_SHIELD } end
     for i = #slots, 2, -1 do local j = rand(1, i); slots[i], slots[j] = slots[j], slots[i] end

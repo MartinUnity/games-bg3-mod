@@ -72,6 +72,9 @@ UCL = {
     "EldritchBlaster1": "2919cea5-a0c1-46e8-9774-4c9f03ba3d5f",
     "EldritchBlaster2": "4b87365a-69a3-4863-8d2f-4f30f630cbeb",
     "style2_gwf": "69eae9b0-d17e-429c-9b61-03145d645d0b",      # GreatWeaponFighting (lvl2)
+    # v3.45 VERDICT (owner: Duelist had NO Two Weapon Fighting): UCL_Generic_DualWielder
+    # only grants BonusAC@4 + Dex+2@8 - the TWF passive lives in these style tables.
+    "style2_twf": "5b91e529-a3bb-4fcd-bd59-de914b46f2fa",      # TwoWeaponFighting (lvl2)
     "prog_twohander": "b01ff88f-ca24-4d55-b9ba-1b8b835cc2b6",  # GWM BonusDamage+BonusAttack
     "feat_dualwielder": "13abbf29-3a70-4854-805d-c9ede2147adb",# DualWielder feat + TWF @2/3
     # UCL has no plain Monk; UCL_FourElements_Thief is an NPC-safe full monk build
@@ -107,10 +110,10 @@ BUILDS = {
         hp=lambda lvl: 10 + 9 * lvl, prof=PROF_MARTIAL_SH, armor=14, armor_type="Heavy",
         cast=None),
     "fighter_dual": dict(   # the agile dex dual-wielder: TWF + Dual Wielder, LIGHT armor only
-        # (UCL_Generic_DualWielder already carries TwoWeaponFighting at its rows 2/3 -
-        # adding the style2/style3_twf tables too would double the passive)
+        # (v3.45: TWF comes from style2_twf - the DualWielder feat table alone does NOT
+        # grant it, owner-verified in-game)
         label="Duelist", vis="melee", wp="dual", min=1,
-        prog=["Fighter", "feat_dualwielder", "asi_dex"],
+        prog=["Fighter", "style2_twf", "feat_dualwielder", "asi_dex"],
         stats={"STR": 10, "DEX": 16, "CON": 14, "INT": 8, "WIS": 12, "CHA": 8},
         hp=lambda lvl: 10 + 9 * lvl, prof=PROF_MARTIAL_SH, armor=13, armor_type="Light",
         cast=None),
@@ -140,11 +143,14 @@ BUILDS = {
         hp=lambda lvl: 8 + 7 * lvl, prof="", armor=10 + 3, armor_type="None",
         cast=None),
     "rogue": dict(          # lvl5+; finesse pair, light armor
+        # (v3.45: TWF passive via boost - the fighter style tables would be a Fighter
+        # context; UnlockPassive is the same passive, and rogues are lvl5+ gated anyway)
         label="Rogue", vis="melee", wp="dual", min=5,
         prog=["Rogue", "GloomStalker", "asi_dex"],
         stats={"STR": 10, "DEX": 17, "CON": 13, "INT": 10, "WIS": 11, "CHA": 8},
         hp=lambda lvl: 8 + 7 * lvl, prof="SimpleWeapons;MartialWeapons;LightArmor;Shields",
-        armor=13, armor_type="Light", cast=None),
+        armor=13, armor_type="Light", cast=None,
+        boosts=["UnlockPassive(FightingStyle_TwoWeaponFighting)"]),
     "hexblade": dict(       # 25% of warlocks: melee using Charisma for hit/damage
         label="Hexblade", vis="melee", wp="1h_shield", min=5, cast="Charisma",
         prog=["Warlock", "OtherworldlyFiend", "asi_cha"],
@@ -264,7 +270,9 @@ SPELLS = {
         (1, "Target_Bless"), (1, "Target_HealingWord"),
         (2, "Projectile_GuidingBolt"), (2, "Target_ShieldOfFaith"),
         (3, "Target_MAG_SpiritualWeapon"),
-        (5, "Shout_SpiritGuardians"), (7, "Target_CallLightning")]),
+        (5, "Shout_SpiritGuardians")]),
+        # v3.45 (owner): NO Call Lightning on clerics - it is a DRUID spell; clerics'
+        # only 3rd-level attack option is Spirit Guardians (run-on-top of enemies).
     "druid_healer": ("Wisdom", FULL_SLOTS, [   # druid heal kit (25% of healers, owner)
         (1, "Target_Guidance"),                # cantrip
         (1, "Target_HealingWord"), (2, "Target_Goodberry"),

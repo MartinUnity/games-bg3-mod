@@ -442,6 +442,25 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.45 owner-playtest fixes (pak 451379 B):** (1) **Duelist had NO Two Weapon
+  Fighting** - the subagent note "DualWielder table includes TWF@2/3" was WRONG
+  (UCL_Generic_DualWielder rows are only BonusAC@4 + Dex+2@8); re-added
+  `style2_twf` (UCL_2_FightingStyle_TwoWeaponFighting 5b91e529, L2 row grants the
+  vanilla FightingStyle_TwoWeaponFighting passive) to fighter_dual's prog chain, and
+  gave the rogue (also wp=dual) `UnlockPassive(FightingStyle_TwoWeaponFighting)` via
+  DefaultBoosts (lvl5+ gated anyway). (2) **BOSS Duelist spawned with a single magic
+  WARHAMMER** (log `magic: BOSS lvl 10 45% ... got WPN_HUM_Warhammer_A_1`) - the
+  magicGear weapon slot always drew the generic 1h pool; the warhammer auto-equipped
+  2-handed (versatile) so DEX was dead for hit/dmg and the light pair got displaced.
+  magicGear weapon pool is now **kit-aware**: wp=dual -> WP_DUAL_1 (light pair),
+  wp=twohanded -> WP_2H_1 (greatsword/greataxe/maul/halberd _1), else legacy
+  MAGIC_WEAPON[band] (1h_shield/table/javelins), ranged keeps bows. Offline harness:
+  350+ rolls per kit, 0 wrong-kit. (3) **clerics had Call Lightning** (owner: that is
+  a DRUID spell; clerics' only 3rd-level attack option is Spirit Guardians) - removed
+  from the cleric kit (druid healer/caster keep it; Target_FlameStrike does not exist
+  in vanilla, verified). Verdicts in from owner: cleric shields ✅, hexblade skills/
+  stats ✅. ⚠️ pending re-verdicts: duelist dual-wields with TWF, magic kits match
+  build, no lone-warhammer recurrences.
 - **v3.44 CLASS-BUILD ROSTER (framework shipped, owner refs pending; pak 451056 B,
   178 stat entries / 1958 CHAOST templates, `!chaos_root` now expects 1958):** team
   slots now roll CLASS BUILDS (owner spec). gen_teams.py: `BUILDS` recipe table +

@@ -207,6 +207,13 @@ Where things live:
   unarmed; 178 entries × 11 donors = **1958 templates, `!chaos_root` expects 1958**;
   forensics /tmp/opencode/v344_prog_notes.md; ⚠️ in-game verdicts pending (thrower AI,
   wild shape, flurry, smites, CHA melee, blast) + owner owes warlock/hexblade refs);
+  **v3.45 playtest fixes** (owner: hexblade ✅, cleric shields ✅): DualWielder table
+  does NOT grant TWF (only BonusAC@4/Dex+2@8) — fighter_dual prog re-adds
+  `style2_twf 5b91e529`, rogue gets `UnlockPassive(FightingStyle_TwoWeaponFighting)`;
+  magicGear weapon pool is kit-aware (wp dual→light pair, twohanded→2H _1, else 1h
+  band pool; BOSS Duelist had drawn a 2h warhammer killing dex); cleric kit lost
+  CallLightning (druid spell; FlameStrike doesn't exist in vanilla). ✅ dual-wield
+  re-verdict pending);
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

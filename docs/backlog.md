@@ -206,10 +206,13 @@ per race (RACE_VISUALS in gen_teams.py). Parking lot:
 
 **v3.44 class roster — owner follow-ups (2026-11-03)** — framework shipped; these
 need owner references / in-game verdicts before tuning:
+- ✅ VERDICTS IN: hexblade skills/stats good; cleric shields work; Duelist looked
+  right EXCEPT missing TWF + lone magic warhammer (both FIXED v3.45 — re-verdict:
+  duelist now fights with a light pair + off-hand bonus attack).
 - WARLOCK KIT: current = blast passive + Hex + ChromaticOrb; owner to supply a
   reference build (invocations/patron taste). GreatOldOne chosen arbitrarily.
 - HEXBLADE: melee CHA via WeaponAttackRollAbilityOverride(SpellCastingAbility) +
-  Fiend patron (no hexblade table exists). Verify to-hit/damage actually use CHA;
+  Fiend patron (no hexblade table exists). Check to-hit/damage numbers match CHA;
   owner may want 2h pact (WPN_*_Pact exist) or shield.
 - BARB THROWER: 3-8 javelins added, but NPC AI may not THROW them (melee-first);
   verdict needed — may require a thrown-weapon spell or Tag, compare vanilla
