@@ -436,31 +436,41 @@ function EquipMob(created, base, entry, groupTier, isBoss)
 end
 
 -- v3.39 ONE-SHOT DIAGNOSTIC (owner: ARM_* equips per log, but every team member renders
--- the same blue robe - weapon art shows, armor art does not; our pipeline provably adds
--- no garments for armored mobs, so WHERE does the robe ride in?). Dumps the full
--- Equipment + Inventory components of the first 3 armored spawns to profile file
--- Chaos_gear_dump.txt (file, not main log - owner hates spam). Flip PROBE_GEAR=false
--- once the robe mystery is solved.
+-- naked/robe - weapon art shows, armor art does not). v2 probe: first dump showed raw
+-- ent.Equipment = NIL server-side (that's the CLIENT component); the server-authoritative
+-- data lives in "ServerCharacter". Dumps component names + ServerCharacter + any
+-- Equip/Inven/Outfit-named component to profile file Chaos_gear_dump.txt (file, not
+-- main log). Flip PROBE_GEAR=false once the naked/robe mystery is solved.
 local PROBE_GEAR = true
 local GEAR_FILE = "Chaos_gear_dump.txt"
 local GEAR_DUMP = ""
 local gearProbes = 0
 function probeGear(mob, armored)
-    if not PROBE_GEAR or not armored or gearProbes >= 3 then return end
+    if not PROBE_GEAR or not armored or gearProbes >= 2 then return end
     gearProbes = gearProbes + 1
     pcall(Ext.Timer.WaitFor, 2000, function ()
         local okE, ent = pcall(Ext.Entity.Get, mob)
         if not okE or not ent then log("gear: entity gone", mob) return end
         local chunk = "=== mob " .. tostring(mob) .. " (probe " .. gearProbes .. ") ===\n"
+        local function dump(label, val)
+            chunk = chunk .. "-- " .. label .. " --\n"
+            if val == nil then chunk = chunk .. "NIL\n" return end
+            local okD, d = pcall(Ext.DumpExport, val)
+            chunk = chunk .. (okD and tostring(d) or ("dump threw: " .. tostring(d))) .. "\n"
+        end
+        local okN, names = pcall(function () return ent:GetAllComponentNames() end)
+        if okN and names then
+            local list = {}
+            for _, n in ipairs(names) do list[#list + 1] = tostring(n) end
+            chunk = chunk .. "-- ALL COMPONENTS --\n" .. table.concat(list, "\n") .. "\n"
+        else
+            chunk = chunk .. "-- ALL COMPONENTS: " .. tostring(names) .. " --\n"
+        end
+        local scOk, sc = pcall(function () return ent:GetComponent("ServerCharacter") end)
+        dump("ServerCharacter", scOk and sc or nil)
         for _, comp in ipairs({ "Equipment", "Inventory", "OutfitOverride" }) do
-            local okC, c = pcall(function () return ent[comp] end)
-            if okC and c ~= nil then
-                local okD, d = pcall(Ext.DumpExport, c)
-                chunk = chunk .. "-- " .. comp .. " --\n"
-                chunk = chunk .. (okD and tostring(d) or ("dump threw: " .. tostring(d))) .. "\n"
-            else
-                chunk = chunk .. "-- " .. comp .. ": NIL --\n"
-            end
+            local okC, c = pcall(function () return ent:GetComponent(comp) end)
+            dump(comp, okC and c or nil)
         end
         GEAR_DUMP = GEAR_DUMP .. chunk .. "\n"
         local okIO, eIO = pcall(Ext.IO.SaveFile, GEAR_FILE, GEAR_DUMP)

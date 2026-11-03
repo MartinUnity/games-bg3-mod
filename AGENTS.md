@@ -171,9 +171,10 @@ Where things live:
   CHAOST Vitality = level-1 pool only — the engine still levels and ROLLS hit dice per
   level (owner: keep the dice variance, no deterministic 5e pools); blue-robe visual
   mystery UNSOLVED (ARM_* equip per log, all 10 templates carry real VisualTemplate art,
-  our pipeline grants no garments to armored mobs, yet everyone renders the same robe)
-  → one-shot `probeGear` dumps Equipment+Inventory of first 3 armored spawns to profile
-  `Chaos_gear_dump.txt` — read next session, then set PROBE_GEAR=false););
+  our pipeline grants no garments to armored mobs, yet mobs render naked/robe)
+  → one-shot probe v2 (raw ent.Equipment is CLIENT-side, NIL on server): dumps
+  GetAllComponentNames + ServerCharacter + named comps of first 2 armored spawns to
+  profile `Chaos_gear_dump.txt` — read next session, then set PROBE_GEAR=false););
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

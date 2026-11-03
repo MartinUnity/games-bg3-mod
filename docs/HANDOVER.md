@@ -463,6 +463,13 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   first 3 armored spawns dump Equipment+Inventory+OutfitOverride components to profile
   file Chaos_gear_dump.txt (file, not main log). Read it next session to name the robe,
   then flip PROBE_GEAR=false. Pak 233517 B.
+  PROBE v1 RESULT (2026-11-02 late session): raw field access ent.Equipment/Inventory =
+  NIL server-side (Equipment is the CLIENT-side component; server data lives in
+  GetComponent("ServerCharacter") per ECS docs). Owner also now sees patrols TOTALLY
+  NAKED (weapons in hand) - earlier "blue robe" was v3.38 half-elf teams, today's
+  tiefling/goblin teams naked; both had clean 'equipped ARM_*' log lines. Probe v2
+  (pak 233774 B) dumps GetAllComponentNames + ServerCharacter + named components, cap 2
+  mobs. Read Chaos_gear_dump.txt next session.
 - **v3.38 casting + team naming (owner team-fight reports, `game-logs/team-fight-1.txt`;
   note: those fights ran v3.36, so the v3.37 armor/ability fixes are still UNVERIFIED):**
   AI quality praised (potion-throwing between allies, web grenades, Action Surge, weapon
