@@ -497,15 +497,27 @@ end)
 -- (2026-11-01: every CreateAtObject for CHAOST_* failed - root templates only load
 -- as BINARY .lsf from paks; the lsx-only pak registered nothing.)
 Ext.RegisterConsoleCommand("chaos_root", function ()
+    -- v3.40: newer SE returns a host Map<FixedString, GameObjectTemplate> object, NOT a
+    -- Lua table (guard used to reject it as "failed"). pairs() iterates it fine
+    -- (Probe.lua's dump proves it); keys are template GUIDs, so match CHAOST on the
+    -- value's .Name too.
     local ok, all = pcall(Ext.Template.GetAllRootTemplates)
-    if not ok or type(all) ~= "table" then
+    if not ok or all == nil then
         log("chaos_root: GetAllRootTemplates failed:", tostring(all))
         return
     end
     local total, found = 0, 0
-    for k in pairs(all) do
-        total = total + 1
-        if tostring(k):find("CHAOST") then found = found + 1 end
+    local okIt, errIt = pcall(function ()
+        for k, v in pairs(all) do
+            total = total + 1
+            local nm = ""
+            pcall(function () nm = tostring(v.Name) end)
+            if tostring(k):find("CHAOST") or nm:find("CHAOST") then found = found + 1 end
+        end
+    end)
+    if not okIt then
+        log("chaos_root: iteration failed:", tostring(errIt), "obj:", tostring(all))
+        return
     end
     log("chaos_root:", found, "CHAOST templates among", total, "root templates",
         found > 0 and "- REGISTERED" or "- NOT LOADED (check pak .lsf!)")
