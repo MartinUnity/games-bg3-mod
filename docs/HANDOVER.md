@@ -470,6 +470,22 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   tiefling/goblin teams naked; both had clean 'equipped ARM_*' log lines. Probe v2
   (pak 233774 B) dumps GetAllComponentNames + ServerCharacter + named components, cap 2
   mobs. Read Chaos_gear_dump.txt next session.
+  PROBE v2 RESULT + ROOT CAUSE FOUND (2026-11-03): the 53K ServerCharacter dump has ZERO
+  ARM_/WPN_ refs (item instances aren't held in that component - the dump was a dead
+  end) BUT it exposed the vanilla-vs-us delta: `PlayerStats.Equipment: ""`, while vanilla
+  armored NPCs carry an equipment SET (Equipment.txt EQP_* sets, e.g.
+  EQP_Halberd_Plate_Shortbow, plus EquipmentRace/EquipmentTypes/ItemList nodes; the
+  render-attachment machinery lives in Mods/Shared/EquipmentSettings/*.lsx). Decisive
+  evidence came from story_header.div + vanilla goals: `Equip(char, item, 1, 0, 1)`'s
+  trailing args are HAND args (the offhand example uses 1,0,0) - OUR listener forced MAIN
+  HAND on everything, so body armor failed at Osiris level (EquipFailed event exists,
+  arity 2) while weapons "equipped" fine because they wanted the main hand. Our pcall
+  success-log never checked the Osiris return. v3.40 FIX: bare Osi.Equip(char,item) =
+  engine auto-slot (vanilla precedent). Probe v3 replaces the ECS dump: GetEquippedItem
+  (mob,"Breast") + GetEquippedWeapon -> one compact 'gear probe:' log line per mob
+  (cap 4) + capped EquipFailed listener. Slot names from vanilla goals: "Breast",
+  "Melee Main Weapon", "Melee Offhand Weapon". If Breast still EMPTY after the fix,
+  next lever = CharacterGiveEquipmentSet(EQP_*) - the native vanilla outfit channel.
 - **v3.38 casting + team naming (owner team-fight reports, `game-logs/team-fight-1.txt`;
   note: those fights ran v3.36, so the v3.37 armor/ability fixes are still UNVERIFIED):**
   AI quality praised (potion-throwing between allies, web grenades, Action Surge, weapon

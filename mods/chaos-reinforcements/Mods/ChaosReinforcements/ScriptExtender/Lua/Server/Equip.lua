@@ -435,47 +435,35 @@ function EquipMob(created, base, entry, groupTier, isBoss)
     probeGear(created, armor ~= nil)
 end
 
--- v3.39 ONE-SHOT DIAGNOSTIC (owner: ARM_* equips per log, but every team member renders
--- naked/robe - weapon art shows, armor art does not). v2 probe: first dump showed raw
--- ent.Equipment = NIL server-side (that's the CLIENT component); the server-authoritative
--- data lives in "ServerCharacter". Dumps component names + ServerCharacter + any
--- Equip/Inven/Outfit-named component to profile file Chaos_gear_dump.txt (file, not
--- main log). Flip PROBE_GEAR=false once the naked/robe mystery is solved.
+-- v3.39 ONE-SHOT DIAGNOSTIC, v3 in-place (v1/v2 ECS dumps were blind: Equipment/
+-- Inventory are CLIENT-side components, NIL server-side; ServerCharacter holds no item
+-- lists). Ask OSIRIS instead - it owns the equip DB. Vanilla slot names from goals:
+-- "Breast" (body armor), "Melee Main Weapon". One compact log line per mob for the
+-- first 4 armored spawns; EquipFailed listener (arity 2, from story_header) capped at 6.
+-- Flip PROBE_GEAR=false once the naked/robe mystery is solved.
 local PROBE_GEAR = true
-local GEAR_FILE = "Chaos_gear_dump.txt"
-local GEAR_DUMP = ""
 local gearProbes = 0
 function probeGear(mob, armored)
-    if not PROBE_GEAR or not armored or gearProbes >= 2 then return end
+    if not PROBE_GEAR or not armored or gearProbes >= 4 then return end
     gearProbes = gearProbes + 1
-    pcall(Ext.Timer.WaitFor, 2000, function ()
-        local okE, ent = pcall(Ext.Entity.Get, mob)
-        if not okE or not ent then log("gear: entity gone", mob) return end
-        local chunk = "=== mob " .. tostring(mob) .. " (probe " .. gearProbes .. ") ===\n"
-        local function dump(label, val)
-            chunk = chunk .. "-- " .. label .. " --\n"
-            if val == nil then chunk = chunk .. "NIL\n" return end
-            local okD, d = pcall(Ext.DumpExport, val)
-            chunk = chunk .. (okD and tostring(d) or ("dump threw: " .. tostring(d))) .. "\n"
-        end
-        local okN, names = pcall(function () return ent:GetAllComponentNames() end)
-        if okN and names then
-            local list = {}
-            for _, n in ipairs(names) do list[#list + 1] = tostring(n) end
-            chunk = chunk .. "-- ALL COMPONENTS --\n" .. table.concat(list, "\n") .. "\n"
-        else
-            chunk = chunk .. "-- ALL COMPONENTS: " .. tostring(names) .. " --\n"
-        end
-        local scOk, sc = pcall(function () return ent:GetComponent("ServerCharacter") end)
-        dump("ServerCharacter", scOk and sc or nil)
-        for _, comp in ipairs({ "Equipment", "Inventory", "OutfitOverride" }) do
-            local okC, c = pcall(function () return ent:GetComponent(comp) end)
-            dump(comp, okC and c or nil)
-        end
-        GEAR_DUMP = GEAR_DUMP .. chunk .. "\n"
-        local okIO, eIO = pcall(Ext.IO.SaveFile, GEAR_FILE, GEAR_DUMP)
-        log("gear: dumped", tostring(mob):sub(1, 8), okIO and "ok" or ("SAVE FAILED " .. tostring(eIO)),
-            "-> " .. GEAR_FILE)
+    pcall(Ext.Timer.WaitFor, 1500, function ()
+        local okB, breast = pcall(Osi.GetEquippedItem, mob, "Breast")
+        local okW, wep = pcall(Osi.GetEquippedWeapon, mob)
+        local b = (okB and breast and breast ~= "") and ("Breast=" .. tostring(breast):sub(1, 13)) or "Breast=EMPTY"
+        local w = (okW and wep and wep ~= "") and "main=OK" or "main=EMPTY"
+        log("gear probe:", b, w, "on", tostring(mob):sub(1, 8))
+    end)
+end
+if PROBE_GEAR then
+    local fails = 0
+    pcall(function ()
+        Ext.Osiris.RegisterListener("EquipFailed", 2, "after", function (item, who)
+            if fails < 6 then
+                fails = fails + 1
+                log("EquipFailed:", tostring(item), "->", tostring(who):sub(1, 8),
+                    fails >= 6 and "(cap)" or "")
+            end
+        end)
     end)
 end
 
@@ -500,14 +488,26 @@ end
 -- SPAWNED registry (normalized guids, works for Chaos AND Wild mobs) and logs
 -- failures too, so the next log pinpoints the real cause.
 -- weapons/armor equip into their slot; potions/gold fail into inventory (param 3).
+-- v3.40 EQUIP ARGS FIX: trailing (1,0,1) on Osi.Equip are HAND args (vanilla goals:
+-- Equip(char, weapon, 1, 0, 1) main-hand / Equip(char, offhand, 1, 0, 0)). Forcing
+-- MAIN HAND on a breastplate fails at Osiris level - weapons rendered (owner: "totally
+-- naked, weapons in hand") because they happened to want the main hand, body gear never
+-- equipped. The old log only checked pcall() success, so the failure was invisible.
+-- Bare Equip(char, item) = engine auto-slots via GetEquipmentSlotForItem (vanilla
+-- precedent: Equip(Ketheric, ApostleScythe) bare).
 local ok, err = pcall(function ()
     Ext.Osiris.RegisterListener("TemplateAddedTo", 4, "after", function (tmpl, object, holder, addType)
         if isSpawned(holder) then
-            local okE, eE = pcall(Osi.Equip, holder, object, 1, 0, 1)
-            if okE then
-                log("equipped", object, "on", holder)
+            local okE, eE = pcall(Osi.Equip, holder, object)
+            if not okE then
+                log("equip THREW:", object, "on", holder, "-", tostring(eE))
+            elseif not eE then
+                -- Osiris refused the equip (item stays in inventory). Normal for
+                -- potions/gold/consumables; LOUD for real gear.
+                local t = tostring(tmpl)
+                if t:find("^ARM_") or t:find("^WPN_") then log("equip REFUSED:", object, "(", t, ") on", holder) end
             else
-                log("equip FAILED:", object, "on", holder, "-", tostring(eE))
+                log("equipped", object, "on", holder)
             end
         end
     end)
