@@ -19,6 +19,14 @@ Usage: python3 tools/gen_teams.py
 """
 import pathlib
 import uuid
+import os
+import random
+
+# v3.46: spell-kit rolls. CHAOS_SEED=<int> makes them reproducible (tests); by
+# default every regen re-rolls every caster's whole spell stack (owner wants the
+# chaos: lvl-6 dwarf cleric != lvl-5 dwarf cleric + 1 spell).
+if os.environ.get("CHAOS_SEED"):
+    random.seed(int(os.environ["CHAOS_SEED"]))
 
 OUT_STATS = pathlib.Path("mods/chaos-reinforcements/Public/ChaosReinforcements/"
                          "Stats/Generated/Data/CHAOS_Teams.txt")
@@ -256,38 +264,100 @@ HALF_SLOTS = {  # ranger/bard curve
     9: {1: 4, 2: 3, 3: 2}, 10: {1: 4, 2: 3, 3: 2},
     11: {1: 4, 2: 3, 3: 2, 4: 1}, 12: {1: 4, 2: 3, 3: 2, 4: 1},
 }
+# ---- v3.46 ROLLED SPELL KITS (owner design: docs/spells-categories.md) --------
+# Caster builds roll their known spells at GENERATION time so every level - and
+# every regen - shows a different toolkit (owner: a lvl6 dwarf cleric shouldn't be
+# an exact lvl5 clone +1 spell). Design: walk spell levels 1..max; for each slot,
+# cycle the owner's priority GROUPS in order (prio1 group, prio2, prio3, loop back
+# once all groups were used); within a group pick weighted by the table's intra-group
+# Pri column (Pri1 ~6x, Pri2 ~3x, Pri3 ~1x). One spell known per slot; picks are
+# without replacement. Set CHAOS_SEED=<int> for reproducible rolls; default = fresh
+# random every regen.
+# ids validated against vanilla Spell_*.txt from Shared.pak+Gustav.pak+GustavX.pak
+# (covers Shared/SharedDev/Gustav/GustavDev/Honour layers, 2026-11-03 census):
+# Mass Cure Wounds = Target_CureWounds_Mass, Mass Healing Word = Shout_HealingWord_Mass,
+# Command (NPC AI entry) = Target_Command_Halt_NPC, Spiritual Weapon = MAG_ variant,
+# Flame Strike/Insect Plague/Ice Storm/Blight/Ice Knife/TollTheDead all EXIST.
+# NOT in vanilla (dropped): Conjure Minor Elemental (folded into the Conjure
+# Elemental container; only a MudMephit claw ref exists).
+SPELL_CATS = {
+    "cleric": [
+        ("healing", [("Target_CureWounds", 1, 1), ("Target_HealingWord", 1, 2),
+                     ("Shout_HealingWord_Mass", 3, 1), ("Target_CureWounds_Mass", 5, 1),
+                     ("Target_Heal", 6, 1)]),
+        ("buff", [("Target_Bless", 1, 1), ("Target_ShieldOfFaith", 1, 2),
+                  ("Target_WardingBond", 2, 2), ("Shout_Aid", 2, 3),
+                  ("Target_FreedomOfMovement", 4, 3)]),
+        ("summon_debuff_damage",
+         [("Target_HoldPerson", 2, 1), ("Target_MAG_SpiritualWeapon", 2, 1),
+          ("Target_Bane", 1, 2), ("Projectile_GuidingBolt", 1, 2),
+          ("Target_Command_Halt_NPC", 1, 2), ("Shout_SpiritGuardians", 3, 2),
+          ("Target_FlameStrike", 5, 2), ("Target_InsectPlague", 5, 2)]),
+    ],
+    "druid": [
+        ("healing", [("Target_CureWounds", 1, 1), ("Target_HealingWord", 1, 2),
+                     ("Target_CureWounds_Mass", 5, 1), ("Target_Heal", 6, 1)]),
+        ("buff_summon", [("Target_FlamingSphere", 2, 2),
+                         ("Target_ConjureWoodlandBeings", 4, 2),
+                         ("Target_ConjureElemental_Elemental_Fire_NPC", 5, 2),
+                         ("Target_FreedomOfMovement", 4, 3)]),
+        ("debuff_damage",
+         [("Projectile_IceKnife", 1, 1), ("Target_HeatMetal", 2, 1),
+          ("Target_Moonbeam", 2, 1), ("Target_CallLightning", 3, 1),
+          ("Target_IceStorm", 4, 1), ("Target_HoldPerson", 2, 2),
+          ("Zone_Thunderwave", 1, 2), ("Target_InsectPlague", 5, 2),
+          ("Target_SpikeGrowth", 2, 3), ("Target_Blight", 5, 3)]),
+    ],
+}
+CANTRIPS = {
+    "cleric": [("Target_TollTheDead", 1), ("Target_SacredFlame", 2)],
+    "druid": [("Target_ThornWhip", 1), ("Projectile_PoisonSpray", 2)],
+}
+# build -> (casting ability, slot curve, SPELL_CATS key)
+ROLL_KITS = {
+    "cleric": ("Wisdom", FULL_SLOTS, "cleric"),
+    "druid_healer": ("Wisdom", FULL_SLOTS, "druid"),
+    "druid_shifter": ("Wisdom", FULL_SLOTS, "druid"),
+    "druid_caster": ("Wisdom", FULL_SLOTS, "druid"),
+}
+PRI_WEIGHT = {1: 6, 2: 3, 3: 1}
+
+def _wpick(pool):
+    w = [PRI_WEIGHT.get(pri, 1) for (_, _, pri) in pool]
+    return pool.pop(random.choices(range(len(pool)), weights=w)[0])
+
+def roll_spell_kit(catkey, curve, lvl):
+    ids = []
+    # cantrips: 2 known, +1 at char lvl 4 and 10 (5e progression), own Pri weights
+    pool = [(sid, 0, pri) for (sid, pri) in CANTRIPS[catkey]]
+    ncan = min(2 + (1 if lvl >= 4 else 0) + (1 if lvl >= 10 else 0), len(pool))
+    for _ in range(ncan):
+        ids.append(_wpick(pool)[0])
+    # one spell known per slot, cycling the priority groups per spell level
+    cats = SPELL_CATS[catkey]
+    for slvl in sorted(curve.get(lvl, {})):
+        pools = [[(sid, sl, pri) for (sid, sl, pri) in spells if sl == slvl]
+                 for (_, spells) in cats]
+        ci, n = 0, curve[lvl][slvl]
+        for _ in range(n):
+            for attempt in range(len(cats)):
+                c = (ci + attempt) % len(cats)
+                if pools[c]:
+                    ids.append(_wpick(pools[c])[0])
+                    ci = c + 1
+                    break
+            else:
+                break                       # spell level exhausted across all groups
+    return ids
+
 # build -> (casting ability, slot curve, [(min char level, spell stats id), ...])
-# v3.44: kits per CLASS BUILD. All ids validated against vanilla Spell_*.txt
-# (2026-11-03 census): EldritchBlast/Hex/ProduceFlame/ThornWhip/Entangle/Guidance/
-# Smite_Divine|Searing|Thunderous all exist as listed.
+# STATIC kits (owner's category lists cover cleric+druid so far; full/half/1-3
+# casters come later - these stay fixed-order until then). All ids validated.
 WARLOCK_SLOTS = {  # warlock pact magic: few slots, upcast high
     1: {}, 2: {1: 1}, 3: {1: 2}, 4: {1: 2}, 5: {2: 1}, 6: {2: 1},
     7: {2: 1}, 8: {2: 1}, 9: {3: 1}, 10: {3: 1}, 11: {3: 1}, 12: {3: 1},
 }
 SPELLS = {
-    "cleric": ("Wisdom", FULL_SLOTS, [
-        (1, "Target_SacredFlame"),            # cantrip
-        (1, "Target_Bless"), (1, "Target_HealingWord"),
-        (2, "Projectile_GuidingBolt"), (2, "Target_ShieldOfFaith"),
-        (3, "Target_MAG_SpiritualWeapon"),
-        (5, "Shout_SpiritGuardians")]),
-        # v3.45 (owner): NO Call Lightning on clerics - it is a DRUID spell; clerics'
-        # only 3rd-level attack option is Spirit Guardians (run-on-top of enemies).
-    "druid_healer": ("Wisdom", FULL_SLOTS, [   # druid heal kit (25% of healers, owner)
-        (1, "Target_Guidance"),                # cantrip
-        (1, "Target_HealingWord"), (2, "Target_Goodberry"),
-        (2, "Target_Barkskin"), (3, "Target_Entangle"),
-        (5, "Target_SpikeGrowth"), (7, "Target_CallLightning")]),
-    "druid_shifter": ("Wisdom", FULL_SLOTS, [  # shapeshifter: beast-y cantrip + control
-        (1, "Target_ThornWhip"),               # cantrip
-        (1, "Shout_ProduceFlame"),             # cantrip
-        (2, "Target_Entangle"), (2, "Target_Barkskin"),
-        (5, "Target_SpikeGrowth")]),
-    "druid_caster": ("Wisdom", FULL_SLOTS, [   # spores druid dps-caster
-        (1, "Target_ThornWhip"),               # cantrip
-        (1, "Shout_ProduceFlame"),             # cantrip
-        (2, "Target_Entangle"), (3, "Projectile_ChromaticOrb_Acid"),
-        (5, "Target_SpikeGrowth"), (7, "Target_CallLightning")]),
     "wizard": ("Intelligence", FULL_SLOTS, [
         (1, "Projectile_FireBolt"), (1, "Projectile_AcidSplash"),  # cantrips
         (1, "Projectile_MagicMissile"), (1, "Zone_Thunderwave"), (1, "Target_MageArmor"),
@@ -455,7 +525,15 @@ def main():
             if cfg["cast"]:
                 stats_lines.append(f'data "SpellCastingAbility" "{cfg["cast"]}"')
             boosts = []
-            if kit:
+            rolled = ROLL_KITS.get(build)
+            if rolled:
+                # v3.46: per-level ROLLED kit (docs/spells-categories.md design)
+                ab, curve, catkey = rolled
+                boosts += [f'ActionResource(SpellSlot,{cnt},{slvl})'
+                           for slvl, cnt in sorted(curve.get(lvl, {}).items())]
+                boosts += [f'UnlockSpell({sid},,,,{ab})'
+                           for sid in roll_spell_kit(catkey, curve, lvl)]
+            elif kit:
                 ab, curve, spells = kit
                 boosts += [f'ActionResource(SpellSlot,{cnt},{slvl})'
                            for slvl, cnt in sorted(curve.get(lvl, {}).items())]
@@ -537,6 +615,10 @@ def main():
     print(f"stat entries: {n_entries} -> {OUT_STATS}")
     print(f"templates:    {n_tpl} -> {OUT_TEMPLATES}")
     print(f"lua lookup:  -> {OUT_LUA}")
+    print("rolled-kit samples (re-roll every regen):")
+    for ck in ("cleric", "druid"):
+        for L in (5, 8):
+            print(f"  {ck} L{L}:", ", ".join(roll_spell_kit(ck, FULL_SLOTS, L)))
 
 
 if __name__ == "__main__":

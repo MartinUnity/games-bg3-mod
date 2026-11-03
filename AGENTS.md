@@ -212,8 +212,15 @@ Where things live:
   `style2_twf 5b91e529`, rogue gets `UnlockPassive(FightingStyle_TwoWeaponFighting)`;
   magicGear weapon pool is kit-aware (wp dual→light pair, twohanded→2H _1, else 1h
   band pool; BOSS Duelist had drawn a 2h warhammer killing dex); cleric kit lost
-  CallLightning (druid spell; FlameStrike doesn't exist in vanilla). ✅ dual-wield
+  CallLightning (druid spell; FlameStrike was believed absent at the time - it does
+  exist as Target_FlameStrike in SharedDev). ✅ dual-wield
   re-verdict pending);
+  **v3.46 rolled spell kits (docs/spells-categories.md)**: cleric+druid known spells
+  rolled at generation — priority groups cycle per slot (prio1→2→3→loop), within-group
+  weighted by Pri 6/3/1, one spell per slot, every level re-rolls (CHAOS_SEED for
+  reproducible); ids validated vs full pak census /tmp/opencode/sp3_ids.txt
+  (4682 entries; MassCure=Target_CureWounds_Mass, Command=Target_Command_Halt_NPC,
+  ConjureMinorElemental doesn't exist); owner owes lists for full/half/1-3 casters;
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

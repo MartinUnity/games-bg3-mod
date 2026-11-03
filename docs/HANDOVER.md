@@ -442,6 +442,29 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.46 ROLLED SPELL KITS for cleric + druid (owner design:
+  docs/spells-categories.md):** caster spell stacks are no longer static lists -
+  gen_teams.py `SPELL_CATS`/`CANTRIPS` encode the owner's priority GROUPS (cleric:
+  healing/buff/summon+debuff+damage; druid: healing/buff+summon/debuff+damage) with
+  each spell's intra-group Pri column. `roll_spell_kit`: walk spell levels 1..max;
+  each slot cycles the groups in prio order (prio1, prio2, prio3, loop once all
+  used), picks WITHIN a group weighted by Pri (6/3/1 - sim: druid lvl2 picks
+  HeatMetal+Moonbeam ~47% combined, HoldPerson 14.5%, SpikeGrowth 5.3%; Bless ~2x
+  ShieldOfFaith). One spell known per slot; empty groups at that spell level are
+  skipped, truly-empty spell levels leave the slot unfilled (mob upcasts its known
+  spell - engine doesn't require 1:1). Cantrips: 2 known +1@4 +1@10, own Pri
+  weights. EVERY LEVEL ROLLS INDEPENDENTLY and every regen re-rolls everything
+  (`CHAOS_SEED=<int>` for reproducible rolls; default fresh random) - owner wanted
+  the lvl-6 dwarf cleric to NOT be the lvl-5 clone +1 spell. Applied to cleric +
+  all 3 druid builds; wizard/sorc/warlock/hexblade/paladin/ranger/bard keep static
+  kits until the owner adds their category lists. ID census re-done from
+  Shared.pak+Gustav.pak+GustavX.pak Spell_*.txt (all 5 layers incl. Honour, 4682
+  ids, /tmp/opencode/sp3_ids.txt): all 33 used ids validated; Mass Cure Wounds =
+  Target_CureWounds_Mass, Mass Healing Word = Shout_HealingWord_Mass, Command =
+  Target_Command_Halt_NPC (AI entry), Heal = Target_Heal, Flame Strike EXISTS
+  (Target_FlameStrike, SharedDev - earlier "doesn't exist" was a wrong-file grep);
+  Conjure Minor Elemental does NOT exist (folded into Conjure Elemental container).
+  Pak 451955 B. ⚠️ in-game verdict pending (cleric/druid toolkits vary per spawn).
 - **v3.45 owner-playtest fixes (pak 451379 B):** (1) **Duelist had NO Two Weapon
   Fighting** - the subagent note "DualWielder table includes TWF@2/3" was WRONG
   (UCL_Generic_DualWielder rows are only BonusAC@4 + Dex+2@8); re-added
@@ -457,8 +480,9 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   MAGIC_WEAPON[band] (1h_shield/table/javelins), ranged keeps bows. Offline harness:
   350+ rolls per kit, 0 wrong-kit. (3) **clerics had Call Lightning** (owner: that is
   a DRUID spell; clerics' only 3rd-level attack option is Spirit Guardians) - removed
-  from the cleric kit (druid healer/caster keep it; Target_FlameStrike does not exist
-  in vanilla, verified). Verdicts in from owner: cleric shields ✅, hexblade skills/
+  from the cleric kit (druid healer/caster keep it; Flame Strike checked then and
+  reported absent — WRONG, it exists as Target_FlameStrike in SharedDev, later
+  restored via the v3.46 rolled kits where the owner lists it). Verdicts in from owner: cleric shields ✅, hexblade skills/
   stats ✅. ⚠️ pending re-verdicts: duelist dual-wields with TWF, magic kits match
   build, no lone-warhammer recurrences.
 - **v3.44 CLASS-BUILD ROSTER (framework shipped, owner refs pending; pak 451056 B,
