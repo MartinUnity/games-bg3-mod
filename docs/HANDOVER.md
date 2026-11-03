@@ -451,12 +451,40 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   = hard exit (6 negative tests pass: cleric+CallLightning, warlock+Sunbeam, Heal-as-lvl5,
   MAG_ id, bogus id, "ranged" typo all caught). Registry self-audit vs census fixed 9
   entries on first run (MinorIllusion/ArmorOfAgathys/MistyStep/Darkness/WallOfFire ids,
-  ArmsOfHadar lvl 1, ConjureWoodlandBeings lvl 4, ProduceFlame lvl 0). Caught 3 real kit
+  ArmsOfHadar lvl 1, ConjureWoodlandBeings lvl 4, ProduceFlame lvl 0). Caught real kit
   bugs at the gate: **ranger had ZERO spells since v3.44** (SPELLS key was `ranged`,
-  never matched build `ranger` - fixed); druid rolled kit lost Thunderwave+Blight
-  (owner lists them, but they are not on the druid list in BG3/5e - registry refused;
-  override = add "druid" to their class set in spell_registry.py); paladin kit lost
-  Sacred Flame (no paladin cantrips in the 2014 ruleset). Slot curves now PHB-exact:
+  never matched build `ranger` - fixed); paladin kit lost Sacred Flame (no paladin
+  cantrips in the 2014 ruleset). ⚠️ GATE LESSON: class sets must follow **BG3's lists,
+  not the 5e PHB** - the gate first wrongly rejected druid Thunderwave+Blight (both
+  ARE BG3 druid spells; bg3.wiki List_of_Druid_spells + owner's own in-game druid
+  confirmed; registry fixed, both back in the roll). Owner dumped bg3.wiki class
+  pages as lynx text into `docs/wiki-dumps/` (druid first) - the authoritative
+  cross-check for registry class sets; BG3 also has exclusive spells (Enhance Leap,
+  Create or Destroy Water). Wiki cross-check fixes: **Conjure Minor Elemental DOES
+  exist** (`Target_ConjureElementals_Minor_Container` lvl 4 - v3.46 'absent' was a
+  bad regex; re-added to druid roll prio2), Mass Healing Word is NOT BG3-druid,
+  Wall of Fire IS. Wiki druid dump parses ~62 rows with one regex
+  (`[n]Name [n+1]Link <C|1-6> <CastType>`).
+- **v3.47b WIKI DUMPS AS CLASS GROUND TRUTH:** owner dumped ALL 10 bg3.wiki
+  class spell pages (lynx text) into `docs/wiki-dumps/<class>_spells.txt`
+  (bard cleric druid paladin ranger sorcerer warlock wizard arcanetrickster
+  eldritchknight). New `tools/parse_wiki_spells.py`: generic parser (row regex;
+  norm handles bg3.wiki quirks: British "Armour", "Bane (spell)" suffixes,
+  "Conjure Woodland Being(s)") + `--check` cross-checks EVERY spell_registry
+  entry (class membership AND spell level) against all dumps. Registry class
+  sets REBUILT from the wiki (~30 entries changed): AT/EK get wizard cantrips +
+  a few 1st/2nd spells; BG3 druid has NO Mass Healing Word; Thorn Whip + Moonbeam
+  are NOT ranger spells in BG3; no Sacred Flame for warlocks; Cure Wounds IS
+  bard+ranger (BG3); Heat Metal IS bard; Sunbeam IS sorcerer/wizard (lvl 6);
+  Sunbeam IS sorcerer/wizard (lvl 6); Fly on NO class list (scrolls/items only
+  -> empty set); Freedom of Movement NOT ranger (is bard). Exceptions in
+  spell_registry.py: WIKI_EXCEPTIONS (Chromatic Orb warlock = Kindly invocation,
+  not on lists) + FEATURE_IDS (Target_Smite_Divine = paladin feature, absent
+  from spell tables by design); BANNED ids skip the check. Workflow: after any
+  registry edit run BOTH `python3 tools/spell_registry.py --check` (kits) and
+  `python3 tools/parse_wiki_spells.py --check` (wiki truth). Re-dump pages when
+  bg3.wiki changes: `lynx -dump https://bg3.wiki/wiki/List_of_<Class>_spells`.
+  Pak 452019 B. Slot curves now PHB-exact:
   FULL_SLOTS 4s@7, 5s@9, **6th slot @11/12 so Target_Heal (lvl 6) is reachable**
   (owner: Heal needs lvl 11); HALF_SLOTS no 4s at 11/12. Warlock Sunbeam/Disintegrate
   in owner log = Goon's Library, not our boosts (GOB_/UCL forensics dead-ended; owner:

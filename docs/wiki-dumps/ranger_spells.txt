@@ -1,0 +1,817 @@
+   #[1]Edit [2]bg3.wiki (en) [3]bg3.wiki Atom feed
+
+   Ad placeholder
+
+List of Ranger spells
+
+   From bg3.wiki
+   [4]Jump to navigation [5]Jump to search
+           [6]Spells
+   Lists of spells by level
+     * [7]All spells
+     * [8]Cantrips
+     * [9]1st level
+     * [10]2nd level
+     * [11]3rd level
+     * [12]4th level
+     * [13]5th level
+     * [14]6th level
+
+   Lists of spells by school
+     * [15]Abjuration
+     * [16]Conjuration
+     * [17]Divination
+     * [18]Enchantment
+     * [19]Evocation
+     * [20]Illusion
+     * [21]Necromancy
+     * [22]Transmutation
+
+   Lists of spells by class
+     * [23]Bard
+     * [24]Cleric
+     * [25]Druid
+     * [26]Paladin
+     * Ranger
+     * [27]Sorcerer
+     * [28]Warlock
+     * [29]Wizard
+     * [30]Arcane Trickster
+     * [31]Eldritch Knight
+
+          Other lists
+     * [32]Upcastable spells
+     * [33]Healing spells
+     * [34]NPC spells
+     * [35]Ritual spells
+     * [36]Scrolls
+
+     * [37]v
+     * [38]t
+     * [39]e
+
+   A list of spells available to be learned by the [40]Ranger class upon
+   level up.
+
+Overview[[41]edit section | [42]visual editor]
+
+   [43][95px-Class_Ranger_Hotbar_Icon.png.webp]
+
+   The level column indicates spell level, not class level. Ranger spells
+   are [44]Known spells and cannot be changed after they are learned
+   during through a level up.
+
+   Ranger spells will use the caster's [45]Wisdom modifier for [46]Spell
+   Save DC and [47]Spell Attack rolls.
+
+Ranger spell list[[48]edit section | [49]visual editor]
+
+   Name Level Cast time Duration Range/Area Attack/Save Damage/Effect
+   [50]Animal Friendship [51]Animal Friendship 1 Upcast Icon.png Action
+   + Level 1 Spell Slot Duration Icons.png 10 turns Range Icon.png  18 m
+   (60 ft)
+   WIS Save  [52]WIS [53]Save
+   -
+   [54]Cure Wounds [55]Cure Wounds 1 Upcast Icon.png Action + Level 1
+   Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   -
+   1d8 + [56]Spellcasting modifier Healing ⁠[57]Healing
+   [58]Enhance Leap [59]Enhance Leap  1 Action + Level 1 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [60]Ensnaring Strike [61]Ensnaring Strike  1 Upcast Icon.png Action
+   + Bonus Action + Level 1 Spell Slot Duration Icons.png 10 turns
+   -
+   STR Save  [62]STR [63]Save
+   Normal weapon damage
+   1d6 Piercing ⁠[64]Piercing
+   [65]Fog Cloud [66]Fog Cloud  1 Upcast Icon.png Action + Level 1 Spell
+   Slot Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   4.5 m (15 ft) Radius  4.5 m (15 ft) Radius
+   -
+   -
+   [67]Goodberry [68]Goodberry 1 Action + Level 1 Spell Slot Duration
+   Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [69]Hail of Thorns [70]Hail of Thorns 1 Upcast Icon.png Action + Bonus
+   Action + Level 1 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   2 m (7 ft) Radius  2 m (7 ft) Radius
+   DEX Save  [71]DEX [72]Save
+   Normal weapon damage
+   1d10 Piercing ⁠[73]Piercing
+   [74]Hunter's Mark [75]Hunter's Mark  1 Bonus Action + Level 1 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  18 m (60 ft)
+   -
+   1d6 Weapon ⁠[76]Weapon
+   [77]Longstrider [78]Longstrider  1 Upcast Icon.png Action + Level 1
+   Spell Slot Duration Icons.png Until long rest Range Icon.png  1.5 m
+   (5 ft)
+   -
+   -
+   [79]Speak with Animals [80]Speak with Animals  1 Action + Level 1 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  Self
+   -
+   -
+   [81]Barkskin [82]Barkskin  2 Action + Level 2 Spell Slot Duration
+   Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [83]Darkvision (spell) [84]Darkvision (spell) 2 Action + Level 2 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [85]Lesser Restoration [86]Lesser Restoration 2 Action + Level 2 Spell
+   Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   -
+   -
+   [87]Pass Without Trace [88]Pass Without Trace  2 Action + Level 2 Spell
+   Slot Duration Icons.png Until long rest Range Icon.png  Self
+   9 m (30 ft) Radius  9 m (30 ft) Radius
+   -
+   -
+   [89]Protection from Poison [90]Protection from Poison 2 Action + Level
+   2 Spell Slot Duration Icons.png Until long rest Range Icon.png  1.5 m
+   (5 ft)
+   -
+   -
+   [91]Silence [92]Silence    2 Action + Level 2 Spell Slot Duration
+   Icons.png 100 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [93]Spike Growth [94]Spike Growth  2 Action + Level 2 Spell Slot
+   Duration Icons.png 100 turns Range Icon.png  18 m (60 ft)
+   -
+   2d4 Piercing ⁠[95]Piercing
+   [96]Conjure Barrage [97]Conjure Barrage 3 Upcast Icon.png Action +
+   Level 3 Spell Slot
+   -
+   Range Icon.png  Self
+   9 m (30 ft) Cone  9 m (30 ft) Cone
+   DEX Save  [98]DEX [99]Save
+   Normal weapon damage
+   2d8 Weapon ⁠[100]Weapon
+   [101]Daylight [102]Daylight 3 Action + Level 3 Spell Slot Duration
+   Icons.png Until long rest Range Icon.png  18 m (60 ft)
+   -
+   -
+   [103]Lightning Arrow [104]Lightning Arrow 3 Upcast Icon.png Action
+   + Level 3 Spell Slot
+   -
+   Range Icon.png  18 m (60 ft)
+   3 m (10 ft) Radius  3 m (10 ft) Radius
+   DEX Save  [105]DEX [106]Save
+   4d8 Lightning ⁠[107]Lightning
+   2d8 Lightning ⁠[108]Lightning
+   [109]Plant Growth [110]Plant Growth 3 Action + Level 3 Spell Slot
+   Duration Icons.png 10 turns Range Icon.png  18 m (60 ft)
+   -
+   -
+   [111]Protection from Energy [112]Protection from Energy  3 Action +
+   Level 3 Spell Slot
+   -
+   Range Icon.png  1.5 m (5 ft)
+   -
+   -
+
+     * [113]v
+     * [114]t
+     * [115]e
+
+   [116]Ranger
+
+   Subclasses
+
+     * [117]Beast Master
+     * [118]Gloom Stalker
+     * [119]Hunter
+     * [120]Swarmkeeper
+
+   [121]Defensive Tactics
+
+     * [122]Escape the Horde  [123]Escape the Horde
+     * [124]Multiattack Defence  [125]Multiattack Defence
+     * [126]Steel Will  [127]Steel Will
+
+   [128]Favoured Enemy
+
+     * [129]Bounty Hunter  [130]Bounty Hunter
+     * [131]Keeper of the Veil  [132]Keeper of the Veil
+     * [133]Mage Breaker  [134]Mage Breaker
+     * [135]Ranger Knight  [136]Ranger Knight
+     * [137]Sanctified Stalker  [138]Sanctified Stalker
+
+   Gathered Swarm
+
+     * [139]Cloud of Jellyfish  [140]Cloud of Jellyfish
+          + [141]Mighty  [142]Mighty
+     * [143]Flurry of Moths  [144]Flurry of Moths
+          + [145]Mighty  [146]Mighty
+     * [147]Legion of Bees  [148]Legion of Bees
+          + [149]Mighty  [150]Mighty
+     * [151]Mighty Swarm  [152]Mighty Swarm
+
+   [153]Hunter’s Prey
+
+     * [154]Colossus Slayer  [155]Colossus Slayer
+     * [156]Giant Killer  [157]Giant Killer
+     * [158]Horde Breaker  [159]Horde Breaker
+
+   [160]Natural Explorer
+
+     * [161]Beast Tamer  [162]Beast Tamer
+     * [163]Urban Tracker  [164]Urban Tracker
+     * Wasteland Wanderer
+          + [165]Cold  [166]Cold
+          + [167]Fire  [168]Fire
+          + [169]Poison  [170]Poison
+
+   Other class features
+
+     * [171]Bestial Fury  [172]Bestial Fury
+     * [173]Companion's Bond  [174]Companion's Bond
+     * [175]Dread Ambusher  [176]Dread Ambusher
+          + [177]Melee  [178]Melee
+          + [179]Ranged  [180]Ranged
+          + [181]Hide  [182]Hide
+     * [183]Exceptional Training  [184]Exceptional Training
+     * [185]Extra Attack  [186]Extra Attack
+     * [187]Hide in Plain Sight  [188]Hide in Plain Sight
+     * [189]Iron Mind  [190]Iron Mind
+     * [191]Land's Stride: Difficult Terrain  [192]Land's Stride:
+       Difficult Terrain
+     * [193]Prey's Scent  [194]Prey's Scent
+     * [195]Spells  Spells
+     * [196]Ranger's Companion  [197]Ranger's Companion
+     * [198]Stalker's Flurry  [199]Stalker's Flurry
+     * [200]Superior Darkvision  [201]Superior Darkvision
+     * [202]Umbral Shroud  [203]Umbral Shroud
+     * [204]Volley  [205]Volley
+     * [206]Whirlwind Attack  [207]Whirlwind Attack
+     * [208]Writhing Tide  [209]Writhing Tide
+
+   Spotted an issue with this page? [210]Leave a comment! Note that your
+   IP address will be publicly logged unless you [211]create an account.
+   You can also [212]edit the page to fix the issue. See [213]How to
+   Contribute to get started, and maybe [214]join our Discord so we can
+   coordinate our efforts.
+
+   Retrieved from
+   "[215]https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&oldid=42
+   0531"
+
+   [216]Categories:
+     * [217]Lists
+     * [218]Lists of spells
+
+Navigation menu
+
+Personal tools
+
+     * Not logged in
+     * [219]Talk
+     * [220]Contributions
+     * [221]Create account
+     * [222]Log in
+
+Namespaces
+
+     * [223]Page
+     * [224]Discussion
+
+   [ ] English
+
+Views
+
+     * [225]Read
+     * [226]Edit page
+     * [227]Visual editor
+     * [228]View history
+
+   [ ] More
+
+Search
+
+   ____________________ Search Go
+
+Navigation
+
+     * [229]Main page
+     * [230]Help index
+     * [231]Learn to edit
+     * [232]Navigation
+     * [233]Guides
+     * [234]Modding
+     * [235]Upload file
+     * [236]Discord
+     * [237]Backups
+     * [238]Payment
+
+Special
+
+     * [239]Recent changes
+     * [240]Newly added files
+     * [241]Special pages
+     * [242]Random page
+     * [243]Maintenance
+     * [244]Version
+
+Tools
+
+     * [245]What links here
+     * [246]Related changes
+     * [247]Special pages
+     * [248]Printable version
+     * [249]Permanent link
+     * [250]Page information
+     * [251]Cargo data
+
+Advertisement
+
+     * [252]About ads on bg3.wiki
+     * [253]Please report bad ads
+
+   Ad placeholder
+
+     * This page was last edited on 12 September 2026, at 15:46.
+     * Content is available under [254]CC BY-NC-SA 4.0 or CC BY-SA 4.0;
+       please see the linked page for details.
+
+     * [255]Privacy policy
+     * [256]About bg3.wiki
+     * [257]Copyrights
+     * [258]Mobile view
+
+     * [259]Powered by MediaWiki
+
+References
+
+   Visible links:
+   1. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=edit
+   2. https://bg3.wiki/w/rest.php/v1/search
+   3. https://bg3.wiki/w/index.php?title=Special:RecentChanges&feed=atom
+   4. https://bg3.wiki/wiki/List_of_Ranger_spells#mw-head
+   5. https://bg3.wiki/wiki/List_of_Ranger_spells#searchInput
+   6. https://bg3.wiki/wiki/Spells
+   7. https://bg3.wiki/wiki/List_of_all_spells
+   8. https://bg3.wiki/wiki/List_of_cantrips
+   9. https://bg3.wiki/wiki/List_of_1st_level_spells
+  10. https://bg3.wiki/wiki/List_of_2nd_level_spells
+  11. https://bg3.wiki/wiki/List_of_3rd_level_spells
+  12. https://bg3.wiki/wiki/List_of_4th_level_spells
+  13. https://bg3.wiki/wiki/List_of_5th_level_spells
+  14. https://bg3.wiki/wiki/List_of_6th_level_spells
+  15. https://bg3.wiki/wiki/Abjuration
+  16. https://bg3.wiki/wiki/Conjuration
+  17. https://bg3.wiki/wiki/Divination
+  18. https://bg3.wiki/wiki/Enchantment_(school)
+  19. https://bg3.wiki/wiki/Evocation
+  20. https://bg3.wiki/wiki/Illusion
+  21. https://bg3.wiki/wiki/Necromancy
+  22. https://bg3.wiki/wiki/Transmutation
+  23. https://bg3.wiki/wiki/List_of_Bard_spells
+  24. https://bg3.wiki/wiki/List_of_Cleric_spells
+  25. https://bg3.wiki/wiki/List_of_Druid_spells
+  26. https://bg3.wiki/wiki/List_of_Paladin_spells
+  27. https://bg3.wiki/wiki/List_of_Sorcerer_spells
+  28. https://bg3.wiki/wiki/List_of_Warlock_spells
+  29. https://bg3.wiki/wiki/List_of_Wizard_spells
+  30. https://bg3.wiki/wiki/List_of_Arcane_Trickster_spells
+  31. https://bg3.wiki/wiki/List_of_Eldritch_Knight_spells
+  32. https://bg3.wiki/wiki/Upcasting
+  33. https://bg3.wiki/wiki/List_of_Healing_spells
+  34. https://bg3.wiki/wiki/List_of_NPC_spells
+  35. https://bg3.wiki/wiki/List_of_Ritual_spells
+  36. https://bg3.wiki/wiki/Scrolls
+  37. https://bg3.wiki/wiki/Template:Spells
+  38. https://bg3.wiki/wiki/Template_talk:Spells
+  39. https://bg3.wiki/wiki/Special:EditPage/Template:Spells
+  40. https://bg3.wiki/wiki/Ranger
+  41. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=edit&section=1
+  42. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&veaction=edit&section=1
+  43. https://bg3.wiki/wiki/File:Class_Ranger_Hotbar_Icon.png
+  44. https://bg3.wiki/wiki/Known_spells
+  45. https://bg3.wiki/wiki/Wisdom
+  46. https://bg3.wiki/wiki/Spell_Save_DC
+  47. https://bg3.wiki/wiki/Spell_Attack
+  48. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=edit&section=2
+  49. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&veaction=edit&section=2
+  50. https://bg3.wiki/wiki/Animal_Friendship
+  51. https://bg3.wiki/wiki/Animal_Friendship
+  52. https://bg3.wiki/wiki/Wisdom
+  53. https://bg3.wiki/wiki/Saving_throws
+  54. https://bg3.wiki/wiki/Cure_Wounds
+  55. https://bg3.wiki/wiki/Cure_Wounds
+  56. https://bg3.wiki/wiki/Spells#Spellcasting_ability
+  57. https://bg3.wiki/wiki/Healing
+  58. https://bg3.wiki/wiki/Enhance_Leap
+  59. https://bg3.wiki/wiki/Enhance_Leap
+  60. https://bg3.wiki/wiki/Ensnaring_Strike
+  61. https://bg3.wiki/wiki/Ensnaring_Strike
+  62. https://bg3.wiki/wiki/Strength
+  63. https://bg3.wiki/wiki/Saving_throws
+  64. https://bg3.wiki/wiki/Piercing
+  65. https://bg3.wiki/wiki/Fog_Cloud
+  66. https://bg3.wiki/wiki/Fog_Cloud
+  67. https://bg3.wiki/wiki/Goodberry
+  68. https://bg3.wiki/wiki/Goodberry
+  69. https://bg3.wiki/wiki/Hail_of_Thorns
+  70. https://bg3.wiki/wiki/Hail_of_Thorns
+  71. https://bg3.wiki/wiki/Dexterity
+  72. https://bg3.wiki/wiki/Saving_throws
+  73. https://bg3.wiki/wiki/Piercing
+  74. https://bg3.wiki/wiki/Hunter's_Mark
+  75. https://bg3.wiki/wiki/Hunter's_Mark
+  76. https://bg3.wiki/wiki/Weapon
+  77. https://bg3.wiki/wiki/Longstrider
+  78. https://bg3.wiki/wiki/Longstrider
+  79. https://bg3.wiki/wiki/Speak_with_Animals
+  80. https://bg3.wiki/wiki/Speak_with_Animals
+  81. https://bg3.wiki/wiki/Barkskin
+  82. https://bg3.wiki/wiki/Barkskin
+  83. https://bg3.wiki/wiki/Darkvision_(spell)
+  84. https://bg3.wiki/wiki/Darkvision_(spell)
+  85. https://bg3.wiki/wiki/Lesser_Restoration
+  86. https://bg3.wiki/wiki/Lesser_Restoration
+  87. https://bg3.wiki/wiki/Pass_Without_Trace
+  88. https://bg3.wiki/wiki/Pass_Without_Trace
+  89. https://bg3.wiki/wiki/Protection_from_Poison
+  90. https://bg3.wiki/wiki/Protection_from_Poison
+  91. https://bg3.wiki/wiki/Silence
+  92. https://bg3.wiki/wiki/Silence
+  93. https://bg3.wiki/wiki/Spike_Growth
+  94. https://bg3.wiki/wiki/Spike_Growth
+  95. https://bg3.wiki/wiki/Piercing
+  96. https://bg3.wiki/wiki/Conjure_Barrage
+  97. https://bg3.wiki/wiki/Conjure_Barrage
+  98. https://bg3.wiki/wiki/Dexterity
+  99. https://bg3.wiki/wiki/Saving_throws
+ 100. https://bg3.wiki/wiki/Weapon
+ 101. https://bg3.wiki/wiki/Daylight
+ 102. https://bg3.wiki/wiki/Daylight
+ 103. https://bg3.wiki/wiki/Lightning_Arrow
+ 104. https://bg3.wiki/wiki/Lightning_Arrow
+ 105. https://bg3.wiki/wiki/Dexterity
+ 106. https://bg3.wiki/wiki/Saving_throws
+ 107. https://bg3.wiki/wiki/Lightning
+ 108. https://bg3.wiki/wiki/Lightning
+ 109. https://bg3.wiki/wiki/Plant_Growth
+ 110. https://bg3.wiki/wiki/Plant_Growth
+ 111. https://bg3.wiki/wiki/Protection_from_Energy
+ 112. https://bg3.wiki/wiki/Protection_from_Energy
+ 113. https://bg3.wiki/wiki/Template:RangerNavbox
+ 114. https://bg3.wiki/wiki/Template_talk:RangerNavbox
+ 115. https://bg3.wiki/wiki/Special:EditPage/Template:RangerNavbox
+ 116. https://bg3.wiki/wiki/Ranger
+ 117. https://bg3.wiki/wiki/Beast_Master
+ 118. https://bg3.wiki/wiki/Gloom_Stalker
+ 119. https://bg3.wiki/wiki/Hunter
+ 120. https://bg3.wiki/wiki/Swarmkeeper
+ 121. https://bg3.wiki/wiki/Defensive_Tactics
+ 122. https://bg3.wiki/wiki/Escape_the_Horde
+ 123. https://bg3.wiki/wiki/Escape_the_Horde
+ 124. https://bg3.wiki/wiki/Multiattack_Defence
+ 125. https://bg3.wiki/wiki/Multiattack_Defence
+ 126. https://bg3.wiki/wiki/Steel_Will
+ 127. https://bg3.wiki/wiki/Steel_Will
+ 128. https://bg3.wiki/wiki/Favoured_Enemy
+ 129. https://bg3.wiki/wiki/Bounty_Hunter
+ 130. https://bg3.wiki/wiki/Bounty_Hunter
+ 131. https://bg3.wiki/wiki/Keeper_of_the_Veil
+ 132. https://bg3.wiki/wiki/Keeper_of_the_Veil
+ 133. https://bg3.wiki/wiki/Mage_Breaker
+ 134. https://bg3.wiki/wiki/Mage_Breaker
+ 135. https://bg3.wiki/wiki/Ranger_Knight
+ 136. https://bg3.wiki/wiki/Ranger_Knight
+ 137. https://bg3.wiki/wiki/Sanctified_Stalker
+ 138. https://bg3.wiki/wiki/Sanctified_Stalker
+ 139. https://bg3.wiki/wiki/Cloud_of_Jellyfish
+ 140. https://bg3.wiki/wiki/Cloud_of_Jellyfish
+ 141. https://bg3.wiki/wiki/Mighty_Cloud_of_Jellyfish
+ 142. https://bg3.wiki/wiki/Mighty_Cloud_of_Jellyfish
+ 143. https://bg3.wiki/wiki/Flurry_of_Moths
+ 144. https://bg3.wiki/wiki/Flurry_of_Moths
+ 145. https://bg3.wiki/wiki/Mighty_Flurry_of_Moths
+ 146. https://bg3.wiki/wiki/Mighty_Flurry_of_Moths
+ 147. https://bg3.wiki/wiki/Legion_of_Bees
+ 148. https://bg3.wiki/wiki/Legion_of_Bees
+ 149. https://bg3.wiki/wiki/Mighty_Legion_of_Bees
+ 150. https://bg3.wiki/wiki/Mighty_Legion_of_Bees
+ 151. https://bg3.wiki/wiki/Mighty_Swarm
+ 152. https://bg3.wiki/wiki/Mighty_Swarm
+ 153. https://bg3.wiki/wiki/Hunter’s_Prey
+ 154. https://bg3.wiki/wiki/Colossus_Slayer
+ 155. https://bg3.wiki/wiki/Colossus_Slayer
+ 156. https://bg3.wiki/wiki/Giant_Killer
+ 157. https://bg3.wiki/wiki/Giant_Killer
+ 158. https://bg3.wiki/wiki/Horde_Breaker
+ 159. https://bg3.wiki/wiki/Horde_Breaker
+ 160. https://bg3.wiki/wiki/Natural_Explorer
+ 161. https://bg3.wiki/wiki/Beast_Tamer
+ 162. https://bg3.wiki/wiki/Beast_Tamer
+ 163. https://bg3.wiki/wiki/Urban_Tracker
+ 164. https://bg3.wiki/wiki/Urban_Tracker
+ 165. https://bg3.wiki/wiki/Wasteland_Wanderer:_Cold
+ 166. https://bg3.wiki/wiki/Wasteland_Wanderer:_Cold
+ 167. https://bg3.wiki/wiki/Wasteland_Wanderer:_Fire
+ 168. https://bg3.wiki/wiki/Wasteland_Wanderer:_Fire
+ 169. https://bg3.wiki/wiki/Wasteland_Wanderer:_Poison
+ 170. https://bg3.wiki/wiki/Wasteland_Wanderer:_Poison
+ 171. https://bg3.wiki/wiki/Bestial_Fury
+ 172. https://bg3.wiki/wiki/Bestial_Fury
+ 173. https://bg3.wiki/wiki/Companion's_Bond
+ 174. https://bg3.wiki/wiki/Companion's_Bond
+ 175. https://bg3.wiki/wiki/Dread_Ambusher
+ 176. https://bg3.wiki/wiki/Dread_Ambusher
+ 177. https://bg3.wiki/wiki/Dread_Ambusher_(Melee)
+ 178. https://bg3.wiki/wiki/Dread_Ambusher_(Melee)
+ 179. https://bg3.wiki/wiki/Dread_Ambusher_(Ranged)
+ 180. https://bg3.wiki/wiki/Dread_Ambusher_(Ranged)
+ 181. https://bg3.wiki/wiki/Dread_Ambusher:_Hide
+ 182. https://bg3.wiki/wiki/Dread_Ambusher:_Hide
+ 183. https://bg3.wiki/wiki/Exceptional_Training
+ 184. https://bg3.wiki/wiki/Exceptional_Training
+ 185. https://bg3.wiki/wiki/Extra_Attack
+ 186. https://bg3.wiki/wiki/Extra_Attack
+ 187. https://bg3.wiki/wiki/Hide_in_Plain_Sight
+ 188. https://bg3.wiki/wiki/Hide_in_Plain_Sight
+ 189. https://bg3.wiki/wiki/Iron_Mind
+ 190. https://bg3.wiki/wiki/Iron_Mind
+ 191. https://bg3.wiki/wiki/Land's_Stride:_Difficult_Terrain
+ 192. https://bg3.wiki/wiki/Land's_Stride:_Difficult_Terrain
+ 193. https://bg3.wiki/wiki/Prey's_Scent
+ 194. https://bg3.wiki/wiki/Prey's_Scent
+ 195. https://bg3.wiki/wiki/List_of_Ranger_spells
+ 196. https://bg3.wiki/wiki/Ranger's_Companion
+ 197. https://bg3.wiki/wiki/Ranger's_Companion
+ 198. https://bg3.wiki/wiki/Stalker's_Flurry
+ 199. https://bg3.wiki/wiki/Stalker's_Flurry
+ 200. https://bg3.wiki/wiki/Superior_Darkvision
+ 201. https://bg3.wiki/wiki/Superior_Darkvision
+ 202. https://bg3.wiki/wiki/Umbral_Shroud
+ 203. https://bg3.wiki/wiki/Umbral_Shroud
+ 204. https://bg3.wiki/wiki/Volley
+ 205. https://bg3.wiki/wiki/Volley
+ 206. https://bg3.wiki/wiki/Whirlwind_Attack
+ 207. https://bg3.wiki/wiki/Whirlwind_Attack
+ 208. https://bg3.wiki/wiki/Writhing_Tide
+ 209. https://bg3.wiki/wiki/Writhing_Tide
+ 210. https://bg3.wiki/wiki/Talk:List_of_Ranger_spells
+ 211. https://bg3.wiki/w/index.php?title=Special:CreateAccount
+ 212. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=edit
+ 213. https://bg3.wiki/wiki/Help:How_to_Contribute
+ 214. https://discord.gg/EYNTAQXaNs
+ 215. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&oldid=420531
+ 216. https://bg3.wiki/wiki/Special:Categories
+ 217. https://bg3.wiki/wiki/Category:Lists
+ 218. https://bg3.wiki/wiki/Category:Lists_of_spells
+ 219. https://bg3.wiki/wiki/Special:MyTalk
+ 220. https://bg3.wiki/wiki/Special:MyContributions
+ 221. https://bg3.wiki/w/index.php?title=Special:CreateAccount&returnto=List+of+Ranger+spells
+ 222. https://bg3.wiki/w/index.php?title=Special:UserLogin&returnto=List+of+Ranger+spells
+ 223. https://bg3.wiki/wiki/List_of_Ranger_spells
+ 224. https://bg3.wiki/wiki/Talk:List_of_Ranger_spells
+ 225. https://bg3.wiki/wiki/List_of_Ranger_spells
+ 226. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=edit
+ 227. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&veaction=edit
+ 228. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=history
+ 229. https://bg3.wiki/
+ 230. https://bg3.wiki/wiki/Help:Index
+ 231. https://bg3.wiki/wiki/Help:Editing_manual
+ 232. https://bg3.wiki/wiki/bg3wiki:Navigation
+ 233. https://bg3.wiki/wiki/Guide:Guides
+ 234. https://bg3.wiki/wiki/Modding:Modding
+ 235. https://bg3.wiki/wiki/Special:Upload
+ 236. https://discord.gg/EYNTAQXaNs
+ 237. https://bg3.wiki/wiki/bg3wiki:Backups
+ 238. https://bg3.wiki/wiki/bg3wiki:Payment
+ 239. https://bg3.wiki/wiki/Special:RecentChanges
+ 240. https://bg3.wiki/wiki/Special:NewFiles
+ 241. https://bg3.wiki/wiki/Special:SpecialPages
+ 242. https://bg3.wiki/wiki/Special:Random
+ 243. https://bg3.wiki/wiki/Category:Wiki_maintenance
+ 244. https://bg3.wiki/wiki/Special:Version
+ 245. https://bg3.wiki/wiki/Special:WhatLinksHere/List_of_Ranger_spells
+ 246. https://bg3.wiki/wiki/Special:RecentChangesLinked/List_of_Ranger_spells
+ 247. https://bg3.wiki/wiki/Special:SpecialPages
+ 248. javascript:print();
+ 249. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&oldid=420531
+ 250. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=info
+ 251. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&action=pagevalues
+ 252. https://bg3.wiki/wiki/bg3wiki:Ads
+ 253. https://bg3.wiki/wiki/bg3wiki:Report_ads
+ 254. https://bg3.wiki/wiki/bg3wiki:Copyrights
+ 255. https://bg3.wiki/wiki/bg3wiki:Privacy_policy
+ 256. https://bg3.wiki/wiki/bg3wiki:About
+ 257. https://bg3.wiki/wiki/bg3wiki:Copyrights
+ 258. https://bg3.wiki/w/index.php?title=List_of_Ranger_spells&mobileaction=toggle_view_mobile
+ 259. https://www.mediawiki.org/
+
+   Hidden links:
+ 261. https://bg3.wiki/w/images/9/91/Class_Ranger_Hotbar_Icon.png
+ 262. https://bg3.wiki/w/images/3/36/Animal_Friendship_Icon.webp
+ 263. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 264. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 265. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 266. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 267. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 268. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 269. https://bg3.wiki/w/images/4/40/Cure_Wounds_Icon.webp
+ 270. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 271. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 272. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 273. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 274. https://bg3.wiki/w/images/a/ac/Healing_Icon.png
+ 275. https://bg3.wiki/w/images/4/46/Enhance_Leap_Icon.webp
+ 276. https://bg3.wiki/wiki/Ritual_Spells
+ 277. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 278. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 279. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 280. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 281. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 282. https://bg3.wiki/w/images/6/60/Ensnaring_Strike_Ranged_Icon.webp
+ 283. https://bg3.wiki/wiki/Concentration
+ 284. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 285. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 286. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 287. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+ 288. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 289. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 290. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 291. https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png
+ 292. https://bg3.wiki/w/images/c/c0/Fog_Cloud_Icon.webp
+ 293. https://bg3.wiki/wiki/Concentration
+ 294. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 295. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 296. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 297. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 298. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 299. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 300. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 301. https://bg3.wiki/w/images/4/42/Goodberry_Icon.webp
+ 302. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 303. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 304. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 305. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 306. https://bg3.wiki/w/images/6/63/Hail_of_Thorns_Icon.webp
+ 307. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 308. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 309. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+ 310. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 311. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 312. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 313. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 314. https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png
+ 315. https://bg3.wiki/w/images/f/f6/Hunter%27s_Mark_Icon.webp
+ 316. https://bg3.wiki/wiki/Concentration
+ 317. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 318. https://bg3.wiki/w/images/c/c9/Bonus_Action_Icon.png
+ 319. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 320. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 321. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 322. https://bg3.wiki/w/images/f/f0/Slashing_Damage_Icon.png
+ 323. https://bg3.wiki/w/images/3/35/Longstrider_Icon.webp
+ 324. https://bg3.wiki/wiki/Ritual_Spells
+ 325. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 326. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 327. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 328. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 329. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 330. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 331. https://bg3.wiki/w/images/2/24/Speak_with_Animals_Icon.webp
+ 332. https://bg3.wiki/wiki/Ritual_Spells
+ 333. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 334. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 335. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 336. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 337. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 338. https://bg3.wiki/w/images/8/8b/Barkskin_Icon.webp
+ 339. https://bg3.wiki/wiki/Concentration
+ 340. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 341. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 342. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 343. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 344. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 345. https://bg3.wiki/w/images/0/01/Darkvision_spell_Icon.webp
+ 346. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 347. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 348. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 349. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 350. https://bg3.wiki/w/images/e/e4/Lesser_Restoration_Icon.webp
+ 351. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 352. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 353. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 354. https://bg3.wiki/w/images/2/2b/Pass_Without_Trace_Icon.webp
+ 355. https://bg3.wiki/wiki/Concentration
+ 356. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 357. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 358. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 359. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 360. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 361. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 362. https://bg3.wiki/w/images/3/3b/Protection_from_Poison_Icon.webp
+ 363. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 364. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 365. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 366. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 367. https://bg3.wiki/w/images/7/78/Silence_Icon.webp
+ 368. https://bg3.wiki/wiki/Concentration
+ 369. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 370. https://bg3.wiki/wiki/Ritual_Spells
+ 371. https://bg3.wiki/w/images/f/fa/Ritual_Spell_Icon.png
+ 372. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 373. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 374. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 375. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 376. https://bg3.wiki/w/images/d/d4/Spike_Growth_Icon.webp
+ 377. https://bg3.wiki/wiki/Concentration
+ 378. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 379. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 380. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 381. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 382. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 383. https://bg3.wiki/w/images/0/0b/Piercing_Damage_Icon.png
+ 384. https://bg3.wiki/w/images/d/df/Conjure_Barrage_Icon.webp
+ 385. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 386. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 387. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 388. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 389. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 390. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 391. https://bg3.wiki/w/images/f/f0/Slashing_Damage_Icon.png
+ 392. https://bg3.wiki/w/images/6/6e/Daylight_Icon.webp
+ 393. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 394. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 395. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 396. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 397. https://bg3.wiki/w/images/e/e3/Lightning_Arrow_Icon.webp
+ 398. https://bg3.wiki/w/images/2/2f/Upcast_Icon.png
+ 399. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 400. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 401. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 402. https://bg3.wiki/w/images/d/d0/Aoe_Icon.png
+ 403. https://bg3.wiki/w/images/e/e7/Saving_Throw_Icon.png
+ 404. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+ 405. https://bg3.wiki/w/images/3/31/Lightning_Damage_Icon.png
+ 406. https://bg3.wiki/w/images/a/ad/Plant_Growth_Icon.webp
+ 407. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 408. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 409. https://bg3.wiki/w/images/6/6a/Duration_Icons.png
+ 410. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 411. https://bg3.wiki/w/images/1/15/Protection_from_Energy_Icon.webp
+ 412. https://bg3.wiki/wiki/Concentration
+ 413. https://bg3.wiki/w/images/8/83/Concentration_Icon.png
+ 414. https://bg3.wiki/w/images/f/f2/Action_Icon.png
+ 415. https://bg3.wiki/w/images/e/ef/Spell_Slot_Icon.png
+ 416. https://bg3.wiki/w/images/0/08/Range_Icon.png
+ 417. https://bg3.wiki/w/images/7/78/Escape_the_Horde_Icon.webp
+ 418. https://bg3.wiki/w/images/0/09/Multiattack_Defense_Icon.webp
+ 419. https://bg3.wiki/w/images/a/a6/Steel_Will_Icon.webp
+ 420. https://bg3.wiki/w/images/1/17/Bounty_Hunter_Icon.webp
+ 421. https://bg3.wiki/w/images/5/53/Keeper_of_the_Veil_Icon.webp
+ 422. https://bg3.wiki/w/images/0/07/Mage_Breaker_Icon.webp
+ 423. https://bg3.wiki/w/images/0/02/Ranger_Knight_Icon.webp
+ 424. https://bg3.wiki/w/images/3/30/Sanctified_Stalker_Icon.webp
+ 425. https://bg3.wiki/w/images/d/d4/Cloud_of_Jellyfish_Icon.webp
+ 426. https://bg3.wiki/w/images/2/25/Mighty_Cloud_of_Jellyfish_Icon.webp
+ 427. https://bg3.wiki/w/images/f/fa/Flurry_of_Moths_Icon.webp
+ 428. https://bg3.wiki/w/images/3/3d/Mighty_Flurry_of_Moths_Icon.webp
+ 429. https://bg3.wiki/w/images/8/86/Legion_of_Bees_Icon.webp
+ 430. https://bg3.wiki/w/images/0/02/Mighty_Legion_of_Bees_Icon.webp
+ 431. https://bg3.wiki/w/images/3/3d/Mighty_Flurry_of_Moths_Icon.webp
+ 432. https://bg3.wiki/w/images/f/f0/Colossus_Slayer_Icon.webp
+ 433. https://bg3.wiki/w/images/b/bd/Giant_Killer_Icon.webp
+ 434. https://bg3.wiki/w/images/e/e1/Horde_Breaker_Melee_Icon.webp
+ 435. https://bg3.wiki/w/images/c/cf/Beast_Tamer_Icon.webp
+ 436. https://bg3.wiki/w/images/7/75/Urban_Tracker_Icon.webp
+ 437. https://bg3.wiki/w/images/a/a2/Wasteland_Wanderer_Cold_Icon.webp
+ 438. https://bg3.wiki/w/images/e/e2/Wasteland_Wanderer_Fire_Icon.webp
+ 439. https://bg3.wiki/w/images/d/de/Wasteland_Wanderer_Poison_Icon.webp
+ 440. https://bg3.wiki/w/images/f/f2/Bestial_Fury_Icon.webp
+ 441. https://bg3.wiki/w/images/b/b1/Companions_Bond_Icon.webp
+ 442. https://bg3.wiki/w/images/5/50/Dread_Ambusher_Melee_Icon.webp
+ 443. https://bg3.wiki/w/images/5/50/Dread_Ambusher_Melee_Icon.webp
+ 444. https://bg3.wiki/w/images/5/50/Dread_Ambusher_Ranged_Icon.webp
+ 445. https://bg3.wiki/w/images/e/ec/Hide_Bonus_Action_Icon.webp
+ 446. https://bg3.wiki/w/images/b/bf/Exceptional_Training_Icon.webp
+ 447. https://bg3.wiki/w/images/5/5a/Extra_Attack_Icon.webp
+ 448. https://bg3.wiki/w/images/0/04/Hide_in_Plain_Sight_Icon.webp
+ 449. https://bg3.wiki/w/images/8/8c/Iron_Mind_Icon.webp
+ 450. https://bg3.wiki/w/images/7/7f/Land%27s_Stride_Difficult_Terrain_Icon.webp
+ 451. https://bg3.wiki/w/images/9/94/Prey%27s_Scent_Icon.webp
+ 452. https://bg3.wiki/w/images/f/f6/Hunter%27s_Mark_Icon.webp
+ 453. https://bg3.wiki/w/images/e/ed/Summon_Companion_Icon.webp
+ 454. https://bg3.wiki/w/images/e/e0/Stalker%27s_Flurry_Icon.webp
+ 455. https://bg3.wiki/w/images/3/38/Superior_Darkvision_Icon.webp
+ 456. https://bg3.wiki/w/images/0/06/Umbral_Shroud_Icon.webp
+ 457. https://bg3.wiki/w/images/a/a5/Volley_Icon.webp
+ 458. https://bg3.wiki/w/images/9/90/Whirlwind_Attack_Icon.webp
+ 459. https://bg3.wiki/w/images/6/6f/Writhing_Tide_Icon.webp
+ 460. https://bg3.wiki/

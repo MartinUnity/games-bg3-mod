@@ -11,9 +11,11 @@ HARD errors, so the mistake can never reach the pak.
 
 Levels are the real BG3 stat-entry values (data "Level", following `using`
 chains) from the full vanilla pak census (Shared/Gustav/GustavX paks, all
-layers incl. Honour, 2026-11-03). Class sets follow 5e lists as BG3 ships
-them; where BG3 bends the rules we note it (e.g. warlock Chromatic Orb via
-the Kindly invocation).
+layers incl. Honour, 2026-11-03). Class sets follow the class lists **as BG3
+ships them** (bg3.wiki class spell-list pages, dumped to docs/wiki-spell-lists/)
+- these deviate from the 5e PHB (e.g. BG3 druids get Thunderwave + Blight).
+Where BG3 bends further we note it (e.g. warlock Chromatic Orb via the Kindly
+invocation).
 
 Usage:
   python3 tools/spell_registry.py            # print the table
@@ -30,21 +32,20 @@ import sys
 # vanilla pak census (using-chain resolved), 2026-11-03.
 REGISTRY = {
     # ---- cantrips (level 0) ----
-    "Projectile_AcidSplash":         ("Acid Splash", 0, {"sorcerer", "wizard"}),
+    "Projectile_AcidSplash":         ("Acid Splash", 0, {"arcane_trickster", "eldritch_knight", "sorcerer", "wizard"}),
     "Projectile_EldritchBlast":      ("Eldritch Blast", 0, {"warlock"}),
-    "Projectile_FireBolt":           ("Fire Bolt", 0, {"sorcerer", "wizard"}),
-    "Projectile_PoisonSpray":        ("Poison Spray", 0, {"druid", "sorcerer", "warlock"}),
-    "Shout_ProduceFlame":            ("Produce Flame", 0, {"druid"}),  # BG3 ships it lvl 0
+    "Projectile_FireBolt":           ("Fire Bolt", 0, {"arcane_trickster", "eldritch_knight", "sorcerer", "wizard"}),
+    "Projectile_PoisonSpray":        ("Poison Spray", 0, {"arcane_trickster", "druid", "eldritch_knight", "sorcerer", "warlock", "wizard"}),
+    "Shout_ProduceFlame":            ("Produce Flame", 0, {"cleric", "druid"}),  # BG3 ships it lvl 0
     "Target_Guidance":               ("Guidance", 0, {"cleric", "druid"}),
-    "Target_MinorIllusion":          ("Minor Illusion", 0, {"bard", "sorcerer", "warlock", "wizard"}),
-    "Target_SacredFlame":            ("Sacred Flame", 0, {"cleric", "warlock"}),
-    "Target_ThornWhip":              ("Thorn Whip", 0, {"druid", "ranger"}),
-    "Target_TollTheDead":            ("Toll the Dead", 0, {"cleric", "warlock"}),
+    "Target_MinorIllusion":          ("Minor Illusion", 0, {"arcane_trickster", "bard", "eldritch_knight", "sorcerer", "warlock", "wizard"}),
+    "Target_SacredFlame":            ("Sacred Flame", 0, {"cleric"}),
+    "Target_ThornWhip":              ("Thorn Whip", 0, {"druid"}),
+    "Target_TollTheDead":            ("Toll the Dead", 0, {"arcane_trickster", "cleric", "eldritch_knight", "warlock", "wizard"}),
     "Target_ViciousMockery":         ("Vicious Mockery", 0, {"bard"}),
 
     # ---- 1st level ----
-    "Projectile_ChromaticOrb_Acid":  ("Chromatic Orb (Acid)", 1,
-                                      {"sorcerer", "wizard", "warlock"}),  # warlock: Kindly invocation (BG3)
+    "Projectile_ChromaticOrb_Acid":  ("Chromatic Orb", 1, {"eldritch_knight", "sorcerer", "warlock", "wizard"}),  # warlock: Kindly invocation (not on class lists)
     "Projectile_GuidingBolt":        ("Guiding Bolt", 1, {"cleric"}),
     "Projectile_IceKnife":           ("Ice Knife", 1, {"druid", "sorcerer", "wizard"}),
     "Projectile_MagicMissile":       ("Magic Missile", 1, {"wizard", "sorcerer", "eldritch_knight"}),
@@ -53,59 +54,60 @@ REGISTRY = {
     "Target_Bane":                   ("Bane", 1, {"cleric", "bard"}),
     "Target_Bless":                  ("Bless", 1, {"cleric", "paladin"}),
     "Target_Command_Halt_NPC":       ("Command", 1, {"cleric", "paladin"}),  # AI-friendly entry
-    "Target_CureWounds":             ("Cure Wounds", 1, {"cleric", "druid", "paladin"}),
+    "Target_CureWounds":             ("Cure Wounds", 1, {"bard", "cleric", "druid", "paladin", "ranger"}),
     "Target_Goodberry":              ("Goodberry", 1, {"druid", "ranger"}),
     "Target_HealingWord":            ("Healing Word", 1, {"cleric", "druid", "bard"}),
     "Target_Hex":                    ("Hex", 1, {"warlock"}),
     "Target_HuntersMark":            ("Hunter's Mark", 1, {"ranger"}),
     "Target_MageArmor":              ("Mage Armor", 1, {"wizard", "sorcerer", "eldritch_knight"}),
     "Target_ShieldOfFaith":          ("Shield of Faith", 1, {"cleric", "paladin"}),
-    "Target_Smite_Divine":           ("Divine Smite", 1, {"paladin"}),
+    "Target_Smite_Divine":           ("Divine Smite", 1, {"paladin"}),  # class FEATURE (not on the wiki spell list)
     "Target_Smite_Searing":          ("Searing Smite", 1, {"paladin"}),
     "Target_Smite_Thunderous":       ("Thunderous Smite", 1, {"paladin"}),
-    "Zone_Thunderwave":              ("Thunderwave", 1, {"sorcerer", "wizard", "bard", "eldritch_knight"}),
+    "Zone_Thunderwave":              ("Thunderwave", 1, {"sorcerer", "wizard", "bard", "eldritch_knight", "druid"}),  # druid: BG3 list, not PHB (bg3.wiki druid page + owner's in-game druid)
 
     # ---- 2nd level ----
-    "Projectile_ScorchingRay":       ("Scorching Ray", 2, {"sorcerer", "wizard"}),
-    "Shout_MirrorImage":             ("Mirror Image", 2, {"wizard", "sorcerer", "arcane_trickster"}),
+    "Projectile_ScorchingRay":       ("Scorching Ray", 2, {"eldritch_knight", "sorcerer", "wizard"}),
+    "Shout_MirrorImage":             ("Mirror Image", 2, {"arcane_trickster", "sorcerer", "warlock", "wizard"}),
     "Shout_PassWithoutTrace":        ("Pass without Trace", 2, {"druid", "ranger"}),
-    "Target_Barkskin":               ("Barkskin", 2, {"druid", "ranger", "eldritch_knight"}),
+    "Target_Barkskin":               ("Barkskin", 2, {"druid", "ranger"}),
     "Target_Blindness":              ("Blindness/Deafness", 2, {"bard", "cleric", "sorcerer", "wizard"}),
-    "Target_Darkness":               ("Darkness", 2, {"warlock", "sorcerer", "wizard"}),
+    "Target_Darkness":               ("Darkness", 2, {"eldritch_knight", "sorcerer", "warlock", "wizard"}),
     "Target_FlamingSphere":          ("Flaming Sphere", 2, {"druid", "wizard"}),
-    "Target_HeatMetal":              ("Heat Metal", 2, {"druid"}),
-    "Target_HoldPerson":             ("Hold Person", 2, {"cleric", "druid", "wizard", "sorcerer", "warlock", "bard"}),
+    "Target_HeatMetal":              ("Heat Metal", 2, {"bard", "druid"}),
+    "Target_HoldPerson":             ("Hold Person", 2, {"arcane_trickster", "bard", "cleric", "druid", "sorcerer", "warlock", "wizard"}),
     "Target_MistyStep":              ("Misty Step", 2, {"wizard", "sorcerer", "warlock"}),
-    "Target_Moonbeam":               ("Moonbeam", 2, {"druid", "ranger", "eldritch_knight"}),
-    "Target_Shatter":                ("Shatter", 2, {"sorcerer", "wizard", "bard", "eldritch_knight"}),
+    "Target_Moonbeam":               ("Moonbeam", 2, {"druid"}),
+    "Target_Shatter":                ("Shatter", 2, {"bard", "eldritch_knight", "sorcerer", "warlock", "wizard"}),
     "Target_SpiritualWeapon":        ("Spiritual Weapon", 2, {"cleric"}),
     "Target_SpikeGrowth":            ("Spike Growth", 2, {"druid", "ranger"}),
     "Target_WardingBond":            ("Warding Bond", 2, {"cleric"}),
-    "Target_Web":                    ("Web", 2, {"wizard", "sorcerer", "eldritch_knight"}),
-    "Shout_Aid":                     ("Aid", 2, {"cleric", "paladin", "bard", "arcane_trickster"}),
+    "Target_Web":                    ("Web", 2, {"sorcerer", "wizard"}),
+    "Shout_Aid":                     ("Aid", 2, {"cleric", "paladin"}),
 
     # ---- 3rd level ----
-    "Shout_HealingWord_Mass":        ("Mass Healing Word", 3, {"cleric", "druid", "bard"}),
+    "Shout_HealingWord_Mass":        ("Mass Healing Word", 3, {"cleric"}),  # NOT BG3 druid (bg3.wiki druid list)
     "Shout_SpiritGuardians":         ("Spirit Guardians", 3, {"cleric"}),
     "Target_CallLightning":          ("Call Lightning", 3, {"druid"}),  # DRUID ONLY - never a cleric spell
-    "Target_Fly":                    ("Fly", 3, {"sorcerer", "wizard", "warlock"}),  # warlock: Sight of the Fiend (BG3)
+    "Target_Fly":                    ("Fly", 3, set()),  # NOT on any BG3 class list (scrolls/items only) - keep out of kits
 
     # ---- 4th level ----
-    "Target_Blight":                 ("Blight", 4, {"sorcerer", "wizard", "warlock", "eldritch_knight"}),
+    "Target_Blight":                 ("Blight", 4, {"druid", "sorcerer", "warlock", "wizard"}),  # druid: BG3 list (bg3.wiki)
+    "Target_ConjureElementals_Minor_Container": ("Conjure Minor Elemental", 4, {"druid", "wizard"}),  # v3.46 said 'absent' - wrong: id is Elementals_Minor_Container (search missed it)
     "Target_ConjureWoodlandBeings":  ("Conjure Woodland Beings", 4, {"druid"}),
-    "Target_FreedomOfMovement":      ("Freedom of Movement", 4, {"cleric", "druid", "ranger"}),
+    "Target_FreedomOfMovement":      ("Freedom of Movement", 4, {"bard", "cleric", "druid"}),
     "Target_IceStorm":               ("Ice Storm", 4, {"druid", "sorcerer", "wizard"}),
-    "Wall_WallOfFire":               ("Wall of Fire", 4, {"wizard", "sorcerer", "eldritch_knight"}),
+    "Wall_WallOfFire":               ("Wall of Fire", 4, {"druid", "sorcerer", "wizard"}),  # druid: BG3 list (bg3.wiki)
 
     # ---- 5th level ----
-    "Target_ConjureElemental_Elemental_Fire_NPC": ("Conjure Elemental", 5, {"druid", "wizard", "sorcerer"}),
-    "Target_CureWounds_Mass":        ("Mass Cure Wounds", 5, {"cleric", "druid"}),
+    "Target_ConjureElemental_Elemental_Fire_NPC": ("Conjure Elemental", 5, {"druid", "wizard"}),
+    "Target_CureWounds_Mass":        ("Mass Cure Wounds", 5, {"bard", "cleric", "druid"}),
     "Target_FlameStrike":            ("Flame Strike", 5, {"cleric"}),
     "Target_InsectPlague":           ("Insect Plague", 5, {"cleric", "druid", "sorcerer"}),
 
     # ---- 6th level (need char lvl 11 = 6th slots) ----
-    "Target_Heal":                   ("Heal", 6, {"cleric", "druid", "bard"}),
-    "Zone_Sunbeam":                  ("Sunbeam", 6, {"druid"}),           # owner: warlock cast it - Goon's Library, not us
+    "Target_Heal":                   ("Heal", 6, {"cleric", "druid"}),
+    "Zone_Sunbeam":                  ("Sunbeam", 6, {"druid", "sorcerer", "wizard"}),           # owner: warlock cast it - Goon's Library, not us
     "Projectile_Disintegrate":       ("Disintegrate", 6, {"wizard", "sorcerer"}),
 
     # ---- banned ids (exist in vanilla but must never be assigned) ----
@@ -123,6 +125,14 @@ BUILD_CLASS = {
     "paladin": "paladin", "ranger": "ranger", "bard": "bard",
     "eldritch_knight": "eldritch_knight", "arcane_trickster": "arcane_trickster",
 }
+
+# cross-check exceptions (parse_wiki_spells --check):
+# classes a spell is granted OUTSIDE the class spell lists (invocations etc.)
+WIKI_EXCEPTIONS = {
+    "Projectile_ChromaticOrb_Acid": {"warlock": "The Kindly invocation"},
+}
+# stats ids that model class FEATURES, not list spells (absent from wiki tables by design)
+FEATURE_IDS = {"Target_Smite_Divine"}
 
 
 def _module_literal(path, name, consts=None):

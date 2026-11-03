@@ -302,17 +302,18 @@ SPELL_CATS = {
                      ("Target_CureWounds_Mass", 5, 1), ("Target_Heal", 6, 1)]),
         ("buff_summon", [("Target_FlamingSphere", 2, 2),
                          ("Target_ConjureWoodlandBeings", 4, 2),
+                         ("Target_ConjureElementals_Minor_Container", 4, 2),  # v3.47: exists after all (see registry)
                          ("Target_ConjureElemental_Elemental_Fire_NPC", 5, 2),
                          ("Target_FreedomOfMovement", 4, 3)]),
         ("debuff_damage",
          [("Projectile_IceKnife", 1, 1), ("Target_HeatMetal", 2, 1),
           ("Target_Moonbeam", 2, 1), ("Target_CallLightning", 3, 1),
           ("Target_IceStorm", 4, 1), ("Target_HoldPerson", 2, 2),
-          ("Target_InsectPlague", 5, 2), ("Target_SpikeGrowth", 2, 3)]),
-          # v3.47: owner listed Thunderwave + Blight here too, but the registry
-          # rejects them - not on the druid spell list in BG3/5e (wizard/sorc/
-          # warlock spells). Add "druid" to their class set in spell_registry.py
-          # if you want them anyway.
+          ("Zone_Thunderwave", 1, 2), ("Target_InsectPlague", 5, 2),
+          ("Target_SpikeGrowth", 2, 3), ("Target_Blight", 4, 3)]),
+          # v3.47: Thunderwave + Blight are NOT in the 5e PHB druid list, but the
+          # BG3 druid list has them (bg3.wiki List_of_Druid_spells + owner's own
+          # in-game druid) - spell_registry class sets follow BG3, not the PHB.
     ],
 }
 CANTRIPS = {

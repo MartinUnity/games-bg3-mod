@@ -220,12 +220,20 @@ Where things live:
   weighted by Pri 6/3/1, one spell per slot, every level re-rolls (CHAOS_SEED for
   reproducible); ids validated vs full pak census /tmp/opencode/sp3_ids.txt
   (4682 entries; MassCure=Target_CureWounds_Mass, Command=Target_Command_Halt_NPC,
-  ConjureMinorElemental doesn't exist); owner owes lists for full/half/1-3 casters;
+  ConjureMinorElemental EXISTS as Target_ConjureElementals_Minor_Container lvl4
+  (v3.47, bad regex had missed it)); owner owes lists for full/half/1-3 casters;
   **v3.47 spell registry gate**: `tools/spell_registry.py` (id -> name/BG3-level/classes,
   BANNED ids) validated by gen_teams.py before baking — wrong class/level/id = hard exit;
   caught ranger-kit key typo "ranged" (zero spells since v3.44), druid Thunderwave+Blight
   (not druid-list), paladin cantrip; PHB slot curves (6th slot @11 => Target_Heal
   reachable); SpiritualWeapon plain id (MAG_ = lvl6 item variant); README = 10 bullets;
+  **v3.47b class ground truth**: all 10 bg3.wiki class spell pages lynx-dumped to
+  `docs/wiki-dumps/` (re-dump: `lynx -dump .../List_of_<Class>_spells`);
+  `tools/parse_wiki_spells.py --check` cross-checks registry classes+levels vs wiki
+  (norm: British "Armour", "(spell)" suffixes, singular/slash names; exceptions via
+  WIKI_EXCEPTIONS + FEATURE_IDS in registry); registry class sets REBUILT from wiki —
+  BG3 deviates from 5e PHB (druid HAS Thunderwave/Blight/WallOfFire, NO MassHealingWord;
+  Fly on NO list; Sunbeam also sorc/wiz lvl6); run BOTH checks after registry edits;
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

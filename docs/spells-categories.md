@@ -109,19 +109,23 @@ Knife=`Projectile_IceKnife`, Ice Storm=`Target_IceStorm`, Blight=`Target_Blight`
 Moonbeam=`Target_Moonbeam`, Heat Metal=`Target_HeatMetal`, Poison
 Spray=`Projectile_PoisonSpray`.
 
-Not in BG3 vanilla (dropped from the roll): **Conjure Minor Elemental** (only
-exists folded into the Conjure Elemental container spell).
+Not-spells correction (v3.47): **Conjure Minor Elemental DOES exist** - stats id
+`Target_ConjureElementals_Minor_Container` (lvl 4, per bg3.wiki + census); the
+v3.46 "absent" call was a bad search (the id spells it `Elementals_Minor`, not
+`MinorElemental`). It is back in the druid roll at prio2. Also, bg3.wiki's druid
+list shows **no Mass Healing Word** for BG3 druids (registry class set fixed) and
+confirms **Wall of Fire is a BG3 druid spell**.
 
 Class-safety gate (v3.47): every id/level/class is validated against
 `tools/spell_registry.py` before templates bake - wrong class or wrong level is a
-hard generation error. Two spells from the tables above were pulled by the gate:
-**Thunderwave and Blight are not druid spells** in BG3/5e (wizard/sorcerer/warlock)
-- they are dropped from the druid roll; if you want them anyway, add "druid" to
-their class set in the registry. Also: **Heal is lvl 6** (needs 11th-level slots -
-the slot curve now grants a 6th-level slot at char lvl 11/12), **Blight is lvl 4**
-in BG3 (not 5), and Spiritual Weapon uses the plain lvl-2 id
-(`Target_SpiritualWeapon`; the MAG_ variant is a lvl-6 once-per-rest item spell,
-banned in the registry).
+hard generation error. The gate follows **BG3's lists, not the 5e PHB** (bg3.wiki
+class pages, dumped under `docs/wiki-dumps/`): Thunderwave and Blight are
+NOT PHB druid spells but ARE BG3 druid spells (bg3.wiki + owner's own in-game
+druid) - the registry class sets were fixed and both stay in the druid roll.
+Also: **Heal is lvl 6** (needs 11th-level slots - the slot curve now grants a
+6th-level slot at char lvl 11/12), **Blight is lvl 4** in BG3 (not 5), and
+Spiritual Weapon uses the plain lvl-2 id (`Target_SpiritualWeapon`; the MAG_
+variant is a lvl-6 once-per-rest item spell, banned in the registry).
 
 For the upcoming full-caster (wizard/sorcerer/warlock/bard), half-caster
 (paladin/ranger) and one-third (eldritch knight/arcane trickster) lists: just add
