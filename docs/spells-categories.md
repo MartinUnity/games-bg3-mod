@@ -112,6 +112,17 @@ Spray=`Projectile_PoisonSpray`.
 Not in BG3 vanilla (dropped from the roll): **Conjure Minor Elemental** (only
 exists folded into the Conjure Elemental container spell).
 
+Class-safety gate (v3.47): every id/level/class is validated against
+`tools/spell_registry.py` before templates bake - wrong class or wrong level is a
+hard generation error. Two spells from the tables above were pulled by the gate:
+**Thunderwave and Blight are not druid spells** in BG3/5e (wizard/sorcerer/warlock)
+- they are dropped from the druid roll; if you want them anyway, add "druid" to
+their class set in the registry. Also: **Heal is lvl 6** (needs 11th-level slots -
+the slot curve now grants a 6th-level slot at char lvl 11/12), **Blight is lvl 4**
+in BG3 (not 5), and Spiritual Weapon uses the plain lvl-2 id
+(`Target_SpiritualWeapon`; the MAG_ variant is a lvl-6 once-per-rest item spell,
+banned in the registry).
+
 For the upcoming full-caster (wizard/sorcerer/warlock/bard), half-caster
 (paladin/ranger) and one-third (eldritch knight/arcane trickster) lists: just add
 the same `### Group (prio N)` + `|Spell|Pri|lvl|` tables here - I mirror them into

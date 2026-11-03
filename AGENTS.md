@@ -221,6 +221,11 @@ Where things live:
   reproducible); ids validated vs full pak census /tmp/opencode/sp3_ids.txt
   (4682 entries; MassCure=Target_CureWounds_Mass, Command=Target_Command_Halt_NPC,
   ConjureMinorElemental doesn't exist); owner owes lists for full/half/1-3 casters;
+  **v3.47 spell registry gate**: `tools/spell_registry.py` (id -> name/BG3-level/classes,
+  BANNED ids) validated by gen_teams.py before baking — wrong class/level/id = hard exit;
+  caught ranger-kit key typo "ranged" (zero spells since v3.44), druid Thunderwave+Blight
+  (not druid-list), paladin cantrip; PHB slot curves (6th slot @11 => Target_Heal
+  reachable); SpiritualWeapon plain id (MAG_ = lvl6 item variant); README = 10 bullets;
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);

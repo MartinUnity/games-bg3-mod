@@ -21,6 +21,7 @@ import pathlib
 import uuid
 import os
 import random
+import sys
 
 # v3.46: spell-kit rolls. CHAOS_SEED=<int> makes them reproducible (tests); by
 # default every regen re-rolls every caster's whole spell stack (owner wants the
@@ -251,18 +252,20 @@ SLOT_VARIANTS = {
 # Spell_*.txt (no I_ARM_*_Body-style silent drops); _Human/_Humanoid define no
 # DefaultBoosts, so adding ours overrides nothing. Slot curves = vanilla NPC_Cleric/
 # player tables; UnlockSpell form from Passive.txt:808 (spell,,,,ability).
-FULL_SLOTS = {  # cleric/wizard curve: level -> {slot_level: count}
+FULL_SLOTS = {  # cleric/wizard curve (PHB: lvl 7 gets 4s, 9 gets 5s, 11 gets 6th -
+                # that last one is what makes Target_Heal (lvl 6) reachable, owner)
     1: {1: 2}, 2: {1: 3}, 3: {1: 4, 2: 2}, 4: {1: 4, 2: 3},
-    5: {1: 4, 2: 3, 3: 2}, 6: {1: 4, 2: 3, 3: 3}, 7: {1: 4, 2: 3, 3: 3},
-    8: {1: 4, 2: 3, 3: 3, 4: 1}, 9: {1: 4, 2: 3, 3: 3, 4: 2},
-    10: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1}, 11: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
-    12: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
+    5: {1: 4, 2: 3, 3: 2}, 6: {1: 4, 2: 3, 3: 3}, 7: {1: 4, 2: 3, 3: 3, 4: 1},
+    8: {1: 4, 2: 3, 3: 3, 4: 2}, 9: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
+    10: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1},
+    11: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1, 6: 1},
+    12: {1: 4, 2: 3, 3: 3, 4: 2, 5: 1, 6: 1},
 }
-HALF_SLOTS = {  # ranger/bard curve
+HALF_SLOTS = {  # ranger/bard curve (PHB: no 4th-level slots before char lvl 13)
     1: {}, 2: {1: 2}, 3: {1: 3}, 4: {1: 3},
     5: {1: 4, 2: 2}, 6: {1: 4, 2: 2}, 7: {1: 4, 2: 3}, 8: {1: 4, 2: 3},
     9: {1: 4, 2: 3, 3: 2}, 10: {1: 4, 2: 3, 3: 2},
-    11: {1: 4, 2: 3, 3: 2, 4: 1}, 12: {1: 4, 2: 3, 3: 2, 4: 1},
+    11: {1: 4, 2: 3, 3: 2}, 12: {1: 4, 2: 3, 3: 2},
 }
 # ---- v3.46 ROLLED SPELL KITS (owner design: docs/spells-categories.md) --------
 # Caster builds roll their known spells at GENERATION time so every level - and
@@ -289,7 +292,7 @@ SPELL_CATS = {
                   ("Target_WardingBond", 2, 2), ("Shout_Aid", 2, 3),
                   ("Target_FreedomOfMovement", 4, 3)]),
         ("summon_debuff_damage",
-         [("Target_HoldPerson", 2, 1), ("Target_MAG_SpiritualWeapon", 2, 1),
+         [("Target_HoldPerson", 2, 1), ("Target_SpiritualWeapon", 2, 1),
           ("Target_Bane", 1, 2), ("Projectile_GuidingBolt", 1, 2),
           ("Target_Command_Halt_NPC", 1, 2), ("Shout_SpiritGuardians", 3, 2),
           ("Target_FlameStrike", 5, 2), ("Target_InsectPlague", 5, 2)]),
@@ -305,8 +308,11 @@ SPELL_CATS = {
          [("Projectile_IceKnife", 1, 1), ("Target_HeatMetal", 2, 1),
           ("Target_Moonbeam", 2, 1), ("Target_CallLightning", 3, 1),
           ("Target_IceStorm", 4, 1), ("Target_HoldPerson", 2, 2),
-          ("Zone_Thunderwave", 1, 2), ("Target_InsectPlague", 5, 2),
-          ("Target_SpikeGrowth", 2, 3), ("Target_Blight", 5, 3)]),
+          ("Target_InsectPlague", 5, 2), ("Target_SpikeGrowth", 2, 3)]),
+          # v3.47: owner listed Thunderwave + Blight here too, but the registry
+          # rejects them - not on the druid spell list in BG3/5e (wizard/sorc/
+          # warlock spells). Add "druid" to their class set in spell_registry.py
+          # if you want them anyway.
     ],
 }
 CANTRIPS = {
@@ -376,10 +382,11 @@ SPELLS = {
         (1, "Projectile_EldritchBlast"),       # cantrip
         (2, "Target_Hex")]),
     "paladin": ("Charisma", HALF_SLOTS, [      # smite ladder (smites burn own slots)
-        (1, "Target_SacredFlame"),             # cantrip
+        # v3.47: dropped Sacred Flame - paladins get no cantrips in BG3's ruleset
+        # (2014 rules); registry class set is cleric/warlock.
         (2, "Target_Smite_Divine"), (3, "Target_Smite_Searing"),
         (5, "Target_Smite_Thunderous")]),
-    "ranged": ("Wisdom", HALF_SLOTS, [
+    "ranger": ("Wisdom", HALF_SLOTS, [   # v3.47 FIX: key was "ranged" - never matched
         (2, "Target_HuntersMark"), (2, "Target_Barkskin"),
         (5, "Target_SpikeGrowth"), (5, "Target_Goodberry"),
         (7, "Shout_PassWithoutTrace")]),
@@ -485,6 +492,12 @@ def validate_donors():
 
 
 def main():
+    # v3.47 SPELL REGISTRY GATE (tools/spell_registry.py): unknown id, BG3-level
+    # mismatch or wrong-class kit entry = HARD error before anything is baked
+    # (owner caught cleric Call Lightning + Goon's warlock lvl-6 Sunbeam/Disintegrate).
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+    import spell_registry
+    spell_registry.validate(pathlib.Path(__file__))
     validate_donors()
     stats_lines = []
     tpl_lines = []

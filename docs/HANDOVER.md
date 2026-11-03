@@ -442,6 +442,28 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.47 SPELL REGISTRY + README rewrite:** new `tools/spell_registry.py` = single
+  source of truth id -> (display name, real BG3 spell level [using-chain resolved
+  from the pak census], classes that can learn it), plus BANNED ids (e.g.
+  `Target_MAG_SpiritualWeapon` = lvl-6 once-per-rest item variant; use plain
+  `Target_SpiritualWeapon` lvl 2). gen_teams.py main() calls `spell_registry.validate()`
+  BEFORE generating: unknown id / level mismatch / wrong-class kit / kit-key-not-a-build
+  = hard exit (6 negative tests pass: cleric+CallLightning, warlock+Sunbeam, Heal-as-lvl5,
+  MAG_ id, bogus id, "ranged" typo all caught). Registry self-audit vs census fixed 9
+  entries on first run (MinorIllusion/ArmorOfAgathys/MistyStep/Darkness/WallOfFire ids,
+  ArmsOfHadar lvl 1, ConjureWoodlandBeings lvl 4, ProduceFlame lvl 0). Caught 3 real kit
+  bugs at the gate: **ranger had ZERO spells since v3.44** (SPELLS key was `ranged`,
+  never matched build `ranger` - fixed); druid rolled kit lost Thunderwave+Blight
+  (owner lists them, but they are not on the druid list in BG3/5e - registry refused;
+  override = add "druid" to their class set in spell_registry.py); paladin kit lost
+  Sacred Flame (no paladin cantrips in the 2014 ruleset). Slot curves now PHB-exact:
+  FULL_SLOTS 4s@7, 5s@9, **6th slot @11/12 so Target_Heal (lvl 6) is reachable**
+  (owner: Heal needs lvl 11); HALF_SLOTS no 4s at 11/12. Warlock Sunbeam/Disintegrate
+  in owner log = Goon's Library, not our boosts (GOB_/UCL forensics dead-ended; owner:
+  don't chase). README.md rewritten: 10 one-line bullets (owner: nothing in the old
+  one held true - verified the classic tweaks still live: CarryWeightPerStr 10000,
+  MaxShortRestPoints 3, XPData MaxXPLevel 50). Pak 451891 B. ⚠️ in-game verdicts
+  pending: ranger casts Hunter's Mark now, cleric L11+ Heal, per-spawn toolkit variety.
 - **v3.46 ROLLED SPELL KITS for cleric + druid (owner design:
   docs/spells-categories.md):** caster spell stacks are no longer static lists -
   gen_teams.py `SPELL_CATS`/`CANTRIPS` encode the owner's priority GROUPS (cleric:
