@@ -26,7 +26,7 @@ game restart, nothing persisted).
 | `!chaos` | Force a **reinforcement wave** into the current fight right now | skips the ~30%+stack trigger roll only |
 | `!chaos_status` | One-shot snapshot of both engines (see §3.2) | nothing, read-only |
 | `!chaos_wolf` | Spawn one vanilla wolf at the host (spawn-primitive smoke test) | n/a (direct spawn) |
-| `!chaos_root` | Count our CHAOST_* root templates registered in the live game (**expect 792**) | n/a, read-only |
+| `!chaos_root` | Count our CHAOST_* root templates registered in the live game (**expect 1958**) | n/a, read-only |
 | `!chaos_toggle wilds\|reinforce` | Flip an engine on/off (same as the two self-shouts on the action bar) | n/a |
 | `!chaos_force …` | Targeted wild-mode test overrides: spawn chance, creature type, tier (§3.6) | chance roll + region theme + faction roll only |
 | `!chaos_rename <text>` | Rename the host character (flavor escape hatch) | n/a |
@@ -64,8 +64,8 @@ Spawns `Wolf_41da0eff-…` at the host. Proves the create→faction→position p
 still works (e.g. after an engine or game update). It is NOT hostile — just visible.
 
 ### 3.4 `!chaos_root` — template registration check
-Prints `chaos_root: 792/32xxx CHAOST_*` — our generated team templates as loaded by the
-engine. **Anything but 792 means the pak's RootTemplates .lsf didn't load** (lsx-only paks
+Prints `chaos_root: 1958/32xxx CHAOST_*` — our generated team templates as loaded by the
+engine. **Anything but 1958 means the pak's RootTemplates .lsf didn't load** (lsx-only paks
 register ZERO — pack_mod.sh converts automatically). Run it after every fresh install.
 
 ### 3.5 `!chaos_toggle wilds|reinforce`

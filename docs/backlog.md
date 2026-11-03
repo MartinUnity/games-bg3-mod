@@ -203,3 +203,20 @@ per race (RACE_VISUALS in gen_teams.py). Parking lot:
   TEST_Humans_Male_JOBO_CC_Previs_* skipped as dev placeholders).
 - Body vs stats mismatch is cosmetic: rolled armor (AC) may not match the baked look
   (e.g. plate AC on a light-armored body). Accept unless owner complains.
+
+**v3.44 class roster — owner follow-ups (2026-11-03)** — framework shipped; these
+need owner references / in-game verdicts before tuning:
+- WARLOCK KIT: current = blast passive + Hex + ChromaticOrb; owner to supply a
+  reference build (invocations/patron taste). GreatOldOne chosen arbitrarily.
+- HEXBLADE: melee CHA via WeaponAttackRollAbilityOverride(SpellCastingAbility) +
+  Fiend patron (no hexblade table exists). Verify to-hit/damage actually use CHA;
+  owner may want 2h pact (WPN_*_Pact exist) or shield.
+- BARB THROWER: 3-8 javelins added, but NPC AI may not THROW them (melee-first);
+  verdict needed — may require a thrown-weapon spell or Tag, compare vanilla
+  javelin mobs (BASE_WEAPON_Javelins donor exists for reference).
+- DRUID SHIFTER: WildShape granted as ActionResource boost (UCL lvl2) — engine NPCs
+  may never activate it; if unused in fights, consider shifter = PrimalStrike melee.
+- SORCERER: no metamagic rows in UCL_WildMagic (points granted, unused) — cosmetic.
+- MONK: UCL_FourElements_Thief carries a Thief layer (lvl 7-9: fast hands/purse) —
+  acceptable garnish or swap to vanilla fe1319a2+Shadow if owner objects.
+- Weights are first-guess (tank 50/30/20, caster 40/15/15/15/15): tune on feel.

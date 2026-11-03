@@ -442,6 +442,40 @@ go through the pak (and/or lslib `StoryCompiler`) instead.
   resolve across lvls (tank templates exist 1-12 for all 9 donors), 0 cap violations.
   Compile OK, Pak 227506 B. Still pending verdicts: !chaos_root 792, race-coherent waves,
   nameless-gone confirmation, scroll/bow/grenade AI, lvl-2 gate, party-knob.
+- **v3.44 CLASS-BUILD ROSTER (framework shipped, owner refs pending; pak 451056 B,
+  178 stat entries / 1958 CHAOST templates, `!chaos_root` now expects 1958):** team
+  slots now roll CLASS BUILDS (owner spec). gen_teams.py: `BUILDS` recipe table +
+  `SLOT_VARIANTS` weighted lists → TeamTemplates.lua emits `CHAOS_TEAMS` (keyed by
+  BUILD now), `TEAM_SLOTS`, `BUILD_PROFS/LABEL/WP/MIN`. Common.lua: `pickBuild(slot,
+  lvl)` weighted roll with BUILD_MIN gate (monk/rogue/sorcerer/paladin/warlock/
+  hexblade lvl5+ only - owner: they one-shot sub-lvl-4 parties; weights renormalize),
+  `teamEntry` returns entry.build/wp. Offline sim: melee_dps lvl3 = barb 50/thrower
+  17/druid 32; lvl8 all six; healer 75/25 cleric/druid ✅. Builds: fighter_brute
+  (2h kit + prog_twohander GWM + style2_gwf), fighter_dual (Dex max, DualWielder table
+  incl TWF@2/3, LIGHT armor at ANY lvl - wp dual, 2 light weapons), paladin (Ancients
+  ba5b3a18 = real one; second same-named table 3835c8ee is Devotion mislabelled),
+  barb_brute/barb_thrower (75/25, javelins wp = 3-8 WPN_HUM_Javelin templates), monk
+  via **UCL_FourElements_Thief 3c756b75** (UCL has no plain monk; this is an NPC-safe
+  full monk: Ki/Unarmored_Monk/MartialArts/Flurry/Deflect/ExtraAttack/Evasion + Thief
+  at 7-9; vanilla Monk fe1319a2 rejected: SubClass entity refs + Select prompts),
+  rogue (UCL_Rogue sneak ladder + GloomStalker), hexblade (25% of warlocks: Warlock+
+  Fiend + DefaultBoost `WeaponAttackRollAbilityOverride(SpellCastingAbility)` with
+  SpellCastingAbility=Charisma - SHILLELAGH grammar precedent; WPN_*_Pact templates
+  exist but grant NO CHA boost, vanilla precedent is proficiency-only), druid healer
+  (25% of healers), druid_shifter (CircleOfTheMoon; UCL_Druid lvl2 grants
+  ActionResource(WildShape,2,0) via BOOST only, Moon adds tier passives + PrimalStrike),
+  druid_caster (Spores), warlock (blast via UCL_CanEldritchBlast_1/2/3 PASSIVES at
+  1/5/10 - not a spell row; WARLOCK_SLOTS curve + Hex unlock; GreatOldOne), sorcerer
+  (WildMagic, CHA; no metamagic rows), wizard/ranger/cleric/bard = old configs renamed
+  to build keys. Equip.lua `equipmentFor` wp directives: twohanded (WP_2H kit, no
+  shield), dual (WP_DUAL 2 light weapons + armor forced light at any lvl/tier),
+  javelins (melee table + 3-8 WP_JAVELIN), 1h_shield (HEAL_1H kit, covers paladin/
+  hexblade), staff, unarmed (monk: no weapon/armor). All item ids live-dump validated.
+  Progression forensics: /tmp/opencode/v344_prog_notes.md (1365 lines, subagent).
+  ⚠️ IN-GAME VERDICTS PENDING: class mix variety in logs (`equip: tier ... role`),
+  javelin throwers actually throwing, wild shape usable by druids, monk flurry,
+  paladin smites, hexblade CHA melee, warlock blasts. Owner owes: build/item refs
+  (warlock kit, hexblade details) - see backlog.
 - **v3.43 armor-tier bands per level + capped MAGIC GEAR on leaders/bosses (owner spec
   after v3.42 playtest: "lvl7+ consistently wore heavy; 8+ should be plate"):**
   (1) band table replaces the v3.42 floor: lvl 3-4 floor2, **lvl 5 coin-flip floor2/3**,

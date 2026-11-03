@@ -87,6 +87,40 @@ local HEAL_1H_1 = {
     "WPN_HUM_Battleaxe_A_1_c17ee133-cbb5-418f-88be-5ef27991cf50",
     "WPN_HUM_Morningstar_A_1_deea755b-5335-49d9-bd0e-dbaab9eaf94c",
 }
+-- v3.44 CLASS-KIT weapon pools (all ids validated in the live root-template dump).
+-- twohanded brute kit (GreatWeaponFighting builds):
+local WP_2H = {
+    "WPN_HUM_Greatsword_A_0_ecfb9f69-5bc3-402e-acd8-c91d57e28403",
+    "WPN_HUM_Greataxe_A_0_d5712e24-ce9e-42ce-8fad-6e049b62c28c",
+    "WPN_HUM_Maul_A_0_5487ceb4-b009-46ae-8ed6-cd3baaf0a18d",
+    "WPN_HUM_Halberd_A_0_f928a70d-5b23-4605-9cae-5342f9ed206e",
+}
+local WP_2H_1 = {
+    "WPN_HUM_Greatsword_A_1_1a2a58b7-4bd5-44d5-b1fe-8cd7e5b53def",
+    "WPN_HUM_Greataxe_A_1_afbfaee7-e2cd-48e7-8c46-d2377c7320e3",
+    "WPN_HUM_Maul_A_1_7e8ef269-0e7b-4352-8828-89c5fced943c",
+    "WPN_HUM_Halberd_A_1_d1019d9d-e5ae-4601-8a63-1b33421926e1",
+}
+-- dex dual-wielder: LIGHT one-hands only (TwoWeaponFighting requirement).
+local WP_DUAL = {
+    "WPN_HUM_Shortsword_A_0_467ddb4f-6791-41fa-99f7-ee8620d63bbe",
+    "WPN_HUM_Scimitar_A_0_868217db-9dcb-414c-bb88-e321ab3e0349",
+    "WPN_HUM_Dagger_A_0_569b0f3d-abcd-4b01-aaf0-979091288163",
+    "WPN_HUM_Handaxe_A_0_46b64a36-8446-45bd-98e8-ee81e3136baa",
+    "WPN_HUM_LightHammer_A_0_494f21ac-5a1b-4e91-bd30-551b79532516",
+}
+local WP_DUAL_1 = {
+    "WPN_HUM_Shortsword_A_1_261b946f-154b-4f75-8985-cab6531034a2",
+    "WPN_HUM_Scimitar_A_1_7cc7a0e1-d0b8-4569-afb2-d538e8941894",
+    "WPN_HUM_Dagger_A_1_1eab180b-5bf9-48ea-aece-7ba20d1deb78",
+    "WPN_HUM_Handaxe_A_1_7a05135d-b285-4186-8a32-a870f1684b60",
+    "WPN_HUM_LightHammer_A_1_d0419aaf-9e20-4029-b8e9-9e1a62661b13",
+}
+-- javelin thrower barbarian (3-8 rolled per member, owner spec)
+local WP_JAVELIN = {
+    "WPN_HUM_Javelin_A_0_0a7adc8d-b561-4f81-a8f2-ec07b5d54955",
+    "WPN_HUM_Javelin_A_1_b908f109-b379-4a49-8f41-5b7f154d9b76",
+}
 -- cosmetic decency fallback (owner 2026-10-31: casters without armor prof spawned
 -- weaponless-looking AND naked); vanilla vanity tables, random common/rich garment,
 -- sells for nothing, no proficiency requirement, does not block spellcasting
@@ -297,16 +331,20 @@ end
 local function equipmentFor(entry, base, tier)
     local prof = entry.prof or ""
     if entry.unarmed and prof == "" then return nil, nil end   -- innate attacker
+    local wp = entry.wp or "table"     -- v3.44 class-kit directive (BUILD_WP)
+    if wp == "unarmed" then return nil, nil end  -- monk: fists + table passives
     local role = weaponRoleFor(entry)
-    local healer = entry.role == "healer"   -- v3.42 cleric kit (composer role, not name-guess)
+    local kit1h = entry.role == "healer" or wp == "1h_shield"  -- 1h+shield builds
     local martial = prof:find("MartialWeapons", 1, true) ~= nil
-    local staffed = role == "caster"
-        and (prof:find("SimpleWeapons", 1, true) or prof:find("Quarterstaffs", 1, true)) ~= nil
+    local staffed = wp == "staff"
+        or (role == "caster"
+            and (prof:find("SimpleWeapons", 1, true) or prof:find("Quarterstaffs", 1, true)) ~= nil)
     local finesse = (entry.dex or 10) > (entry.str or 10)
-                    and role ~= "caster" and role ~= "ranged" and not healer  -- high-dex casters/ranged keep their kit
+                    and role ~= "caster" and role ~= "ranged" and not kit1h
+                    and wp ~= "twohanded"            -- high-dex casters/ranged keep their kit
     local weapon
-    if staffed or healer then
-        weapon = nil                                           -- the staff / 1H kit IS the weapon (extras below)
+    if staffed or kit1h or wp == "twohanded" or wp == "dual" then
+        weapon = nil                        -- the kit IS the weapon (extras below)
     elseif role == "ranged" then
         if base <= 1 then weapon = T_RANGED
         elseif tier >= 2 and martial then weapon = T_RANGED_M
@@ -331,9 +369,10 @@ local function equipmentFor(entry, base, tier)
     end
 
     -- armor: ceiling = prof, actual tier decides how far up; lvl 1 always light;
-    -- tier 3 unlocks medium, heavy stays tier-4-only (HEAVY_LEVEL+)
+    -- tier 3 unlocks medium, heavy stays tier-4-only (HEAVY_LEVEL+).
+    -- v3.44: dual-wield fighters wear LIGHT armor at ANY level (owner spec).
     local armor
-    if base <= 1 then
+    if base <= 1 or wp == "dual" then
         armor = "light"
     elseif tier >= 3 then
         if tier == 4 and prof:find("HeavyArmor", 1, true) and base >= HEAVY_LEVEL then armor = "heavy"
@@ -345,21 +384,37 @@ local function equipmentFor(entry, base, tier)
     if not (prof:find("Armor", 1, true) or base <= 1) then
         armor = nil                                                  -- no armor prof: native AC
     end
-    -- class kit extras (v3.28): staff for casters, shields for Shields-proficient
-    -- melees (tank slot always, other melee ~55%; caster/ranged hands stay in kit).
+    -- class kit extras (v3.28 staff/shields + v3.44 two-handed/dual/javelin kits).
     local extras
     if staffed then
         extras = { (tier == 4 and base >= 4) and STAFF_1 or STAFF_0 }
-    elseif healer then
-        -- v3.42: healer ALWAYS fights 1h, and always carries a shield when proficient
-        -- (owner: more AC, proper cleric fantasy) - no 2h weapon lotteries.
+    elseif kit1h then
+        -- v3.42: healers (and paladin/hexblade kits) ALWAYS fight 1h, and always carry
+        -- a shield when proficient (owner: more AC, proper cleric fantasy).
         extras = { (tier == 4) and HEAL_1H_1[rand(1, #HEAL_1H_1)] or HEAL_1H[rand(1, #HEAL_1H)] }
         if prof:find("Shields", 1, true) then
             extras[#extras + 1] = (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)]
         end
+    elseif wp == "twohanded" then
+        -- v3.44 brute: guaranteed 2h martial (no shield - two hands on the steel)
+        extras = { (tier == 4) and WP_2H_1[rand(1, #WP_2H_1)] or WP_2H[rand(1, #WP_2H)] }
+    elseif wp == "dual" then
+        -- v3.44 duelist: two LIGHT weapons (main + off-hand), no shield
+        local pool = (tier == 4) and WP_DUAL_1 or WP_DUAL
+        local a = rand(1, #pool)
+        local b = rand(1, #pool)
+        if b == a then b = b % #pool + 1 end
+        extras = { pool[a], pool[b] }
     elseif role == "melee" and prof:find("Shields", 1, true)
            and rand(1, 100) <= (entry.role == "tank" and 100 or 55) then
         extras = { (tier == 4) and SHIELD_1 or SHIELD_BASIC[rand(1, #SHIELD_BASIC)] }
+    end
+    -- v3.44 javelin thrower (barbarian 25% variant): 3-8 javelins on top (owner).
+    if wp == "javelins" then
+        extras = extras or {}
+        local n = rand(3, 8)
+        local jid = (tier >= 3) and WP_JAVELIN[2] or WP_JAVELIN[1]
+        for _ = 1, n do extras[#extras + 1] = jid end
     end
     return weapon, armor, extras
 end

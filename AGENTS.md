@@ -189,6 +189,24 @@ Where things live:
   = band 1/2/3, slots shuffled; boss tier +2 bump removed; items = vanilla quality-1
   templates WPN_*/ARM_*_1 — all ids live-validated; `magicGear()` in Equip.lua,
   isLeader plumbed via Wild slotMap; log `magic: BOSS/leader ...`);
+  **v3.44 class-build roster** (framework shipped, owner refs pending): team slots
+  roll CLASS BUILDS — gen_teams.py `BUILDS` recipes + `SLOT_VARIANTS` weighted lists
+  → TeamTemplates.lua emits CHAOS_TEAMS (keyed by BUILD), TEAM_SLOTS, BUILD_PROFS/
+  LABEL/WP/MIN; Common.lua `pickBuild` weighted roll with BUILD_MIN gate (monk/rogue/
+  sorcerer/paladin/warlock/hexblade lvl5+ — one-shot low parties); builds: fighter_brute
+  (2h+GWM)/fighter_dual (dex TWF, LIGHT armor always), paladin(Ancients), barb brute/
+  thrower (75/25, 3-8 javelins), monk=**UCL_FourElements_Thief 3c756b75** (UCL has no
+  monk; vanilla Monk table has SubClass-entity refs + selectors — rejected), rogue+
+  GloomStalker, hexblade (Warlock+Fiend + `WeaponAttackRollAbilityOverride(
+  SpellCastingAbility)` CHA melee via DefaultBoosts — SHILLELAGH grammar; WPN_*_Pact
+  grants NO cha boost), druid healer 25%/cleric 75%, druid shifter (CircleOfTheMoon,
+  WildShape ActionResource from UCL_Druid lvl2 boost)/caster (Spores), warlock (blast
+  from UCL_CanEldritchBlast passives at 1/5/10, not a spell row; GreatOldOne),
+  sorcerer (WildMagic; no metamagic rows); Equip.lua `equipmentFor` wp directives:
+  twohanded/dual(2 light weapons + light armor any tier)/javelins/1h_shield/staff/
+  unarmed; 178 entries × 11 donors = **1958 templates, `!chaos_root` expects 1958**;
+  forensics /tmp/opencode/v344_prog_notes.md; ⚠️ in-game verdicts pending (thrower AI,
+  wild shape, flurry, smites, CHA melee, blast) + owner owes warlock/hexblade refs);
   **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
   the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
   campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);
