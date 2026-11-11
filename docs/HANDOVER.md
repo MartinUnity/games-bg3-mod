@@ -10,13 +10,18 @@ playtest detail, ranked next-moves at the time) is preserved verbatim in git:
 ## Open right now
 
 - **v3.44 in-game verdicts pending** (class-build roster shipped offline): barb thrower AI
-  (3-8 javelins), druid Wild Shape, monk flurry, paladin smites, warlock blast.
+  (3-8 javelins — still no javelin throw seen as of 2026-11-11, a barb grabbed an
+  environment ROCK instead), druid Wild Shape, monk flurry, paladin smites, warlock blast.
   Owner ✅ so far: hexblade (CHA melee), cleric shields. **Dual-wield re-verdict pending**
   (v3.45 fix: `style2_twf` + `UnlockPassive(FightingStyle_TwoWeaponFighting)`).
 - **Owner owes**: warlock/hexblade refs (v3.44); full/half/1-3-caster spell lists to widen
   the rolled kits beyond cleric+druid (v3.46, `docs/spells-categories.md`).
-- **Scrolls / arrows / grenades AI unverified** — healing-potion use ✅ in-game
-  (2026-11-01), the other support-slot items still need a playtest verdict.
+- **Support-slot item AI** (owner verdicts 2026-11-11): elemental **arrows ✅** (ranged
+  mobs fire the stacks — bows picked up AND used), **potions broadly ✅** — self-buff
+  (Haste etc.) and offensive, plus damaging/debuff flasks thrown at the party (healing
+  ✅ 2026-11-01). **Still unobserved:** scroll casting, poison application (goblins
+  poison natively — may just need to meet a poison-carrying team) — see the support-slot
+  playtest item in `docs/backlog.md`.
 - **HP re-verdict**: v3.39 shipped the double-count fix (CHAOST Vitality = level-1 pool,
   engine rolls real hit dice per level); no explicit in-game re-verdict logged yet.
 - **Black-screen hangs**: diagnosed as Proton/Vulkan swapchain thrash from alt-tabbing
