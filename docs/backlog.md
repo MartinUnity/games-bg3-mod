@@ -1,7 +1,7 @@
 # Backlog — could-look-into notes
 
 Small parking lot for observations and half-ideas that are NOT worth fixing right now,
-so they don't get lost. Move items to HANDOVER "ranked next moves" (or resolve them)
+so they don't get lost. Move items to HANDOVER "Open right now" (or resolve them)
 when they graduate. Date each entry; delete when done or rejected.
 
 ## Wild ambushes: random fights WITHOUT an existing combat (owner question, 2026-10-31)
@@ -83,7 +83,7 @@ approximate it. Also queued:
   auto-equip listener places them (tank 100%, other Shields-prof melee ~55%);
 - ranged weapons for dex-based humanoids: ✅ shipped v3.28 as the ranged-ROLE primary
   weapon (name-pattern role guess + ST_SimpleRangedWeapons/Martial + _1 at tier 4) —
-  ⚠️ whether mob AI actually fights with the bow is still unproven (see playtest item);
+  ✅ bow + elemental arrows CONFIRMED used in-game (owner, 2026-11-11; see playtest item);
 - chaos fodder tables: `ST_RandomPotion`, `ST_RandomConsumable`, `ST_Throwable`.
 - **support-slot playtest** (v3.21 shipped the slot; ⚠️ needs in-game confirmation): does NPC
   AI actually **use** the new items — scrolls (`LOOT_SCROLL_*` cast without knowing the spell?),
@@ -96,6 +96,13 @@ approximate it. Also queued:
   before acting (owner keeping one alive next fight); arrows/grenades/poisons open. v3.28 moved
   the bow into the ranged role's PRIMARY weapon slot, so the support-bow/melee-weapon
   interference question is moot.
+  **Partial verdict (owner 2026-11-11): special arrows ✅** — ranged mobs fire the
+  elemental stacks (fire/thunder…), i.e. bows get picked up AND used; **potions broadly
+  ✅** — self-strengthening (Haste etc.) AND offensive use, and damaging/debuff flasks
+  get thrown at the party. Still NOT observed: scroll casting, poison application
+  (vanilla goblins DO poison when they carry it — likely just no poison-carrying team
+  encountered, keep watching), and thrown grenades as such (flask-throwing works, so the
+  throw-AI path exists — `ALCH_Solution_Grenade_*` likely fine, awaiting a sighting).
 - **fizzle-backoff watch** (v3.25): ✅ RESOLVED 2026-11-02 — owner: "fizzle backoff ...
   works well" (real-fight confirmation vs fizzle anomaly, and the backoff pacing feel right).
 
@@ -217,6 +224,10 @@ need owner references / in-game verdicts before tuning:
 - BARB THROWER: 3-8 javelins added, but NPC AI may not THROW them (melee-first);
   verdict needed — may require a thrown-weapon spell or Tag, compare vanilla
   javelin mobs (BASE_WEAPON_Javelins donor exists for reference).
+  **Update 2026-11-11: still no javelin throw observed** — the barb instead picked up an
+  environment ROCK and threw it (the vanilla throw path works; our javelin kit never
+  triggered). Next lever: diff against the BASE_WEAPON_Javelins donor / try a
+  thrown-weapon spell or Tag on the kit.
 - DRUID SHIFTER: WildShape granted as ActionResource boost (UCL lvl2) — engine NPCs
   may never activate it; if unused in fights, consider shifter = PrimalStrike melee.
 - SORCERER: no metamagic rows in UCL_WildMagic (points granted, unused) — cosmetic.

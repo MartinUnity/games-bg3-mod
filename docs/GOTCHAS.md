@@ -101,8 +101,11 @@ promote to AGENTS.md if a session could trip over it without looking.
   (v3.22/v3.35; ✅ in-game).
 - Faction pair (verbatim, proven): Evil `4be9261a-e481-8d9d-3528-f36956a19b17` /
   Hero `a1542c81-6895-929e-4522-10ce218bb360`; hostility = `SetHostileAndEnterCombat`.
-- NPC AI uses healing potions on each other ✅ (2026-11-01); scrolls / arrows /
-  grenades still unverified.
+- NPC AI item use (progressive verdicts): healing potions ✅ (2026-11-01); elemental
+  arrows + self-buff/offensive potions + thrown damage/debuff flasks ✅ (2026-11-11).
+  Not yet observed: scroll casting, poison application, NPC-initiated javelin throws
+  (a barbarian grabbed an environment rock instead — the vanilla throw trigger exists,
+  our javelin kit did not fire).
 - Vanilla mid-combat reinforcement pattern: `PROC_Appear` +
   `PROC_GLO_NarrativeCombat_JoinCombat` (`Gustav/.../TUT_Helm.txt:896-1010`).
 - Leader flavor: `OpenMessageBox` popups break immersion AND halt combat — use vanilla
