@@ -3,20 +3,28 @@
 ## Use git as snapshot
 
 Check git log for reference; basically commit work as snapshots for potential restore at point-in-time.
+The per-version chaos-engine changelog lives in commit messages — they are full entries:
+`git log --oneline --grep='^v3'`, search e.g. `--grep=v3.44`.
+
+## Where new findings go (keep this file lean)
+
+AGENTS.md is injected into every session, so it holds only rules, pointers, and landmines —
+never version narrative, never feature internals. Budget: ~10KB.
+
+- New durable API/engine finding → append to `docs/GOTCHAS.md` (promote here only a
+  one-liner if a session could trip over it without looking).
+- State of play / what's open now → `docs/HANDOVER.md` (newest entry on top; when an
+  entry is fully superseded, cut it — git log is the archive).
+- "Could look into" → `docs/backlog.md`.
+- Version story ("we tried X, then Y") → the commit message you're already writing.
 
 ## What this repo is
 
 A BG3 "mod" made by editing game files directly: this repo *is* the game's
-`Data/Public/` folder, cloned in place (no pak/mod build step — that's what
-keeps achievements working). Game data lives in four layers: `Gustav/`,
-`GustavDev/`, `Shared/`, `SharedDev/`; an edit takes effect by matching the
-vanilla file path and entry name (override).
-
-⚠️ Loading is keyed on **file identity** (`docs/overview.md` §6.1): overrides inside a file vanilla
-already defines are applied, but **invented file names under `Data/Public` are not loaded** —
-confirmed positive/negative in-game by the owner (the live Honour HP boost works as an appended entry
-in an existing `Status_BOOST.txt`; new `MARTIN_*`-style stat files never did). New file names count
-only inside a `.pak`, which is also the leading explanation for the null story-goal tests.
+`Data/Public/` folder, cloned in place (no pak/mod build step for overrides — that's what
+keeps achievements working; the SE mod is a separate packed artifact). Game data lives in
+four layers: `Gustav/`, `GustavDev/`, `Shared/`, `SharedDev/`; an edit takes effect by
+matching the vanilla file path and entry name (override).
 
 Where things live:
 - Items/spells/passives/balance: `<Layer>/Stats/Generated/Data/*.txt`
@@ -24,309 +32,112 @@ Where things live:
   `Status_BOOST.txt`, `Character.txt`; global balance in `Shared/.../Data.txt`,
   XP curves in `XPData*.txt`)
 - Loot: `<Layer>/Stats/Generated/TreasureTable.txt`
-- Story/goal text: masters live in `docs/goals/MARTIN_*.txt` (CRLF, in git) and deploy to the
-  LIVE story mount via `tools/deploy_story.sh --copy` (the `Data/Public/<Module>/Story/` mount
-  never fires — E1/E7 nulls). The vanilla goal text lives at
-  `Data/Mods/{Gustav,GustavDev,GustavX,Shared,SharedDev}/Story/RawFiles/Goals/*.txt` —
-  944 files, all still stock vanilla (install mtime 2025-09-06). **Resolved 2026-10-31:** the
-  live story channel IS that `Data/Mods` mount — rules appended into a vanilla-named goal file
-  there compiled and spawned a wolf in-game (E8b ✅, `docs/spawn-chains.md` §3.1.2), while the
-  `Data/Public/<Module>/Story/` mount never fires (E1/E7 nulls). A whole-file grammar error
-  *refuses new-game creation* ("likely due to mods"); a bad name in one rule can also drop just
-  that rule silently (our imp rule died, wolf rule fired — instance-vs-root templates, §3.1.2).
-  E8 (same day) **positive**: *invented* `MARTIN_*.txt` file names compile and fire in that mount
-  too — so features ship as our own goal files under
-  `Data/Mods/<Module>/Story/RawFiles/Goals/`, mirrored from repo masters in `docs/goals/` via
-  `tools/deploy_story.sh --copy` (probes since removed; mount vanilla again). `Data/Mods` is
-  writable (ro bind fixed).
-  This is the Windows
-  build under Proton: prefix `compatdata/1086940`, logs `bin/gold.*.log`, profile
-  `…/AppData/Local/Larian Studios/Baldur's Gate 3/` — live load order is
-  `PlayerProfiles/Public/modsettings.lsx` (base module **GustavX**, mods enabled), NOT the stale
-  2024 root-level file. Vanilla keeps its helper library in
-  `Data/Mods` — `Shared/Story/RawFiles/Goals/__PROC.txt`
-  declares 457 `PROC_`/`QRY_` rules — worth reading, but cross-module visibility is unverified
-  so our own files declare everything they use. loca: proven route — the pak carries
-  `Localization/English/ChaosReinforcements.loca` (xml source in the mod workspace; recipe in
-  `docs/lua-modding.md`).
-- Lua / Script Extender route (⚠️ parallel channel, not the override workflow; **user wants this
-  for the real feature: randomised spawn pools need Lua logic**): fundamentals in
-  `docs/lua-modding.md`, upstream API vendored at `docs/vendor/bg3se-Lua-API.md`, mod workspace
-  `mods/chaos-reinforcements/`. **SE v33 loads and our Lua runs** (probe v1 wrote its template dump on
-  SessionLoaded, 2026-10-31) — the historical problem was invisible errors: v33 logging needs
-  `"LogRuntime": true` in `bin/ScriptExtenderSettings.json` (`LogEnabled`/`bg3-print.log` are
-  obsolete); logs land per-session in the Larian profile at `Script Extender Logs/Extender
-  Runtime*.log` (under AppData `Larian Studios/Baldur's Gate 3/`; the old drive_c prefix-home
-  path is stale), and probes also file-log to profile `Script Extender/Chaos_probe.log` via
-  `Ext.IO.SaveFile`. `bin/DWrite.dll` = official Oct-12 v33 updater (old kept `.bak-2024`;
-  `WINEDLLOVERRIDES="DWrite.dll=n,b"` still required — launch options have it). SE itself stages
-  under AppData `BG3ScriptExtender/`, not `bin/`. **Spawn-on-combat PROVEN (probe v3: hostile
-  wolf joins fights); reinforcement engine v3.1 installed & packed** (`Server/Chaos.lua`,
-  data-driven): stacking trigger chance (TEST_MODE force-knobs removed v3.33), level-budget spawns
-  `hostLevel x rand(2-4) x (1 + 0.15 x (party-4))`, low-level ceiling (host lvl ≤2 → mobs never
-  above player level), **CreatureDB.lua** (generated by
-  `tools/build_creature_db.py` from converted merged root-template lsx + vanilla stats `using`
-  chains (plural parents! `_Giants`→Giant) + the live 32017-entry dump; MUST be
-  `Ext.Require`d BEFORE Chaos in BootstrapServer) —
-  622 generic spawnable creatures in 14 D&D type groups (526 as of v3.32: lvl gate from
-  LevelOverride + artless filter), `{id = Name_GUID, hp, cost = hp/10}`;
-  display names live in loca (invisible offline), so story mobs are filtered by template-name
-  patterns (`^QUEST_`, `CINE_`, `^Footstep_`, `Elder_Brain`, bosses…); encounter-type affinity
-  via RACE_TO_TYPE + dominant enemy type,
-  leader system (pack ≥2 → ~10% roll, ~90% same type / ~10% cross-type via AFFINITY map,
-  spawned OUTSIDE the budget — jackpot escalation, biased to the beefier half of the pool,
-  no cross-type while the low-level ceiling is active, +0-2 lvls), **`Osi.SetLevel` calls
-  REMOVED 2026-11-01 (hard crash: OsirisWrappers::CallWrapper fault -> bg3.exe from
-  `spawnWildMob`; pcall can't survive native faults; it only set the level number anyway,
-  v3.3 lesson — over-level gate now reads the template's native GetLevel)**, anchors near existing enemies, wave delayed 1.5 s after
-  CombatStarted (Timer.WaitFor) so enemies are classifiable, E8b faction
-  pair verbatim, discovery logging of every enemy lvl/race/type/faction to grow RACE_TO_TYPE. **save-load quiet window (v3.28)**: LOADING a save into an ongoing fight re-fires `CombatStarted` (~12 s after SessionLoaded — live log: toggle-restore +04 s, wave +16 s) which used to roll a SECOND wave; SessionLoaded sets `loadQuietUntil = MonotonicMs() + 20 s` (`MonotonicMs()` in Common.lua) and the listener skips rolls in the window WITHOUT touching the miss stack. Cost: a genuinely new fight within 20 s of a load loses one roll.
-  **v3.3: `Osi.SetLevel` does NOT rescale fixed monster stat blocks (sets the level number
-  only) → difficulty is controlled at PICK time: CreatureDB entries now carry NATIVE stats
-  `{ac, str, dex, con, ea (ExtraAttack)}`, gated at host lvl 1 (hp≤20/ac≤14/ability≤12/no
-  EA) and 2 (hp≤35/ac≤15/ability≤14/no EA), `HEAVY_TYPES` (Dragon/Giant/Celestial) need lvl≥5;
-  Honour HP boost commented out of `GustavDev Status_BOOST.txt` for calibration (Lua-side
-  MOB_HP_BOOST placeholder off); ⚠️ SE databases are keyed by ARITY: `DB_Is_InCombat` has 2
-  columns → `Get(nil, nil)` via `table.unpack({}, 1, ncols)`; **equipment phase 1**: humanoid
-  spawns get random gear via `Osi.GenerateTreasure` (vanilla tables `ST_SimpleMeleeWeapons`/
-  `ST_MartialMeleeWeapons`/`ST_Light|Medium|HeavyArmor`) + potions via `TemplateAddTo`,
-  auto-equipped by a
-  `TemplateAddedTo` listener + `Osi.Equip` (gear lives on level instances, NOT root templates;
-  non-humanoids keep innate attacks — equipping would replace them); **equip tiers follow the
-  wild group tier** (Wild passes core/squad/warband tier into `EquipMob`; 20% one-band bump,
-  boss +2; combat reinforcements keep the legacy per-member roll) — tier3 unlocks medium
-  armor, tier4 heavy+magic tables; healing potion is BASELINE from member lvl 3 (all tiers,
-  so dps can throw one); one "extra" consumable roll from the member-level-band pool
-  (low 1-3: Basic poison/antitoxin/resistances; mid 4-8: heroism/resistances/Drow+Malice
-  poison; top 9-12: regen/invisibility/Wyvern+PurpleWorm poison, Speed = crown jewel only
-  here; DONOTUSE variants skipped; ids in Equip.lua from profile `Chaos_root_templates.txt`
-  live dump); **support slot** (v3.21): caster = 0-X `LOOT_SCROLL_*`, ranged = bow
-  (`ST_SimpleRangedWeapons`) + 0-X `ARR_Arrow_Of_*` stacks, melee = strong poisons +
-  `ALCH_Solution_Grenade_*`; pool band = group tier (+1 if equip tier ≥3), count binomial
-  cap min(groupTier+tier bonuses,4) at p 30/60/80/100% by equip tier; role from team entry
-  role / prof-guess for pool mobs; **healing-potion AI ✅ in-game 2026-11-01** ("they use healing potions to heal each other"); ⚠️ scrolls/arrows/grenades still unverified); **v3.28 role parity** (Equip.lua): role = team slot else template-name patterns (`weaponRoleFor` over nm+id: Ranger|Hunter|Archer...→ranged, Caster|Cleric|Wizard|Necro...→caster); casters get `WPN_HUM_Quarterstaff_A_0/_1` templates (need SimpleWeapons/Quarterstaffs prof) NOT the finesse lottery (finesse gated to melee), ranged get bow tables as PRIMARY (`ST_Simple/MartialRangedWeapons`, _1 at tier4; support-bow dup removed), Shields-prof melees get `WPN_HUM_Shield_*` off-hand templates (tank 100%, other melee 55%); `ST_ArmorShield` unusable (StartLevel 6); tooltips show template-native "Level 1" — cosmetic, don't chase); **v3.29 team-mode reinforcements + race coherence** (owner: humans+goblins+Meazel mix "too odd"): `reinforce()` runs the CHAOST composer when etype==Humanoid && base>=TEAM_MIN_LEVEL(3) && wave size>=2 (budget/max(2,ceil(lvl*0.7))); composer pieces = Common.lua globals (TEAM_PROFS/teamSlots/teamLevelFor/teamEntry + donorRaces/RACE_TO_DONOR/dominantRaceKey/poolForRace); ONE donor race per wave = `dominantRaceKey(enemies)` (GetRace→donor; Goblinoid/Hobgoblin→goblin, Duergar→dwarf…), 20% TEAM_CHAOS_CHANCE = random race; donors 7→9 in gen_teams.py (+BASE_Goblins_Male/Female, BASE_HalfOrcs_Male/Female_Guard; NO Hobgoblin/Bugbear/Gnoll/Meazel BASE templates exist) → 792 CHAOST templates; team entry `nm` = RACE_LABEL+ROLE_LABEL ("Goblin Vanguard") via FlavorNameFix; wild squads one-race-per-group too (pool retry via poolForRace); leader stays pool-based both modes; teamSlots(<3) trims the guaranteed trio (sim-caught over-spawn bug); ⚠️ `!chaos_root` now expects 792 REGISTERED); **v3.30 over-level leak + nameless-mob fix** (owner Orthon log: lvl-10 devils survived a lvl-5 fight AND rendered nameless): the DB's `lvl` now comes from root-template **LevelOverride** (stats `data "Level"` exists on only ~2 entries; build_creature_db parses it via pending-buffer since LevelOverride sorts before the MapKey that opens a node) → `passesGate`'s existing `lvl > base+2` pick-gate finally works (132/560 entries gated); spawnCreature checks level BEFORE SetFaction/hostility (hostility dragged despawn-candidates into combat so the deferred delete refused forever), single skip replaced by `ScheduleOverlevelDelete` retry ladder (3/10/30/90 s, STUCK log), `FlavorNameFix` moved before the despawn branch (blank-name templates like Orthon_A = the whole nameless-mob mystery: survivors never got renamed), spawn log prints DB lvl (old "lvl nil" was dead-variable artifact), party knob uses max(DB_Players, involved-count) (involved read lagged: party 6 in log vs budget used 1); **v3.31 wild-roll stacking** (owner: 10+ flat 25% rolls with no spawn):
-  heartbeat chance = min(100, WILD_CHANCE(25) + wildMisses*rand(2-8)), reset on group
-  spawned; a triggered-but-unplaced heartbeat counts as a miss too (spawnWildGroup
-  returns bool), skip-gates never touch the stack; miss count in roll log +
-  `!chaos_status` `misses N (next lo-hi%)` (sim: P(≥10 misses) 5.7%→0.1%); **v3.32 invisible-template
-  filter** (owner: Phase Spider invisible body + placeholder portrait): root templates can override
-  inherited art with an explicit EMPTY `VisualTemplate=""`; if the node also lacks a own
-  `CharacterVisualResourceID` the spawn renders invisible (BASE_Quadruped_Beast_Spider_Phase = the
-  spider; concrete SPIDER_Phaser is the visible twin, same stats) → build_creature_db parses both
-  art attrs per node (CVRID pending-buffered before MapKey, VisualTemplate after) and drops
-  `vis=="" AND no own CVRID` (34 entries, 560→526; vis=="" WITH CVRID kept — tighten to vis==""
-  alone if a kept one turns out invisible); **v3.33 housekeeping + composition** (owner OK):
-  TEST_MODE/LEADER_TEST/WILD_TEST knobs deleted (console probes stay), dead mods removed from
-  the story mount (HealthBoostLocal, HPChaos_* — never worked, no modsettings refs), RACE_TO_TYPE
-  seeded from vanilla stats _Type chains + `tools/grow_race_to_type.py` log aggregator, and TEAM-mode
-  reinforce() leaders now draw the wave's donor-race CHAOST tank at a capped level (never trips the
-  over-level despawn; cross-type rolls stay pool-based); **v3.34 false-aggro race + invisible-donor
-  fix** (owner: instant "aggro fizzled" groups 60-70m away + invisible 2-mob tiefling team +
-  black-screen hangs during mob fights): (a) heartbeat(90s)/monitor(2s) were PHASE-LOCKED
-  (90%2==0, both start at SessionLoaded) so the monitor always ticked right after a spawn while
-  AppearAtPosition teleports unsettled and GetPosition still read the host-adjacent CreateAtObject
-  spot → false "player within 12m" aggro on distant mobs → never-engaged loop; fix = `WILD_SETTLE_MS`
-  5s settle stamp (no aggro/expiry while settling) + member-position sanity (members must be within
-  `WILD_MEMBER_SANITY_M`=25m of group center to count, ignores the ~937m AppearAtPosition fallback)
-  + **de-orphan** ("never engaged" groups re-enter tracking, alive mobs stay TTL-governed; real
-  brief fights stay untracked for loot); (b) invisible CHAOST members: gen_teams DONORS for
-  tiefling_m/gith_m carried RUNTIME INSTANCE guids (from an equip-log line, not template MapKeys)
-  → dangling ParentTemplateId → no visual (stats fine); real donors Tieflings_Male_Asmodeus_Guard_
-  Caster_806815fc / Githyanki_Male_Guard_Caster_49567bbf, all 792 templates regenerated, and
-  gen_teams `validate_donors()` now hard-fails any donor id that is not a MapKey in the live
-  root-template dump; black-screen hangs UNPROVEN cause, suspected renderer on dangling-visual
-  mobs — expect gone with fix, watch verdict); **v3.35 wake-camp loophole + !chaos_force +
-  spawn coords** (owner OK): wake re-fires the camp event pair for EVERY character (party,
-  summons, dogs) and silently releases the host latch (campers never empties → no "camp done"
-  log) → spawn 19 s post-wake at the campsite; fix = 30 s `WILD_CAMP_QUIET_MS` window refreshed
-  by ANY camp event either direction + explicit `host LEFT CAMP` log (Scratch = red herring,
-  heartbeat gates on host only); `!chaos_force spawn on|off|type <Type>|off|tier 1-3|off|off`
-  targeted test overrides (forced type beats theme + forces evil packs → TEAM mode; gates still
-  respected; replaced dead setterless WILD_FORCE_TIER); wild spawn log carries `map (x, z) h y`
-  (minimap axes are x/z, y = height); **v3.36 log hygiene**: Race static sample dump
-  moved out of the main log to profile `Script Extender/Chaos_race_dump.txt` (was a
-  hundreds-of-lines DumpExport spam) + unconditional `==== COMBAT <id> STARTED/ENDED ====`
-  bookends on the Osiris CombatStarted/CombatEnded listeners (spawned-group fights
-  included); **v3.37 team look/stats** (owner report): armor treasure tables were DEAD
-  (I_ARM_*_Body ids have no root template -> silent zero items -> underwear mobs) - armor
-  now via direct TemplateAddTo of real ARM_* templates (bands by tier/prof, ids validated,
-  GenerateTreasure failures logged); gen_teams ability tokens FIXED (`data "STR"` ->
-  `data "Strength"` - abbreviations were silently dropped, all mobs had base 10s);
-  black-screen hangs = Proton/Vulkan swapchain thrash from rapid alt-tabbing (13x
-  "0x0 extent -> offscreen" in gold log, zero mod errors — saved to repo `game-logs/`),
-  NOT the mod; owner PERM fix = **Borderless window** instead of Full screen on
-  Proton/Vulkan); HP inflation diagnosed: LevelOverride+Progressions grant REAL class
-  levels on top of the cumulative Vitality curve (observed = curve + max hit dice,
-  exact on two d10 L7 mobs) — fix candidate: Vitality = lvl-1 hit die only (HANDOVER
-  v3.37 has the numbers + prediction to confirm in-game);
-  **v3.38 casting + naming** (owner: mobs had class features but cast NOTHING): spells/
-  slots now via per-level `DefaultBoosts` on CHAOST entries — `ActionResource(SpellSlot,n,lvl)`
-  curves + level-gated `UnlockSpell(id,,,,ability)` kits for healer/caster/ranged/wildcard
-  (vanilla-precedent channel; ALL ids validated vs vanilla Spell_*.txt — vanilla Characters
-  never carry spell-list tokens; generic mobs' spells come from root-template SpellSet attr
-  instead); tooltips showed donor loca name ("Drow Half-Elf") because FlavorNameFix was
-  blank-only — team mobs now relabeled unconditionally, ROLE_LABEL class-flavored
-  (Cleric/Wizard/Hunter/Berserker/Vanguard/Bard) → "Half-Elf Cleric");
-  **v3.39 HP double-count fix + gear probe** (owner verdict: equip/stats/naming all ✅):
-  CHAOST Vitality = level-1 pool only — the engine still levels and ROLLS hit dice per
-  level (owner: keep the dice variance, no deterministic 5e pools); blue-robe visual
-  mystery → v3.40 equip fix: `Osi.Equip(char, item, 1, 0, 1)` trailing args are HAND args
-  (vanilla offhand uses 1,0,0) — main-hand forced on everything, body armor failed at
-  Osiris level; bare `Osi.Equip(char,item)` auto-slots (Osiris CALLs return nil even on
-  success — only explicit false = refusal, REFUSED logs were an artifact). VERIFIED in-game
-  (Breast=OK probes, AC 15/16). But mobs STILL render naked → v3.41 real visual answer:
-  BG3 does NOT attach body-armor art to NPC bodies — gear is BAKED into each template's
-  `CharacterVisualResourceID` body mesh (only hand props attach). gen_teams now stamps
-  CVRID per CHAOST node = vanilla Guard_Melee/Ranger/Caster bodies per donor race
-  (RACE_VISUALS table; HalfOrc bodies live in SharedDev/_merged root templates);
-  PROBE_GEAR=false; goblin Tier2 bodies + tiefling body taste = backlog);
-  **v3.42 healers always 1h+shield** (owner: cleric had 2h): composer `entry.role==
-  "healer"` bypasses weapon tables, kit = WPN_HUM_Mace/Warhammer/Battleaxe/Morningstar
-  _A_0 (_A_1 at tier4) + shield 100%; **v3.43 armor bands per level** (lvl3-4 floor2,
-  lvl5 coin-flip 2/3, lvl6-7 floor3 medium, lvl8+ floor4 plate — lvl7+ wore heavy too
-  much before) + **capped magic gear on leaders/bosses** (same baseline kit, then per-
-  slot +1-item rolls: leaders 10/20/30%, bosses 15/30/45% by band 5-6/7-8/9+, item cap
-  = band 1/2/3, slots shuffled; boss tier +2 bump removed; items = vanilla quality-1
-  templates WPN_*/ARM_*_1 — all ids live-validated; `magicGear()` in Equip.lua,
-  isLeader plumbed via Wild slotMap; log `magic: BOSS/leader ...`);
-  **v3.44 class-build roster** (framework shipped, owner refs pending): team slots
-  roll CLASS BUILDS — gen_teams.py `BUILDS` recipes + `SLOT_VARIANTS` weighted lists
-  → TeamTemplates.lua emits CHAOS_TEAMS (keyed by BUILD), TEAM_SLOTS, BUILD_PROFS/
-  LABEL/WP/MIN; Common.lua `pickBuild` weighted roll with BUILD_MIN gate (monk/rogue/
-  sorcerer/paladin/warlock/hexblade lvl5+ — one-shot low parties); builds: fighter_brute
-  (2h+GWM)/fighter_dual (dex TWF, LIGHT armor always), paladin(Ancients), barb brute/
-  thrower (75/25, 3-8 javelins), monk=**UCL_FourElements_Thief 3c756b75** (UCL has no
-  monk; vanilla Monk table has SubClass-entity refs + selectors — rejected), rogue+
-  GloomStalker, hexblade (Warlock+Fiend + `WeaponAttackRollAbilityOverride(
-  SpellCastingAbility)` CHA melee via DefaultBoosts — SHILLELAGH grammar; WPN_*_Pact
-  grants NO cha boost), druid healer 25%/cleric 75%, druid shifter (CircleOfTheMoon,
-  WildShape ActionResource from UCL_Druid lvl2 boost)/caster (Spores), warlock (blast
-  from UCL_CanEldritchBlast passives at 1/5/10, not a spell row; GreatOldOne),
-  sorcerer (WildMagic; no metamagic rows); Equip.lua `equipmentFor` wp directives:
-  twohanded/dual(2 light weapons + light armor any tier)/javelins/1h_shield/staff/
-  unarmed; 178 entries × 11 donors = **1958 templates, `!chaos_root` expects 1958**;
-  forensics /tmp/opencode/v344_prog_notes.md; ⚠️ in-game verdicts pending (thrower AI,
-  wild shape, flurry, smites, CHA melee, blast) + owner owes warlock/hexblade refs);
-  **v3.45 playtest fixes** (owner: hexblade ✅, cleric shields ✅): DualWielder table
-  does NOT grant TWF (only BonusAC@4/Dex+2@8) — fighter_dual prog re-adds
-  `style2_twf 5b91e529`, rogue gets `UnlockPassive(FightingStyle_TwoWeaponFighting)`;
-  magicGear weapon pool is kit-aware (wp dual→light pair, twohanded→2H _1, else 1h
-  band pool; BOSS Duelist had drawn a 2h warhammer killing dex); cleric kit lost
-  CallLightning (druid spell; FlameStrike was believed absent at the time - it does
-  exist as Target_FlameStrike in SharedDev). ✅ dual-wield
-  re-verdict pending);
-  **v3.46 rolled spell kits (docs/spells-categories.md)**: cleric+druid known spells
-  rolled at generation — priority groups cycle per slot (prio1→2→3→loop), within-group
-  weighted by Pri 6/3/1, one spell per slot, every level re-rolls (CHAOS_SEED for
-  reproducible); ids validated vs full pak census /tmp/opencode/sp3_ids.txt
-  (4682 entries; MassCure=Target_CureWounds_Mass, Command=Target_Command_Halt_NPC,
-  ConjureMinorElemental EXISTS as Target_ConjureElementals_Minor_Container lvl4
-  (v3.47, bad regex had missed it)); owner owes lists for full/half/1-3 casters;
-  **v3.47 spell registry gate**: `tools/spell_registry.py` (id -> name/BG3-level/classes,
-  BANNED ids) validated by gen_teams.py before baking — wrong class/level/id = hard exit;
-  caught ranger-kit key typo "ranged" (zero spells since v3.44), druid Thunderwave+Blight
-  (not druid-list), paladin cantrip; PHB slot curves (6th slot @11 => Target_Heal
-  reachable); SpiritualWeapon plain id (MAG_ = lvl6 item variant); README = 10 bullets;
-  **v3.47b class ground truth**: all 10 bg3.wiki class spell pages lynx-dumped to
-  `docs/wiki-dumps/` (re-dump: `lynx -dump .../List_of_<Class>_spells`);
-  `tools/parse_wiki_spells.py --check` cross-checks registry classes+levels vs wiki
-  (norm: British "Armour", "(spell)" suffixes, singular/slash names; exceptions via
-  WIKI_EXCEPTIONS + FEATURE_IDS in registry); registry class sets REBUILT from wiki —
-  BG3 deviates from 5e PHB (druid HAS Thunderwave/Blight/WallOfFire, NO MassHealingWord;
-  Fly on NO list; Sunbeam also sorc/wiz lvl6); run BOTH checks after registry edits;
-  **camp guard** (v3.22: making camp fires NO Osiris `LevelLoaded` — party teleports to
-  the campsite inside the same level, wild gate stays OPEN; a warband spawned at a
-  campfire once. Only signal = `TeleportedToCamp`/`TeleportedFromCamp` events (arity 1);
-  Wild tracks per-char, heartbeat+monitor gate while the HOST is camped; ✅ in-game
-  confirmed 2026-11-01 (`wild: at CAMP` fires on camping, guard works);
-  **fizzle-aware backoff** (v3.25, owner: a fizzled aggro is an anomaly, it must not
-  cost spawn chances): the 8-10 min wild backoff is NO LONGER armed by `aggroGroup` —
-  the monitor judges the last aggroed group via `pendingEngage` and arms backoff only
-  after ~15 s of sustained combat (2 s ticks; 6 s out-of-combat grace covers aggro
-  startup and mid-fight blips; fizzle/never-engaged logs the anomaly instead); RNG =
-  `math.random` only (`Ext.RandomInteger` doesn't exist, `math.randomseed` throws);
-  **`os` IS NIL in server Lua (v3.26 incident: an `os.date` "guard" in log() threw at
-  bootstrap + SessionLoaded for 3 versions — heartbeat never scheduled, zero spawns,
-  zero game-log lines; only the Extender Runtime log showed it). `Ext.Print` nil on
-  server (client-only). log() now fully pcall-guarded, clock = feature-detect
-  `Ext.IO.GetCurrentDateTime` -> `Ext.Timer.MonotonicTime`; offline compile-checks run
-  under LuaJIT = no nested `...` in closures, pass varargs explicitly)**; log =
-  profile `Script Extender/ChaosReinforcements.log`; console `!chaos`/`!chaos_status`/`!chaos_wolf`/
-  `!chaos_root` (registration probe: counts CHAOST_* in GetAllRootTemplates).
-  ⚠️ pak RootTemplates load as BINARY `.lsf` ONLY (lsx-only = silently ZERO templates;
-  working mod paks here ship .lsf, vanilla `_merged.lsf`) — pack_mod.sh auto-converts
-  staged `RootTemplates/*.lsx` via `divine -a convert-resource -i lsx -o lsf` (abs paths;
-  roundtrip-verified). CHAOST stats: `Progressions` refs UCL progression **TableUUID**s;
-  Fighter entry was a 1-char typo (fixed `1c4c6006-0b49...`); failed team slots now
-  fall back to pool mobs (group never empties).
-  offline syntax check via python+lupa, venv `/tmp/opencode/luachk`). Pak toolchain: native lslib Divine at
-  `tools/divine.sh` + `tools/pack_mod.sh` (proven; unpack verb: `-a extract-package -g bg3`).
-  A loaded mod flags the save as modded (achievements off — user doesn't care).
-- Difficulty hook: `Shared/Stats/Generated/Data/Character.txt` entry `_Base` carries
-  `DifficultyStatuses` (`STATUS_HARD: HEALTHBOOST_HARDCORE` → the override at
-  `GustavDev/Stats/Generated/Data/Status_BOOST.txt:11622-11630` is **currently DISABLED** —
-  every `data "Boosts"` line for it is commented out ("HP boost DISABLED 2026-10-31 for
-  chaos-engine calibration"; drafts at 11518-11618 too — grep before trusting any line
-  number); re-enabling is the old difficulty knob, superseded by Lua-side spawn difficulty);
-  the story-side equivalent is the
-  vanilla predicate `DB_HonorMode_Enabled(1)`, usable from any goal file (maintained by
-  `Data/Mods/SharedDev/.../Goals/GLO_HonorMode.txt:66-70`)
-- `bg3-vanilla-data/` (repo-local) is gitignored and **absent/empty** — do NOT re-unpack
-  16G locally: the working vanilla unpack lives at
-  `/home/martin/Documents/mods/bg3-new/bg3-vanilla-data` (STATS ONLY — no Race/GUI folders;
-  race strings must be derived from stats `_Type` chains or discovery logs). Vanilla .pak
-  files are in `Data/` (NOT `Data/Paks`); `tools/divine.sh` needs absolute paths.
+- Story/goal text: masters in `docs/goals/MARTIN_*.txt` (CRLF, in git) deployed via
+  `tools/deploy_story.sh --copy` into the LIVE story mount
+  `Data/Mods/<Module>/Story/RawFiles/Goals/` (own file names work there — E8)
+- Lua / Script Extender (the product route: randomised spawn pools need Lua logic):
+  mod workspace `mods/chaos-reinforcements/`, packed with `tools/pack_mod.sh`;
+  fundamentals in `docs/lua-modding.md`, upstream API vendored at
+  `docs/vendor/bg3se-Lua-API.md` — **grep the vendored API before using any
+  `Ext.*`/`Osi.*` name.**
+- Difficulty hook (dormant): `Shared/.../Data/Character.txt` `_Base` → `DifficultyStatuses`
+  → the `HEALTHBOOST_HARDCORE` override at `GustavDev/Stats/Generated/Data/Status_BOOST.txt`
+  is **DISABLED** (Boosts commented out for calibration — grep before trusting line numbers);
+  superseded by Lua-side spawn difficulty. Story gate: `DB_HonorMode_Enabled(1)`.
 
-After touching treasure tables, validate:
-`python3 tools/validate_treasure.py` (exit 1 on duplicate entry names or
-dangling `I_`/`T_` references; `--strict` escalates warnings)
+## Landmines (details + more in `docs/GOTCHAS.md`)
 
-After touching story goals, validate:
-`python3 tools/check_goal.py` (checks our `MARTIN_*.txt` goals against
-`Data/Mods/*/Story/RawFiles/story_header.div`: unknown calls/queries/events, unknown
-`DB_` predicates, misplaced `;`, non-CRLF endings, and query/call misuse — QUERY-in-THEN etc.;
-that class does NOT fail silently: it refuses new-game creation (confirmed 2026-10-31), while a
-wrong name in one rule may drop just that rule.
-`tools/deploy_story.sh` (--dry-run by default, `--copy`, `--remove`) mirrors
-them into the `Data/Mods` story mount when needed. `tools/e8b_inject.py`
-(--dry-run/--inject/--status/--restore) is the E8b story-mount test: it appends probe
-rules into vanilla-named goal files in `Data/Mods` and restores them from gitignored
-`tools/e8b_backup/`.
+- ⚠️ Loading is keyed on **file identity**: overrides inside vanilla-defined files apply,
+  but **invented file names under `Data/Public` are NOT loaded**; new names count only
+  inside a `.pak`. The `Data/Public/<Module>/Story/` mount never fires — the live story
+  channel is the `Data/Mods/.../Story/RawFiles/Goals/` mount.
+- ⚠️ Pak RootTemplates load as binary **`.lsf` ONLY** (lsx-only = silently ZERO
+  templates); `pack_mod.sh` auto-converts staged `.lsx`.
+- ⚠️ Goal files: a whole-file grammar error **refuses new-game creation**; a wrong name
+  in ONE rule can drop just that rule silently. Always run `tools/check_goal.py`.
+- ⚠️ Server Lua: **`os` is nil**; `Ext.Print` nil on server; RNG = `math.random` only.
+- ⚠️ SE v33 logging needs `"LogRuntime": true` in `bin/ScriptExtenderSettings.json`
+  (`LogEnabled`/`bg3-print.log` obsolete); logs live in the Larian profile
+  (`Script Extender Logs/…`, mod log `Script Extender/ChaosReinforcements.log`).
+- ⚠️ SE databases are keyed by **arity** (`DB_Is_InCombat:Get(nil, nil)`); Osiris
+  CALLs return nil even on success (only explicit `false` = refusal).
+- ⚠️ `pcall` can't survive native faults: `Osi.SetLevel` hard-crashed bg3.exe — and it
+  only set the level NUMBER anyway. Difficulty = pick-time gating.
+- ⚠️ Stats gotchas: real level = root-template **LevelOverride** (not `data "Level"`);
+  ability tokens must be spelled out (`Strength`, NOT `STR` — abbreviations silently
+  dropped); `Progressions` refs UCL **TableUUIDs** exactly; LevelOverride+Progressions
+  grant real levels on top of the cumulative Vitality curve → set Vitality = level-1 pool.
+- ⚠️ Visuals: body-armor art is BAKED into `CharacterVisualResourceID` — BG3 never
+  attaches body gear to NPC bodies (hand props only); explicit `VisualTemplate=""` +
+  no own CVRID = invisible mob; parent/donor ids must be root-template **MapKeys**
+  (runtime instance GUIDs → invisible).
+- ⚠️ Behaviour: making camp fires NO `LevelLoaded` — only `TeleportedToCamp`/
+  `TeleportedFromCamp`; loading a save into a fight re-fires `CombatStarted` (~12s after
+  SessionLoaded); spawn positions are unsettled briefly after creation (settle guard).
+- ⚠️ Spell ids/class/level pass TWO gates: `tools/spell_registry.py` +
+  `tools/parse_wiki_spells.py --check` — BG3 deviates from the 5e PHB.
+- ⚠️ Proton: `WINEDLLOVERRIDES="DWrite.dll=n,b"` required to launch; black-screen hangs
+  = alt-tab swapchain thrash → use **Borderless window**; live load order is
+  `PlayerProfiles/Public/modsettings.lsx` (base module **GustavX**), not the stale 2024 file.
+- A loaded mod flags the save as modded (achievements off — user doesn't care).
+- ⚠️ Do NOT re-unpack the 16G vanilla data locally (`bg3-vanilla-data/` is gitignored and
+  empty): the working unpack is `/home/martin/Documents/mods/bg3-new/bg3-vanilla-data`
+  (STATS ONLY — race strings from stats `_Type` chains or discovery logs). Vanilla .paks
+  are in `Data/` (NOT `Data/Paks`); `tools/divine.sh` needs absolute paths.
+
+## Chaos engine — current state
+
+SE Lua mod `mods/chaos-reinforcements/` (pak, Script Extender v33): combat
+reinforcements + wild ambushes + CHAOST team composer; current version **v3.47b**
+(class-build roster: 178 entries × 11 donors = **1958 templates — `!chaos_root` expects
+1958**; rolled spell kits + registry gates). Engine internals live in the code
+(`Server/{Common,CreatureDB,Equip,Chaos}.lua`, loaded in that order) — not documented here.
+Console commands (`!chaos`, `!chaos_status`, `!chaos_wolf`, `!chaos_root`, `!chaos_force`):
+`docs/console-commands.md`. Per-version history: `git log --grep=v3`. Open items: `docs/HANDOVER.md`.
+
+## Validate after touching things
+
+- Treasure tables: `python3 tools/validate_treasure.py` (exit 1 on duplicate entry
+  names or dangling `I_`/`T_` refs; `--strict` escalates warnings)
+- Story goals: `python3 tools/check_goal.py` (validates `MARTIN_*.txt` against
+  `story_header.div`: unknown calls/queries/events, misplaced `;`, non-CRLF, QUERY-in-THEN
+  etc.). `tools/deploy_story.sh` (--dry-run default, `--copy`, `--remove`) mirrors masters
+  into the story mount; `tools/e8b_inject.py` (--dry-run/--inject/--status/--restore) is
+  the E8b story-mount probe tool (restores from gitignored `tools/e8b_backup/`).
+- Team templates / spells: `tools/gen_teams.py` hard-validates against
+  `tools/spell_registry.py`; run `tools/parse_wiki_spells.py --check` after registry edits;
+  offline Lua syntax check via python+lupa (venv `/tmp/opencode/luachk`).
+- Pak: `tools/pack_mod.sh` (+ `tools/divine.sh`; unpack verb
+  `divine -a extract-package -g bg3`; absolute paths).
 
 ## docs/ — reference material
 
+- `GOTCHAS.md` — durable API/engine findings & landmines (append new ones here).
 - `overview.md` — repo-wide orientation: layers, what has been changed, how
   overrides load. Start here.
-- `HANDOVER.md` — dated state-of-play snapshot for a fresh session (open experiments, E7 null
-  result, pak-toolchain progress, ranked next moves). Read after `overview.md` when resuming.
-- `drop-chains.md` — drop-side loot wiring: what is editable (table pool
-  contents) vs binary/uneditable (encounter→table wiring), `subtable "x,y"`
-  semantics, probability math, injected parent tables. Most current of the
-  treasure docs.
-- `item-chains.md` — vendor-side chain (trader → treasure tables) and Boosts
-  grammar. Mostly current, but its §5 "orphaned wrapper" bug and §6 necklace
-  plan were superseded by drop-chains §5/§6 — trust drop-chains there.
-- `encounters.md` — cookbook of EVERY route to add mobs/encounters/encounter pressure on
-  this install: SE Lua runtime spawns (the product route), story goal files (E8b-proven),
-  pre-placed `.lsf` level instances, treasure-table loot re-wiring, planned custom stat
-  blocks + custom root templates in the pak, and what is ruled out. Ranked, with the
-  proven primitives and their limits. Read before designing new encounter features.
-- `backlog.md` — parking lot for "could look into" items (spawn-placement edge cases,
-  SE client-side Lua/Ext.UI experiments, leader visual distinction, equipment phase 2,
-  balancing knobs, release prep). Move items to HANDOVER next-moves when they graduate.
-- `console-commands.md` — every in-game `!chaos*` console command: what it does, which
-  gates it skips vs respects, example output, the raw-Lua escape hatch, and the
-  "not yet a command" wishlist. Update it when adding/removing a RegisterConsoleCommand.
-- `spawn-chains.md` — adding **more mobs** to existing encounters in text: the Osiris
-  goal-file channel (`CreateAt`/`CreateAtObject`, `DB_HonorMode_Enabled(1)` honour gate,
-  combat-group joining, spawn-position solving), what stays binary (level layout),
-  ranked recipes, and experiment **E1** (the dead-`Data/Public`-mount artifact at
-  `SharedDev/Story/RawFiles/Goals/MARTIN_Reinforcements.txt`, §12 = how it was tested).
-  Refines drop-chains' "not possible in text" claim. **Headline verdicts in §1/§3 predate the
-  2026-10-31 E8/E8b resolution** (live channel = the `Data/Mods` story mount; the
-  `Data/Public/<Module>/Story/` mount never fires) — read §3.1.2 and that banner first.
-- `larian_treasuretables_description.md` — official Larian treasure-table
-  format reference (columns, DropCount, rarity weights).
+- `HANDOVER.md` — dated state-of-play, newest on top (rotate old entries out — git keeps them).
+- `backlog.md` — parking lot for "could look into" items. Move items to HANDOVER
+  next-moves when they graduate.
+- `drop-chains.md` — drop-side loot wiring: editable pool contents vs binary
+  encounter→table wiring, `subtable "x,y"` semantics, probability math. Most current
+  treasure doc. `item-chains.md` — vendor-side chain + Boosts grammar (its §5/§6 were
+  superseded by drop-chains §5/§6 — trust drop-chains there).
+- `encounters.md` — cookbook of every route to add mobs/encounter pressure on this
+  install (SE Lua spawns = product route, story goals, `.lsf` pre-placement, loot
+  re-wiring, custom stats/templates — and what is ruled out). Read before designing
+  encounter features.
+- `console-commands.md` — every in-game `!chaos*` command: what it does, gates skipped
+  vs respected, sample output, raw-Lua escape hatch, wishlist. Update when adding or
+  removing a RegisterConsoleCommand.
+- `lua-modding.md` — SE fundamentals on this box; `spells-categories.md` — rolled
+  spell-kit design; `wiki-dumps/` — class-spell ground truth; `vendor/bg3se-Lua-API.md`
+  — vendored upstream API.
+- `spawn-chains.md` — more mobs on existing encounters via the Osiris goal channel:
+  primitives, spawn-position solving, ranked recipes, experiment E1 (§12 = how tested).
+  **Headline verdicts in §1/§3 predate the 2026-10-31 E8/E8b resolution** — read §3.1.2
+  and that banner first.
+- `larian_treasuretables_description.md` — official Larian treasure-table format
+  reference (columns, DropCount, rarity weights).
 
 Update these docs when you change how items/loot are wired; they are the
 project's memory.
